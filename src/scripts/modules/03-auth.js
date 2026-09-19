@@ -1,5 +1,5 @@
 // =========================================================================
-// VOCAFLOW 03-AUTH.JS (v0.10.10-41 Build 342)
+// VOCAFLOW 03-AUTH.JS (v0.10.10-42 Build 343)
 // Firebase Auth, Realtime Sync, Public Profiles, Social Graph, Monetization & Billing
 // =========================================================================
 
@@ -9850,9 +9850,11 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
             vipExpiresAt: userVipExpiresAt,
             lastActiveAt: Date.now(),
             lastSync: new Date().toISOString(),
-            equippedWardrobe: (typeof getEquippedWardrobe === 'function') ? getEquippedWardrobe() : { frame: 'default', nameEffect: 'default', title: 'default' }
+            equippedWardrobe: (typeof getEquippedWardrobe === 'function') ? getEquippedWardrobe() : { frame: 'default', nameEffect: 'default', title: 'default' },
+            unlockedWardrobeItems: (typeof getUnlockedWardrobeItems === 'function') ? getUnlockedWardrobeItems() : { frames: ['default'], nameEffects: ['default'], titles: ['default'] }
           },
           equippedWardrobe: (typeof getEquippedWardrobe === 'function') ? getEquippedWardrobe() : { frame: 'default', nameEffect: 'default', title: 'default' },
+          unlockedWardrobeItems: (typeof getUnlockedWardrobeItems === 'function') ? getUnlockedWardrobeItems() : { frames: ['default'], nameEffects: ['default'], titles: ['default'] },
           studyExp: currentStudyExp,
           level: currentLvlInfo.level,
           lastClaimedLevel: currentLastClaimedLevel,
@@ -10195,6 +10197,11 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
       if (data.equippedWardrobe && typeof data.equippedWardrobe === 'object') {
         currentUser.equippedWardrobe = data.equippedWardrobe;
         localStorage.setItem('vocaflow_equipped_wardrobe', JSON.stringify(data.equippedWardrobe));
+        changed = true;
+      }
+      if (data.unlockedWardrobeItems && typeof data.unlockedWardrobeItems === 'object') {
+        currentUser.unlockedWardrobeItems = data.unlockedWardrobeItems;
+        localStorage.setItem('vocaflow_unlocked_wardrobe_items', JSON.stringify(data.unlockedWardrobeItems));
         changed = true;
       }
       if (changed) {

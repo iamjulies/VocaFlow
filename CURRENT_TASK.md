@@ -1,12 +1,41 @@
 # CURRENT TASK & TRẠNG THÁI CÔNG VIỆC HIỆN TẠI (VOCAFLOW)
 
-> **Phiên bản mục tiêu:** `v0.10.10-41 (Build 342)`  
+> **Phiên bản mục tiêu:** `v0.10.10-42 (Build 343)`  
 > **Cập nhật lần cuối:** 2026-09-20  
 > **Trạng thái:** 🚀 **ĐANG TIẾN HÀNH BUILD, KIỂM THỬ CDP & MULTI-DEPLOY GITHUB**
 
 ---
 
-## 🎯 1. DANH SÁCH NHIỆM VỤ ĐÃ GIẢI QUYẾT (v0.10.10-41 Build 342)
+## 🎯 1. DANH SÁCH NHIỆM VỤ ĐÃ GIẢI QUYẾT (v0.10.10-42 Build 343)
+
+- [x] **Shop Bán Khung Viền & Hiệu Ứng Tên Thẩm Mỹ (`src/components/modals/modal-wardrobe.html`, `src/scripts/modules/13-wardrobe.js`)**:
+  - **Khung viền Avatar (Avatar Frames)**:
+    - 2 Khung thú cưng có thể mua: Bé Mèo (`cat` - 500 VoCoin), Bé Cún (`dog` - 500 VoCoin) với tai động và animation SVG.
+    - 6 Khung sự kiện: Sinh Nhật (`birthday` - 800 VoCoin), Giáng Sinh (`christmas` - 800 VoCoin), Halloween (`halloween` - 800 VoCoin), Quốc Khánh VN (`vietnam` - 800 VoCoin), Tết Cổ Truyền (`tet` - 800 VoCoin), Phục Sinh (`easter` - 800 VoCoin).
+    - Các khung cấp độ cũ (Default, Bronze, Silver, Gold, Diamond, Mythic) xếp cuối.
+  - **Hiệu ứng Tên (Name Effects)**:
+    - 2 Hiệu ứng thú cưng: Bé Mèo (`cat` - 🐾 400 VoCoin), Bé Cún (`dog` - 🦴 400 VoCoin).
+    - 6 Hiệu ứng sự kiện: Sinh Nhật (`birthday` - 🎉🎂 600 VoCoin), Giáng Sinh (`christmas` - ❄️🔔 600 VoCoin), Halloween (`halloween` - 🎃🦇 600 VoCoin), Quốc Khánh VN (`vietnam` - ⭐🇻🇳 600 VoCoin), Tết (`tet` - 🧧🌸 600 VoCoin), Phục Sinh (`easter` - 🐰🥚 600 VoCoin).
+    - Các hiệu ứng cấp độ cũ xếp cuối.
+- [x] **Bộ Lọc Nhanh Thông Minh (Wardrobe Quick Filters) & Hiển Thị VoCoin (`modal-wardrobe.html`, `13-wardrobe.js`, `app.css`)**:
+  - 4 nút lọc nhanh: Tất Cả (`all`), Có Thể Mua (`shop`), Sự Kiện (`event`), Cấp Bậc (`level`) kèm số lượng badge tương ứng.
+  - Chip số dư VoCoin thời gian thực trên thanh tiêu đề modal tủ đồ.
+- [x] **Giao Dịch VoCoin & Lưu Trữ Đồng Bộ Đám Mây (`13-wardrobe.js`, `03-auth.js`)**:
+  - Mua vật phẩm trực tiếp bằng VoCoin, ghi log giao dịch `WARDROBE_PURCHASE`.
+  - Danh sách `unlockedWardrobeItems` lưu LocalStorage và đồng bộ 2 chiều qua Firebase Realtime Database.
+- [x] **Đồng Bộ Toàn Diện 7-Point Version Consistency & Multi-Deploy (`v0.10.10-42 Build 343`)**:
+  - `src/components/modals/modal-settings.html` (`VocaFlow v0.10.10-42 (Build 343)`)
+  - `src/scripts/modules/01-router.js` - `13-wardrobe.js` (`v0.10.10-42 Build 343`)
+  - `src/scripts/modules/02-state-core.js` (`const VOCAFLOW_APP_VERSION = 'v0.10.10-42'`, `VOCAFLOW_APP_BUILD = 343`)
+  - `sw.js` & `Release_App/sw.js` (`vocaflow-pwa-v0.10.10-42`)
+  - `pubspec.yaml` (`version: 0.10.10+343`)
+  - `VocaFlow_Desktop/Program.cs` (`VocaFlow v0.10.10-42`)
+  - `GITHUB_RELEASE/push_github.ps1` (`v0.10.10-42 (Build 343)`)
+  - `VOCAFLOW_OVERVIEW.txt` & `GITHUB_RELEASE/VOCAFLOW_OVERVIEW.txt`
+
+---
+
+## 🎯 2. DANH SÁCH NHIỆM VỤ CÁC PHIÊN BẢN TRƯỚC (v0.10.10-41 Build 342)
 
 - [x] **Hệ Thống Tủ Đồ Cá Nhân (Wardrobe System) (`src/components/modals/modal-wardrobe.html`, `src/scripts/modules/13-wardrobe.js`)**:
   - Gồm 3 ngăn: Khung Viền (Avatar Frames), Hiệu Ứng Tên (Name Effects), Danh Xưng (Titles).

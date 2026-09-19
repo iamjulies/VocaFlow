@@ -1,6 +1,6 @@
-  <!-- MODAL: TỦ ĐỒ CÁ NHÂN (WARDROBE SYSTEM v0.10.10-41) -->
+  <!-- MODAL: TỦ ĐỒ CÁ NHÂN & SHOP THẨM MỸ (WARDROBE SYSTEM v0.10.10-42 Build 343) -->
   <div class="modal-overlay" id="modal-wardrobe" style="z-index: 10006;">
-    <div class="modal vf-wardrobe-modal" style="max-width: 640px; width: 100%;">
+    <div class="modal vf-wardrobe-modal" style="max-width: 660px; width: 100%;">
       <!-- MODAL HEADER -->
       <div class="modal-title" style="display: flex; justify-content: space-between; align-items: center; padding-bottom: 12px; border-bottom: 1px solid var(--border);">
         <div style="display: flex; align-items: center; gap: 10px;">
@@ -8,17 +8,22 @@
             ✨
           </div>
           <div>
-            <strong style="font-size: 16px; color: var(--text);">Tủ Đồ Cá Nhân</strong>
-            <div style="font-size: 11px; color: var(--text-muted);">Khung avatar, hiệu ứng tên & danh xưng rèn luyện</div>
+            <strong style="font-size: 16px; color: var(--text);">Tủ Đồ & Cửa Hàng Thẩm Mỹ</strong>
+            <div style="font-size: 11px; color: var(--text-muted);">Khung avatar, hiệu ứng tên sự kiện & danh xưng rèn luyện</div>
           </div>
         </div>
-        <button type="button" class="btn btn-outline btn-icon" onclick="closeModal('modal-wardrobe')">
-          <svg class="icon"><use href="#i-close"/></svg>
-        </button>
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <span class="badge" style="background: rgba(245,158,11,0.15); border: 1px solid rgba(245,158,11,0.4); color: #fbbf24; font-size: 11.5px; font-weight: 800; padding: 3px 9px; border-radius: 8px;" title="Số dư VoCoin của bạn">
+            🪙 <span id="wardrobe-user-points">0 VoCoin</span>
+          </span>
+          <button type="button" class="btn btn-outline btn-icon" onclick="closeModal('modal-wardrobe')">
+            <svg class="icon"><use href="#i-close"/></svg>
+          </button>
+        </div>
       </div>
 
       <!-- LIVE PREVIEW HERO BOX -->
-      <div class="vf-wardrobe-hero-box" style="background: radial-gradient(circle at 50% 30%, rgba(236,72,153,0.12) 0%, rgba(15,23,42,0.6) 70%), var(--surface-elevated); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 18px; margin-top: 14px; margin-bottom: 16px; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.3);">
+      <div class="vf-wardrobe-hero-box" style="background: radial-gradient(circle at 50% 30%, rgba(236,72,153,0.12) 0%, rgba(15,23,42,0.6) 70%), var(--surface-elevated); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 18px; margin-top: 14px; margin-bottom: 14px; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.3);">
         
         <!-- Live Preview Tag -->
         <div style="position: absolute; top: 10px; left: 12px; display: flex; align-items: center; gap: 5px;">
@@ -50,7 +55,7 @@
       </div>
 
       <!-- WARDROBE 3 COMPARTMENTS TABS BAR -->
-      <div class="ig-tabs-bar" style="margin-bottom: 14px;">
+      <div class="ig-tabs-bar" style="margin-bottom: 12px;">
         <button type="button" class="ig-tab-btn active" id="wardrobe-tab-btn-frames" onclick="switchWardrobeTab('frames')">
           <span>🖼️</span> <span>Khung Viền</span>
         </button>
@@ -62,6 +67,22 @@
         </button>
       </div>
 
+      <!-- WARDROBE QUICK FILTER PILLS BAR (v0.10.10-42) -->
+      <div id="wardrobe-filter-bar" style="display: flex; gap: 6px; margin-bottom: 14px; overflow-x: auto; padding-bottom: 2px;">
+        <button type="button" class="btn btn-xs wardrobe-filter-pill active" id="wardrobe-filter-all" onclick="filterWardrobeCategory('all')" style="border-radius: 20px; font-weight: 700; padding: 4px 12px; font-size: 11px;">
+          🌟 Tất Cả (<span id="wardrobe-filter-count-all">0</span>)
+        </button>
+        <button type="button" class="btn btn-xs wardrobe-filter-pill btn-outline" id="wardrobe-filter-shop" onclick="filterWardrobeCategory('shop')" style="border-radius: 20px; font-weight: 700; padding: 4px 12px; font-size: 11px;">
+          🛍️ Có Thể Mua (<span id="wardrobe-filter-count-shop">0</span>)
+        </button>
+        <button type="button" class="btn btn-xs wardrobe-filter-pill btn-outline" id="wardrobe-filter-event" onclick="filterWardrobeCategory('event')" style="border-radius: 20px; font-weight: 700; padding: 4px 12px; font-size: 11px;">
+          🎪 Sự Kiện (<span id="wardrobe-filter-count-event">0</span>)
+        </button>
+        <button type="button" class="btn btn-xs wardrobe-filter-pill btn-outline" id="wardrobe-filter-level" onclick="filterWardrobeCategory('level')" style="border-radius: 20px; font-weight: 700; padding: 4px 12px; font-size: 11px;">
+          🏆 Cấp Bậc (<span id="wardrobe-filter-count-level">0</span>)
+        </button>
+      </div>
+
       <!-- WARDROBE ITEMS SCROLLABLE CONTAINER -->
       <div id="wardrobe-items-container" style="max-height: 380px; overflow-y: auto; padding-right: 2px;">
         <!-- Injected dynamically via renderWardrobeTabContent -->
@@ -69,7 +90,7 @@
 
       <!-- MODAL FOOTER -->
       <div style="display: flex; justify-content: space-between; align-items: center; padding-top: 14px; margin-top: 14px; border-top: 1px solid var(--border); font-size: 11.5px; color: var(--text-muted);">
-        <span>💡 Tăng Cấp Độ rèn luyện để mở khóa toàn bộ tủ đồ danh giá!</span>
+        <span>💡 Tích lũy VoCoin và tăng Cấp Độ để mở khóa toàn bộ tủ đồ thẩm mỹ!</span>
         <button type="button" class="btn btn-primary btn-sm" onclick="closeModal('modal-wardrobe')" style="font-weight: 700;">
           Đã Xong
         </button>

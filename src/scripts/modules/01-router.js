@@ -1,6 +1,6 @@
 // =========================================================================
-// VOCAFLOW SPA ROUTER & URL HISTORY ENGINE (v0.10.10-41 Build 342)
-// Enables direct clean URLs, deep sub-links & browser history navigation (pushState/popstate)
+// VOCAFLOW 01-ROUTER.JS (v0.10.10-42 Build 343)
+// URL Routing & State Restoration Engine
 // =========================================================================
 
 let isRouterNavigating = false;

@@ -1,7 +1,5 @@
 // =========================================================================
-
-// VOCAFLOW 04-DECKS-MANAGER.JS (v0.10.10-41 Build 342)
-
+// VOCAFLOW 04-DECKS-MANAGER.JS (v0.10.10-42 Build 343)
 // CRUD VocaDeck, Word Card Modal, Excel/JSON Import/Export, SRS & Auto-Flashcards
 
 // =========================================================================

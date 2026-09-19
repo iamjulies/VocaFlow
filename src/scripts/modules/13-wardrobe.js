@@ -1,20 +1,107 @@
 // =========================================================================
-// VOCAFLOW 13-WARDROBE.JS (v0.10.10-41 Build 342)
-// Hệ Thống Tủ Đồ Cá Nhân: Khung Viền Avatar, Hiệu Ứng Tên & Danh Xưng
+// VOCAFLOW 13-WARDROBE.JS (v0.10.10-42 Build 343)
+// Hệ Thống Tủ Đồ & Cửa Hàng Thẩm Mỹ: Khung Viền Avatar, Hiệu Ứng Tên & Danh Xưng
 // =========================================================================
 
 (function() {
   'use strict';
 
   const STORAGE_KEY_EQUIPPED_WARDROBE = 'vocaflow_equipped_wardrobe';
+  const STORAGE_KEY_UNLOCKED_WARDROBE = 'vocaflow_unlocked_wardrobe_items';
 
   // 1. REGISTRY TỦ ĐỒ (REGISTRY OF ALL WARDROBE ITEMS)
+  // Phân loại: shop (Có thể mua), event (Sự kiện), level (Cấp bậc)
   const VOCAFLOW_WARDROBE_REGISTRY = {
     frames: [
+      // --- A. CÓ THỂ MUA (SHOP / PETS) ---
+      {
+        id: 'cat',
+        name: 'Bé Mèo Dễ Thương',
+        type: 'shop',
+        price: 500,
+        desc: 'Tai vểnh hồng pastel, chuông vàng leng keng và vòng bo êm dịu.',
+        badge: 'Shop: 500🪙',
+        badgeColor: '#ff9fb2',
+        icon: '🐱'
+      },
+      {
+        id: 'dog',
+        name: 'Bé Cún Tinh Nghịch',
+        type: 'shop',
+        price: 500,
+        desc: 'Tai cụp caramel ấm áp, khúc xương nhỏ xinh và viền nâu vàng.',
+        badge: 'Shop: 500🪙',
+        badgeColor: '#f5b041',
+        icon: '🐶'
+      },
+
+      // --- B. SỰ KIỆN ĐẶC BIỆT (EVENT) ---
+      {
+        id: 'birthday',
+        name: 'Sinh Nhật Rực Rỡ',
+        type: 'event',
+        price: 800,
+        desc: 'Nón tiệc 12h, bánh cupcake thắp nến 6h và pháo giấy cầu vồng.',
+        badge: 'Sự Kiện: 800🪙',
+        badgeColor: '#ff007f',
+        icon: '🎂'
+      },
+      {
+        id: 'christmas',
+        name: 'Giáng Sinh An Lành',
+        type: 'event',
+        price: 800,
+        desc: 'Mũ Noel đỏ ấm áp, chuông vàng nơ đỏ và vòng lá thông mùa đông.',
+        badge: 'Sự Kiện: 800🪙',
+        badgeColor: '#22c55e',
+        icon: '🎄'
+      },
+      {
+        id: 'halloween',
+        name: 'Halloween Ma Mị',
+        type: 'event',
+        price: 800,
+        desc: 'Mũ phù thủy huyền bí, bí ngô phát sáng răng cưa và cánh dơi ma mị.',
+        badge: 'Sự Kiện: 800🪙',
+        badgeColor: '#f97316',
+        icon: '🎃'
+      },
+      {
+        id: 'vietnam',
+        name: 'Quốc Khánh Việt Nam',
+        type: 'event',
+        price: 800,
+        desc: 'Ngôi sao vàng 12h, hai bông lúa trĩu hạt ôm trọn viền và hoa sen 2/9.',
+        badge: 'Sự Kiện: 800🪙',
+        badgeColor: '#ef4444',
+        icon: '⭐'
+      },
+      {
+        id: 'tet',
+        name: 'Tết Nguyên Đán',
+        type: 'event',
+        price: 800,
+        desc: 'Lồng đèn đỏ may mắn, cành mai vàng khoe sắc, bánh chưng & bao lì xì.',
+        badge: 'Sự Kiện: 800🪙',
+        badgeColor: '#eab308',
+        icon: '🧧'
+      },
+      {
+        id: 'easter',
+        name: 'Lễ Phục Sinh (Easter)',
+        type: 'event',
+        price: 800,
+        desc: 'Đôi tai thỏ trắng xinh xắn, hoa cúc nhỏ và giỏ trứng phục sinh pastel.',
+        badge: 'Sự Kiện: 800🪙',
+        badgeColor: '#38bdf8',
+        icon: '🐰'
+      },
+
+      // --- C. CẤP BẬC RÈN LUYỆN (LEVEL - ĐẨY XUỐNG CUỐI) ---
       {
         id: 'default',
         name: 'Khung Mặc Định',
-        tier: 0,
+        type: 'level',
         minLevel: 1,
         desc: 'Viền tròn thanh lịch cơ bản của mọi Flower.',
         badge: 'Mặc định',
@@ -24,7 +111,7 @@
       {
         id: 'bronze',
         name: 'Khung Đồng Sơ Cấp',
-        tier: 1,
+        type: 'level',
         minLevel: 10,
         desc: 'Huy hiệu sao đồng & đinh tán cổ phong chạm khắc.',
         badge: 'Cấp 10+',
@@ -34,7 +121,7 @@
       {
         id: 'silver',
         name: 'Khung Bạc Tinh Xảo',
-        tier: 2,
+        type: 'level',
         minLevel: 20,
         desc: 'Cánh chim bạch kim & hoa văn hiệp sĩ thanh lịch.',
         badge: 'Cấp 20+',
@@ -44,7 +131,7 @@
       {
         id: 'gold',
         name: 'Khung Vàng Hoàng Gia',
-        tier: 3,
+        type: 'level',
         minLevel: 30,
         desc: 'Vương miện hoàng kim 12h & nạm ngọc ruby đáy khiên.',
         badge: 'Cấp 30+',
@@ -54,7 +141,7 @@
       {
         id: 'diamond',
         name: 'Khung Lam Ngọc',
-        tier: 4,
+        type: 'level',
         minLevel: 40,
         desc: 'Giác cắt kim cương 3D bất đối xứng & hào quang lam ngọc.',
         badge: 'Cấp 40+',
@@ -64,7 +151,7 @@
       {
         id: 'mythic',
         name: 'Rồng Hồng Thần Thoại',
-        tier: 5,
+        type: 'level',
         minLevel: 50,
         desc: 'Rồng hồng thần thoại quấn quanh, cánh dơi & khè lửa plasma.',
         badge: 'Cấp 50 MAX',
@@ -72,11 +159,97 @@
         icon: '🐉'
       }
     ],
+
     nameEffects: [
+      // --- A. CÓ THỂ MUA (SHOP / PETS) ---
+      {
+        id: 'cat',
+        name: 'Tên Bé Mèo Pastel',
+        type: 'shop',
+        price: 400,
+        desc: 'Hồng phấn pastel ngọt ngào, đốm sáng vuốt mèo & tai mèo xinh.',
+        badge: 'Shop: 400🪙',
+        badgeColor: '#ff9fb2',
+        icon: '🐾'
+      },
+      {
+        id: 'dog',
+        name: 'Tên Bé Cún Năng Động',
+        type: 'shop',
+        price: 400,
+        desc: 'Caramel ấm áp, khúc xương nhỏ & vệt sáng cún tinh nghịch.',
+        badge: 'Shop: 400🪙',
+        badgeColor: '#f5b041',
+        icon: '🦴'
+      },
+
+      // --- B. SỰ KIỆN ĐẶC BIỆT (EVENT) ---
+      {
+        id: 'birthday',
+        name: 'Tên Tiệc Sinh Nhật',
+        type: 'event',
+        price: 600,
+        desc: 'Gradient đa sắc tiệc tùng, pháo bông & confetti bay bổng.',
+        badge: 'Sự Kiện: 600🪙',
+        badgeColor: '#ff007f',
+        icon: '🎉'
+      },
+      {
+        id: 'christmas',
+        name: 'Tên Giáng Sinh Tuyết Rơi',
+        type: 'event',
+        price: 600,
+        desc: 'Xanh thông tuyết trắng, đỏ kẹo ngọt & chuông vàng Noel.',
+        badge: 'Sự Kiện: 600🪙',
+        badgeColor: '#22c55e',
+        icon: '❄️'
+      },
+      {
+        id: 'halloween',
+        name: 'Tên Halloween Ma Quái',
+        type: 'event',
+        price: 600,
+        desc: 'Cam bí ngô rực lửa, tím bóng đêm & hào quang huyền bí.',
+        badge: 'Sự Kiện: 600🪙',
+        badgeColor: '#f97316',
+        icon: '👻'
+      },
+      {
+        id: 'vietnam',
+        name: 'Tên Tự Hào Việt Nam',
+        type: 'event',
+        price: 600,
+        desc: 'Đỏ cờ Tổ quốc thắm tươi, sao vàng hoàng kim & hào quang rạng rỡ.',
+        badge: 'Sự Kiện: 600🪙',
+        badgeColor: '#ef4444',
+        icon: '🇻🇳'
+      },
+      {
+        id: 'tet',
+        name: 'Tên Khai Xuân Đắc Lộc',
+        type: 'event',
+        price: 600,
+        desc: 'Đỏ kim tiền may mắn, hoa mai vàng khoe sắc & pháo hoa chúc phúc.',
+        badge: 'Sự Kiện: 600🪙',
+        badgeColor: '#eab308',
+        icon: '🌸'
+      },
+      {
+        id: 'easter',
+        name: 'Tên Phục Sinh Sắc Xuân',
+        type: 'event',
+        price: 600,
+        desc: 'Pastel mùa xuân dịu dàng, tai thỏ trắng muốt & trứng sắc màu.',
+        badge: 'Sự Kiện: 600🪙',
+        badgeColor: '#c084fc',
+        icon: '🥚'
+      },
+
+      // --- C. CẤP BẬC RÈN LUYỆN (LEVEL - ĐẨY XUỐNG CUỐI) ---
       {
         id: 'default',
         name: 'Tên Mặc Định',
-        tier: 0,
+        type: 'level',
         minLevel: 1,
         desc: 'Chữ tiêu chuẩn sắc nét nguyên bản.',
         badge: 'Mặc định',
@@ -86,7 +259,7 @@
       {
         id: 'bronze',
         name: 'Tên Đồng Sơ Cấp',
-        tier: 1,
+        type: 'level',
         minLevel: 10,
         desc: 'Ánh đồng trầm ấm cổ điển, text-shadow ấm áp.',
         badge: 'Cấp 10+',
@@ -96,7 +269,7 @@
       {
         id: 'silver',
         name: 'Tên Bạc Tinh Xảo',
-        tier: 2,
+        type: 'level',
         minLevel: 20,
         desc: 'Ánh kim bạch kim phát sáng huyền ảo khi rê chuột.',
         badge: 'Cấp 20+',
@@ -106,7 +279,7 @@
       {
         id: 'gold',
         name: 'Tên Vàng Hoàng Gia',
-        tier: 3,
+        type: 'level',
         minLevel: 30,
         desc: 'Gradient hoàng kim quét động & lấp lánh Blink Blink (✨).',
         badge: 'Cấp 30+',
@@ -116,7 +289,7 @@
       {
         id: 'diamond',
         name: 'Tên Lam Ngọc',
-        tier: 4,
+        type: 'level',
         minLevel: 40,
         desc: 'Neon xanh băng, tia phản quang & đốm sáng kim cương.',
         badge: 'Cấp 40+',
@@ -126,7 +299,7 @@
       {
         id: 'mythic',
         name: 'Tên Thần Thoại Conic',
-        tier: 5,
+        type: 'level',
         minLevel: 50,
         desc: 'Hồng neon Cyberpunk, hiệu ứng Glitch 2 màu & ngọn lửa hồng.',
         badge: 'Cấp 50 MAX',
@@ -134,6 +307,7 @@
         icon: '🐉'
       }
     ],
+
     titles: [
       {
         id: 'default',
@@ -158,7 +332,7 @@
         name: 'Am Hiểu',
         tag: '⚡ Am Hiểu',
         minLevel: 20,
-        desc: 'Chạm mốc Cấp 20 - Vốn từ vựng vững vàng.',
+        desc: 'Chạm mốc Cấp 20 - Vốn từ phong phú vững vàng.',
         badge: 'Cấp 20+',
         color: '#38bdf8'
       },
@@ -167,16 +341,16 @@
         name: 'Chuyên Gia',
         tag: '🔥 Chuyên Gia',
         minLevel: 30,
-        desc: 'Chạm mốc Cấp 30 - Làm chủ các kỹ năng ngôn ngữ.',
+        desc: 'Chạm mốc Cấp 30 - Nắm trọn phản xạ từ vựng đỉnh cao.',
         badge: 'Cấp 30+',
-        color: '#ec4899'
+        color: '#ef4444'
       },
       {
         id: 'lv40',
         name: 'Bậc Thầy',
         tag: '👑 Bậc Thầy',
         minLevel: 40,
-        desc: 'Chạm mốc Cấp 40 - Đẳng cấp rèn luyện xuất chúng.',
+        desc: 'Chạm mốc Cấp 40 - Đẳng cấp rèn luyện xuất sắc.',
         badge: 'Cấp 40+',
         color: '#a855f7'
       },
@@ -194,9 +368,10 @@
   window.VOCAFLOW_WARDROBE_REGISTRY = VOCAFLOW_WARDROBE_REGISTRY;
 
   let activeWardrobeTab = 'frames';
+  let activeWardrobeFilter = 'all';
   let wardrobePreviewState = null;
 
-  // 2. STATE STORAGE & RETRIEVAL
+  // 2. STATE STORAGE & RETRIEVAL (EQUIPPED & UNLOCKED)
   function getEquippedWardrobe() {
     try {
       if (typeof currentUser !== 'undefined' && currentUser && currentUser.equippedWardrobe && typeof currentUser.equippedWardrobe === 'object') {
@@ -244,21 +419,131 @@
   }
   window.setEquippedWardrobe = setEquippedWardrobe;
 
+  // Unlocked items repository (for shop/event purchases)
+  function getUnlockedWardrobeItems() {
+    let unlocked = { frames: ['default'], nameEffects: ['default'], titles: ['default'] };
+    try {
+      if (typeof currentUser !== 'undefined' && currentUser && currentUser.unlockedWardrobeItems && typeof currentUser.unlockedWardrobeItems === 'object') {
+        unlocked = {
+          frames: Array.from(new Set(['default', ...(currentUser.unlockedWardrobeItems.frames || [])])),
+          nameEffects: Array.from(new Set(['default', ...(currentUser.unlockedWardrobeItems.nameEffects || [])])),
+          titles: Array.from(new Set(['default', ...(currentUser.unlockedWardrobeItems.titles || [])]))
+        };
+      } else {
+        const raw = localStorage.getItem(STORAGE_KEY_UNLOCKED_WARDROBE);
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          if (parsed && typeof parsed === 'object') {
+            unlocked = {
+              frames: Array.from(new Set(['default', ...(parsed.frames || [])])),
+              nameEffects: Array.from(new Set(['default', ...(parsed.nameEffects || [])])),
+              titles: Array.from(new Set(['default', ...(parsed.titles || [])]))
+            };
+          }
+        }
+      }
+    } catch (e) {
+      console.warn('Error reading unlocked wardrobe items:', e);
+    }
+    return unlocked;
+  }
+  window.getUnlockedWardrobeItems = getUnlockedWardrobeItems;
+
+  function unlockWardrobeItem(category, itemId) {
+    if (!itemId) return;
+    const current = getUnlockedWardrobeItems();
+    if (!current[category]) current[category] = ['default'];
+    if (!current[category].includes(itemId)) {
+      current[category].push(itemId);
+    }
+    localStorage.setItem(STORAGE_KEY_UNLOCKED_WARDROBE, JSON.stringify(current));
+    if (typeof currentUser !== 'undefined' && currentUser) {
+      currentUser.unlockedWardrobeItems = current;
+      localStorage.setItem('vocaflow_auth_user', JSON.stringify(currentUser));
+    }
+    if (typeof pushCurrentDatabaseToCloud === 'function') {
+      pushCurrentDatabaseToCloud();
+    }
+  }
+  window.unlockWardrobeItem = unlockWardrobeItem;
+
   function isWardrobeItemUnlocked(category, itemId) {
     if (!itemId || itemId === 'default') return true;
-    const userLevel = (typeof getCurrentUserLevelInfo === 'function') ? getCurrentUserLevelInfo().level : 1;
     const list = VOCAFLOW_WARDROBE_REGISTRY[category] || [];
     const item = list.find(i => i.id === itemId);
     if (!item) return false;
-    return userLevel >= (item.minLevel || 1);
+
+    // 1. Level-based unlock
+    if (item.type === 'level' || (item.minLevel && !item.price)) {
+      const userLevel = (typeof getCurrentUserLevelInfo === 'function') ? getCurrentUserLevelInfo().level : 1;
+      return userLevel >= (item.minLevel || 1);
+    }
+
+    // 2. Shop / Event unlock (by purchase or event claim)
+    const unlocked = getUnlockedWardrobeItems();
+    return (unlocked[category] || []).includes(itemId);
   }
   window.isWardrobeItemUnlocked = isWardrobeItemUnlocked;
 
+  function buyWardrobeItem(category, itemId, skipConfirm = false) {
+    const list = VOCAFLOW_WARDROBE_REGISTRY[category] || [];
+    const item = list.find(i => i.id === itemId);
+    if (!item) return { success: false, reason: 'ITEM_NOT_FOUND' };
+
+    if (isWardrobeItemUnlocked(category, itemId)) {
+      equipWardrobeItem(category, itemId);
+      return { success: true, alreadyUnlocked: true };
+    }
+
+    const price = item.price || 0;
+    const userPoints = (typeof getUserPoints === 'function') ? getUserPoints() : 0;
+
+    if (userPoints < price) {
+      if (typeof playSfx === 'function') playSfx('wrong');
+      if (typeof showToast === 'function') {
+        showToast(`⚠️ Bạn không đủ VoCoin! Cần ${price.toLocaleString()} VoCoin (hiện có ${userPoints.toLocaleString()} VoCoin). Hãy học tập hoặc quay vòng quay may mắn!`);
+      }
+      return { success: false, reason: 'INSUFFICIENT_FUNDS' };
+    }
+
+    if (!skipConfirm && typeof confirm === 'function' && !confirm(`Bạn có muốn dùng ${price.toLocaleString()} VoCoin để mua "${item.name}" không?`)) {
+      return { success: false, reason: 'CANCELLED' };
+    }
+
+    // Deduct VoCoin
+    const newPoints = userPoints - price;
+    if (typeof setUserPoints === 'function') {
+      setUserPoints(newPoints);
+    }
+    if (typeof addLedgerEntry === 'function') {
+      addLedgerEntry('WARDROBE_PURCHASE', -price, `Mua vật phẩm [${item.name}] trong Tủ Đồ Thẩm Mỹ`);
+    }
+
+    // Unlock item
+    unlockWardrobeItem(category, itemId);
+
+    // Play celebration SFX
+    if (typeof playSfx === 'function') playSfx('award');
+    if (typeof showToast === 'function') {
+      showToast(`🎉 Chúc mừng bạn đã sở hữu thành công: ${item.name}!`);
+    }
+
+    // Equip immediately
+    equipWardrobeItem(category, itemId);
+    updateWardrobePointsDisplay();
+    return { success: true, item, newPoints };
+  }
+  window.buyWardrobeItem = buyWardrobeItem;
+
   function equipWardrobeItem(category, itemId) {
     if (!isWardrobeItemUnlocked(category, itemId)) {
-      if (typeof showToast === 'function') {
-        const item = (VOCAFLOW_WARDROBE_REGISTRY[category] || []).find(i => i.id === itemId);
-        showToast(`🔒 Cần đạt Cấp độ ${item ? item.minLevel : 10} để trang bị vật phẩm này!`);
+      const item = (VOCAFLOW_WARDROBE_REGISTRY[category] || []).find(i => i.id === itemId);
+      if (item && item.price) {
+        buyWardrobeItem(category, itemId);
+      } else {
+        if (typeof showToast === 'function') {
+          showToast(`🔒 Cần đạt Cấp độ ${item ? item.minLevel : 10} để trang bị vật phẩm này!`);
+        }
       }
       return;
     }
@@ -299,7 +584,7 @@
   }
   window.previewWardrobeItem = previewWardrobeItem;
 
-  // 3. UNIVERSAL RENDERING HELPERS
+  // 3. UNIVERSAL SVG & DOM RENDERING HELPERS
   function renderAvatarWithFrameHtml(avatarVal, size = 64, frameId = null, extraClasses = '') {
     const fId = frameId || getEquippedWardrobe().frame || 'default';
     const innerSize = Math.round(size * 0.76);
@@ -309,16 +594,271 @@
 
     let overlaySvg = '';
 
-    if (fId === 'bronze') {
+    if (fId === 'cat') {
+      overlaySvg = `
+        <svg class="vf-avatar-frame-svg" viewBox="0 0 160 160" fill="none" style="filter: drop-shadow(0 2px 8px rgba(255, 159, 178, 0.45));">
+          <!-- Vòng bo viền tròn hồng phấn pastel -->
+          <circle cx="80" cy="80" r="54" stroke="#ff9fb2" stroke-width="4.5" />
+          <circle cx="80" cy="80" r="50" stroke="#ffd1dc" stroke-width="1.5" opacity="0.6" />
+          <!-- Tai Mèo Trái -->
+          <g class="cat-ear-left">
+            <polygon points="32,58 42,22 62,44" fill="#ff9fb2" stroke="#ff758f" stroke-width="2.2" stroke-linejoin="round" />
+            <polygon points="37,53 44,30 57,45" fill="#ffe0e6" />
+          </g>
+          <!-- Tai Mèo Phải -->
+          <g class="cat-ear-right">
+            <polygon points="128,58 118,22 98,44" fill="#ff9fb2" stroke="#ff758f" stroke-width="2.2" stroke-linejoin="round" />
+            <polygon points="123,53 116,30 103,45" fill="#ffe0e6" />
+          </g>
+          <!-- Chuông nhỏ vàng dễ thương ở đáy -->
+          <g transform="translate(80, 138)">
+            <ellipse cx="0" cy="-2" rx="12" ry="4.5" fill="#ff758f" />
+            <circle cx="0" cy="2" r="7.5" fill="#facc15" stroke="#eab308" stroke-width="1.4" />
+            <line x1="-4" y1="3" x2="4" y2="3" stroke="#ca8a04" stroke-width="1.2" />
+            <circle cx="0" cy="5" r="1.4" fill="#854d0e" />
+          </g>
+        </svg>
+      `;
+    } else if (fId === 'dog') {
+      overlaySvg = `
+        <svg class="vf-avatar-frame-svg" viewBox="0 0 160 160" fill="none" style="filter: drop-shadow(0 2px 8px rgba(245, 176, 65, 0.45));">
+          <!-- Vòng bo viền tròn caramel -->
+          <circle cx="80" cy="80" r="54" stroke="#f5b041" stroke-width="4.5" />
+          <circle cx="80" cy="80" r="50" stroke="#fdebd0" stroke-width="1.5" opacity="0.5" />
+          <!-- Tai Cún Cụp Bên Trái -->
+          <g class="dog-ear-left">
+            <path d="M 38,36 C 28,38 20,52 21,70 C 22,82 33,85 38,78 C 44,68 47,48 42,37 Z" fill="#d35400" stroke="#ba4a00" stroke-width="2" stroke-linejoin="round" />
+            <path d="M 34,44 C 29,51 27,62 29,72 C 31,76 35,76 37,70 C 40,63 41,50 37,45 Z" fill="#e59866" opacity="0.6" />
+          </g>
+          <!-- Tai Cún Cụp Bên Phải -->
+          <g class="dog-ear-right">
+            <path d="M 122,36 C 132,38 140,52 139,70 C 138,82 127,85 122,78 C 116,68 113,48 118,37 Z" fill="#d35400" stroke="#ba4a00" stroke-width="2" stroke-linejoin="round" />
+            <path d="M 126,44 C 131,51 133,62 131,72 C 129,76 125,76 123,70 C 120,63 119,50 123,45 Z" fill="#e59866" opacity="0.6" />
+          </g>
+          <!-- Khúc xương nhỏ xinh ở đáy -->
+          <g transform="translate(80, 138)">
+            <rect x="-9" y="-4" width="18" height="8" rx="4" fill="#fdfefe" stroke="#e5e7eb" stroke-width="1" />
+            <circle cx="-9" cy="-4" r="3.2" fill="#fdfefe" stroke="#e5e7eb" stroke-width="0.8" />
+            <circle cx="-9" cy="4" r="3.2" fill="#fdfefe" stroke="#e5e7eb" stroke-width="0.8" />
+            <circle cx="9" cy="-4" r="3.2" fill="#fdfefe" stroke="#e5e7eb" stroke-width="0.8" />
+            <circle cx="9" cy="4" r="3.2" fill="#fdfefe" stroke="#e5e7eb" stroke-width="0.8" />
+          </g>
+        </svg>
+      `;
+    } else if (fId === 'birthday') {
+      overlaySvg = `
+        <svg class="vf-avatar-frame-svg" viewBox="0 0 160 160" fill="none" style="filter: drop-shadow(0 2px 10px rgba(255, 0, 127, 0.4));">
+          <defs>
+            <linearGradient id="bdayGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#ff007f" /><stop offset="35%" stop-color="#a855f7" /><stop offset="70%" stop-color="#06b6d4" /><stop offset="100%" stop-color="#facc15" />
+            </linearGradient>
+          </defs>
+          <circle cx="80" cy="80" r="54" stroke="url(#bdayGrad)" stroke-width="4.8" stroke-linecap="round" />
+          <circle cx="80" cy="80" r="50" stroke="#ffffff" stroke-width="1.2" opacity="0.4" stroke-dasharray="4 8" />
+          <!-- Nón sinh nhật chóp nhọn 12h -->
+          <g transform="translate(80, 24)">
+            <g class="bday-hat">
+              <path d="M 0,-18 L -18,14 Q 0,20 18,14 Z" fill="#ff007f" stroke="#ffffff" stroke-width="1.5" stroke-linejoin="round" />
+              <path d="M -5,-7 L -14,8" stroke="#facc15" stroke-width="2.2" stroke-linecap="round" />
+              <path d="M 0,-3 L -4,15" stroke="#06b6d4" stroke-width="2.2" stroke-linecap="round" />
+              <path d="M 5,1 L 6,16" stroke="#a855f7" stroke-width="2.2" stroke-linecap="round" />
+              <circle cx="0" cy="-18" r="4.5" fill="#facc15" stroke="#ffffff" stroke-width="1" />
+              <ellipse cx="0" cy="14" rx="19" ry="4" fill="#ffffff" />
+            </g>
+          </g>
+          <!-- Bánh cupcake ngọt ngào ở 6h -->
+          <g transform="translate(80, 136)">
+            <polygon points="-11,5 -8,15 8,15 11,5" fill="#f59e0b" stroke="#78350f" stroke-width="0.8" />
+            <ellipse cx="0" cy="4" rx="13" ry="5" fill="#f43f5e" />
+            <ellipse cx="0" cy="1" rx="10" ry="4" fill="#fb7185" />
+            <ellipse cx="0" cy="-2" rx="6" ry="3" fill="#ffffff" />
+            <rect x="-1" y="-8" width="2" height="6" fill="#38bdf8" />
+            <path d="M 0,-8 Q -2,-11 0,-14 Q 2,-11 0,-8 Z" fill="#facc15" />
+          </g>
+          <circle class="bday-star-pulse" cx="125" cy="40" r="3" fill="#06b6d4" />
+          <circle class="bday-star-pulse" cx="35" cy="120" r="2.5" fill="#38bdf8" />
+        </svg>
+      `;
+    } else if (fId === 'christmas') {
+      overlaySvg = `
+        <svg class="vf-avatar-frame-svg" viewBox="0 0 160 160" fill="none" style="filter: drop-shadow(0 2px 10px rgba(34, 197, 94, 0.4));">
+          <defs>
+            <linearGradient id="xmasPineGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#15803d" /><stop offset="50%" stop-color="#22c55e" /><stop offset="100%" stop-color="#166534" />
+            </linearGradient>
+          </defs>
+          <circle cx="80" cy="80" r="54" stroke="url(#xmasPineGrad)" stroke-width="5.5" stroke-linecap="round" />
+          <circle cx="80" cy="80" r="50" stroke="#fef08a" stroke-width="1.5" stroke-dasharray="3 7" opacity="0.8" />
+          <circle cx="34" cy="60" r="4" fill="#dc2626" stroke="#ffffff" stroke-width="0.8" />
+          <circle cx="126" cy="62" r="4" fill="#eab308" stroke="#ffffff" stroke-width="0.8" />
+          <!-- Mũ Noel ở 12h -->
+          <g transform="translate(80, 36)">
+            <g class="xmas-hat">
+              <path d="M -28,2 C -30,-20 15,-26 35,-8 C 34,-1 26,2 18,2 Z" fill="#dc2626" stroke="#991b1b" stroke-width="1" />
+              <circle cx="38" cy="-6" r="6" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1" />
+              <rect x="-30" y="-2" width="56" height="10" rx="5" fill="#ffffff" stroke="#e2e8f0" stroke-width="1" />
+            </g>
+          </g>
+          <!-- Chuông vàng & nơ đỏ Noel ở 6h -->
+          <g transform="translate(80, 134)">
+            <g class="xmas-bell">
+              <ellipse cx="-7" cy="-7" rx="6" ry="3" fill="#dc2626" transform="rotate(-25, -7, -7)" />
+              <ellipse cx="7" cy="-7" rx="6" ry="3" fill="#dc2626" transform="rotate(25, 7, -7)" />
+              <circle cx="0" cy="-7" r="3" fill="#991b1b" />
+              <path d="M -5,-5 C -5,0 -9,6 -10,9 L 0,9 C -1,6 -5,0 -5,-5 Z" fill="#eab308" stroke="#ca8a04" stroke-width="0.8" />
+              <path d="M 5,-5 C 5,0 1,6 0,9 L 10,9 C 9,6 5,0 5,-5 Z" fill="#facc15" stroke="#ca8a04" stroke-width="0.8" />
+            </g>
+          </g>
+        </svg>
+      `;
+    } else if (fId === 'halloween') {
+      overlaySvg = `
+        <svg class="vf-avatar-frame-svg" viewBox="0 0 160 160" fill="none" style="filter: drop-shadow(0 2px 10px rgba(249, 115, 22, 0.45));">
+          <defs>
+            <linearGradient id="hwGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#f97316" /><stop offset="50%" stop-color="#7c3aed" /><stop offset="100%" stop-color="#ea580c" />
+            </linearGradient>
+          </defs>
+          <circle cx="80" cy="80" r="54" stroke="url(#hwGrad)" stroke-width="4.8" />
+          <!-- Dơi đêm góc 9h -->
+          <g transform="translate(26, 42)">
+            <g class="spooky-bat">
+              <path d="M 0,3 Q -8,-6 -14,-3 Q -10,6 0,8 Q 10,6 14,-3 Q 8,-6 0,3 Z" fill="#1e1b4b" stroke="#a855f7" stroke-width="0.8" />
+              <circle cx="-1.5" cy="3" r="0.8" fill="#f97316" /><circle cx="1.5" cy="3" r="0.8" fill="#f97316" />
+            </g>
+          </g>
+          <!-- Mũ phù thủy ở đỉnh -->
+          <g transform="translate(68, 26) rotate(-14)">
+            <path d="M 0,-18 Q 4,-4 14,8 L -14,8 Q -6,-4 0,-18 Z" fill="#2e1065" stroke="#7c3aed" stroke-width="1.2" />
+            <path d="M -12,4 L 12,4 L 13,8 L -13,8 Z" fill="#ea580c" />
+            <ellipse cx="0" cy="9" rx="20" ry="4.5" fill="#1e1b4b" stroke="#7c3aed" stroke-width="1" />
+          </g>
+          <!-- Quả bí ngô phát sáng ở 5h -->
+          <g transform="translate(122, 122)">
+            <g class="spooky-pumpkin">
+              <path d="M 0,-10 Q 3,-14 5,-13 L 3,-9 Z" fill="#15803d" />
+              <ellipse cx="0" cy="1" rx="8.5" ry="10.5" fill="#f97316" stroke="#c2410c" stroke-width="0.8" />
+              <polygon points="-4,-2 -1,-2 -2.5,-5" fill="#fef08a" />
+              <polygon points="4,-2 1,-2 2.5,-5" fill="#fef08a" />
+              <path d="M -4,4 L -2,6 L 0,4 L 2,6 L 4,4 Q 0,8 -4,4 Z" fill="#fef08a" />
+            </g>
+          </g>
+        </svg>
+      `;
+    } else if (fId === 'vietnam') {
+      overlaySvg = `
+        <svg class="vf-avatar-frame-svg" viewBox="0 0 160 160" fill="none" style="filter: drop-shadow(0 2px 10px rgba(239, 68, 68, 0.5));">
+          <defs>
+            <linearGradient id="vnRedGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#ef4444" /><stop offset="50%" stop-color="#b91c1c" /><stop offset="100%" stop-color="#dc2626" />
+            </linearGradient>
+            <linearGradient id="goldStarGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#ffffff" /><stop offset="30%" stop-color="#fde047" /><stop offset="100%" stop-color="#eab308" />
+            </linearGradient>
+            <linearGradient id="riceGoldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#fffbeb" /><stop offset="35%" stop-color="#fde047" /><stop offset="100%" stop-color="#d97706" />
+            </linearGradient>
+          </defs>
+          <circle cx="80" cy="80" r="54" stroke="url(#vnRedGrad)" stroke-width="5" />
+          <circle cx="80" cy="80" r="50" stroke="#fbbf24" stroke-width="1.5" />
+          <!-- Bông lúa vàng bên trái -->
+          <g class="vn-rice-left">
+            <path d="M 52,126 C 36,112 24,92 24,68 C 24,54 18,46 12,54" stroke="#d97706" stroke-width="1.3" fill="none" />
+            <g transform="translate(35, 104) rotate(-50)"><path d="M 0,-4.2 C 2.4,-2.8 2.4,2.8 0,4.2 C -2.4,2.8 -2.4,-2.8 0,-4.2 Z" fill="url(#riceGoldGrad)" /></g>
+            <g transform="translate(27, 91) rotate(-65)"><path d="M 0,-4.2 C 2.4,-2.8 2.4,2.8 0,4.2 C -2.4,2.8 -2.4,-2.8 0,-4.2 Z" fill="url(#riceGoldGrad)" /></g>
+            <g transform="translate(21, 77) rotate(-78)"><path d="M 0,-4.2 C 2.4,-2.8 2.4,2.8 0,4.2 C -2.4,2.8 -2.4,-2.8 0,-4.2 Z" fill="url(#riceGoldGrad)" /></g>
+            <g transform="translate(19, 53) rotate(-115)"><path d="M 0,-4 C 2.3,-2.7 2.3,2.7 0,4 C -2.3,2.7 -2.3,-2.7 0,-4 Z" fill="url(#riceGoldGrad)" /></g>
+          </g>
+          <!-- Bông lúa vàng bên phải -->
+          <g class="vn-rice-right">
+            <path d="M 108,126 C 124,112 136,92 136,68 C 136,54 142,46 148,54" stroke="#d97706" stroke-width="1.3" fill="none" />
+            <g transform="translate(125, 104) rotate(50)"><path d="M 0,-4.2 C 2.4,-2.8 2.4,2.8 0,4.2 C -2.4,2.8 -2.4,-2.8 0,-4.2 Z" fill="url(#riceGoldGrad)" /></g>
+            <g transform="translate(133, 91) rotate(65)"><path d="M 0,-4.2 C 2.4,-2.8 2.4,2.8 0,4.2 C -2.4,2.8 -2.4,-2.8 0,-4.2 Z" fill="url(#riceGoldGrad)" /></g>
+            <g transform="translate(139, 77) rotate(78)"><path d="M 0,-4.2 C 2.4,-2.8 2.4,2.8 0,4.2 C -2.4,2.8 -2.4,-2.8 0,-4.2 Z" fill="url(#riceGoldGrad)" /></g>
+            <g transform="translate(141, 53) rotate(115)"><path d="M 0,-4 C 2.3,-2.7 2.3,2.7 0,4 C -2.3,2.7 -2.3,-2.7 0,-4 Z" fill="url(#riceGoldGrad)" /></g>
+          </g>
+          <!-- Ngôi sao vàng ở 12h -->
+          <g transform="translate(80, 24)">
+            <g class="vn-star">
+              <circle cx="0" cy="0" r="14" fill="#b91c1c" stroke="#facc15" stroke-width="1.8" />
+              <polygon points="0,-10 3,-3 10,-3 4.5,1.5 6.5,8.5 0,4.5 -6.5,8.5 -4.5,1.5 -10,-3 -3,-3" fill="url(#goldStarGrad)" />
+            </g>
+          </g>
+          <!-- Hoa sen hồng ở 6h -->
+          <g transform="translate(80, 136)">
+            <path d="M -26,-4 Q 0,-8 26,-4 L 22,4 Q 0,0 -22,4 Z" fill="#dc2626" stroke="#facc15" stroke-width="1" />
+            <path d="M 0,-15 C -4,-10 -3,-3 0,2 C 3,-3 4,-10 0,-15 Z" fill="#fbcfe8" stroke="#ec4899" stroke-width="0.8" />
+          </g>
+        </svg>
+      `;
+    } else if (fId === 'tet') {
+      overlaySvg = `
+        <svg class="vf-avatar-frame-svg" viewBox="0 0 160 160" fill="none" style="filter: drop-shadow(0 2px 10px rgba(234, 179, 8, 0.45));">
+          <defs>
+            <linearGradient id="tetGoldRed" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#e11d48" /><stop offset="40%" stop-color="#f59e0b" /><stop offset="100%" stop-color="#eab308" />
+            </linearGradient>
+          </defs>
+          <circle cx="80" cy="80" r="54" stroke="url(#tetGoldRed)" stroke-width="4.8" />
+          <circle cx="80" cy="80" r="50" stroke="#fef08a" stroke-width="1.2" opacity="0.6" stroke-dasharray="3 7" />
+          <!-- Lồng đèn đỏ ở 10h -->
+          <g transform="translate(32, 26)">
+            <g class="tet-lantern">
+              <line x1="0" y1="0" x2="0" y2="10" stroke="#facc15" stroke-width="1.2" />
+              <ellipse cx="0" cy="19" rx="8" ry="8" fill="#dc2626" stroke="#991b1b" stroke-width="0.8" />
+              <line x1="0" y1="27" x2="0" y2="38" stroke="#f59e0b" stroke-width="1.2" />
+            </g>
+          </g>
+          <!-- Cành mai vàng ở 2h -->
+          <g transform="translate(126, 42)">
+            <g class="tet-blossom">
+              <circle cx="-5" cy="-4" r="3.5" fill="#facc15" /><circle cx="5" cy="-4" r="3.5" fill="#facc15" />
+              <circle cx="-5" cy="3" r="3.5" fill="#facc15" /><circle cx="5" cy="3" r="3.5" fill="#facc15" />
+              <circle cx="0" cy="0" r="2.2" fill="#ea580c" />
+            </g>
+          </g>
+          <!-- Bánh chưng & bao lì xì ở 6h -->
+          <g transform="translate(80, 134)">
+            <rect x="2" y="-10" width="16" height="20" rx="2" fill="#dc2626" stroke="#facc15" stroke-width="1" transform="rotate(15, 10, 0)" />
+            <rect x="-17" y="-8" width="18" height="18" rx="2" fill="#15803d" stroke="#166534" stroke-width="1" transform="rotate(-8, -8, 1)" />
+            <circle cx="0" cy="5" r="4.5" fill="#facc15" stroke="#b45309" stroke-width="0.8" />
+          </g>
+        </svg>
+      `;
+    } else if (fId === 'easter') {
+      overlaySvg = `
+        <svg class="vf-avatar-frame-svg" viewBox="0 0 160 160" fill="none" style="filter: drop-shadow(0 2px 10px rgba(56, 189, 248, 0.45));">
+          <defs>
+            <linearGradient id="easterPastelGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#38bdf8" /><stop offset="35%" stop-color="#c084fc" /><stop offset="70%" stop-color="#f472b6" /><stop offset="100%" stop-color="#4ade80" />
+            </linearGradient>
+          </defs>
+          <circle cx="80" cy="80" r="54" stroke="url(#easterPastelGrad)" stroke-width="4.5" />
+          <!-- Đôi tai thỏ ở đỉnh -->
+          <g class="easter-ear-left">
+            <path d="M 46,38 C 38,10 50,4 56,8 C 64,13 62,30 58,38 Z" fill="#ffffff" stroke="#e2e8f0" stroke-width="1.2" />
+            <path d="M 49,34 C 44,15 50,11 54,14 C 59,18 57,28 55,34 Z" fill="#fbcfe8" />
+          </g>
+          <g class="easter-ear-right">
+            <path d="M 102,38 C 98,30 96,13 104,8 C 110,4 122,10 114,38 Z" fill="#ffffff" stroke="#e2e8f0" stroke-width="1.2" />
+            <path d="M 105,34 C 103,28 101,18 106,14 C 110,11 116,15 111,34 Z" fill="#fbcfe8" />
+            <circle cx="98" cy="38" r="3" fill="#facc15" />
+          </g>
+          <!-- Trứng phục sinh ở 6h -->
+          <g transform="translate(80, 134)">
+            <path d="M -22,10 L -18,0 L -14,10 L 14,10 L 18,0 L 22,10 Z" fill="#4ade80" />
+            <ellipse cx="-12" cy="2" rx="6" ry="8" fill="#f472b6" stroke="#db2777" stroke-width="0.8" transform="rotate(-15, -12, 2)" />
+            <ellipse cx="12" cy="2" rx="6" ry="8" fill="#38bdf8" stroke="#0284c7" stroke-width="0.8" transform="rotate(15, 12, 2)" />
+            <ellipse cx="0" cy="0" rx="7" ry="9" fill="#c084fc" stroke="#9333ea" stroke-width="0.8" />
+          </g>
+        </svg>
+      `;
+    } else if (fId === 'bronze') {
       overlaySvg = `
         <svg class="vf-avatar-frame-svg" viewBox="0 0 600 600" style="filter: drop-shadow(0 2px 8px rgba(205, 127, 50, 0.4));">
           <defs>
             <linearGradient id="vfBronzeGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stop-color="#f5b041" />
-              <stop offset="25%" stop-color="#ba4a00" />
-              <stop offset="50%" stop-color="#f8c471" />
-              <stop offset="75%" stop-color="#7e380e" />
-              <stop offset="100%" stop-color="#e59866" />
+              <stop offset="0%" stop-color="#f5b041" /><stop offset="25%" stop-color="#ba4a00" /><stop offset="50%" stop-color="#f8c471" /><stop offset="75%" stop-color="#7e380e" /><stop offset="100%" stop-color="#e59866" />
             </linearGradient>
             <linearGradient id="vfBronzeStarGrad" x1="0%" y1="0%" x2="100%" y2="100%">
               <stop offset="0%" stop-color="#fff2a8" /><stop offset="50%" stop-color="#f39c12" /><stop offset="100%" stop-color="#a04000" />
@@ -328,65 +868,63 @@
           <circle cx="300" cy="300" r="252" fill="none" stroke="#f8c471" stroke-width="4" opacity="0.8" />
           <g fill="#fbeee6" stroke="#4a2108" stroke-width="2">
             <circle cx="300" cy="54" r="7" /><circle cx="474" cy="126" r="7" /><circle cx="546" cy="300" r="7" /><circle cx="474" cy="474" r="7" />
-            <circle cx="126" cy="474" r="7" /><circle cx="54" cy="300" r="7" /><circle cx="126" cy="126" r="7" />
+            <circle cx="300" cy="546" r="7" /><circle cx="126" cy="474" r="7" /><circle cx="54" cy="300" r="7" /><circle cx="126" cy="126" r="7" />
           </g>
-          <g transform="translate(0, -10)">
-            <path d="M 200,530 L 400,530 L 415,555 L 300,595 L 185,555 Z" fill="#1e0c04" stroke="url(#vfBronzeGrad)" stroke-width="6" />
-            <path d="M 300,540 L 306,555 L 322,555 L 309,565 L 314,580 L 300,570 L 286,580 L 291,565 L 278,555 L 294,555 Z" fill="url(#vfBronzeStarGrad)" stroke="#fff" stroke-width="1" />
+          <g transform="translate(300, 542)">
+            <circle cx="0" cy="0" r="38" fill="url(#vfBronzeGrad)" stroke="#4a2108" stroke-width="3" />
+            <circle cx="0" cy="0" r="30" fill="#2b1408" />
+            <polygon points="0,-18 5,-4 19,-4 8,4 12,18 0,9 -12,18 -8,4 -19,-4 -5,-4" fill="url(#vfBronzeStarGrad)" />
           </g>
         </svg>
       `;
     } else if (fId === 'silver') {
       overlaySvg = `
-        <svg class="vf-avatar-frame-svg" viewBox="0 0 600 600" style="filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.35));">
+        <svg class="vf-avatar-frame-svg" viewBox="0 0 600 600" style="filter: drop-shadow(0 0 12px rgba(224, 224, 224, 0.45));">
           <defs>
             <linearGradient id="vfSilverGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stop-color="#ffffff" /><stop offset="25%" stop-color="#95a5a6" /><stop offset="50%" stop-color="#ecf0f1" /><stop offset="75%" stop-color="#7f8c8d" /><stop offset="100%" stop-color="#dcdde1" />
+              <stop offset="0%" stop-color="#ffffff" /><stop offset="25%" stop-color="#cfd8dc" /><stop offset="50%" stop-color="#ffffff" /><stop offset="75%" stop-color="#90a4ae" /><stop offset="100%" stop-color="#eceff1" />
             </linearGradient>
-            <linearGradient id="vfSilverStarGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stop-color="#ffffff" /><stop offset="50%" stop-color="#dcdde1" /><stop offset="100%" stop-color="#718093" />
+            <linearGradient id="vfSilverGem" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#e0f7fa" /><stop offset="50%" stop-color="#00e5ff" /><stop offset="100%" stop-color="#006064" />
             </linearGradient>
           </defs>
           <circle cx="300" cy="300" r="236" fill="none" stroke="url(#vfSilverGrad)" stroke-width="24" />
-          <circle cx="300" cy="300" r="252" fill="none" stroke="#ffffff" stroke-width="3" stroke-dasharray="20 14 6 14" opacity="0.85" />
-          <g fill="#ffffff">
-            <polygon points="300,42 310,58 290,58" /><polygon points="558,300 542,310 542,290" /><polygon points="42,300 58,290 58,310" />
+          <circle cx="300" cy="300" r="252" fill="none" stroke="#ffffff" stroke-width="3" stroke-dasharray="16 16" opacity="0.8" />
+          <g transform="translate(110, 220)">
+            <path d="M 0,0 C -40,-40 -60,-10 -90,10 C -60,20 -30,10 0,0 Z" fill="url(#vfSilverGrad)" stroke="#37474f" stroke-width="2" />
+            <path d="M 0,25 C -35,-10 -50,15 -75,30 C -50,40 -25,30 0,25 Z" fill="url(#vfSilverGrad)" stroke="#37474f" stroke-width="2" />
           </g>
-          <g transform="translate(0, -10)">
-            <path d="M 190,530 L 410,530 Q 435,550 405,575 L 300,598 L 195,575 Q 165,550 190,530 Z" fill="#111620" stroke="url(#vfSilverGrad)" stroke-width="5" />
-            <path d="M 180,540 C 135,530 105,550 90,570 C 120,570 160,560 190,555 Z" fill="url(#vfSilverGrad)" stroke="#57606f" stroke-width="1.5" />
-            <path d="M 420,540 C 465,530 495,550 510,570 C 480,570 440,560 410,555 Z" fill="url(#vfSilverGrad)" stroke="#57606f" stroke-width="1.5" />
-            <path d="M 280,546 L 284,558 L 297,558 L 286,566 L 290,578 L 280,570 L 270,578 L 274,566 L 263,558 L 276,558 Z" fill="url(#vfSilverStarGrad)" stroke="#ffffff" stroke-width="1" />
-            <path d="M 320,546 L 324,558 L 337,558 L 326,566 L 330,578 L 320,570 L 310,578 L 314,566 L 303,558 L 316,558 Z" fill="url(#vfSilverStarGrad)" stroke="#ffffff" stroke-width="1" />
+          <g transform="translate(490, 220) scale(-1, 1)">
+            <path d="M 0,0 C -40,-40 -60,-10 -90,10 C -60,20 -30,10 0,0 Z" fill="url(#vfSilverGrad)" stroke="#37474f" stroke-width="2" />
+            <path d="M 0,25 C -35,-10 -50,15 -75,30 C -50,40 -25,30 0,25 Z" fill="url(#vfSilverGrad)" stroke="#37474f" stroke-width="2" />
+          </g>
+          <g transform="translate(300, 60)">
+            <polygon points="0,-24 16,0 0,24 -16,0" fill="url(#vfSilverGem)" stroke="#ffffff" stroke-width="2" />
           </g>
         </svg>
       `;
     } else if (fId === 'gold') {
       overlaySvg = `
-        <svg class="vf-avatar-frame-svg" viewBox="0 0 600 600" style="filter: drop-shadow(0 0 12px rgba(241, 196, 15, 0.55));">
+        <svg class="vf-avatar-frame-svg" viewBox="0 0 600 600" style="filter: drop-shadow(0 0 14px rgba(255, 215, 0, 0.55));">
           <defs>
             <linearGradient id="vfGoldRingGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stop-color="#fff6bd" /><stop offset="20%" stop-color="#f1c40f" /><stop offset="45%" stop-color="#b78516" /><stop offset="70%" stop-color="#fef3a3" /><stop offset="100%" stop-color="#8a5e04" />
+              <stop offset="0%" stop-color="#ffffff" /><stop offset="20%" stop-color="#ffd700" /><stop offset="45%" stop-color="#ff9900" /><stop offset="70%" stop-color="#fff099" /><stop offset="90%" stop-color="#d4af37" /><stop offset="100%" stop-color="#8a6d1c" />
             </linearGradient>
             <linearGradient id="vfGoldStarGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stop-color="#ffffff" /><stop offset="35%" stop-color="#fff176" /><stop offset="70%" stop-color="#f59e0b" /><stop offset="100%" stop-color="#b45309" />
+              <stop offset="0%" stop-color="#ffffff" /><stop offset="40%" stop-color="#ffd700" /><stop offset="100%" stop-color="#ff8c00" />
             </linearGradient>
           </defs>
           <circle cx="300" cy="300" r="236" fill="none" stroke="url(#vfGoldRingGrad)" stroke-width="26" />
-          <circle cx="300" cy="300" r="254" fill="none" stroke="#fff3a8" stroke-width="3.5" stroke-dasharray="24 16" />
-          <g transform="translate(300, 38)" fill="url(#vfGoldRingGrad)" stroke="#fff" stroke-width="1.2">
-            <path d="M -32,20 L -40,-6 L -14,8 L 0,-18 L 14,8 L 40,-6 L 32,20 Z" />
-            <circle cx="0" cy="-18" r="4.5" fill="#ffffff" /><circle cx="-40" cy="-6" r="3.5" fill="#ffffff" /><circle cx="40" cy="-6" r="3.5" fill="#ffffff" />
+          <circle cx="300" cy="300" r="254" fill="none" stroke="#ffffff" stroke-width="3.5" opacity="0.9" />
+          <!-- Crown at Top 12h -->
+          <g transform="translate(300, 48)">
+            <path d="M -45,18 L -36,-16 L -16,4 L 0,-26 L 16,4 L 36,-16 L 45,18 Z" fill="url(#vfGoldRingGrad)" stroke="#5e3c04" stroke-width="3" />
             <circle cx="0" cy="6" r="4.5" fill="#e74c3c" stroke="none" />
           </g>
-          <g transform="translate(0, -10)">
-            <path d="M 180,530 L 420,530 L 438,558 L 300,600 L 162,558 Z" fill="#1b1202" stroke="url(#vfGoldRingGrad)" stroke-width="6" />
-            <path d="M 160,540 C 110,520 80,550 60,575 C 98,582 135,568 165,560 Z" fill="url(#vfGoldRingGrad)" stroke="#784a0a" stroke-width="2" />
-            <path d="M 440,540 C 490,520 520,550 540,575 C 502,582 465,568 435,560 Z" fill="url(#vfGoldRingGrad)" stroke="#784a0a" stroke-width="2" />
-            <circle cx="300" cy="586" r="5" fill="#e74c3c" stroke="#ffffff" stroke-width="1.2" />
-            <path d="M 255,548 L 259,558 L 270,558 L 261,565 L 264,575 L 255,569 L 246,575 L 249,565 L 240,558 L 251,558 Z" fill="url(#vfGoldStarGrad)" stroke="#ffffff" stroke-width="1" />
-            <path d="M 300,538 L 305,551 L 319,551 L 308,559 L 312,573 L 300,564 L 288,573 L 292,559 L 281,551 L 295,551 Z" fill="url(#vfGoldStarGrad)" stroke="#ffffff" stroke-width="1.2" />
-            <path d="M 345,548 L 349,558 L 360,558 L 351,565 L 354,575 L 345,569 L 336,575 L 339,565 L 330,558 L 341,558 Z" fill="url(#vfGoldStarGrad)" stroke="#ffffff" stroke-width="1" />
+          <!-- Base Shield at Bottom 6h -->
+          <g transform="translate(300, 560)">
+            <path d="M -120,-30 L 120,-30 L 138,-2 L 0,40 L -138,-2 Z" fill="#1b1202" stroke="url(#vfGoldRingGrad)" stroke-width="5" />
+            <circle cx="0" cy="26" r="5" fill="#e74c3c" stroke="#ffffff" stroke-width="1.2" />
           </g>
         </svg>
       `;
@@ -400,9 +938,6 @@
             <linearGradient id="vfGemLight" x1="0%" y1="0%" x2="100%" y2="100%">
               <stop offset="0%" stop-color="#ffffff" /><stop offset="60%" stop-color="#80deea" /><stop offset="100%" stop-color="#00acc1" />
             </linearGradient>
-            <linearGradient id="vfGemDark" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stop-color="#4dd0e1" /><stop offset="60%" stop-color="#00838f" /><stop offset="100%" stop-color="#004d40" />
-            </linearGradient>
           </defs>
           <circle cx="300" cy="300" r="238" fill="none" stroke="url(#vfDiaRingGrad)" stroke-width="22" />
           <circle cx="300" cy="300" r="256" fill="none" stroke="#ffffff" stroke-width="3" stroke-dasharray="14 26 50 26" opacity="0.85" />
@@ -410,22 +945,11 @@
           <g transform="translate(425, 145) rotate(22)" filter="drop-shadow(0 0 8px #00e5ff)">
             <polygon points="0,-36 30,-15 30,22 0,42 -30,22 -30,-15" fill="#ffffff" stroke="#e0f7fa" stroke-width="1.8" />
             <polygon points="0,-36 30,-15 46,-38 0,-52" fill="url(#vfGemLight)" stroke="#ffffff" stroke-width="1.2" />
-            <polygon points="30,-15 30,22 58,12 46,-38" fill="url(#vfGemDark)" stroke="#ffffff" stroke-width="1.2" />
-            <polygon points="30,22 0,42 22,58 58,12" fill="url(#vfGemDark)" stroke="#ffffff" stroke-width="1.2" />
-            <polygon points="0,42 -30,22 -22,58 22,58" fill="url(#vfGemLight)" stroke="#ffffff" stroke-width="1.2" />
-            <polygon points="-30,22 -30,-15 -58,12 -22,58" fill="url(#vfGemDark)" stroke="#ffffff" stroke-width="1.2" />
-            <polygon points="-30,-15 0,-36 -46,-38 -58,12" fill="url(#vfGemLight)" stroke="#ffffff" stroke-width="1.2" />
           </g>
-          <!-- Bottom Left Asymmetrical Crystals -->
+          <!-- Bottom Left Crystals -->
           <g transform="translate(145, 445) rotate(-38)" filter="drop-shadow(0 0 8px #00e5ff)">
             <polygon points="0,-42 18,0 0,42 -18,0" fill="url(#vfGemLight)" stroke="#ffffff" stroke-width="1.8" />
-            <polygon points="0,-42 18,0 0,0" fill="#ffffff" opacity="0.85" />
-            <polygon points="0,0 18,0 0,42" fill="url(#vfGemDark)" />
-            <polygon points="0,-42 -18,0 0,0" fill="url(#vfGemDark)" />
-            <polygon points="0,0 -18,0 0,42" fill="#00acc1" />
           </g>
-          <path class="diamond-glint" d="M 450,120 Q 450,138 450,156 Q 450,138 468,138 Q 450,138 450,120 Z" fill="#ffffff" />
-          <path class="diamond-glint" d="M 120,460 Q 120,472 120,484 Q 120,472 132,472 Q 120,472 120,460 Z" fill="#ffffff" />
         </svg>
       `;
     } else if (fId === 'mythic') {
@@ -439,33 +963,23 @@
             <linearGradient id="vfDragonScales" x1="0%" y1="0%" x2="100%" y2="100%">
               <stop offset="0%" stop-color="#fff0f8" /><stop offset="25%" stop-color="#ff3399" /><stop offset="65%" stop-color="#99004d" /><stop offset="100%" stop-color="#2b0016" />
             </linearGradient>
-            <linearGradient id="vfDragonHorn" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stop-color="#ffffff" /><stop offset="40%" stop-color="#ffb8db" /><stop offset="85%" stop-color="#a60053" />
-            </linearGradient>
             <linearGradient id="vfPlasmaFire" x1="0%" y1="0%" x2="100%" y2="100%">
               <stop offset="0%" stop-color="#ffffff" /><stop offset="20%" stop-color="#ffb3da" /><stop offset="55%" stop-color="#ff007f" /><stop offset="85%" stop-color="#99004d" /><stop offset="100%" stop-color="#ff007f" stop-opacity="0" />
             </linearGradient>
           </defs>
           <g filter="url(#vfMythicGlow)">
             <circle cx="300" cy="300" r="238" fill="none" stroke="#ff007f" stroke-width="8" stroke-linecap="round" />
-            <circle cx="300" cy="300" r="248" fill="none" stroke="#ff99cc" stroke-width="2.5" stroke-dasharray="10 18 4 18" opacity="0.8" />
+            <path d="M 80,300 A 220 220 0 0 1 520,300" fill="none" stroke="url(#vfDragonScales)" stroke-width="26" stroke-linecap="round" />
+            <path d="M 520,300 A 220 220 0 0 1 80,300" fill="none" stroke="url(#vfDragonScales)" stroke-width="22" stroke-linecap="round" />
           </g>
-          <!-- Dragon Tail & Wings -->
-          <g filter="url(#vfMythicGlow)">
-            <path d="M 165,415 C 120,465 155,530 220,535 C 275,540 280,488 240,480 C 185,465 155,395 133,325 C 124,295 125,265 128,240" fill="none" stroke="url(#vfDragonScales)" stroke-width="26" stroke-linecap="round" />
-            <!-- Dragon Wing at 10h -->
-            <path d="M 165,190 Q 110,120 45,85 Q 25,75 5,90 Q 30,105 75,135 Q 115,175 140,225 Z" fill="url(#vfDragonScales)" />
-            <!-- Dragon Head & Horns at 12h -->
-            <path d="M 128,245 C 120,175 155,128 200,95 C 215,85 232,85 245,95 C 230,115 205,140 185,185 C 170,220 160,250 155,270 Z" fill="url(#vfDragonScales)" />
-            <path d="M 228,75 C 220,28 175,-8 118,0 C 160,18 200,48 215,82 Z" fill="url(#vfDragonHorn)" stroke="#ffffff" stroke-width="2" />
-            <path d="M 255,85 C 285,92 320,110 340,125 C 305,125 275,110 245,95 Z" fill="url(#vfDragonScales)" />
-            <ellipse cx="262" cy="94" rx="8" ry="5" transform="rotate(-15, 262, 94)" class="mythic-eye" fill="#ffccd9" />
+          <!-- Dragon Head at Left Top -->
+          <g transform="translate(130, 150) rotate(-35)">
+            <path d="M -20,20 Q 0,-30 40,-35 Q 20,10 25,35 Z" fill="url(#vfDragonScales)" stroke="#ff007f" stroke-width="2" />
+            <circle cx="12" cy="-5" r="4.5" fill="#00ffff" />
           </g>
-          <!-- Dragon Plasma Fire Stream Group -->
-          <g class="dragon-fire-layer" filter="url(#vfMythicGlow)">
-            <path d="M 320,130 C 375,100 455,105 515,160 C 575,215 590,305 560,395 C 530,470 465,530 385,555 C 440,512 470,470 480,405 C 495,310 465,225 400,175 C 368,150 332,138 320,130 Z" fill="url(#vfPlasmaFire)" />
-            <circle cx="335" cy="133" r="20" fill="#ffffff" />
-            <circle cx="335" cy="133" r="12" fill="#ffb8db" />
+          <!-- Plasma Breath at 6h -->
+          <g transform="translate(300, 550)">
+            <path d="M -60,0 Q 0,-40 60,0 Q 0,50 -60,0 Z" fill="url(#vfPlasmaFire)" />
           </g>
         </svg>
       `;
@@ -479,7 +993,7 @@
     }
 
     return `
-      <div class="vf-avatar-frame-box ${extraClasses}" style="width: ${size}px; height: ${size}px;">
+      <div class="vf-avatar-frame-box frame-${fId} ${extraClasses}" style="width: ${size}px; height: ${size}px;">
         <div class="vf-avatar-inner-circle" style="width: ${innerSize}px; height: ${innerSize}px;">
           ${avHtml}
         </div>
@@ -494,6 +1008,35 @@
     const cleanName = (typeof rawName === 'string' && rawName.trim()) ? rawName.trim() : 'Flower';
     const safeEscaped = (typeof escapeHtml === 'function') ? escapeHtml(cleanName) : cleanName;
 
+    // Pet effects
+    if (eId === 'cat') {
+      return `<span class="vf-name-wrapper ${extraClasses}"><strong class="tier-cat">🐾 ${safeEscaped} 🐾</strong></span>`;
+    }
+    if (eId === 'dog') {
+      return `<span class="vf-name-wrapper ${extraClasses}"><strong class="tier-dog">🦴 ${safeEscaped} 🦴</strong></span>`;
+    }
+
+    // Event effects
+    if (eId === 'birthday') {
+      return `<span class="vf-name-wrapper ${extraClasses}"><strong class="tier-birthday">🎉 ${safeEscaped} 🎂</strong></span>`;
+    }
+    if (eId === 'christmas') {
+      return `<span class="vf-name-wrapper ${extraClasses}"><strong class="tier-christmas">❄️ ${safeEscaped} 🔔</strong></span>`;
+    }
+    if (eId === 'halloween') {
+      return `<span class="vf-name-wrapper ${extraClasses}"><strong class="tier-halloween">🎃 ${safeEscaped} 🦇</strong></span>`;
+    }
+    if (eId === 'vietnam') {
+      return `<span class="vf-name-wrapper ${extraClasses}"><strong class="tier-vietnam">⭐ ${safeEscaped} 🇻🇳</strong></span>`;
+    }
+    if (eId === 'tet') {
+      return `<span class="vf-name-wrapper ${extraClasses}"><strong class="tier-tet">🧧 ${safeEscaped} 🌸</strong></span>`;
+    }
+    if (eId === 'easter') {
+      return `<span class="vf-name-wrapper ${extraClasses}"><strong class="tier-easter">🐰 ${safeEscaped} 🥚</strong></span>`;
+    }
+
+    // Level-based effects
     if (eId === 'bronze') {
       return `<span class="vf-name-wrapper ${extraClasses}"><strong class="tier-bronze">${safeEscaped}</strong></span>`;
     }
@@ -513,7 +1056,6 @@
             <path class="gold-sparkle gold-sparkle-1" d="M 25,12 Q 25,18 25,24 Q 25,18 31,18 Q 25,18 25,12 Z" fill="url(#vfGoldSparkleGrad)" />
             <path class="gold-sparkle gold-sparkle-2" d="M 115,8 Q 115,16 115,24 Q 115,16 123,16 Q 115,16 115,8 Z" fill="url(#vfGoldSparkleGrad)" />
             <path class="gold-sparkle gold-sparkle-3" d="M 195,20 Q 195,27 195,34 Q 195,27 202,27 Q 195,27 195,20 Z" fill="url(#vfGoldSparkleGrad)" />
-            <path class="gold-sparkle gold-sparkle-4" d="M 65,28 Q 65,33 65,38 Q 65,33 70,33 Q 65,33 65,28 Z" fill="url(#vfGoldSparkleGrad)" />
           </svg>
         </span>
       `;
@@ -531,11 +1073,8 @@
               </linearGradient>
             </defs>
             <rect class="diamond-sweep-beam" x="-30" y="2" width="28" height="40" fill="url(#vfDiaSweepGrad)" opacity="0" />
-            <g class="diamond-sparkle sparkle-1"><circle cx="20" cy="14" r="2.5" fill="#ffffff" /><circle cx="20" cy="14" r="5" fill="#00e5ff" opacity="0.4" /></g>
-            <g class="diamond-sparkle sparkle-2"><circle cx="110" cy="8" r="3" fill="#ffffff" /><circle cx="110" cy="8" r="6" fill="#00e5ff" opacity="0.4" /></g>
-            <g class="diamond-sparkle sparkle-3"><circle cx="190" cy="18" r="2.5" fill="#ffffff" /><circle cx="190" cy="18" r="5" fill="#00e5ff" opacity="0.4" /></g>
-            <g class="diamond-sparkle sparkle-4"><circle cx="70" cy="30" r="2" fill="#ffffff" /></g>
-            <g class="diamond-sparkle sparkle-5"><circle cx="150" cy="32" r="2" fill="#ffffff" /></g>
+            <g class="diamond-sparkle sparkle-1"><circle cx="20" cy="14" r="2.5" fill="#ffffff" /></g>
+            <g class="diamond-sparkle sparkle-2"><circle cx="110" cy="8" r="3" fill="#ffffff" /></g>
           </svg>
         </span>
       `;
@@ -548,11 +1087,7 @@
             <svg class="flame-wave-svg" viewBox="0 0 320 80">
               <defs>
                 <linearGradient id="vfWaveFlameGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-                  <stop offset="0%" stop-color="#ff007f" stop-opacity="0" />
-                  <stop offset="25%" stop-color="#ff007f" stop-opacity="0.6" />
-                  <stop offset="50%" stop-color="#ff66b2" stop-opacity="0.9" />
-                  <stop offset="75%" stop-color="#ff007f" stop-opacity="0.6" />
-                  <stop offset="100%" stop-color="#ff007f" stop-opacity="0" />
+                  <stop offset="0%" stop-color="#ff007f" stop-opacity="0" /><stop offset="50%" stop-color="#ff66b2" stop-opacity="0.9" /><stop offset="100%" stop-color="#ff007f" />
                 </linearGradient>
               </defs>
               <g class="flame-sweep-group">
@@ -625,13 +1160,14 @@
   }
   window.applyWardrobeToActiveUI = applyWardrobeToActiveUI;
 
-  // 5. MODAL & TAB LOGIC
+  // 5. MODAL & TAB & FILTER LOGIC
   function openWardrobeModal(defaultTab = 'frames') {
     if (typeof closeModal === 'function') {
       closeModal('modal-profile');
     }
     wardrobePreviewState = { ...getEquippedWardrobe() };
     activeWardrobeTab = defaultTab || 'frames';
+    activeWardrobeFilter = 'all';
 
     if (typeof openModal === 'function') {
       openModal('modal-wardrobe');
@@ -640,10 +1176,20 @@
       if (el) el.classList.add('active');
     }
 
+    updateWardrobePointsDisplay();
     renderWardrobePreview();
     switchWardrobeTab(activeWardrobeTab);
   }
   window.openWardrobeModal = openWardrobeModal;
+
+  function updateWardrobePointsDisplay() {
+    const ptsEl = document.getElementById('wardrobe-user-points');
+    if (ptsEl) {
+      const pts = (typeof getUserPoints === 'function') ? getUserPoints() : 0;
+      ptsEl.textContent = `${pts.toLocaleString()} VoCoin`;
+    }
+  }
+  window.updateWardrobePointsDisplay = updateWardrobePointsDisplay;
 
   function switchWardrobeTab(tabName) {
     activeWardrobeTab = tabName || 'frames';
@@ -656,9 +1202,51 @@
       }
     });
 
+    // Show/hide filter bar for titles tab if needed
+    const filterBar = document.getElementById('wardrobe-filter-bar');
+    if (filterBar) {
+      filterBar.style.display = (activeWardrobeTab === 'titles') ? 'none' : 'flex';
+    }
+
+    updateFilterPillCounts();
     renderWardrobeTabContent(activeWardrobeTab);
   }
   window.switchWardrobeTab = switchWardrobeTab;
+
+  function filterWardrobeCategory(filterType) {
+    activeWardrobeFilter = filterType || 'all';
+    const pills = ['all', 'shop', 'event', 'level'];
+    pills.forEach(p => {
+      const btn = document.getElementById(`wardrobe-filter-${p}`);
+      if (btn) {
+        if (p === activeWardrobeFilter) {
+          btn.className = 'btn btn-xs wardrobe-filter-pill active';
+        } else {
+          btn.className = 'btn btn-xs wardrobe-filter-pill btn-outline';
+        }
+      }
+    });
+
+    renderWardrobeTabContent(activeWardrobeTab);
+  }
+  window.filterWardrobeCategory = filterWardrobeCategory;
+
+  function updateFilterPillCounts() {
+    const items = VOCAFLOW_WARDROBE_REGISTRY[activeWardrobeTab] || [];
+    const countAll = items.length;
+    const countShop = items.filter(i => i.type === 'shop').length;
+    const countEvent = items.filter(i => i.type === 'event').length;
+    const countLevel = items.filter(i => i.type === 'level' || (!i.type && i.minLevel)).length;
+
+    const elAll = document.getElementById('wardrobe-filter-count-all');
+    if (elAll) elAll.textContent = countAll;
+    const elShop = document.getElementById('wardrobe-filter-count-shop');
+    if (elShop) elShop.textContent = countShop;
+    const elEvent = document.getElementById('wardrobe-filter-count-event');
+    if (elEvent) elEvent.textContent = countEvent;
+    const elLevel = document.getElementById('wardrobe-filter-count-level');
+    if (elLevel) elLevel.textContent = countLevel;
+  }
 
   function renderWardrobePreview(previewOverride = null) {
     const state = previewOverride || wardrobePreviewState || getEquippedWardrobe();
@@ -701,17 +1289,38 @@
     if (!container) return;
 
     const equipped = getEquippedWardrobe();
-    const userLevel = (typeof getCurrentUserLevelInfo === 'function') ? getCurrentUserLevelInfo().level : 1;
-    const items = VOCAFLOW_WARDROBE_REGISTRY[tabName] || [];
+    const allItems = VOCAFLOW_WARDROBE_REGISTRY[tabName] || [];
     const userAvatar = (typeof getUserAvatar === 'function') ? getUserAvatar() : (currentUser?.avatar || '👤');
     const userName = (currentUser && currentUser.displayName) ? currentUser.displayName : (localStorage.getItem('vocaflow_user_name') || 'Flower');
 
+    // Filter items
+    let filteredItems = allItems;
+    if (tabName !== 'titles' && activeWardrobeFilter !== 'all') {
+      if (activeWardrobeFilter === 'shop') {
+        filteredItems = allItems.filter(i => i.type === 'shop');
+      } else if (activeWardrobeFilter === 'event') {
+        filteredItems = allItems.filter(i => i.type === 'event');
+      } else if (activeWardrobeFilter === 'level') {
+        filteredItems = allItems.filter(i => i.type === 'level' || (!i.type && i.minLevel));
+      }
+    }
+
     const equippedItemId = equipped[tabName === 'frames' ? 'frame' : (tabName === 'nameEffects' ? 'nameEffect' : 'title')] || 'default';
+
+    if (filteredItems.length === 0) {
+      container.innerHTML = `
+        <div style="text-align: center; padding: 36px 12px; color: var(--text-muted); font-size: 13px;">
+          <span style="font-size: 28px; display: block; margin-bottom: 8px;">🔍</span>
+          Không có vật phẩm nào trong mục này.
+        </div>
+      `;
+      return;
+    }
 
     let cardsHtml = '<div class="vf-wardrobe-grid">';
 
-    items.forEach(item => {
-      const isUnlocked = userLevel >= item.minLevel;
+    filteredItems.forEach(item => {
+      const isUnlocked = isWardrobeItemUnlocked(tabName, item.id);
       const isEquipped = equippedItemId === item.id;
 
       let previewVisual = '';
@@ -735,9 +1344,12 @@
 
       let statusBadge = '';
       if (isEquipped) {
-        statusBadge = `<span class="badge" style="background: rgba(16,185,129,0.2); color: #34d399; font-size: 10px; font-weight: 800; border: 1px solid rgba(16,185,129,0.5);">✅ Đang Trang Bị</span>`;
+        statusBadge = `<span class="badge" style="background: rgba(16,185,129,0.2); color: #34d399; font-size: 10px; font-weight: 800; border: 1px solid rgba(16,185,129,0.5);">✅ Đang Dùng</span>`;
       } else if (isUnlocked) {
-        statusBadge = `<span class="badge" style="background: rgba(56,189,248,0.15); color: #38bdf8; font-size: 10px; font-weight: 700; border: 1px solid rgba(56,189,248,0.35);">🔓 Đã Mở Khóa</span>`;
+        statusBadge = `<span class="badge" style="background: rgba(56,189,248,0.15); color: #38bdf8; font-size: 10px; font-weight: 700; border: 1px solid rgba(56,189,248,0.35);">🔓 Đã Sở Hữu</span>`;
+      } else if (item.price) {
+        const typeIcon = item.type === 'event' ? '🎪' : '🛍️';
+        statusBadge = `<span class="badge" style="background: rgba(245,158,11,0.15); color: #fbbf24; font-size: 10px; font-weight: 800; border: 1px solid rgba(245,158,11,0.4);">${typeIcon} ${item.price}🪙</span>`;
       } else {
         statusBadge = `<span class="badge" style="background: rgba(239,68,68,0.15); color: #f87171; font-size: 10px; font-weight: 700; border: 1px solid rgba(239,68,68,0.35);">🔒 Cần Cấp ${item.minLevel}</span>`;
       }
@@ -754,6 +1366,15 @@
           <div style="display: flex; gap: 6px; width: 100%;">
             <button type="button" class="btn btn-outline btn-sm" onclick="previewWardrobeItem('${tabName}', '${item.id}')" style="flex: 1; font-size: 11px; padding: 4px 6px;" title="Xem thử trên người">👁️ Thử</button>
             <button type="button" class="btn btn-primary btn-sm" onclick="equipWardrobeItem('${tabName}', '${item.id}')" style="flex: 1.5; font-size: 11.5px; font-weight: 800; background: linear-gradient(135deg, #4f46e5, #7c3aed); border: none;">Trang Bị</button>
+          </div>
+        `;
+      } else if (item.price) {
+        actionBtn = `
+          <div style="display: flex; gap: 6px; width: 100%;">
+            <button type="button" class="btn btn-outline btn-sm" onclick="previewWardrobeItem('${tabName}', '${item.id}')" style="flex: 1; font-size: 11px; padding: 4px 6px;" title="Xem thử trên người">👁️ Thử</button>
+            <button type="button" class="btn btn-primary btn-sm" onclick="buyWardrobeItem('${tabName}', '${item.id}')" style="flex: 1.8; font-size: 11.5px; font-weight: 800; background: linear-gradient(135deg, #f59e0b, #d97706); border: none; color: #000;">
+              🛒 Mua (${item.price}🪙)
+            </button>
           </div>
         `;
       } else {

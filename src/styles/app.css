@@ -5403,3 +5403,231 @@
       opacity: 0.9;
       filter: none;
     }
+
+    /* 4. WARDROBE QUICK FILTER PILLS (v0.10.10-42) */
+    .wardrobe-filter-pill {
+      background: var(--surface-elevated);
+      color: var(--text-muted);
+      border: 1px solid var(--border);
+      transition: all 0.2s ease;
+      white-space: nowrap;
+      cursor: pointer;
+    }
+    .wardrobe-filter-pill:hover {
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--text);
+    }
+    .wardrobe-filter-pill.active {
+      background: linear-gradient(135deg, #a855f7, #6366f1);
+      color: #ffffff !important;
+      border-color: #a855f7 !important;
+      box-shadow: 0 2px 10px rgba(168, 85, 247, 0.35);
+    }
+
+    /* 5. PET & EVENT AVATAR FRAME ANIMATIONS (v0.10.10-42) */
+    .vf-avatar-frame-box:hover .cat-ear-left {
+      transform-origin: 22% 23%;
+      animation: wiggleLeft 0.5s ease-in-out;
+    }
+    .vf-avatar-frame-box:hover .cat-ear-right {
+      transform-origin: 75% 23%;
+      animation: wiggleRight 0.5s ease-in-out;
+    }
+    .vf-avatar-frame-box:hover .dog-ear-left {
+      transform-origin: 20% 25%;
+      animation: flopEar 0.6s ease-in-out;
+    }
+    .vf-avatar-frame-box:hover .dog-ear-right {
+      transform-origin: 80% 25%;
+      animation: flopEarRev 0.6s ease-in-out;
+    }
+    @keyframes wiggleLeft {
+      0%, 100% { transform: rotate(0deg); }
+      30% { transform: rotate(-8deg); }
+      70% { transform: rotate(5deg); }
+    }
+    @keyframes wiggleRight {
+      0%, 100% { transform: rotate(0deg); }
+      30% { transform: rotate(8deg); }
+      70% { transform: rotate(-5deg); }
+    }
+    @keyframes flopEar {
+      0%, 100% { transform: rotate(0deg); }
+      50% { transform: rotate(-6deg) translateY(2px); }
+    }
+    @keyframes flopEarRev {
+      0%, 100% { transform: rotate(0deg); }
+      50% { transform: rotate(6deg) translateY(2px); }
+    }
+
+    /* Event Frames: Birthday, Christmas, Halloween, Vietnam, Tet, Easter */
+    .vf-avatar-frame-box:hover .bday-hat {
+      transform-origin: 50% 15%;
+      animation: hatPartyWiggle 0.6s ease-in-out infinite alternate;
+    }
+    .bday-star-pulse {
+      transform-box: fill-box;
+      transform-origin: center;
+      animation: starTwinkleCenter 1.2s ease-in-out infinite alternate;
+    }
+    .vf-avatar-frame-box:hover .bday-star-pulse {
+      animation-duration: 0.6s;
+    }
+    @keyframes hatPartyWiggle {
+      0% { transform: rotate(-7deg); }
+      100% { transform: rotate(7deg); }
+    }
+    @keyframes starTwinkleCenter {
+      0% { transform: scale(0.65); opacity: 0.5; }
+      100% { transform: scale(1.35); opacity: 1; filter: drop-shadow(0 0 4px #facc15); }
+    }
+
+    .vf-avatar-frame-box:hover .xmas-hat {
+      transform-origin: 50% 22%;
+      animation: santaHatTilt 0.7s ease-in-out infinite alternate;
+    }
+    .vf-avatar-frame-box:hover .xmas-bell {
+      transform-origin: 50% 84%;
+      animation: bellJingle 0.4s ease-in-out infinite alternate;
+    }
+    @keyframes santaHatTilt {
+      0% { transform: rotate(-4deg); }
+      100% { transform: rotate(5deg); }
+    }
+    @keyframes bellJingle {
+      0% { transform: rotate(-14deg); }
+      100% { transform: rotate(14deg); }
+    }
+
+    .vf-avatar-frame-box:hover .spooky-pumpkin {
+      transform-box: fill-box;
+      transform-origin: center;
+      animation: pumpkinGlow 0.8s ease-in-out infinite alternate;
+    }
+    .vf-avatar-frame-box:hover .spooky-bat {
+      transform-origin: 16% 26%;
+      animation: batFlap 0.5s ease-in-out infinite alternate;
+    }
+    @keyframes pumpkinGlow {
+      0% { transform: scale(1); filter: drop-shadow(0 0 2px #f97316); }
+      100% { transform: scale(1.08); filter: drop-shadow(0 0 10px #ffedd5) drop-shadow(0 0 18px #ea580c); }
+    }
+    @keyframes batFlap {
+      0% { transform: translateY(0px) rotate(-6deg); }
+      100% { transform: translateY(-4px) rotate(8deg); }
+    }
+
+    .vf-avatar-frame-box:hover .vn-star {
+      transform-origin: 50% 15%;
+      animation: starRadiance 1.2s ease-in-out infinite alternate;
+    }
+    .vf-avatar-frame-box:hover .vn-rice-left {
+      transform-origin: 32% 78%;
+      animation: riceSwayLeft 1.6s ease-in-out infinite alternate;
+    }
+    .vf-avatar-frame-box:hover .vn-rice-right {
+      transform-origin: 68% 78%;
+      animation: riceSwayRight 1.6s ease-in-out infinite alternate;
+    }
+    @keyframes starRadiance {
+      0% { transform: scale(1); filter: drop-shadow(0 0 4px #facc15); }
+      100% { transform: scale(1.15); filter: drop-shadow(0 0 10px #ffffff) drop-shadow(0 0 20px #eab308); }
+    }
+    @keyframes riceSwayLeft {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(-3.5deg); }
+    }
+    @keyframes riceSwayRight {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(3.5deg); }
+    }
+
+    .vf-avatar-frame-box:hover .tet-lantern {
+      transform-origin: 20% 16%;
+      animation: lanternSway 0.9s ease-in-out infinite alternate;
+    }
+    .vf-avatar-frame-box:hover .tet-blossom {
+      transform-origin: 78% 26%;
+      animation: blossomTwirl 1.4s ease-in-out infinite alternate;
+    }
+    @keyframes lanternSway {
+      0% { transform: rotate(-12deg); }
+      100% { transform: rotate(12deg); }
+    }
+    @keyframes blossomTwirl {
+      0% { transform: rotate(-8deg) scale(1); }
+      100% { transform: rotate(10deg) scale(1.06); }
+    }
+
+    .vf-avatar-frame-box:hover .easter-ear-left {
+      transform-origin: 35% 28%;
+      animation: earWiggleLeft 0.5s ease-in-out infinite alternate;
+    }
+    .vf-avatar-frame-box:hover .easter-ear-right {
+      transform-origin: 65% 28%;
+      animation: earWiggleRight 0.5s ease-in-out infinite alternate;
+    }
+    @keyframes earWiggleLeft {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(-8deg); }
+    }
+    @keyframes earWiggleRight {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(8deg); }
+    }
+
+    /* 6. PET & EVENT NAME EFFECTS (v0.10.10-42) */
+    .tier-cat {
+      background: linear-gradient(135deg, #ff758f 0%, #ff9fb2 50%, #ffe0e6 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      filter: drop-shadow(0 0 6px rgba(255, 117, 143, 0.6));
+    }
+    .tier-dog {
+      background: linear-gradient(135deg, #d35400 0%, #f5b041 50%, #fdebd0 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      filter: drop-shadow(0 0 6px rgba(245, 176, 65, 0.6));
+    }
+    .tier-birthday {
+      background: linear-gradient(90deg, #ff007f, #a855f7, #06b6d4, #facc15, #ff007f);
+      background-size: 200% auto;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: vfGradFlow 3s linear infinite;
+      filter: drop-shadow(0 0 8px rgba(236, 72, 153, 0.6));
+    }
+    .tier-christmas {
+      background: linear-gradient(90deg, #dc2626 0%, #ffffff 35%, #22c55e 70%, #dc2626 100%);
+      background-size: 200% auto;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: vfGradFlow 3.5s linear infinite;
+      filter: drop-shadow(0 0 8px rgba(34, 197, 94, 0.6));
+    }
+    .tier-halloween {
+      background: linear-gradient(135deg, #f97316 0%, #c084fc 50%, #ea580c 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      filter: drop-shadow(0 0 8px rgba(249, 115, 22, 0.7));
+    }
+    .tier-vietnam {
+      background: linear-gradient(135deg, #ef4444 0%, #fde047 50%, #dc2626 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      filter: drop-shadow(0 0 8px rgba(239, 68, 68, 0.8));
+    }
+    .tier-tet {
+      background: linear-gradient(90deg, #e11d48, #f59e0b, #facc15, #e11d48);
+      background-size: 200% auto;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: vfGradFlow 3s linear infinite;
+      filter: drop-shadow(0 0 8px rgba(245, 158, 11, 0.7));
+    }
+    .tier-easter {
+      background: linear-gradient(135deg, #c084fc 0%, #f472b6 40%, #38bdf8 70%, #4ade80 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      filter: drop-shadow(0 0 6px rgba(192, 132, 252, 0.6));
+    }

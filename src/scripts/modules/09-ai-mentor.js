@@ -1,7 +1,5 @@
 // =========================================================================
-
-// VOCAFLOW 09-AI-MENTOR.JS (v0.10.10-41 Build 342)
-
+// VOCAFLOW 09-AI-MENTOR.JS (v0.10.10-42 Build 343)
 // Gemini AI chatbot, quick chips, quota management, multi-key pool
 
 // =========================================================================

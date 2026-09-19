@@ -1,4 +1,24 @@
 ================================================================================
+Phiên bản: v0.10.10-42 (Build 343) - Shop Bán Khung Viền & Hiệu Ứng Tên, Bộ Lọc Nhanh, Đồng Bộ Mua Sắm VoCoin Đám Mây (Wardrobe Aesthetic & Event Shop, Filter Pills, VoCoin Commerce & Cloud Sync)
+================================================================================
+1. [Shop Bán Khung Viền Avatar Độc Quyền (Shop & Event Frames)]:
+   - 2 Mẫu Thú Cưng Đáng Yêu (Pets): Bé Mèo Tinh Nghịch (`cat` - 500 VoCoin), Bé Cún Trung Thành (`dog` - 500 VoCoin) với tai động vẫy và hiệu ứng SVG tinh tế.
+   - 6 Mẫu Sự Kiện Đặc Biệt (Event Themes): Sinh Nhật (`birthday` - 800 VoCoin), Giáng Sinh (`christmas` - 800 VoCoin), Halloween (`halloween` - 800 VoCoin), Quốc Khánh Việt Nam (`vietnam` - 800 VoCoin), Tết Cổ Truyền (`tet` - 800 VoCoin), Lễ Phục Sinh (`easter` - 800 VoCoin).
+   - Tái cấu trúc thứ tự hiển thị ưu tiên: Có thể mua (Shop) -> Sự kiện (Event) -> Cấp bậc (Level).
+2. [Hiệu Ứng Tên Động Mới (Animated Name Effects)]:
+   - 2 Hiệu ứng Thú Cưng: Bé Mèo (`cat` - 🐾 400 VoCoin), Bé Cún (`dog` - 🦴 400 VoCoin).
+   - 6 Hiệu ứng Sự Kiện: Sinh Nhật (`birthday` - 🎉🎂 600 VoCoin), Giáng Sinh (`christmas` - ❄️🔔 600 VoCoin), Halloween (`halloween` - 🎃🦇 600 VoCoin), Quốc Khánh VN (`vietnam` - ⭐🇻🇳 600 VoCoin), Tết (`tet` - 🧧🌸 600 VoCoin), Phục Sinh (`easter` - 🐰🥚 600 VoCoin).
+3. [Bộ Lọc Nhanh Thông Minh (Wardrobe Filter Pills)]:
+   - Thêm 4 nút lọc nhanh trong Modal Tủ Đồ: Tất Cả (`all`), Có Thể Mua (`shop`), Sự Kiện (`event`), Cấp Bậc (`level`) kèm huy hiệu số lượng động.
+   - Hiển thị chip số dư VoCoin thời gian thực ngay trên thanh tiêu đề modal.
+4. [Cơ Chế Giao Dịch VoCoin & Đồng Bộ Đám Mây (VoCoin Commerce & Cloud Sync)]:
+   - Mua vật phẩm trực tiếp trong Modal Tủ Đồ, tự động trừ VoCoin và ghi nhật ký giao dịch `WARDROBE_PURCHASE`.
+   - Danh sách vật phẩm đã mở khóa `unlockedWardrobeItems` lưu trữ trong LocalStorage và tự động đồng bộ 2 chiều lên Firebase Realtime Database.
+5. [Đồng Bộ Toàn Diện 7-Point Version Consistency & Multi-Deploy (v0.10.10-42 Build 343)]:
+   - Cập nhật phiên bản nhất quán trên toàn bộ 7 điểm hệ thống: `modal-settings.html`, `state-core.js`, module headers, `sw.js` & `Release_App/sw.js`, `pubspec.yaml`, `Program.cs`, `push_github.ps1`.
+   - Biên dịch `VocaFlow.exe`, đóng gói `VocaFlow_v0.10.10-42_Windows_Portable.zip` và sẵn sàng multi-deploy lên 3 kho GitHub.
+
+================================================================================
 Phiên bản: v0.10.10-41 (Build 342) - Hệ Thống Tủ Đồ Cá Nhân, Khung Viền Avatar, Hiệu Ứng Tên & Danh Xưng (Wardrobe System, Level-Unlocked Avatar Frames, Animated Name Effects & Honor Titles, Realtime Cloud Sync)
 ================================================================================
 1. [Hệ Thống Tủ Đồ Cá Nhân (Wardrobe System)]:

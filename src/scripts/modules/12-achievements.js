@@ -1,7 +1,5 @@
 // =========================================================================
-
-// VOCAFLOW 12-ACHIEVEMENTS.JS (v0.10.10-41 Build 342)
-
+// VOCAFLOW 12-ACHIEVEMENTS.JS (v0.10.10-42 Build 343)
 // Badges, daily tasks, highlights showcase, notifications, VocaMail, User Guide
 
 // =========================================================================
