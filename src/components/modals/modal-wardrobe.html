@@ -1,0 +1,78 @@
+  <!-- MODAL: TỦ ĐỒ CÁ NHÂN (WARDROBE SYSTEM v0.10.10-41) -->
+  <div class="modal-overlay" id="modal-wardrobe" style="z-index: 10006;">
+    <div class="modal vf-wardrobe-modal" style="max-width: 640px; width: 100%;">
+      <!-- MODAL HEADER -->
+      <div class="modal-title" style="display: flex; justify-content: space-between; align-items: center; padding-bottom: 12px; border-bottom: 1px solid var(--border);">
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <div style="width: 36px; height: 36px; border-radius: 10px; background: linear-gradient(135deg, rgba(236,72,153,0.2), rgba(168,85,247,0.2)); border: 1px solid rgba(236,72,153,0.4); display: flex; align-items: center; justify-content: center; font-size: 18px;">
+            ✨
+          </div>
+          <div>
+            <strong style="font-size: 16px; color: var(--text);">Tủ Đồ Cá Nhân</strong>
+            <div style="font-size: 11px; color: var(--text-muted);">Khung avatar, hiệu ứng tên & danh xưng rèn luyện</div>
+          </div>
+        </div>
+        <button type="button" class="btn btn-outline btn-icon" onclick="closeModal('modal-wardrobe')">
+          <svg class="icon"><use href="#i-close"/></svg>
+        </button>
+      </div>
+
+      <!-- LIVE PREVIEW HERO BOX -->
+      <div class="vf-wardrobe-hero-box" style="background: radial-gradient(circle at 50% 30%, rgba(236,72,153,0.12) 0%, rgba(15,23,42,0.6) 70%), var(--surface-elevated); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 18px; margin-top: 14px; margin-bottom: 16px; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.3);">
+        
+        <!-- Live Preview Tag -->
+        <div style="position: absolute; top: 10px; left: 12px; display: flex; align-items: center; gap: 5px;">
+          <span style="display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: #10b981; box-shadow: 0 0 8px #10b981;"></span>
+          <span style="font-size: 10px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">Xem Trước Trực Tiếp</span>
+        </div>
+
+        <!-- Current User Level Pill -->
+        <div id="wardrobe-user-level-pill" style="position: absolute; top: 10px; right: 12px; font-size: 10.5px; font-weight: 800; padding: 2px 8px; border-radius: 8px; background: rgba(245,158,11,0.15); border: 1px solid rgba(245,158,11,0.4); color: #fbbf24;">
+          ⭐ Lv.1 (0 EXP)
+        </div>
+
+        <!-- Avatar Preview Center -->
+        <div id="wardrobe-preview-avatar-container" style="width: 140px; height: 140px; margin: 10px 0 6px 0; display: flex; align-items: center; justify-content: center; position: relative;">
+          <!-- Injected dynamically via renderWardrobePreview -->
+        </div>
+
+        <!-- Username Preview with Name Effect -->
+        <div id="wardrobe-preview-name-container" style="margin-top: 6px; margin-bottom: 6px; text-align: center;">
+          <span id="wardrobe-preview-name" class="vf-username-preview" style="font-size: 18px; font-weight: 800;">Flower VocaFlow</span>
+        </div>
+
+        <!-- Title Badge Preview -->
+        <div id="wardrobe-preview-title-container" style="margin-top: 2px;">
+          <span id="wardrobe-preview-title-badge" class="badge" style="font-size: 11.5px; font-weight: 700; padding: 3px 10px; border-radius: 8px; background: rgba(16,185,129,0.15); color: #34d399; border: 1px solid rgba(16,185,129,0.35);">
+            🎓 Flower VocaFlow
+          </span>
+        </div>
+      </div>
+
+      <!-- WARDROBE 3 COMPARTMENTS TABS BAR -->
+      <div class="ig-tabs-bar" style="margin-bottom: 14px;">
+        <button type="button" class="ig-tab-btn active" id="wardrobe-tab-btn-frames" onclick="switchWardrobeTab('frames')">
+          <span>🖼️</span> <span>Khung Viền</span>
+        </button>
+        <button type="button" class="ig-tab-btn" id="wardrobe-tab-btn-nameEffects" onclick="switchWardrobeTab('nameEffects')">
+          <span>✨</span> <span>Hiệu Ứng Tên</span>
+        </button>
+        <button type="button" class="ig-tab-btn" id="wardrobe-tab-btn-titles" onclick="switchWardrobeTab('titles')">
+          <span>🎖️</span> <span>Danh Xưng</span>
+        </button>
+      </div>
+
+      <!-- WARDROBE ITEMS SCROLLABLE CONTAINER -->
+      <div id="wardrobe-items-container" style="max-height: 380px; overflow-y: auto; padding-right: 2px;">
+        <!-- Injected dynamically via renderWardrobeTabContent -->
+      </div>
+
+      <!-- MODAL FOOTER -->
+      <div style="display: flex; justify-content: space-between; align-items: center; padding-top: 14px; margin-top: 14px; border-top: 1px solid var(--border); font-size: 11.5px; color: var(--text-muted);">
+        <span>💡 Tăng Cấp Độ rèn luyện để mở khóa toàn bộ tủ đồ danh giá!</span>
+        <button type="button" class="btn btn-primary btn-sm" onclick="closeModal('modal-wardrobe')" style="font-weight: 700;">
+          Đã Xong
+        </button>
+      </div>
+    </div>
+  </div>

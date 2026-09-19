@@ -1,0 +1,12 @@
+v0.10.10-42 (SHOP BÁN KHUNG VIỀN VÀ HIỆU ỨNG TÊN)
+* khung viền:
+- các viền đã có được đẩy xuống cuối
+- có bộ lọc nhanh: tất cả, sự kiện, có thể mua
+- các viền có thể mua được up lên sau, ở đây có 2 mẫu mèo và cún "C:\Users\DELL\Documents\Modding\browser\model code\28-khung_avatar_m_o_v_c_n_c_ng.html"
+- các viền sự kiện như: sinh nhật, giáng sinh, halloween, quốc khánh VN, tết, phục sinh (tham khảo: "C:\Users\DELL\Documents\Modding\browser\model code\29-6_khung_avatar_s_ki_n_svg.html")
+* hiệu ứng tên: 
+- các hiệu ứng đã có đẩy xuống dưới 
+- có bộ lọc nhanh: tất cả, sự kiện, có thể mua
+- các hiệu ứng có thể mua: mèo, cún
+- các hiệu ứng sự kiện như: sinh nhật, giáng sinh, halloween, quốc khánh VN, tết, phục sinh 
+đọc và thực hiện các file markdown có trong "C:\Users\DELL\Documents\Modding\browser" (nếu quên)

@@ -5066,15 +5066,369 @@
       50% { transform: translateY(-6px) scale(1.08); }
     }
 
+    /* =========================================================================
+       WARDROBE SYSTEM CSS & SVG ANIMATIONS (v0.10.10-41)
+       Avatar Frames, Name Effects & Badges
+       ========================================================================= */
 
+    /* 1. AVATAR FRAMES BASE */
+    .vf-avatar-frame-box {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      user-select: none;
+      flex-shrink: 0;
+      transition: transform 0.3s ease;
+    }
+    .vf-avatar-frame-box.hoverable:hover {
+      transform: scale(1.05);
+    }
+    .vf-avatar-frame-svg {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      overflow: visible;
+      pointer-events: none;
+      z-index: 2;
+    }
+    .vf-avatar-inner-circle {
+      border-radius: 50%;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      z-index: 1;
+      background: #111827;
+    }
 
+    /* Frame Glow Animations */
+    @keyframes vfTremorEffect {
+      0% { transform: translate(0, 0) rotate(0deg); }
+      25% { transform: translate(-1.5px, 1.5px) rotate(-0.3deg); }
+      50% { transform: translate(1.5px, -1px) rotate(0.3deg); }
+      75% { transform: translate(-1px, -1.5px) rotate(0deg); }
+      100% { transform: translate(0, 0) rotate(0deg); }
+    }
+    @keyframes vfFirePulseAnim {
+      0%, 100% { filter: drop-shadow(0 0 8px #ff007f) drop-shadow(0 0 20px #ff66b2); opacity: 0.95; }
+      50% { filter: drop-shadow(0 0 18px #ffffff) drop-shadow(0 0 36px #ff007f); opacity: 1; }
+    }
+    @keyframes vfStreamFlow {
+      0% { stroke-dashoffset: 0; }
+      100% { stroke-dashoffset: -200; }
+    }
+    @keyframes vfDiamondGlint {
+      0%, 100% { transform: scale(1) rotate(0deg); opacity: 0.85; }
+      50% { transform: scale(1.25) rotate(15deg); opacity: 1; filter: drop-shadow(0 0 10px #00e5ff); }
+    }
 
+    .dragon-shaking {
+      animation: vfTremorEffect 0.12s infinite;
+    }
+    .dragon-fire-layer {
+      opacity: 0;
+      transform-origin: 320px 130px;
+      transform: scale(0.65) rotate(-6deg);
+      transition: opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1), transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+      pointer-events: none;
+    }
+    .vf-avatar-frame-box:hover .dragon-fire-layer,
+    .mythic-active .dragon-fire-layer {
+      opacity: 1;
+      transform: scale(1) rotate(0deg);
+      animation: vfFirePulseAnim 1.8s infinite ease-in-out;
+    }
+    .mythic-jaw {
+      transform-origin: 260px 130px;
+      transition: transform 0.3s ease-out;
+    }
+    .vf-avatar-frame-box:hover .mythic-jaw,
+    .mythic-active .mythic-jaw {
+      transform: rotate(14deg) translateY(2px);
+    }
+    .mythic-eye {
+      transition: filter 0.3s ease, fill 0.3s ease;
+    }
+    .vf-avatar-frame-box:hover .mythic-eye,
+    .mythic-active .mythic-eye {
+      filter: drop-shadow(0 0 8px #ffffff) drop-shadow(0 0 16px #ff007f);
+      fill: #ffffff;
+    }
+    .vf-avatar-frame-box:hover .mythic-plasma-stream,
+    .mythic-active .mythic-plasma-stream {
+      animation: vfStreamFlow 2s linear infinite;
+    }
+    .diamond-glint {
+      animation: vfDiamondGlint 3s ease-in-out infinite;
+      transform-origin: center;
+    }
 
+    /* 2. NAME EFFECTS */
+    .vf-name-wrapper {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      user-select: none;
+      vertical-align: middle;
+    }
 
+    /* Bronze Name */
+    .tier-bronze {
+      color: #cd7f32 !important;
+      text-shadow: 0 0 6px rgba(205, 127, 50, 0.55);
+      font-weight: 800;
+    }
 
+    /* Silver Name */
+    .tier-silver {
+      color: #e0e0e0 !important;
+      text-shadow: 0 0 8px rgba(255, 255, 255, 0.35), 0 0 15px rgba(224, 224, 224, 0.25);
+      font-weight: 800;
+      transition: all 0.3s ease;
+    }
+    .vf-name-wrapper:hover .tier-silver,
+    .tier-silver:hover {
+      color: #ffffff !important;
+      text-shadow: 0 0 15px rgba(255, 255, 255, 0.95), 0 0 25px rgba(200, 220, 255, 0.6);
+      transform: scale(1.03);
+    }
 
+    /* Gold Name */
+    .tier-gold {
+      background: linear-gradient(90deg, #ffd700 0%, #fff8dc 50%, #ffd700 100%) !important;
+      background-size: 200% auto !important;
+      -webkit-background-clip: text !important;
+      -webkit-text-fill-color: transparent !important;
+      animation: vfGoldShine 3s linear infinite;
+      filter: drop-shadow(0 0 5px rgba(255, 215, 0, 0.5));
+      font-weight: 800;
+      display: inline-block;
+    }
+    .vf-name-wrapper:hover .tier-gold,
+    .tier-gold:hover {
+      filter: drop-shadow(0 0 14px rgba(255, 215, 0, 0.95));
+      transform: scale(1.03);
+    }
+    @keyframes vfGoldShine {
+      to { background-position: 200% center; }
+    }
 
+    .gold-svg-overlay {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 100%;
+      min-width: 140px;
+      height: 100%;
+      min-height: 28px;
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+      z-index: 3;
+      overflow: visible;
+    }
+    .gold-sparkle {
+      transform-origin: center;
+      animation: vfGoldTwinkle 2.2s ease-in-out infinite;
+    }
+    @keyframes vfGoldTwinkle {
+      0%, 100% { transform: scale(0.1) rotate(0deg); opacity: 0; }
+      50% { transform: scale(1) rotate(45deg); opacity: 1; }
+    }
+    .gold-sparkle-1 { animation-delay: 0.1s; }
+    .gold-sparkle-2 { animation-delay: 0.7s; }
+    .gold-sparkle-3 { animation-delay: 1.3s; }
+    .gold-sparkle-4 { animation-delay: 1.8s; }
 
+    /* Diamond Name */
+    .tier-diamond {
+      color: #b9f2ff !important;
+      text-shadow: 0 0 6px #00d2ff, 0 0 16px rgba(0, 210, 255, 0.6);
+      animation: vfDiamondPulse 2s ease-in-out infinite alternate;
+      font-weight: 800;
+      display: inline-block;
+    }
+    @keyframes vfDiamondPulse {
+      from { text-shadow: 0 0 6px #00d2ff, 0 0 16px rgba(0, 210, 255, 0.6); }
+      to { text-shadow: 0 0 12px #00e5ff, 0 0 28px #00d2ff, 0 0 35px rgba(0, 210, 255, 0.9); }
+    }
+    .vf-name-wrapper:hover .tier-diamond,
+    .tier-diamond:hover {
+      color: #ffffff !important;
+      text-shadow: 0 0 10px #ffffff, 0 0 20px #00e5ff, 0 0 35px #00bfff;
+      transform: scale(1.04);
+    }
+    .diamond-svg-overlay {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 100%;
+      min-width: 140px;
+      height: 100%;
+      min-height: 28px;
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+      z-index: 3;
+      overflow: visible;
+    }
+    .diamond-sparkle {
+      opacity: 0;
+      transform-origin: center;
+      transition: opacity 0.25s ease;
+    }
+    .vf-name-wrapper:hover .diamond-sparkle {
+      opacity: 1;
+    }
+    @keyframes vfDiamondGlintAnim {
+      0% { transform: scale(0.15) rotate(0deg); opacity: 0; }
+      50% { transform: scale(0.85) rotate(45deg); opacity: 1; }
+      100% { transform: scale(0.35) rotate(90deg); opacity: 0.2; }
+    }
+    @keyframes vfDiamondLightSweep {
+      0% { transform: translateX(-35px) skewX(-20deg); opacity: 0; }
+      15% { opacity: 0.9; }
+      85% { opacity: 0.9; }
+      100% { transform: translateX(180px) skewX(-20deg); opacity: 0; }
+    }
+    .vf-name-wrapper:hover .sparkle-1 { animation: vfDiamondGlintAnim 1s ease-in-out infinite 0.05s; }
+    .vf-name-wrapper:hover .sparkle-2 { animation: vfDiamondGlintAnim 1.2s ease-in-out infinite 0.35s; }
+    .vf-name-wrapper:hover .sparkle-3 { animation: vfDiamondGlintAnim 0.9s ease-in-out infinite 0.2s; }
+    .vf-name-wrapper:hover .sparkle-4 { animation: vfDiamondGlintAnim 1.1s ease-in-out infinite 0.5s; }
+    .vf-name-wrapper:hover .sparkle-5 { animation: vfDiamondGlintAnim 1s ease-in-out infinite 0.7s; }
+    .vf-name-wrapper:hover .diamond-sweep-beam { animation: vfDiamondLightSweep 1.5s cubic-bezier(0.4, 0, 0.2, 1) infinite; }
+
+    /* Mythic / Legendary Name */
+    .tier-legendary {
+      position: relative;
+      background: linear-gradient(45deg, #ff007f, #ff66b2, #ff007f) !important;
+      background-size: 200% auto !important;
+      -webkit-background-clip: text !important;
+      -webkit-text-fill-color: transparent !important;
+      animation: vfGoldShine 2s linear infinite;
+      filter: drop-shadow(0 0 6px rgba(255, 0, 127, 0.75));
+      font-weight: 900;
+      display: inline-block;
+      z-index: 2;
+    }
+    .tier-legendary::before,
+    .tier-legendary::after {
+      content: attr(data-text);
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: transparent;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      display: none;
+      z-index: 2;
+    }
+    .vf-name-wrapper:hover .tier-legendary::before {
+      display: block;
+      left: 2px;
+      background: linear-gradient(45deg, #00ffff, #ff007f);
+      -webkit-background-clip: text;
+      text-shadow: -1px 0 #00ffff;
+      clip: rect(6px, 9999px, 20px, 0);
+      animation: vfGlitchAnim 0.3s infinite linear alternate-reverse;
+    }
+    .vf-name-wrapper:hover .tier-legendary::after {
+      display: block;
+      left: -2px;
+      background: linear-gradient(45deg, #ff007f, #ffff00);
+      -webkit-background-clip: text;
+      text-shadow: 1px 0 #ffff00;
+      clip: rect(15px, 9999px, 30px, 0);
+      animation: vfGlitchAnim2 0.3s infinite linear alternate-reverse;
+    }
+    @keyframes vfGlitchAnim {
+      0% { clip: rect(10px, 9999px, 16px, 0); }
+      100% { clip: rect(4px, 9999px, 24px, 0); }
+    }
+    @keyframes vfGlitchAnim2 {
+      0% { clip: rect(18px, 9999px, 28px, 0); }
+      100% { clip: rect(8px, 9999px, 20px, 0); }
+    }
+
+    .legendary-flame-container {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 120%;
+      min-width: 160px;
+      height: 160%;
+      min-height: 48px;
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+      z-index: 1;
+      overflow: hidden;
+      border-radius: 12px;
+    }
+    .flame-wave-svg {
+      width: 100%;
+      height: 100%;
+      overflow: visible;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    .vf-name-wrapper:hover .flame-wave-svg {
+      opacity: 0.85;
+    }
+    .flame-sweep-group {
+      animation: vfFlameSweep 2s ease-in-out infinite alternate;
+      transform-origin: center;
+    }
+    @keyframes vfFlameSweep {
+      0% { transform: scaleX(0.85) scaleY(0.7) translateY(4px); filter: drop-shadow(0 0 8px #ff007f); }
+      100% { transform: scaleX(1.15) scaleY(1.1) translateY(-4px); filter: drop-shadow(0 0 20px #ff007f); }
+    }
+
+    /* 3. WARDROBE CARDS GRID */
+    .vf-wardrobe-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 12px;
+    }
+    @media (max-width: 500px) {
+      .vf-wardrobe-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+    .vf-wardrobe-card {
+      background: var(--surface-elevated);
+      border: 1.5px solid var(--border);
+      border-radius: 14px;
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      position: relative;
+      overflow: hidden;
+    }
+    .vf-wardrobe-card:hover {
+      border-color: rgba(168, 85, 247, 0.5);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+    }
+    .vf-wardrobe-card.equipped {
+      border-color: #10b981;
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.08), rgba(6, 78, 59, 0.15)), var(--surface-elevated);
+      box-shadow: 0 0 16px rgba(16, 185, 129, 0.2);
+    }
+    .vf-wardrobe-card.locked {
+      opacity: 0.75;
+      filter: grayscale(0.2);
+    }
+    .vf-wardrobe-card.locked:hover {
+      opacity: 0.9;
+      filter: none;
+    }
 
   </style>
 </head>
@@ -5202,6 +5556,14 @@
             <div>
               <div style="font-weight: 800; font-size: 13px; color: #fbbf24;">Gói VocaVIP</div>
               <small style="color: var(--text-muted); font-size: 10.5px;">Tháng 39k • Năm 299k • Trọn đời 599k</small>
+            </div>
+          </div>
+          <!-- VOCAFLOW WARDROBE / TỦ ĐỒ CÁ NHÂN (v0.10.10-41) -->
+          <div class="dropdown-item" onclick="openWardrobeModal(); closeHeaderMoreMenu();" style="background: linear-gradient(135deg, rgba(236, 72, 153, 0.15), rgba(168, 85, 247, 0.15)); border: 1px solid rgba(236, 72, 153, 0.4);">
+            <span style="font-size: 16px;">✨</span>
+            <div>
+              <div style="font-weight: 800; font-size: 13px; color: #f472b6;">Tủ Đồ Cá Nhân</div>
+              <small style="color: var(--text-muted); font-size: 10.5px;">Khung viền, hiệu ứng tên & danh xưng</small>
             </div>
           </div>
           <!-- VOCASTUDIO IN DROPDOWN -->
@@ -10881,6 +11243,9 @@
           <button type="button" class="ig-btn ig-btn-outline" onclick="toggleProfileEditSection()" style="flex: 1.2;">
             <span>✏️</span> Chỉnh Sửa
           </button>
+          <button type="button" id="profile-wardrobe-btn" class="ig-btn ig-btn-outline" onclick="openWardrobeModal()" title="Tủ Đồ Khung Viền, Hiệu Ứng & Danh Xưng" style="background: linear-gradient(135deg, rgba(236,72,153,0.15), rgba(168,85,247,0.15)); border-color: rgba(236,72,153,0.4); color: #f472b6; font-weight: 700;">
+            <span>✨</span> Tủ Đồ
+          </button>
           <button type="button" class="ig-btn ig-btn-outline" onclick="shareMyProfile()" title="Chia sẻ liên kết hồ sơ của bạn">
             <span>🔗</span> Chia Sẻ
           </button>
@@ -11975,7 +12340,7 @@
       <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 16px;">
         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">📦 Thông Tin Ứng Dụng</label>
         <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
-          <div>Phiên bản: <strong style="color: var(--text); user-select: text;" id="settings-app-version-label">VocaFlow v0.10.10-40 (Build 341)</strong></div>
+          <div>Phiên bản: <strong style="color: var(--text); user-select: text;" id="settings-app-version-label">VocaFlow v0.10.10-41 (Build 342)</strong></div>
           <div>Môi trường: <span style="color: var(--text);">Offline-First Web PWA & Windows EXE</span></div>
           <div>Lưu trữ: <span style="color: var(--text);">Cục bộ + Đồng bộ Cloud Realtime</span></div>
         </div>
@@ -13106,6 +13471,85 @@
   </div>
 </div>
 
+  <!-- MODAL: TỦ ĐỒ CÁ NHÂN (WARDROBE SYSTEM v0.10.10-41) -->
+  <div class="modal-overlay" id="modal-wardrobe" style="z-index: 10006;">
+    <div class="modal vf-wardrobe-modal" style="max-width: 640px; width: 100%;">
+      <!-- MODAL HEADER -->
+      <div class="modal-title" style="display: flex; justify-content: space-between; align-items: center; padding-bottom: 12px; border-bottom: 1px solid var(--border);">
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <div style="width: 36px; height: 36px; border-radius: 10px; background: linear-gradient(135deg, rgba(236,72,153,0.2), rgba(168,85,247,0.2)); border: 1px solid rgba(236,72,153,0.4); display: flex; align-items: center; justify-content: center; font-size: 18px;">
+            ✨
+          </div>
+          <div>
+            <strong style="font-size: 16px; color: var(--text);">Tủ Đồ Cá Nhân</strong>
+            <div style="font-size: 11px; color: var(--text-muted);">Khung avatar, hiệu ứng tên & danh xưng rèn luyện</div>
+          </div>
+        </div>
+        <button type="button" class="btn btn-outline btn-icon" onclick="closeModal('modal-wardrobe')">
+          <svg class="icon"><use href="#i-close"/></svg>
+        </button>
+      </div>
+
+      <!-- LIVE PREVIEW HERO BOX -->
+      <div class="vf-wardrobe-hero-box" style="background: radial-gradient(circle at 50% 30%, rgba(236,72,153,0.12) 0%, rgba(15,23,42,0.6) 70%), var(--surface-elevated); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 18px; margin-top: 14px; margin-bottom: 16px; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.3);">
+        
+        <!-- Live Preview Tag -->
+        <div style="position: absolute; top: 10px; left: 12px; display: flex; align-items: center; gap: 5px;">
+          <span style="display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: #10b981; box-shadow: 0 0 8px #10b981;"></span>
+          <span style="font-size: 10px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">Xem Trước Trực Tiếp</span>
+        </div>
+
+        <!-- Current User Level Pill -->
+        <div id="wardrobe-user-level-pill" style="position: absolute; top: 10px; right: 12px; font-size: 10.5px; font-weight: 800; padding: 2px 8px; border-radius: 8px; background: rgba(245,158,11,0.15); border: 1px solid rgba(245,158,11,0.4); color: #fbbf24;">
+          ⭐ Lv.1 (0 EXP)
+        </div>
+
+        <!-- Avatar Preview Center -->
+        <div id="wardrobe-preview-avatar-container" style="width: 140px; height: 140px; margin: 10px 0 6px 0; display: flex; align-items: center; justify-content: center; position: relative;">
+          <!-- Injected dynamically via renderWardrobePreview -->
+        </div>
+
+        <!-- Username Preview with Name Effect -->
+        <div id="wardrobe-preview-name-container" style="margin-top: 6px; margin-bottom: 6px; text-align: center;">
+          <span id="wardrobe-preview-name" class="vf-username-preview" style="font-size: 18px; font-weight: 800;">Flower VocaFlow</span>
+        </div>
+
+        <!-- Title Badge Preview -->
+        <div id="wardrobe-preview-title-container" style="margin-top: 2px;">
+          <span id="wardrobe-preview-title-badge" class="badge" style="font-size: 11.5px; font-weight: 700; padding: 3px 10px; border-radius: 8px; background: rgba(16,185,129,0.15); color: #34d399; border: 1px solid rgba(16,185,129,0.35);">
+            🎓 Flower VocaFlow
+          </span>
+        </div>
+      </div>
+
+      <!-- WARDROBE 3 COMPARTMENTS TABS BAR -->
+      <div class="ig-tabs-bar" style="margin-bottom: 14px;">
+        <button type="button" class="ig-tab-btn active" id="wardrobe-tab-btn-frames" onclick="switchWardrobeTab('frames')">
+          <span>🖼️</span> <span>Khung Viền</span>
+        </button>
+        <button type="button" class="ig-tab-btn" id="wardrobe-tab-btn-nameEffects" onclick="switchWardrobeTab('nameEffects')">
+          <span>✨</span> <span>Hiệu Ứng Tên</span>
+        </button>
+        <button type="button" class="ig-tab-btn" id="wardrobe-tab-btn-titles" onclick="switchWardrobeTab('titles')">
+          <span>🎖️</span> <span>Danh Xưng</span>
+        </button>
+      </div>
+
+      <!-- WARDROBE ITEMS SCROLLABLE CONTAINER -->
+      <div id="wardrobe-items-container" style="max-height: 380px; overflow-y: auto; padding-right: 2px;">
+        <!-- Injected dynamically via renderWardrobeTabContent -->
+      </div>
+
+      <!-- MODAL FOOTER -->
+      <div style="display: flex; justify-content: space-between; align-items: center; padding-top: 14px; margin-top: 14px; border-top: 1px solid var(--border); font-size: 11.5px; color: var(--text-muted);">
+        <span>💡 Tăng Cấp Độ rèn luyện để mở khóa toàn bộ tủ đồ danh giá!</span>
+        <button type="button" class="btn btn-primary btn-sm" onclick="closeModal('modal-wardrobe')" style="font-weight: 700;">
+          Đã Xong
+        </button>
+      </div>
+    </div>
+  </div>
+
   <!-- MODAL: CLOZE RESULT CELEBRATION (v0.10.10-18 - CLOZE READING COMPREHENSION β) -->
   <div class="modal-overlay" id="modal-cloze-result" style="z-index: 10000;">
     <div class="modal" style="max-width: 500px; text-align: center; position: relative; overflow: hidden; border: 1px solid rgba(99, 102, 241, 0.4); box-shadow: 0 10px 40px rgba(0,0,0,0.5); padding: 24px 20px;">
@@ -13733,7 +14177,7 @@
 
   <script>
 // =========================================================================
-// VOCAFLOW SPA ROUTER & URL HISTORY ENGINE (v0.10.10-40 Build 341)
+// VOCAFLOW SPA ROUTER & URL HISTORY ENGINE (v0.10.10-41 Build 342)
 // Enables direct clean URLs, deep sub-links & browser history navigation (pushState/popstate)
 // =========================================================================
 
@@ -13920,12 +14364,22 @@ function navigateToRoute(route, isPopState = false) {
         if (typeof openProfileModal === 'function') openProfileModal('community', 'mine');
         return;
       }
+      if (secondSegment === 'wardrobe' || secondSegment === 'tudo' || secondSegment === 'closet') {
+        if (typeof openWardrobeModal === 'function') openWardrobeModal();
+        return;
+      }
       if (secondSegment === 'sync' || secondSegment === 'cloud' || secondSegment === 'dongbo') {
         if (typeof openProfileModal === 'function') openProfileModal('cloud');
         return;
       }
       // Default /me or /me/mydeck or /me/decks
       if (typeof openProfileModal === 'function') openProfileModal('decks');
+      return;
+    }
+
+    // 3b. Handle Standalone /wardrobe or /tudo
+    if (firstSegment === 'wardrobe' || firstSegment === 'tudo') {
+      if (typeof openWardrobeModal === 'function') openWardrobeModal(secondSegment || 'frames');
       return;
     }
 
@@ -14198,16 +14652,16 @@ function initSpaRouter() {
 window.initSpaRouter = initSpaRouter;
 
 
-// VOCAFLOW 02-STATE-CORE.JS (v0.10.10-40 Build 341)
+// VOCAFLOW 02-STATE-CORE.JS (v0.10.10-41 Build 342)
 // Global constants, core database state, storage keys, recovery & audio engine
 // =========================================================================
 
     // =========================================================================
-    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.10-40 Build 341)
+    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.10-41 Build 342)
     // =========================================================================
-    const VOCAFLOW_APP_VERSION = 'v0.10.10-40';
-    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.10-40 (Build 341)';
-    const VOCAFLOW_APP_BUILD = 341;
+    const VOCAFLOW_APP_VERSION = 'v0.10.10-41';
+    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.10-41 (Build 342)';
+    const VOCAFLOW_APP_BUILD = 342;
     window.VOCAFLOW_APP_VERSION = VOCAFLOW_APP_VERSION;
     window.VOCAFLOW_APP_FULL_TITLE = VOCAFLOW_APP_FULL_TITLE;
     window.VOCAFLOW_APP_BUILD = VOCAFLOW_APP_BUILD;
@@ -19217,7 +19671,7 @@ window.initSpaRouter = initSpaRouter;
     const FREEZE_ICON_DATA_URI = 'data:image/png;base64,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';
 
 // =========================================================================
-// VOCAFLOW 03-AUTH.JS (v0.10.10-40 Build 341)
+// VOCAFLOW 03-AUTH.JS (v0.10.10-41 Build 342)
 // Firebase Auth, Realtime Sync, Public Profiles, Social Graph, Monetization & Billing
 // =========================================================================
 
@@ -23226,6 +23680,9 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
       if (typeof isUserVip === 'function' && isUserVip() && typeof purgeAllAdArtifactsFromDOM === 'function') {
         purgeAllAdArtifactsFromDOM();
       }
+      if (typeof applyWardrobeToActiveUI === 'function') {
+        applyWardrobeToActiveUI();
+      }
     }
 
     // Modal Switchers
@@ -24807,6 +25264,11 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
         const cleanResolvedName = stripVipAffixes(resolvedName);
         const isIamJulies = (authorClean === 'iamjulies' || (resolvedHandle && resolvedHandle.toLowerCase() === 'iamjulies') || (targetUid && targetUid.toLowerCase() === 'iamjulies'));
 
+        const targetWardrobe = (isCurrentUser && typeof getEquippedWardrobe === 'function') 
+          ? getEquippedWardrobe()
+          : ((uData && (uData.equippedWardrobe || (uData.profile && uData.profile.equippedWardrobe))) 
+              || (isVocaFlowOfficial ? { frame: 'mythic', nameEffect: 'mythic', title: 'lv50' } : { frame: 'default', nameEffect: 'default', title: 'default' }));
+
         if (nameEl) {
           if (isVocaFlowOfficial) {
             nameEl.innerHTML = `<span class="vip-name-wrapper" style="gap: 6px;"><span class="vip-glowing-name" style="font-size: 1.15em; background: linear-gradient(135deg, #f59e0b, #ec4899, #8b5cf6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 800;">VocaFlow Chuẩn</span><span style="font-size: 1.25em;" title="Đội ngũ sáng lập & phát triển VocaFlow">👑</span></span>`;
@@ -24814,21 +25276,29 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
             nameEl.innerHTML = `<span class="vip-name-wrapper" style="gap: 6px;"><span class="vip-glowing-name" style="font-size: 1.15em; background: linear-gradient(135deg, #f59e0b, #ec4899, #8b5cf6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 800;">${escapeHtml(cleanResolvedName)}</span><span style="font-size: 1.25em;" title="Nhà Sáng Lập & Phát Triển VocaFlow">👑</span></span>`;
           } else if (isAuthorVip) {
             nameEl.innerHTML = `<span class="vip-name-wrapper" style="gap: 5px;"><span class="vip-glowing-name" style="font-size: 1.15em;">${escapeHtml(cleanResolvedName)}</span><span class="vip-crown-icon" style="font-size: 1.3em;" title="Tác giả VIP (${authorVipTier.toUpperCase()})">👑</span></span>`;
+          } else if (targetWardrobe && targetWardrobe.nameEffect && targetWardrobe.nameEffect !== 'default' && typeof renderUsernameWithEffectHtml === 'function') {
+            nameEl.innerHTML = renderUsernameWithEffectHtml(cleanResolvedName, targetWardrobe.nameEffect);
           } else {
             nameEl.textContent = cleanResolvedName;
           }
         }
         if (avEl) {
-          avEl.innerHTML = renderAvatarHtml(resolvedAvatar, 96, 36);
-          if (isVocaFlowOfficial || isIamJulies) {
-            avEl.style.boxShadow = '0 0 0 2px #8b5cf6, 0 0 24px rgba(139, 92, 246, 0.6)';
-            avEl.style.borderColor = '#c084fc';
-          } else if (isAuthorVip) {
-            avEl.style.boxShadow = '0 0 0 2px #fbbf24, 0 0 20px rgba(251, 191, 36, 0.5)';
-            avEl.style.borderColor = '#fbbf24';
+          if (targetWardrobe && targetWardrobe.frame && targetWardrobe.frame !== 'default' && typeof renderAvatarWithFrameHtml === 'function') {
+            avEl.innerHTML = renderAvatarWithFrameHtml(resolvedAvatar, 96, targetWardrobe.frame, 'hoverable');
+            avEl.style.boxShadow = 'none';
+            avEl.style.borderColor = 'transparent';
           } else {
-            avEl.style.boxShadow = '0 4px 16px rgba(0, 0, 0, 0.35)';
-            avEl.style.borderColor = 'rgba(255, 255, 255, 0.15)';
+            avEl.innerHTML = renderAvatarHtml(resolvedAvatar, 96, 36);
+            if (isVocaFlowOfficial || isIamJulies) {
+              avEl.style.boxShadow = '0 0 0 2px #8b5cf6, 0 0 24px rgba(139, 92, 246, 0.6)';
+              avEl.style.borderColor = '#c084fc';
+            } else if (isAuthorVip) {
+              avEl.style.boxShadow = '0 0 0 2px #fbbf24, 0 0 20px rgba(251, 191, 36, 0.5)';
+              avEl.style.borderColor = '#fbbf24';
+            } else {
+              avEl.style.boxShadow = '0 4px 16px rgba(0, 0, 0, 0.35)';
+              avEl.style.borderColor = 'rgba(255, 255, 255, 0.15)';
+            }
           }
         }
         if (pubSubBadgeEl) {
@@ -24857,6 +25327,21 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
               pubSubBadgeEl.style.color = '#fbbf24';
               pubSubBadgeEl.style.fontWeight = '700';
               pubSubBadgeEl.style.border = '1px solid rgba(245, 158, 11, 0.3)';
+            }
+          } else if (targetWardrobe && targetWardrobe.title && targetWardrobe.title !== 'default' && typeof VOCAFLOW_WARDROBE_REGISTRY !== 'undefined') {
+            const customTitle = VOCAFLOW_WARDROBE_REGISTRY.titles.find(t => t.id === targetWardrobe.title);
+            if (customTitle) {
+              pubSubBadgeEl.innerHTML = escapeHtml(customTitle.tag);
+              pubSubBadgeEl.style.background = `${customTitle.color}25`;
+              pubSubBadgeEl.style.color = customTitle.color;
+              pubSubBadgeEl.style.fontWeight = '700';
+              pubSubBadgeEl.style.border = `1px solid ${customTitle.color}60`;
+            } else {
+              pubSubBadgeEl.innerHTML = '🎓 Flower VocaFlow';
+              pubSubBadgeEl.style.background = 'rgba(16, 185, 129, 0.15)';
+              pubSubBadgeEl.style.color = '#34d399';
+              pubSubBadgeEl.style.fontWeight = '700';
+              pubSubBadgeEl.style.border = '1px solid rgba(16, 185, 129, 0.3)';
             }
           } else {
             pubSubBadgeEl.innerHTML = '🎓 Flower VocaFlow';
@@ -29036,8 +29521,10 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
             vipTier: getUserVipTier(),
             vipExpiresAt: userVipExpiresAt,
             lastActiveAt: Date.now(),
-            lastSync: new Date().toISOString()
+            lastSync: new Date().toISOString(),
+            equippedWardrobe: (typeof getEquippedWardrobe === 'function') ? getEquippedWardrobe() : { frame: 'default', nameEffect: 'default', title: 'default' }
           },
+          equippedWardrobe: (typeof getEquippedWardrobe === 'function') ? getEquippedWardrobe() : { frame: 'default', nameEffect: 'default', title: 'default' },
           studyExp: currentStudyExp,
           level: currentLvlInfo.level,
           lastClaimedLevel: currentLastClaimedLevel,
@@ -29376,6 +29863,11 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
       }
       if (data.isVip !== undefined) {
         applyVipState(!!data.isVip, data.vipTier || 'monthly', Number(data.vipExpiresAt || 0), 'realtime_patch', false);
+      }
+      if (data.equippedWardrobe && typeof data.equippedWardrobe === 'object') {
+        currentUser.equippedWardrobe = data.equippedWardrobe;
+        localStorage.setItem('vocaflow_equipped_wardrobe', JSON.stringify(data.equippedWardrobe));
+        changed = true;
       }
       if (changed) {
         localStorage.setItem(STORAGE_KEY_AUTH, JSON.stringify(currentUser));
@@ -30397,7 +30889,7 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
 
 // =========================================================================
 
-// VOCAFLOW 04-DECKS-MANAGER.JS (v0.10.10-40 Build 341)
+// VOCAFLOW 04-DECKS-MANAGER.JS (v0.10.10-41 Build 342)
 
 // CRUD VocaDeck, Word Card Modal, Excel/JSON Import/Export, SRS & Auto-Flashcards
 
@@ -34399,7 +34891,7 @@ Return ONLY a valid raw JSON 2D array with NO markdown fences:
     window.checkWordTermDuplicate = checkWordTermDuplicate;
 
 // =========================================================================
-// VOCAFLOW 05-QUIZ-ENGINE.JS (v0.10.10-40 Build 341)
+// VOCAFLOW 05-QUIZ-ENGINE.JS (v0.10.10-41 Build 342)
 // Quiz study mode, scoring, question generation, AI explanation & Mistake Notebook
 // =========================================================================
 
@@ -36700,7 +37192,7 @@ Yêu cầu nghiêm ngặt:
 
 
 // =========================================================================
-// VOCAFLOW 06C-WRITING-ENGINE.JS (v0.10.10-40 Build 341 - SENTENCE WRITING LAB VIP)
+// VOCAFLOW 06C-WRITING-ENGINE.JS (v0.10.10-41 Build 342 - SENTENCE WRITING LAB VIP)
 // AI-Powered Writing Lab with Thematic Word Linking & Target Band Aim Polish
 // =========================================================================
 
@@ -38119,7 +38611,7 @@ window.closeWritingResultModal = closeWritingResultModal;
 window.retryWritingWrongWordsOnly = retryWritingWrongWordsOnly;
 
 // =========================================================================
-// VOCAFLOW 06D-CLOZE-ENGINE.JS (v0.10.10-40 Build 341 - EXTENDED LEARNING MODE BETA)
+// VOCAFLOW 06D-CLOZE-ENGINE.JS (v0.10.10-41 Build 342 - EXTENDED LEARNING MODE BETA)
 // Contextual Reading & Cloze Test Passage Generator with Strict JSON Schema
 // =========================================================================
 
@@ -40020,7 +40512,7 @@ window.retryClozeWrongWordsOnly = retryClozeWrongWordsOnly;
 
 
 // =========================================================================
-// VOCAFLOW 06E-DICTATION-ENGINE.JS (v0.10.10-40 Build 341 - SENTENCE DICTATION VIP β)
+// VOCAFLOW 06E-DICTATION-ENGINE.JS (v0.10.10-41 Build 342 - SENTENCE DICTATION VIP β)
 // Full Sentence Dictation Engine with Natural Speech, Speed Slider, AI Scoring & Sequence Alignment
 // =========================================================================
 
@@ -41545,7 +42037,7 @@ function doExecuteExitDictation(done, total) {
 window.exitDictationMode = exitDictationMode;
 
 // =========================================================================
-// VOCAFLOW 06F-TRANSLATION-ENGINE.JS (v0.10.10-40 Build 341 - TRANSLATION LAB VIP β)
+// VOCAFLOW 06F-TRANSLATION-ENGINE.JS (v0.10.10-41 Build 342 - TRANSLATION LAB VIP β)
 // Bidirectional Translation Engine (EN ↔ VI) with Direct Gemini AI Generation, Multi-Tier VocaHint & Balance v3
 // =========================================================================
 
@@ -43086,7 +43578,7 @@ function exitTranslationMode(force = false) {
 window.exitTranslationMode = exitTranslationMode;
 
 // =========================================================================
-// VOCAFLOW 06-SPELLING-ENGINE.JS (v0.10.10-40 Build 341)
+// VOCAFLOW 06-SPELLING-ENGINE.JS (v0.10.10-41 Build 342)
 // Spelling mode, virtual keyboard, syllable clues, phonetics & score calculation
 // =========================================================================
 
@@ -45151,7 +45643,7 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ không có markdown block:
     window.fetchWordFromGemini = fetchWordFromGemini;
 
 // =========================================================================
-// VOCAFLOW 07-SPEAKING-ENGINE.JS (v0.10.10-40 Build 341)
+// VOCAFLOW 07-SPEAKING-ENGINE.JS (v0.10.10-41 Build 342)
 // AI Speaking Lab, MediaRecorder, VAD, Gemini audio analysis, multi-take economy & IndexedDB Best Take
 // =========================================================================
 
@@ -47856,7 +48348,7 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
 
 
 // =========================================================================
-// VOCAFLOW 08-WALLET-ECONOMY.JS (v0.10.10-40 Build 341)
+// VOCAFLOW 08-WALLET-ECONOMY.JS (v0.10.10-41 Build 342)
 // Economy, Wallet, Ledger, Lucky Spin, Cat Meme Reactions, Brain Energy & Study Settlements
 // =========================================================================
 
@@ -50494,7 +50986,7 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
 
 // =========================================================================
 
-// VOCAFLOW 09-AI-MENTOR.JS (v0.10.10-40 Build 341)
+// VOCAFLOW 09-AI-MENTOR.JS (v0.10.10-41 Build 342)
 
 // Gemini AI chatbot, quick chips, quota management, multi-key pool
 
@@ -52100,7 +52592,7 @@ Quy tắc phản hồi quan trọng:
     }
 
 // =========================================================================
-// VOCAFLOW 10-LUCKY-WHEEL.JS (v0.10.10-40 Build 341)
+// VOCAFLOW 10-LUCKY-WHEEL.JS (v0.10.10-41 Build 342)
 // Lucky wheel canvas, spin purchase, rewarded video ads, monetization
 // =========================================================================
 
@@ -53153,7 +53645,7 @@ Quy tắc phản hồi quan trọng:
     }, 1000);
 
 // =========================================================================
-// VOCAFLOW 11-PUBLISHER-STUDIO.JS (v0.10.10-40 Build 341)
+// VOCAFLOW 11-PUBLISHER-STUDIO.JS (v0.10.10-41 Build 342)
 // VocaLib Community Library, VocaStudio publisher portal, deck sharing
 // =========================================================================
 
@@ -65689,7 +66181,7 @@ Quy tắc phản hồi quan trọng:
     }
 // =========================================================================
 
-// VOCAFLOW 12-ACHIEVEMENTS.JS (v0.10.10-40 Build 341)
+// VOCAFLOW 12-ACHIEVEMENTS.JS (v0.10.10-41 Build 342)
 
 // Badges, daily tasks, highlights showcase, notifications, VocaMail, User Guide
 
@@ -68784,8 +69276,812 @@ Quy tắc phản hồi quan trọng:
   window.checkUrlProfileDeepLink = checkUrlProfileDeepLink;
 
 // =========================================================================
+// VOCAFLOW 13-WARDROBE.JS (v0.10.10-41 Build 342)
+// Hệ Thống Tủ Đồ Cá Nhân: Khung Viền Avatar, Hiệu Ứng Tên & Danh Xưng
+// =========================================================================
 
-// VOCAFLOW APP.JS - CORE LIFECYCLE & GLOBAL BRIDGE ENTRY POINT (v0.10.10-40 Build 341)
+(function() {
+  'use strict';
+
+  const STORAGE_KEY_EQUIPPED_WARDROBE = 'vocaflow_equipped_wardrobe';
+
+  // 1. REGISTRY TỦ ĐỒ (REGISTRY OF ALL WARDROBE ITEMS)
+  const VOCAFLOW_WARDROBE_REGISTRY = {
+    frames: [
+      {
+        id: 'default',
+        name: 'Khung Mặc Định',
+        tier: 0,
+        minLevel: 1,
+        desc: 'Viền tròn thanh lịch cơ bản của mọi Flower.',
+        badge: 'Mặc định',
+        badgeColor: '#10b981',
+        icon: '⚪'
+      },
+      {
+        id: 'bronze',
+        name: 'Khung Đồng Sơ Cấp',
+        tier: 1,
+        minLevel: 10,
+        desc: 'Huy hiệu sao đồng & đinh tán cổ phong chạm khắc.',
+        badge: 'Cấp 10+',
+        badgeColor: '#cd7f32',
+        icon: '🥉'
+      },
+      {
+        id: 'silver',
+        name: 'Khung Bạc Tinh Xảo',
+        tier: 2,
+        minLevel: 20,
+        desc: 'Cánh chim bạch kim & hoa văn hiệp sĩ thanh lịch.',
+        badge: 'Cấp 20+',
+        badgeColor: '#e0e0e0',
+        icon: '🥈'
+      },
+      {
+        id: 'gold',
+        name: 'Khung Vàng Hoàng Gia',
+        tier: 3,
+        minLevel: 30,
+        desc: 'Vương miện hoàng kim 12h & nạm ngọc ruby đáy khiên.',
+        badge: 'Cấp 30+',
+        badgeColor: '#ffd700',
+        icon: '🥇'
+      },
+      {
+        id: 'diamond',
+        name: 'Khung Lam Ngọc',
+        tier: 4,
+        minLevel: 40,
+        desc: 'Giác cắt kim cương 3D bất đối xứng & hào quang lam ngọc.',
+        badge: 'Cấp 40+',
+        badgeColor: '#00e5ff',
+        icon: '💎'
+      },
+      {
+        id: 'mythic',
+        name: 'Rồng Hồng Thần Thoại',
+        tier: 5,
+        minLevel: 50,
+        desc: 'Rồng hồng thần thoại quấn quanh, cánh dơi & khè lửa plasma.',
+        badge: 'Cấp 50 MAX',
+        badgeColor: '#ff007f',
+        icon: '🐉'
+      }
+    ],
+    nameEffects: [
+      {
+        id: 'default',
+        name: 'Tên Mặc Định',
+        tier: 0,
+        minLevel: 1,
+        desc: 'Chữ tiêu chuẩn sắc nét nguyên bản.',
+        badge: 'Mặc định',
+        badgeColor: '#10b981',
+        icon: '📝'
+      },
+      {
+        id: 'bronze',
+        name: 'Tên Đồng Sơ Cấp',
+        tier: 1,
+        minLevel: 10,
+        desc: 'Ánh đồng trầm ấm cổ điển, text-shadow ấm áp.',
+        badge: 'Cấp 10+',
+        badgeColor: '#cd7f32',
+        icon: '🥉'
+      },
+      {
+        id: 'silver',
+        name: 'Tên Bạc Tinh Xảo',
+        tier: 2,
+        minLevel: 20,
+        desc: 'Ánh kim bạch kim phát sáng huyền ảo khi rê chuột.',
+        badge: 'Cấp 20+',
+        badgeColor: '#e0e0e0',
+        icon: '🥈'
+      },
+      {
+        id: 'gold',
+        name: 'Tên Vàng Hoàng Gia',
+        tier: 3,
+        minLevel: 30,
+        desc: 'Gradient hoàng kim quét động & lấp lánh Blink Blink (✨).',
+        badge: 'Cấp 30+',
+        badgeColor: '#ffd700',
+        icon: '🥇'
+      },
+      {
+        id: 'diamond',
+        name: 'Tên Lam Ngọc',
+        tier: 4,
+        minLevel: 40,
+        desc: 'Neon xanh băng, tia phản quang & đốm sáng kim cương.',
+        badge: 'Cấp 40+',
+        badgeColor: '#00e5ff',
+        icon: '💎'
+      },
+      {
+        id: 'mythic',
+        name: 'Tên Thần Thoại Conic',
+        tier: 5,
+        minLevel: 50,
+        desc: 'Hồng neon Cyberpunk, hiệu ứng Glitch 2 màu & ngọn lửa hồng.',
+        badge: 'Cấp 50 MAX',
+        badgeColor: '#ff007f',
+        icon: '🐉'
+      }
+    ],
+    titles: [
+      {
+        id: 'default',
+        name: 'Flower VocaFlow',
+        tag: '🎓 Flower VocaFlow',
+        minLevel: 1,
+        desc: 'Danh xưng khởi đầu của mọi Flower rèn luyện từ vựng.',
+        badge: 'Mặc định',
+        color: '#10b981'
+      },
+      {
+        id: 'lv10',
+        name: 'Tập Sự',
+        tag: '🌱 Tập Sự',
+        minLevel: 10,
+        desc: 'Chạm mốc Cấp 10 - Tinh thần học tập khởi sắc.',
+        badge: 'Cấp 10+',
+        color: '#f59e0b'
+      },
+      {
+        id: 'lv20',
+        name: 'Am Hiểu',
+        tag: '⚡ Am Hiểu',
+        minLevel: 20,
+        desc: 'Chạm mốc Cấp 20 - Vốn từ vựng vững vàng.',
+        badge: 'Cấp 20+',
+        color: '#38bdf8'
+      },
+      {
+        id: 'lv30',
+        name: 'Chuyên Gia',
+        tag: '🔥 Chuyên Gia',
+        minLevel: 30,
+        desc: 'Chạm mốc Cấp 30 - Làm chủ các kỹ năng ngôn ngữ.',
+        badge: 'Cấp 30+',
+        color: '#ec4899'
+      },
+      {
+        id: 'lv40',
+        name: 'Bậc Thầy',
+        tag: '👑 Bậc Thầy',
+        minLevel: 40,
+        desc: 'Chạm mốc Cấp 40 - Đẳng cấp rèn luyện xuất chúng.',
+        badge: 'Cấp 40+',
+        color: '#a855f7'
+      },
+      {
+        id: 'lv50',
+        name: 'Huyền Thoại',
+        tag: '🌟 Huyền Thoại',
+        minLevel: 50,
+        desc: 'Chạm mốc Cấp 50 Tối Thượng - Đỉnh cao tri thức Flower.',
+        badge: 'Cấp 50 MAX',
+        color: '#eab308'
+      }
+    ]
+  };
+  window.VOCAFLOW_WARDROBE_REGISTRY = VOCAFLOW_WARDROBE_REGISTRY;
+
+  let activeWardrobeTab = 'frames';
+  let wardrobePreviewState = null;
+
+  // 2. STATE STORAGE & RETRIEVAL
+  function getEquippedWardrobe() {
+    try {
+      if (typeof currentUser !== 'undefined' && currentUser && currentUser.equippedWardrobe && typeof currentUser.equippedWardrobe === 'object') {
+        return {
+          frame: currentUser.equippedWardrobe.frame || 'default',
+          nameEffect: currentUser.equippedWardrobe.nameEffect || 'default',
+          title: currentUser.equippedWardrobe.title || 'default'
+        };
+      }
+      const raw = localStorage.getItem(STORAGE_KEY_EQUIPPED_WARDROBE);
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        if (parsed && typeof parsed === 'object') {
+          return {
+            frame: parsed.frame || 'default',
+            nameEffect: parsed.nameEffect || 'default',
+            title: parsed.title || 'default'
+          };
+        }
+      }
+    } catch (e) {
+      console.warn('Error reading equipped wardrobe:', e);
+    }
+    return { frame: 'default', nameEffect: 'default', title: 'default' };
+  }
+  window.getEquippedWardrobe = getEquippedWardrobe;
+
+  function setEquippedWardrobe(equippedObj) {
+    if (!equippedObj || typeof equippedObj !== 'object') return;
+    const clean = {
+      frame: equippedObj.frame || 'default',
+      nameEffect: equippedObj.nameEffect || 'default',
+      title: equippedObj.title || 'default',
+      updatedAt: new Date().toISOString()
+    };
+    localStorage.setItem(STORAGE_KEY_EQUIPPED_WARDROBE, JSON.stringify(clean));
+    if (typeof currentUser !== 'undefined' && currentUser) {
+      currentUser.equippedWardrobe = clean;
+      localStorage.setItem('vocaflow_auth_user', JSON.stringify(currentUser));
+    }
+    applyWardrobeToActiveUI();
+    if (typeof pushCurrentDatabaseToCloud === 'function') {
+      pushCurrentDatabaseToCloud();
+    }
+  }
+  window.setEquippedWardrobe = setEquippedWardrobe;
+
+  function isWardrobeItemUnlocked(category, itemId) {
+    if (!itemId || itemId === 'default') return true;
+    const userLevel = (typeof getCurrentUserLevelInfo === 'function') ? getCurrentUserLevelInfo().level : 1;
+    const list = VOCAFLOW_WARDROBE_REGISTRY[category] || [];
+    const item = list.find(i => i.id === itemId);
+    if (!item) return false;
+    return userLevel >= (item.minLevel || 1);
+  }
+  window.isWardrobeItemUnlocked = isWardrobeItemUnlocked;
+
+  function equipWardrobeItem(category, itemId) {
+    if (!isWardrobeItemUnlocked(category, itemId)) {
+      if (typeof showToast === 'function') {
+        const item = (VOCAFLOW_WARDROBE_REGISTRY[category] || []).find(i => i.id === itemId);
+        showToast(`🔒 Cần đạt Cấp độ ${item ? item.minLevel : 10} để trang bị vật phẩm này!`);
+      }
+      return;
+    }
+    const current = getEquippedWardrobe();
+    current[category === 'frames' ? 'frame' : (category === 'nameEffects' ? 'nameEffect' : 'title')] = itemId;
+    setEquippedWardrobe(current);
+    wardrobePreviewState = { ...current };
+    renderWardrobePreview();
+    renderWardrobeTabContent(activeWardrobeTab);
+
+    if (typeof playSfx === 'function') playSfx('award');
+    if (typeof showToast === 'function') {
+      const item = (VOCAFLOW_WARDROBE_REGISTRY[category] || []).find(i => i.id === itemId);
+      showToast(`✨ Đã trang bị thành công: ${item ? item.name : itemId}!`);
+    }
+  }
+  window.equipWardrobeItem = equipWardrobeItem;
+
+  function unequipWardrobeItem(category) {
+    const current = getEquippedWardrobe();
+    current[category === 'frames' ? 'frame' : (category === 'nameEffects' ? 'nameEffect' : 'title')] = 'default';
+    setEquippedWardrobe(current);
+    wardrobePreviewState = { ...current };
+    renderWardrobePreview();
+    renderWardrobeTabContent(activeWardrobeTab);
+
+    if (typeof playSfx === 'function') playSfx('click');
+    if (typeof showToast === 'function') {
+      showToast(`🔄 Đã gỡ trang bị, trở về mặc định.`);
+    }
+  }
+  window.unequipWardrobeItem = unequipWardrobeItem;
+
+  function previewWardrobeItem(category, itemId) {
+    if (!wardrobePreviewState) wardrobePreviewState = { ...getEquippedWardrobe() };
+    wardrobePreviewState[category === 'frames' ? 'frame' : (category === 'nameEffects' ? 'nameEffect' : 'title')] = itemId;
+    renderWardrobePreview(wardrobePreviewState);
+  }
+  window.previewWardrobeItem = previewWardrobeItem;
+
+  // 3. UNIVERSAL RENDERING HELPERS
+  function renderAvatarWithFrameHtml(avatarVal, size = 64, frameId = null, extraClasses = '') {
+    const fId = frameId || getEquippedWardrobe().frame || 'default';
+    const innerSize = Math.round(size * 0.76);
+    const avHtml = (typeof renderAvatarHtml === 'function')
+      ? renderAvatarHtml(avatarVal, innerSize, Math.round(innerSize * 0.45))
+      : `<span style="font-size:${Math.round(innerSize*0.45)}px;">👤</span>`;
+
+    let overlaySvg = '';
+
+    if (fId === 'bronze') {
+      overlaySvg = `
+        <svg class="vf-avatar-frame-svg" viewBox="0 0 600 600" style="filter: drop-shadow(0 2px 8px rgba(205, 127, 50, 0.4));">
+          <defs>
+            <linearGradient id="vfBronzeGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#f5b041" />
+              <stop offset="25%" stop-color="#ba4a00" />
+              <stop offset="50%" stop-color="#f8c471" />
+              <stop offset="75%" stop-color="#7e380e" />
+              <stop offset="100%" stop-color="#e59866" />
+            </linearGradient>
+            <linearGradient id="vfBronzeStarGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#fff2a8" /><stop offset="50%" stop-color="#f39c12" /><stop offset="100%" stop-color="#a04000" />
+            </linearGradient>
+          </defs>
+          <circle cx="300" cy="300" r="236" fill="none" stroke="url(#vfBronzeGrad)" stroke-width="26" />
+          <circle cx="300" cy="300" r="252" fill="none" stroke="#f8c471" stroke-width="4" opacity="0.8" />
+          <g fill="#fbeee6" stroke="#4a2108" stroke-width="2">
+            <circle cx="300" cy="54" r="7" /><circle cx="474" cy="126" r="7" /><circle cx="546" cy="300" r="7" /><circle cx="474" cy="474" r="7" />
+            <circle cx="126" cy="474" r="7" /><circle cx="54" cy="300" r="7" /><circle cx="126" cy="126" r="7" />
+          </g>
+          <g transform="translate(0, -10)">
+            <path d="M 200,530 L 400,530 L 415,555 L 300,595 L 185,555 Z" fill="#1e0c04" stroke="url(#vfBronzeGrad)" stroke-width="6" />
+            <path d="M 300,540 L 306,555 L 322,555 L 309,565 L 314,580 L 300,570 L 286,580 L 291,565 L 278,555 L 294,555 Z" fill="url(#vfBronzeStarGrad)" stroke="#fff" stroke-width="1" />
+          </g>
+        </svg>
+      `;
+    } else if (fId === 'silver') {
+      overlaySvg = `
+        <svg class="vf-avatar-frame-svg" viewBox="0 0 600 600" style="filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.35));">
+          <defs>
+            <linearGradient id="vfSilverGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#ffffff" /><stop offset="25%" stop-color="#95a5a6" /><stop offset="50%" stop-color="#ecf0f1" /><stop offset="75%" stop-color="#7f8c8d" /><stop offset="100%" stop-color="#dcdde1" />
+            </linearGradient>
+            <linearGradient id="vfSilverStarGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#ffffff" /><stop offset="50%" stop-color="#dcdde1" /><stop offset="100%" stop-color="#718093" />
+            </linearGradient>
+          </defs>
+          <circle cx="300" cy="300" r="236" fill="none" stroke="url(#vfSilverGrad)" stroke-width="24" />
+          <circle cx="300" cy="300" r="252" fill="none" stroke="#ffffff" stroke-width="3" stroke-dasharray="20 14 6 14" opacity="0.85" />
+          <g fill="#ffffff">
+            <polygon points="300,42 310,58 290,58" /><polygon points="558,300 542,310 542,290" /><polygon points="42,300 58,290 58,310" />
+          </g>
+          <g transform="translate(0, -10)">
+            <path d="M 190,530 L 410,530 Q 435,550 405,575 L 300,598 L 195,575 Q 165,550 190,530 Z" fill="#111620" stroke="url(#vfSilverGrad)" stroke-width="5" />
+            <path d="M 180,540 C 135,530 105,550 90,570 C 120,570 160,560 190,555 Z" fill="url(#vfSilverGrad)" stroke="#57606f" stroke-width="1.5" />
+            <path d="M 420,540 C 465,530 495,550 510,570 C 480,570 440,560 410,555 Z" fill="url(#vfSilverGrad)" stroke="#57606f" stroke-width="1.5" />
+            <path d="M 280,546 L 284,558 L 297,558 L 286,566 L 290,578 L 280,570 L 270,578 L 274,566 L 263,558 L 276,558 Z" fill="url(#vfSilverStarGrad)" stroke="#ffffff" stroke-width="1" />
+            <path d="M 320,546 L 324,558 L 337,558 L 326,566 L 330,578 L 320,570 L 310,578 L 314,566 L 303,558 L 316,558 Z" fill="url(#vfSilverStarGrad)" stroke="#ffffff" stroke-width="1" />
+          </g>
+        </svg>
+      `;
+    } else if (fId === 'gold') {
+      overlaySvg = `
+        <svg class="vf-avatar-frame-svg" viewBox="0 0 600 600" style="filter: drop-shadow(0 0 12px rgba(241, 196, 15, 0.55));">
+          <defs>
+            <linearGradient id="vfGoldRingGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#fff6bd" /><stop offset="20%" stop-color="#f1c40f" /><stop offset="45%" stop-color="#b78516" /><stop offset="70%" stop-color="#fef3a3" /><stop offset="100%" stop-color="#8a5e04" />
+            </linearGradient>
+            <linearGradient id="vfGoldStarGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#ffffff" /><stop offset="35%" stop-color="#fff176" /><stop offset="70%" stop-color="#f59e0b" /><stop offset="100%" stop-color="#b45309" />
+            </linearGradient>
+          </defs>
+          <circle cx="300" cy="300" r="236" fill="none" stroke="url(#vfGoldRingGrad)" stroke-width="26" />
+          <circle cx="300" cy="300" r="254" fill="none" stroke="#fff3a8" stroke-width="3.5" stroke-dasharray="24 16" />
+          <g transform="translate(300, 38)" fill="url(#vfGoldRingGrad)" stroke="#fff" stroke-width="1.2">
+            <path d="M -32,20 L -40,-6 L -14,8 L 0,-18 L 14,8 L 40,-6 L 32,20 Z" />
+            <circle cx="0" cy="-18" r="4.5" fill="#ffffff" /><circle cx="-40" cy="-6" r="3.5" fill="#ffffff" /><circle cx="40" cy="-6" r="3.5" fill="#ffffff" />
+            <circle cx="0" cy="6" r="4.5" fill="#e74c3c" stroke="none" />
+          </g>
+          <g transform="translate(0, -10)">
+            <path d="M 180,530 L 420,530 L 438,558 L 300,600 L 162,558 Z" fill="#1b1202" stroke="url(#vfGoldRingGrad)" stroke-width="6" />
+            <path d="M 160,540 C 110,520 80,550 60,575 C 98,582 135,568 165,560 Z" fill="url(#vfGoldRingGrad)" stroke="#784a0a" stroke-width="2" />
+            <path d="M 440,540 C 490,520 520,550 540,575 C 502,582 465,568 435,560 Z" fill="url(#vfGoldRingGrad)" stroke="#784a0a" stroke-width="2" />
+            <circle cx="300" cy="586" r="5" fill="#e74c3c" stroke="#ffffff" stroke-width="1.2" />
+            <path d="M 255,548 L 259,558 L 270,558 L 261,565 L 264,575 L 255,569 L 246,575 L 249,565 L 240,558 L 251,558 Z" fill="url(#vfGoldStarGrad)" stroke="#ffffff" stroke-width="1" />
+            <path d="M 300,538 L 305,551 L 319,551 L 308,559 L 312,573 L 300,564 L 288,573 L 292,559 L 281,551 L 295,551 Z" fill="url(#vfGoldStarGrad)" stroke="#ffffff" stroke-width="1.2" />
+            <path d="M 345,548 L 349,558 L 360,558 L 351,565 L 354,575 L 345,569 L 336,575 L 339,565 L 330,558 L 341,558 Z" fill="url(#vfGoldStarGrad)" stroke="#ffffff" stroke-width="1" />
+          </g>
+        </svg>
+      `;
+    } else if (fId === 'diamond') {
+      overlaySvg = `
+        <svg class="vf-avatar-frame-svg" viewBox="0 0 600 600" style="filter: drop-shadow(0 0 14px rgba(0, 229, 255, 0.6));">
+          <defs>
+            <linearGradient id="vfDiaRingGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#ffffff" /><stop offset="25%" stop-color="#00e5ff" /><stop offset="50%" stop-color="#e0f7fa" /><stop offset="75%" stop-color="#0091ea" /><stop offset="100%" stop-color="#00b0ff" />
+            </linearGradient>
+            <linearGradient id="vfGemLight" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#ffffff" /><stop offset="60%" stop-color="#80deea" /><stop offset="100%" stop-color="#00acc1" />
+            </linearGradient>
+            <linearGradient id="vfGemDark" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#4dd0e1" /><stop offset="60%" stop-color="#00838f" /><stop offset="100%" stop-color="#004d40" />
+            </linearGradient>
+          </defs>
+          <circle cx="300" cy="300" r="238" fill="none" stroke="url(#vfDiaRingGrad)" stroke-width="22" />
+          <circle cx="300" cy="300" r="256" fill="none" stroke="#ffffff" stroke-width="3" stroke-dasharray="14 26 50 26" opacity="0.85" />
+          <!-- Top Right Asymmetrical Gems -->
+          <g transform="translate(425, 145) rotate(22)" filter="drop-shadow(0 0 8px #00e5ff)">
+            <polygon points="0,-36 30,-15 30,22 0,42 -30,22 -30,-15" fill="#ffffff" stroke="#e0f7fa" stroke-width="1.8" />
+            <polygon points="0,-36 30,-15 46,-38 0,-52" fill="url(#vfGemLight)" stroke="#ffffff" stroke-width="1.2" />
+            <polygon points="30,-15 30,22 58,12 46,-38" fill="url(#vfGemDark)" stroke="#ffffff" stroke-width="1.2" />
+            <polygon points="30,22 0,42 22,58 58,12" fill="url(#vfGemDark)" stroke="#ffffff" stroke-width="1.2" />
+            <polygon points="0,42 -30,22 -22,58 22,58" fill="url(#vfGemLight)" stroke="#ffffff" stroke-width="1.2" />
+            <polygon points="-30,22 -30,-15 -58,12 -22,58" fill="url(#vfGemDark)" stroke="#ffffff" stroke-width="1.2" />
+            <polygon points="-30,-15 0,-36 -46,-38 -58,12" fill="url(#vfGemLight)" stroke="#ffffff" stroke-width="1.2" />
+          </g>
+          <!-- Bottom Left Asymmetrical Crystals -->
+          <g transform="translate(145, 445) rotate(-38)" filter="drop-shadow(0 0 8px #00e5ff)">
+            <polygon points="0,-42 18,0 0,42 -18,0" fill="url(#vfGemLight)" stroke="#ffffff" stroke-width="1.8" />
+            <polygon points="0,-42 18,0 0,0" fill="#ffffff" opacity="0.85" />
+            <polygon points="0,0 18,0 0,42" fill="url(#vfGemDark)" />
+            <polygon points="0,-42 -18,0 0,0" fill="url(#vfGemDark)" />
+            <polygon points="0,0 -18,0 0,42" fill="#00acc1" />
+          </g>
+          <path class="diamond-glint" d="M 450,120 Q 450,138 450,156 Q 450,138 468,138 Q 450,138 450,120 Z" fill="#ffffff" />
+          <path class="diamond-glint" d="M 120,460 Q 120,472 120,484 Q 120,472 132,472 Q 120,472 120,460 Z" fill="#ffffff" />
+        </svg>
+      `;
+    } else if (fId === 'mythic') {
+      overlaySvg = `
+        <svg class="vf-avatar-frame-svg" viewBox="0 0 600 600" style="filter: drop-shadow(0 0 16px rgba(255, 0, 127, 0.65));">
+          <defs>
+            <filter id="vfMythicGlow" x="-30%" y="-30%" width="160%" height="160%">
+              <feGaussianBlur stdDeviation="6" result="b1" /><feGaussianBlur stdDeviation="16" result="b2" />
+              <feMerge><feMergeNode in="b2" /><feMergeNode in="b1" /><feMergeNode in="SourceGraphic" /></feMerge>
+            </filter>
+            <linearGradient id="vfDragonScales" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#fff0f8" /><stop offset="25%" stop-color="#ff3399" /><stop offset="65%" stop-color="#99004d" /><stop offset="100%" stop-color="#2b0016" />
+            </linearGradient>
+            <linearGradient id="vfDragonHorn" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#ffffff" /><stop offset="40%" stop-color="#ffb8db" /><stop offset="85%" stop-color="#a60053" />
+            </linearGradient>
+            <linearGradient id="vfPlasmaFire" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#ffffff" /><stop offset="20%" stop-color="#ffb3da" /><stop offset="55%" stop-color="#ff007f" /><stop offset="85%" stop-color="#99004d" /><stop offset="100%" stop-color="#ff007f" stop-opacity="0" />
+            </linearGradient>
+          </defs>
+          <g filter="url(#vfMythicGlow)">
+            <circle cx="300" cy="300" r="238" fill="none" stroke="#ff007f" stroke-width="8" stroke-linecap="round" />
+            <circle cx="300" cy="300" r="248" fill="none" stroke="#ff99cc" stroke-width="2.5" stroke-dasharray="10 18 4 18" opacity="0.8" />
+          </g>
+          <!-- Dragon Tail & Wings -->
+          <g filter="url(#vfMythicGlow)">
+            <path d="M 165,415 C 120,465 155,530 220,535 C 275,540 280,488 240,480 C 185,465 155,395 133,325 C 124,295 125,265 128,240" fill="none" stroke="url(#vfDragonScales)" stroke-width="26" stroke-linecap="round" />
+            <!-- Dragon Wing at 10h -->
+            <path d="M 165,190 Q 110,120 45,85 Q 25,75 5,90 Q 30,105 75,135 Q 115,175 140,225 Z" fill="url(#vfDragonScales)" />
+            <!-- Dragon Head & Horns at 12h -->
+            <path d="M 128,245 C 120,175 155,128 200,95 C 215,85 232,85 245,95 C 230,115 205,140 185,185 C 170,220 160,250 155,270 Z" fill="url(#vfDragonScales)" />
+            <path d="M 228,75 C 220,28 175,-8 118,0 C 160,18 200,48 215,82 Z" fill="url(#vfDragonHorn)" stroke="#ffffff" stroke-width="2" />
+            <path d="M 255,85 C 285,92 320,110 340,125 C 305,125 275,110 245,95 Z" fill="url(#vfDragonScales)" />
+            <ellipse cx="262" cy="94" rx="8" ry="5" transform="rotate(-15, 262, 94)" class="mythic-eye" fill="#ffccd9" />
+          </g>
+          <!-- Dragon Plasma Fire Stream Group -->
+          <g class="dragon-fire-layer" filter="url(#vfMythicGlow)">
+            <path d="M 320,130 C 375,100 455,105 515,160 C 575,215 590,305 560,395 C 530,470 465,530 385,555 C 440,512 470,470 480,405 C 495,310 465,225 400,175 C 368,150 332,138 320,130 Z" fill="url(#vfPlasmaFire)" />
+            <circle cx="335" cy="133" r="20" fill="#ffffff" />
+            <circle cx="335" cy="133" r="12" fill="#ffb8db" />
+          </g>
+        </svg>
+      `;
+    } else {
+      // Default circular ring
+      overlaySvg = `
+        <svg class="vf-avatar-frame-svg" viewBox="0 0 600 600">
+          <circle cx="300" cy="300" r="236" fill="none" stroke="rgba(255, 255, 255, 0.22)" stroke-width="12" />
+        </svg>
+      `;
+    }
+
+    return `
+      <div class="vf-avatar-frame-box ${extraClasses}" style="width: ${size}px; height: ${size}px;">
+        <div class="vf-avatar-inner-circle" style="width: ${innerSize}px; height: ${innerSize}px;">
+          ${avHtml}
+        </div>
+        ${overlaySvg}
+      </div>
+    `;
+  }
+  window.renderAvatarWithFrameHtml = renderAvatarWithFrameHtml;
+
+  function renderUsernameWithEffectHtml(rawName, effectId = null, extraClasses = '') {
+    const eId = effectId || getEquippedWardrobe().nameEffect || 'default';
+    const cleanName = (typeof rawName === 'string' && rawName.trim()) ? rawName.trim() : 'Flower';
+    const safeEscaped = (typeof escapeHtml === 'function') ? escapeHtml(cleanName) : cleanName;
+
+    if (eId === 'bronze') {
+      return `<span class="vf-name-wrapper ${extraClasses}"><strong class="tier-bronze">${safeEscaped}</strong></span>`;
+    }
+    if (eId === 'silver') {
+      return `<span class="vf-name-wrapper ${extraClasses}"><strong class="tier-silver">${safeEscaped}</strong></span>`;
+    }
+    if (eId === 'gold') {
+      return `
+        <span class="vf-name-wrapper ${extraClasses}">
+          <strong class="tier-gold">${safeEscaped}</strong>
+          <svg class="gold-svg-overlay" viewBox="0 0 230 44">
+            <defs>
+              <linearGradient id="vfGoldSparkleGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#ffffff" /><stop offset="60%" stop-color="#ffd700" /><stop offset="100%" stop-color="#ff9900" />
+              </linearGradient>
+            </defs>
+            <path class="gold-sparkle gold-sparkle-1" d="M 25,12 Q 25,18 25,24 Q 25,18 31,18 Q 25,18 25,12 Z" fill="url(#vfGoldSparkleGrad)" />
+            <path class="gold-sparkle gold-sparkle-2" d="M 115,8 Q 115,16 115,24 Q 115,16 123,16 Q 115,16 115,8 Z" fill="url(#vfGoldSparkleGrad)" />
+            <path class="gold-sparkle gold-sparkle-3" d="M 195,20 Q 195,27 195,34 Q 195,27 202,27 Q 195,27 195,20 Z" fill="url(#vfGoldSparkleGrad)" />
+            <path class="gold-sparkle gold-sparkle-4" d="M 65,28 Q 65,33 65,38 Q 65,33 70,33 Q 65,33 65,28 Z" fill="url(#vfGoldSparkleGrad)" />
+          </svg>
+        </span>
+      `;
+    }
+    if (eId === 'diamond') {
+      return `
+        <span class="vf-name-wrapper ${extraClasses}">
+          <strong class="tier-diamond">${safeEscaped}</strong>
+          <svg class="diamond-svg-overlay" viewBox="0 0 230 44">
+            <defs>
+              <linearGradient id="vfDiaSweepGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stop-color="#ffffff" stop-opacity="0" />
+                <stop offset="50%" stop-color="#ffffff" stop-opacity="0.95" />
+                <stop offset="100%" stop-color="#00e5ff" stop-opacity="0" />
+              </linearGradient>
+            </defs>
+            <rect class="diamond-sweep-beam" x="-30" y="2" width="28" height="40" fill="url(#vfDiaSweepGrad)" opacity="0" />
+            <g class="diamond-sparkle sparkle-1"><circle cx="20" cy="14" r="2.5" fill="#ffffff" /><circle cx="20" cy="14" r="5" fill="#00e5ff" opacity="0.4" /></g>
+            <g class="diamond-sparkle sparkle-2"><circle cx="110" cy="8" r="3" fill="#ffffff" /><circle cx="110" cy="8" r="6" fill="#00e5ff" opacity="0.4" /></g>
+            <g class="diamond-sparkle sparkle-3"><circle cx="190" cy="18" r="2.5" fill="#ffffff" /><circle cx="190" cy="18" r="5" fill="#00e5ff" opacity="0.4" /></g>
+            <g class="diamond-sparkle sparkle-4"><circle cx="70" cy="30" r="2" fill="#ffffff" /></g>
+            <g class="diamond-sparkle sparkle-5"><circle cx="150" cy="32" r="2" fill="#ffffff" /></g>
+          </svg>
+        </span>
+      `;
+    }
+    if (eId === 'mythic') {
+      return `
+        <span class="vf-name-wrapper ${extraClasses}">
+          <strong class="tier-legendary" data-text="${safeEscaped}">${safeEscaped}</strong>
+          <div class="legendary-flame-container">
+            <svg class="flame-wave-svg" viewBox="0 0 320 80">
+              <defs>
+                <linearGradient id="vfWaveFlameGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop offset="0%" stop-color="#ff007f" stop-opacity="0" />
+                  <stop offset="25%" stop-color="#ff007f" stop-opacity="0.6" />
+                  <stop offset="50%" stop-color="#ff66b2" stop-opacity="0.9" />
+                  <stop offset="75%" stop-color="#ff007f" stop-opacity="0.6" />
+                  <stop offset="100%" stop-color="#ff007f" stop-opacity="0" />
+                </linearGradient>
+              </defs>
+              <g class="flame-sweep-group">
+                <path d="M 10,45 Q 60,15 110,45 T 210,45 T 310,45 Q 260,70 160,70 Q 60,70 10,45 Z" fill="url(#vfWaveFlameGrad)" />
+              </g>
+            </svg>
+          </div>
+        </span>
+      `;
+    }
+
+    return `<span class="vf-name-wrapper ${extraClasses}"><strong style="color: var(--text);">${safeEscaped}</strong></span>`;
+  }
+  window.renderUsernameWithEffectHtml = renderUsernameWithEffectHtml;
+
+  function getTitleBadgeHtml(titleId = null) {
+    const tId = titleId || getEquippedWardrobe().title || 'default';
+    const list = VOCAFLOW_WARDROBE_REGISTRY.titles;
+    const item = list.find(t => t.id === tId) || list[0];
+    const col = item.color || '#10b981';
+
+    return `
+      <span class="badge" style="font-size: 11px; font-weight: 700; padding: 2.5px 8px; border-radius: 6px; background: ${col}20; color: ${col}; border: 1px solid ${col}50;">
+        ${escapeHtml(item.tag)}
+      </span>
+    `;
+  }
+  window.getTitleBadgeHtml = getTitleBadgeHtml;
+
+  // 4. APPLY EQUIPPED WARDROBE ACROSS ACTIVE APP UI
+  function applyWardrobeToActiveUI() {
+    const equipped = getEquippedWardrobe();
+    const userAvatar = (typeof getUserAvatar === 'function') ? getUserAvatar() : (currentUser?.avatar || '👤');
+    const userName = (currentUser && currentUser.displayName) ? currentUser.displayName : (localStorage.getItem('vocaflow_user_name') || 'Khách');
+
+    // 1. Profile Modal
+    const profAv = document.getElementById('profile-avatar');
+    if (profAv) {
+      profAv.innerHTML = renderAvatarWithFrameHtml(userAvatar, 88, equipped.frame, 'hoverable');
+      profAv.style.border = 'none';
+      profAv.style.background = 'transparent';
+      profAv.style.boxShadow = 'none';
+    }
+    const profName = document.getElementById('profile-name');
+    if (profName) {
+      profName.innerHTML = renderUsernameWithEffectHtml(userName, equipped.nameEffect);
+    }
+    const profBadge = document.getElementById('profile-badge');
+    if (profBadge) {
+      const activeTitle = VOCAFLOW_WARDROBE_REGISTRY.titles.find(t => t.id === equipped.title) || VOCAFLOW_WARDROBE_REGISTRY.titles[0];
+      profBadge.textContent = activeTitle.tag;
+      profBadge.style.background = `${activeTitle.color}25`;
+      profBadge.style.color = activeTitle.color;
+      profBadge.style.borderColor = `${activeTitle.color}60`;
+    }
+
+    // 2. Header Desktop & Mobile
+    const headerAv = document.getElementById('user-avatar-icon');
+    if (headerAv) {
+      headerAv.innerHTML = renderAvatarWithFrameHtml(userAvatar, 26, equipped.frame);
+    }
+    const headerName = document.getElementById('user-display-name');
+    if (headerName) {
+      headerName.innerHTML = renderUsernameWithEffectHtml(userName, equipped.nameEffect);
+    }
+    const mobileAv = document.getElementById('user-avatar-icon-mobile');
+    if (mobileAv) {
+      mobileAv.innerHTML = renderAvatarWithFrameHtml(userAvatar, 26, equipped.frame);
+    }
+  }
+  window.applyWardrobeToActiveUI = applyWardrobeToActiveUI;
+
+  // 5. MODAL & TAB LOGIC
+  function openWardrobeModal(defaultTab = 'frames') {
+    if (typeof closeModal === 'function') {
+      closeModal('modal-profile');
+    }
+    wardrobePreviewState = { ...getEquippedWardrobe() };
+    activeWardrobeTab = defaultTab || 'frames';
+
+    if (typeof openModal === 'function') {
+      openModal('modal-wardrobe');
+    } else {
+      const el = document.getElementById('modal-wardrobe');
+      if (el) el.classList.add('active');
+    }
+
+    renderWardrobePreview();
+    switchWardrobeTab(activeWardrobeTab);
+  }
+  window.openWardrobeModal = openWardrobeModal;
+
+  function switchWardrobeTab(tabName) {
+    activeWardrobeTab = tabName || 'frames';
+    const tabBtns = ['frames', 'nameEffects', 'titles'];
+    tabBtns.forEach(t => {
+      const btn = document.getElementById(`wardrobe-tab-btn-${t}`);
+      if (btn) {
+        if (t === activeWardrobeTab) btn.classList.add('active');
+        else btn.classList.remove('active');
+      }
+    });
+
+    renderWardrobeTabContent(activeWardrobeTab);
+  }
+  window.switchWardrobeTab = switchWardrobeTab;
+
+  function renderWardrobePreview(previewOverride = null) {
+    const state = previewOverride || wardrobePreviewState || getEquippedWardrobe();
+    const userAvatar = (typeof getUserAvatar === 'function') ? getUserAvatar() : (currentUser?.avatar || '👤');
+    const userName = (currentUser && currentUser.displayName) ? currentUser.displayName : (localStorage.getItem('vocaflow_user_name') || 'Flower VocaFlow');
+    const userLvlInfo = (typeof getCurrentUserLevelInfo === 'function') ? getCurrentUserLevelInfo() : { level: 1, totalExp: 0 };
+
+    // Update level pill
+    const lvlPill = document.getElementById('wardrobe-user-level-pill');
+    if (lvlPill) {
+      lvlPill.textContent = userLvlInfo.isMaxLevel ? `👑 Lv.50 MAX (${userLvlInfo.totalExp.toLocaleString()} EXP)` : `⭐ Lv.${userLvlInfo.level} (${userLvlInfo.totalExp.toLocaleString()} EXP)`;
+    }
+
+    // Update avatar with frame
+    const avContainer = document.getElementById('wardrobe-preview-avatar-container');
+    if (avContainer) {
+      avContainer.innerHTML = renderAvatarWithFrameHtml(userAvatar, 130, state.frame, 'hoverable');
+    }
+
+    // Update username with name effect
+    const nameContainer = document.getElementById('wardrobe-preview-name');
+    if (nameContainer) {
+      nameContainer.innerHTML = renderUsernameWithEffectHtml(userName, state.nameEffect, 'hoverable');
+    }
+
+    // Update title badge
+    const titleContainer = document.getElementById('wardrobe-preview-title-badge');
+    if (titleContainer) {
+      const activeTitle = VOCAFLOW_WARDROBE_REGISTRY.titles.find(t => t.id === state.title) || VOCAFLOW_WARDROBE_REGISTRY.titles[0];
+      titleContainer.textContent = activeTitle.tag;
+      titleContainer.style.background = `${activeTitle.color}25`;
+      titleContainer.style.color = activeTitle.color;
+      titleContainer.style.borderColor = `${activeTitle.color}60`;
+    }
+  }
+  window.renderWardrobePreview = renderWardrobePreview;
+
+  function renderWardrobeTabContent(tabName) {
+    const container = document.getElementById('wardrobe-items-container');
+    if (!container) return;
+
+    const equipped = getEquippedWardrobe();
+    const userLevel = (typeof getCurrentUserLevelInfo === 'function') ? getCurrentUserLevelInfo().level : 1;
+    const items = VOCAFLOW_WARDROBE_REGISTRY[tabName] || [];
+    const userAvatar = (typeof getUserAvatar === 'function') ? getUserAvatar() : (currentUser?.avatar || '👤');
+    const userName = (currentUser && currentUser.displayName) ? currentUser.displayName : (localStorage.getItem('vocaflow_user_name') || 'Flower');
+
+    const equippedItemId = equipped[tabName === 'frames' ? 'frame' : (tabName === 'nameEffects' ? 'nameEffect' : 'title')] || 'default';
+
+    let cardsHtml = '<div class="vf-wardrobe-grid">';
+
+    items.forEach(item => {
+      const isUnlocked = userLevel >= item.minLevel;
+      const isEquipped = equippedItemId === item.id;
+
+      let previewVisual = '';
+      if (tabName === 'frames') {
+        previewVisual = renderAvatarWithFrameHtml(userAvatar, 72, item.id);
+      } else if (tabName === 'nameEffects') {
+        previewVisual = `
+          <div style="padding: 14px 8px; text-align: center; background: rgba(0,0,0,0.3); border-radius: 10px; width: 100%;">
+            ${renderUsernameWithEffectHtml(userName, item.id)}
+          </div>
+        `;
+      } else if (tabName === 'titles') {
+        previewVisual = `
+          <div style="padding: 12px 8px; text-align: center; background: rgba(0,0,0,0.3); border-radius: 10px; width: 100%;">
+            <span class="badge" style="font-size: 13px; font-weight: 800; padding: 4px 12px; border-radius: 8px; background: ${item.color}25; color: ${item.color}; border: 1.5px solid ${item.color}60;">
+              ${escapeHtml(item.tag)}
+            </span>
+          </div>
+        `;
+      }
+
+      let statusBadge = '';
+      if (isEquipped) {
+        statusBadge = `<span class="badge" style="background: rgba(16,185,129,0.2); color: #34d399; font-size: 10px; font-weight: 800; border: 1px solid rgba(16,185,129,0.5);">✅ Đang Trang Bị</span>`;
+      } else if (isUnlocked) {
+        statusBadge = `<span class="badge" style="background: rgba(56,189,248,0.15); color: #38bdf8; font-size: 10px; font-weight: 700; border: 1px solid rgba(56,189,248,0.35);">🔓 Đã Mở Khóa</span>`;
+      } else {
+        statusBadge = `<span class="badge" style="background: rgba(239,68,68,0.15); color: #f87171; font-size: 10px; font-weight: 700; border: 1px solid rgba(239,68,68,0.35);">🔒 Cần Cấp ${item.minLevel}</span>`;
+      }
+
+      let actionBtn = '';
+      if (isEquipped) {
+        if (item.id === 'default') {
+          actionBtn = `<button type="button" class="btn btn-outline btn-sm" disabled style="width: 100%; font-size: 11.5px; opacity: 0.6; cursor: default;">Mặc Định</button>`;
+        } else {
+          actionBtn = `<button type="button" class="btn btn-outline btn-sm" onclick="unequipWardrobeItem('${tabName}')" style="width: 100%; font-size: 11.5px; color: #f87171; border-color: rgba(248,113,113,0.4); font-weight: 700;">Tháo Ra</button>`;
+        }
+      } else if (isUnlocked) {
+        actionBtn = `
+          <div style="display: flex; gap: 6px; width: 100%;">
+            <button type="button" class="btn btn-outline btn-sm" onclick="previewWardrobeItem('${tabName}', '${item.id}')" style="flex: 1; font-size: 11px; padding: 4px 6px;" title="Xem thử trên người">👁️ Thử</button>
+            <button type="button" class="btn btn-primary btn-sm" onclick="equipWardrobeItem('${tabName}', '${item.id}')" style="flex: 1.5; font-size: 11.5px; font-weight: 800; background: linear-gradient(135deg, #4f46e5, #7c3aed); border: none;">Trang Bị</button>
+          </div>
+        `;
+      } else {
+        actionBtn = `<button type="button" class="btn btn-outline btn-sm" disabled style="width: 100%; font-size: 11px; color: var(--text-muted); opacity: 0.5; cursor: not-allowed;">🔒 Mở khóa ở Lv.${item.minLevel}</button>`;
+      }
+
+      cardsHtml += `
+        <div class="vf-wardrobe-card ${isEquipped ? 'equipped' : ''} ${!isUnlocked ? 'locked' : ''}">
+          <!-- Card Top Row -->
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+            <span style="font-size: 11.5px; font-weight: 800; color: ${item.badgeColor || item.color || 'var(--text)'}; display: flex; align-items: center; gap: 4px;">
+              <span>${item.icon || '🎖️'}</span> <span>${escapeHtml(item.name)}</span>
+            </span>
+            ${statusBadge}
+          </div>
+
+          <!-- Card Visual Preview -->
+          <div style="display: flex; align-items: center; justify-content: center; min-height: 80px; margin-bottom: 10px; cursor: pointer;" onclick="previewWardrobeItem('${tabName}', '${item.id}')">
+            ${previewVisual}
+          </div>
+
+          <!-- Card Description -->
+          <p style="font-size: 11px; color: var(--text-muted); margin: 0 0 12px 0; line-height: 1.4; min-height: 30px;">
+            ${escapeHtml(item.desc)}
+          </p>
+
+          <!-- Card Action Button -->
+          <div>
+            ${actionBtn}
+          </div>
+        </div>
+      `;
+    });
+
+    cardsHtml += '</div>';
+    container.innerHTML = cardsHtml;
+  }
+  window.renderWardrobeTabContent = renderWardrobeTabContent;
+
+  // Initialize upon script load
+  document.addEventListener('DOMContentLoaded', () => {
+    setTimeout(() => {
+      applyWardrobeToActiveUI();
+    }, 400);
+  });
+
+})();
+
+// =========================================================================
+
+// VOCAFLOW APP.JS - CORE LIFECYCLE & GLOBAL BRIDGE ENTRY POINT (v0.10.10-41 Build 342)
 
 // Screen Switcher, Universal Modal Manager, Keyboard Shortcuts & Bootstrap
 

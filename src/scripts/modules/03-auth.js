@@ -1,5 +1,5 @@
 // =========================================================================
-// VOCAFLOW 03-AUTH.JS (v0.10.10-40 Build 341)
+// VOCAFLOW 03-AUTH.JS (v0.10.10-41 Build 342)
 // Firebase Auth, Realtime Sync, Public Profiles, Social Graph, Monetization & Billing
 // =========================================================================
 
@@ -4008,6 +4008,9 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
       if (typeof isUserVip === 'function' && isUserVip() && typeof purgeAllAdArtifactsFromDOM === 'function') {
         purgeAllAdArtifactsFromDOM();
       }
+      if (typeof applyWardrobeToActiveUI === 'function') {
+        applyWardrobeToActiveUI();
+      }
     }
 
     // Modal Switchers
@@ -5589,6 +5592,11 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
         const cleanResolvedName = stripVipAffixes(resolvedName);
         const isIamJulies = (authorClean === 'iamjulies' || (resolvedHandle && resolvedHandle.toLowerCase() === 'iamjulies') || (targetUid && targetUid.toLowerCase() === 'iamjulies'));
 
+        const targetWardrobe = (isCurrentUser && typeof getEquippedWardrobe === 'function') 
+          ? getEquippedWardrobe()
+          : ((uData && (uData.equippedWardrobe || (uData.profile && uData.profile.equippedWardrobe))) 
+              || (isVocaFlowOfficial ? { frame: 'mythic', nameEffect: 'mythic', title: 'lv50' } : { frame: 'default', nameEffect: 'default', title: 'default' }));
+
         if (nameEl) {
           if (isVocaFlowOfficial) {
             nameEl.innerHTML = `<span class="vip-name-wrapper" style="gap: 6px;"><span class="vip-glowing-name" style="font-size: 1.15em; background: linear-gradient(135deg, #f59e0b, #ec4899, #8b5cf6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 800;">VocaFlow Chuẩn</span><span style="font-size: 1.25em;" title="Đội ngũ sáng lập & phát triển VocaFlow">👑</span></span>`;
@@ -5596,21 +5604,29 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
             nameEl.innerHTML = `<span class="vip-name-wrapper" style="gap: 6px;"><span class="vip-glowing-name" style="font-size: 1.15em; background: linear-gradient(135deg, #f59e0b, #ec4899, #8b5cf6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 800;">${escapeHtml(cleanResolvedName)}</span><span style="font-size: 1.25em;" title="Nhà Sáng Lập & Phát Triển VocaFlow">👑</span></span>`;
           } else if (isAuthorVip) {
             nameEl.innerHTML = `<span class="vip-name-wrapper" style="gap: 5px;"><span class="vip-glowing-name" style="font-size: 1.15em;">${escapeHtml(cleanResolvedName)}</span><span class="vip-crown-icon" style="font-size: 1.3em;" title="Tác giả VIP (${authorVipTier.toUpperCase()})">👑</span></span>`;
+          } else if (targetWardrobe && targetWardrobe.nameEffect && targetWardrobe.nameEffect !== 'default' && typeof renderUsernameWithEffectHtml === 'function') {
+            nameEl.innerHTML = renderUsernameWithEffectHtml(cleanResolvedName, targetWardrobe.nameEffect);
           } else {
             nameEl.textContent = cleanResolvedName;
           }
         }
         if (avEl) {
-          avEl.innerHTML = renderAvatarHtml(resolvedAvatar, 96, 36);
-          if (isVocaFlowOfficial || isIamJulies) {
-            avEl.style.boxShadow = '0 0 0 2px #8b5cf6, 0 0 24px rgba(139, 92, 246, 0.6)';
-            avEl.style.borderColor = '#c084fc';
-          } else if (isAuthorVip) {
-            avEl.style.boxShadow = '0 0 0 2px #fbbf24, 0 0 20px rgba(251, 191, 36, 0.5)';
-            avEl.style.borderColor = '#fbbf24';
+          if (targetWardrobe && targetWardrobe.frame && targetWardrobe.frame !== 'default' && typeof renderAvatarWithFrameHtml === 'function') {
+            avEl.innerHTML = renderAvatarWithFrameHtml(resolvedAvatar, 96, targetWardrobe.frame, 'hoverable');
+            avEl.style.boxShadow = 'none';
+            avEl.style.borderColor = 'transparent';
           } else {
-            avEl.style.boxShadow = '0 4px 16px rgba(0, 0, 0, 0.35)';
-            avEl.style.borderColor = 'rgba(255, 255, 255, 0.15)';
+            avEl.innerHTML = renderAvatarHtml(resolvedAvatar, 96, 36);
+            if (isVocaFlowOfficial || isIamJulies) {
+              avEl.style.boxShadow = '0 0 0 2px #8b5cf6, 0 0 24px rgba(139, 92, 246, 0.6)';
+              avEl.style.borderColor = '#c084fc';
+            } else if (isAuthorVip) {
+              avEl.style.boxShadow = '0 0 0 2px #fbbf24, 0 0 20px rgba(251, 191, 36, 0.5)';
+              avEl.style.borderColor = '#fbbf24';
+            } else {
+              avEl.style.boxShadow = '0 4px 16px rgba(0, 0, 0, 0.35)';
+              avEl.style.borderColor = 'rgba(255, 255, 255, 0.15)';
+            }
           }
         }
         if (pubSubBadgeEl) {
@@ -5639,6 +5655,21 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
               pubSubBadgeEl.style.color = '#fbbf24';
               pubSubBadgeEl.style.fontWeight = '700';
               pubSubBadgeEl.style.border = '1px solid rgba(245, 158, 11, 0.3)';
+            }
+          } else if (targetWardrobe && targetWardrobe.title && targetWardrobe.title !== 'default' && typeof VOCAFLOW_WARDROBE_REGISTRY !== 'undefined') {
+            const customTitle = VOCAFLOW_WARDROBE_REGISTRY.titles.find(t => t.id === targetWardrobe.title);
+            if (customTitle) {
+              pubSubBadgeEl.innerHTML = escapeHtml(customTitle.tag);
+              pubSubBadgeEl.style.background = `${customTitle.color}25`;
+              pubSubBadgeEl.style.color = customTitle.color;
+              pubSubBadgeEl.style.fontWeight = '700';
+              pubSubBadgeEl.style.border = `1px solid ${customTitle.color}60`;
+            } else {
+              pubSubBadgeEl.innerHTML = '🎓 Flower VocaFlow';
+              pubSubBadgeEl.style.background = 'rgba(16, 185, 129, 0.15)';
+              pubSubBadgeEl.style.color = '#34d399';
+              pubSubBadgeEl.style.fontWeight = '700';
+              pubSubBadgeEl.style.border = '1px solid rgba(16, 185, 129, 0.3)';
             }
           } else {
             pubSubBadgeEl.innerHTML = '🎓 Flower VocaFlow';
@@ -9818,8 +9849,10 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
             vipTier: getUserVipTier(),
             vipExpiresAt: userVipExpiresAt,
             lastActiveAt: Date.now(),
-            lastSync: new Date().toISOString()
+            lastSync: new Date().toISOString(),
+            equippedWardrobe: (typeof getEquippedWardrobe === 'function') ? getEquippedWardrobe() : { frame: 'default', nameEffect: 'default', title: 'default' }
           },
+          equippedWardrobe: (typeof getEquippedWardrobe === 'function') ? getEquippedWardrobe() : { frame: 'default', nameEffect: 'default', title: 'default' },
           studyExp: currentStudyExp,
           level: currentLvlInfo.level,
           lastClaimedLevel: currentLastClaimedLevel,
@@ -10158,6 +10191,11 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
       }
       if (data.isVip !== undefined) {
         applyVipState(!!data.isVip, data.vipTier || 'monthly', Number(data.vipExpiresAt || 0), 'realtime_patch', false);
+      }
+      if (data.equippedWardrobe && typeof data.equippedWardrobe === 'object') {
+        currentUser.equippedWardrobe = data.equippedWardrobe;
+        localStorage.setItem('vocaflow_equipped_wardrobe', JSON.stringify(data.equippedWardrobe));
+        changed = true;
       }
       if (changed) {
         localStorage.setItem(STORAGE_KEY_AUTH, JSON.stringify(currentUser));

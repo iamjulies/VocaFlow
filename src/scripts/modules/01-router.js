@@ -1,5 +1,5 @@
 // =========================================================================
-// VOCAFLOW SPA ROUTER & URL HISTORY ENGINE (v0.10.10-40 Build 341)
+// VOCAFLOW SPA ROUTER & URL HISTORY ENGINE (v0.10.10-41 Build 342)
 // Enables direct clean URLs, deep sub-links & browser history navigation (pushState/popstate)
 // =========================================================================
 
@@ -186,12 +186,22 @@ function navigateToRoute(route, isPopState = false) {
         if (typeof openProfileModal === 'function') openProfileModal('community', 'mine');
         return;
       }
+      if (secondSegment === 'wardrobe' || secondSegment === 'tudo' || secondSegment === 'closet') {
+        if (typeof openWardrobeModal === 'function') openWardrobeModal();
+        return;
+      }
       if (secondSegment === 'sync' || secondSegment === 'cloud' || secondSegment === 'dongbo') {
         if (typeof openProfileModal === 'function') openProfileModal('cloud');
         return;
       }
       // Default /me or /me/mydeck or /me/decks
       if (typeof openProfileModal === 'function') openProfileModal('decks');
+      return;
+    }
+
+    // 3b. Handle Standalone /wardrobe or /tudo
+    if (firstSegment === 'wardrobe' || firstSegment === 'tudo') {
+      if (typeof openWardrobeModal === 'function') openWardrobeModal(secondSegment || 'frames');
       return;
     }
 

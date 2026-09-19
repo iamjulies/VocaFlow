@@ -107,7 +107,8 @@ $modalsOrder = @(
     "modal-library-preview.html",
     "modal-community-upload.html",
     "modal-community-center.html",
-    "modal-level-up.html"
+    "modal-level-up.html",
+    "modal-wardrobe.html"
 )
 $modalsBuilder = [System.Text.StringBuilder]::new()
 $loadedModals = 0

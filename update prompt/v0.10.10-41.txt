@@ -5,3 +5,7 @@ tủ đồ chia làm 3 ngăn:
 - hiệu ứng tên: chứa tất cả các hiệu ứng tên đã sở hữu
 - danh xưng: chứa tất cả các danh xưng đã sở hữu
 set cơ bản của người mới là "C:\Users\DELL\Pictures\Screenshots\Ảnh chụp màn hình 2026-09-20 001144.png"
+tham khảo "C:\Users\DELL\Documents\Modding\browser\model code\26-khung_vi_n_avatar_ph_t_s_ng.html" để lấy mẫu 5 khung viền: Khung Đồng Sơ Cấp (Bronze Frame), Khung Bạc Tinh Xảo (Silver Frame), Khung Vàng Hoàng Gia (Gold Shimmer), Khung Lam Ngọc (Diamond Glow), Khung Thần Thoại Conic
+tham khảo "C:\Users\DELL\Documents\Modding\browser\model code\27-h_th_ng_rank_ch_hi_u_ng_svg.html" để lấy mẫu 5 hiện ứng tên: Tên Đồng Sơ Cấp, Tên Bạc Tinh Xảo, Tên Vàng Hoàng Gia, Tên Lam Ngọc, Tên Thần Thoại Conic
+tạm thời danh xưng từng đoạn sẽ là: Lv10 - Tập Sự; Lv20 - Am Hiểu; Lv30 - Chuyên Gia; Lv40 - Bậc Thầy; Lv50 - Huyền Thoại
+đọc và thực hiện các file markdown có trong "C:\Users\DELL\Documents\Modding\browser" (nếu quên)

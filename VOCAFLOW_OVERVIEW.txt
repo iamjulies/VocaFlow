@@ -1,4 +1,24 @@
 ================================================================================
+Phiên bản: v0.10.10-41 (Build 342) - Hệ Thống Tủ Đồ Cá Nhân, Khung Viền Avatar, Hiệu Ứng Tên & Danh Xưng (Wardrobe System, Level-Unlocked Avatar Frames, Animated Name Effects & Honor Titles, Realtime Cloud Sync)
+================================================================================
+1. [Hệ Thống Tủ Đồ Cá Nhân (Wardrobe System)]:
+   - Tích hợp Modal Tủ Đồ (`#modal-wardrobe`) truy cập nhanh qua nút "✨ Tủ Đồ" trong Hồ Sơ Cá Nhân (`/me`) và mục menu trong Dropdown 3 chấm trên Header.
+   - Gồm 3 ngăn vật phẩm thẩm mỹ độc quyền: Khung Viền Avatar (Avatar Frames), Hiệu Ứng Tên (Name Effects), Danh Xưng Tôn Vinh (Titles).
+   - Tự động mở khóa theo Cấp Độ Rèn Luyện (Level / Study EXP): Cấp 1 (Mặc Định), Cấp 10 (Đồng), Cấp 20 (Bạc), Cấp 30 (Vàng), Cấp 40 (Kim Cương), Cấp 50 (Rồng Thần Thoại Mythic).
+2. [Hộp Trực Quan Hero Box & Xem Trước Tức Thì (Live Preview)]:
+   - Khu vực Hero Box hiển thị Avatar lớn, Tên người dùng và Danh xưng với đầy đủ hiệu ứng hoạt họa thời gian thực.
+   - Cho phép xem trước (Preview) bất kỳ khung viền, hiệu ứng tên hoặc danh xưng nào khi hover hoặc click vào thẻ vật phẩm trước khi quyết định Trang Bị.
+3. [Trang Bị, Tháo Gỡ & Đồng Bộ Đám Mây Hai Chiều (Realtime Cloud Sync)]:
+   - Trang bị (Equip) hoặc Tháo gỡ (Unequip) tức thì với phản hồi âm thanh và thông báo trạng thái trực quan.
+   - Lưu trữ `equippedWardrobe: { frame, nameEffect, title }` trong LocalStorage và tự động đồng bộ 2 chiều lên Firebase Realtime Database (`users/${uid}/profile/equippedWardrobe` & `users/${uid}/equippedWardrobe`).
+4. [Hiển Thị Drop-in Toàn Diện Trên Mọi Giao Diện (Universal Rendering)]:
+   - Avatar kèm Khung viền và Tên kèm Hiệu ứng hiển thị đồng bộ trên Header, Modal Hồ Sơ Cá Nhân (`/me`), và Modal Hồ Sơ Công Khai (`/u/:uid`).
+   - Thiết kế chuẩn Vector SVG không làm vỡ tỉ lệ bo tròn của Avatar từ cỡ nhỏ (Header 22px) đến cỡ lớn (Hero 140px).
+5. [Đồng Bộ Toàn Diện 7-Point Version Consistency & Multi-Deploy (v0.10.10-41 Build 342)]:
+   - Cập nhật phiên bản nhất quán trên toàn bộ 7 điểm hệ thống: `modal-settings.html`, `state-core.js`, module headers, `sw.js` & `Release_App/sw.js`, `pubspec.yaml`, `Program.cs`, `push_github.ps1`.
+   - Biên dịch `VocaFlow.exe`, đóng gói `VocaFlow_v0.10.10-41_Windows_Portable.zip` và sẵn sàng multi-deploy lên 3 kho GitHub.
+
+================================================================================
 Phiên bản: v0.10.10-40 (Build 341) - Sửa Lệch Biểu Đồ 7 Ngày, Đồng Bộ Cấp Độ & EXP Hồ Sơ, Cấp Độ Hồ Sơ Công Khai & Nâng Cấp Thông Báo Lên Cấp (7-Day Performance Real Data, Profile Level Monotonic Cloud Sync, Public Profile Level Card & Badges, Polymorphic Level Up Notifications)
 ================================================================================
 1. [Sửa Sai Lệch Dữ Liệu Biểu Đồ 7 Ngày (Vấn đề 1)]:

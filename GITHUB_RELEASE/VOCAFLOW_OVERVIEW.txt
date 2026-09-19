@@ -1,4 +1,99 @@
 ================================================================================
+Phiên bản: v0.10.10-41 (Build 342) - Hệ Thống Tủ Đồ Cá Nhân, Khung Viền Avatar, Hiệu Ứng Tên & Danh Xưng (Wardrobe System, Level-Unlocked Avatar Frames, Animated Name Effects & Honor Titles, Realtime Cloud Sync)
+================================================================================
+1. [Hệ Thống Tủ Đồ Cá Nhân (Wardrobe System)]:
+   - Tích hợp Modal Tủ Đồ (`#modal-wardrobe`) truy cập nhanh qua nút "✨ Tủ Đồ" trong Hồ Sơ Cá Nhân (`/me`) và mục menu trong Dropdown 3 chấm trên Header.
+   - Gồm 3 ngăn vật phẩm thẩm mỹ độc quyền: Khung Viền Avatar (Avatar Frames), Hiệu Ứng Tên (Name Effects), Danh Xưng Tôn Vinh (Titles).
+   - Tự động mở khóa theo Cấp Độ Rèn Luyện (Level / Study EXP): Cấp 1 (Mặc Định), Cấp 10 (Đồng), Cấp 20 (Bạc), Cấp 30 (Vàng), Cấp 40 (Kim Cương), Cấp 50 (Rồng Thần Thoại Mythic).
+2. [Hộp Trực Quan Hero Box & Xem Trước Tức Thì (Live Preview)]:
+   - Khu vực Hero Box hiển thị Avatar lớn, Tên người dùng và Danh xưng với đầy đủ hiệu ứng hoạt họa thời gian thực.
+   - Cho phép xem trước (Preview) bất kỳ khung viền, hiệu ứng tên hoặc danh xưng nào khi hover hoặc click vào thẻ vật phẩm trước khi quyết định Trang Bị.
+3. [Trang Bị, Tháo Gỡ & Đồng Bộ Đám Mây Hai Chiều (Realtime Cloud Sync)]:
+   - Trang bị (Equip) hoặc Tháo gỡ (Unequip) tức thì với phản hồi âm thanh và thông báo trạng thái trực quan.
+   - Lưu trữ `equippedWardrobe: { frame, nameEffect, title }` trong LocalStorage và tự động đồng bộ 2 chiều lên Firebase Realtime Database (`users/${uid}/profile/equippedWardrobe` & `users/${uid}/equippedWardrobe`).
+4. [Hiển Thị Drop-in Toàn Diện Trên Mọi Giao Diện (Universal Rendering)]:
+   - Avatar kèm Khung viền và Tên kèm Hiệu ứng hiển thị đồng bộ trên Header, Modal Hồ Sơ Cá Nhân (`/me`), và Modal Hồ Sơ Công Khai (`/u/:uid`).
+   - Thiết kế chuẩn Vector SVG không làm vỡ tỉ lệ bo tròn của Avatar từ cỡ nhỏ (Header 22px) đến cỡ lớn (Hero 140px).
+5. [Đồng Bộ Toàn Diện 7-Point Version Consistency & Multi-Deploy (v0.10.10-41 Build 342)]:
+   - Cập nhật phiên bản nhất quán trên toàn bộ 7 điểm hệ thống: `modal-settings.html`, `state-core.js`, module headers, `sw.js` & `Release_App/sw.js`, `pubspec.yaml`, `Program.cs`, `push_github.ps1`.
+   - Biên dịch `VocaFlow.exe`, đóng gói `VocaFlow_v0.10.10-41_Windows_Portable.zip` và sẵn sàng multi-deploy lên 3 kho GitHub.
+
+================================================================================
+Phiên bản: v0.10.10-40 (Build 341) - Sửa Lệch Biểu Đồ 7 Ngày, Đồng Bộ Cấp Độ & EXP Hồ Sơ, Cấp Độ Hồ Sơ Công Khai & Nâng Cấp Thông Báo Lên Cấp (7-Day Performance Real Data, Profile Level Monotonic Cloud Sync, Public Profile Level Card & Badges, Polymorphic Level Up Notifications)
+================================================================================
+1. [Sửa Sai Lệch Dữ Liệu Biểu Đồ 7 Ngày (Vấn đề 1)]:
+   - Chuẩn hóa tính toán ngày địa phương (formatLocalDateString) và tính toán chính xác tổng Điểm Rèn Luyện (Study EXP) và VoCoin kiếm được từ nhật ký `userLedger`.
+   - Lấy `Math.max(storedDailyExp, ledgerStudyExp)` cho current user và `Math.max(authorDailyExp, targetLedgerExp)` cho target author, loại bỏ điều kiện thoát sớm gây thiếu dữ liệu các ngày trước.
+2. [Sửa Lỗi Không Đồng Bộ Cấp Độ & EXP Trên Thẻ Cấp Độ Hồ Sơ (Vấn đề 2)]:
+   - Kích hoạt `updateLevelUI()` ngay khi mở modal hồ sơ (`openProfileModal`), đảm bảo hiển thị đúng Cấp độ và EXP ngay từ lần đầu mở modal.
+   - Đồng bộ 2 chiều `studyExp`, `level`, `lastClaimedLevel`, `claimedPrestigeChests` lên Cloud payload (`profile`, `economy`, top-level) và hợp nhất đơn điệu tăng dần khi pull/patch dữ liệu.
+   - Xóa sạch dữ liệu cấp độ khi đăng xuất (`doLogout`).
+3. [Bổ Sung Hiển Thị Cấp Độ Trên Hồ Sơ Công Khai (Vấn đề 3)]:
+   - Thêm Huy hiệu Cấp độ `#pub-view-level-badge` trên thanh tiêu đề hồ sơ công khai.
+   - Thêm 2 chip thống kê Cấp Độ `#pub-view-stat-level` và Điểm Rèn Luyện `#pub-view-stat-exp` trên hàng thông số cá nhân.
+   - Thêm Thẻ Cấp Độ Tiến Trình `#pub-view-level-card` trong tab Chỉ số & Rèn luyện với thanh phần trăm EXP trực quan.
+4. [Nâng Cấp Thông Báo Lên Cấp Đa Hình & Tương Tác Trực Tiếp (Vấn đề 4)]:
+   - Nâng cấp hàm `addNotification` hỗ trợ chữ ký đa hình (Object `{ type, title, message, actionType, ... }` hoặc Positional args).
+   - Render chuyên biệt thông báo `LEVEL_UP` và `PRESTIGE_CHEST` với sắc vàng kim rực rỡ, icon ngôi sao/vương miện và badge phần thưởng nổi bật.
+   - Bấm vào thông báo lên cấp tự động điều hướng mở ngay tab Chỉ số của modal Hồ sơ cá nhân.
+5. [Đồng Bộ Toàn Diện 7-Point Version Consistency & Multi-Deploy (v0.10.10-40 Build 341)]:
+   - Cập nhật phiên bản nhất quán trên toàn bộ 7 điểm hệ thống: `modal-settings.html`, `screen-decks.html`, `screen-deck-detail.html`, `sw.js` & `Release_App/sw.js`, `pubspec.yaml`, `Program.cs`, `push_github.ps1`.
+   - Biên dịch `VocaFlow.exe`, đóng gói `VocaFlow_v0.10.10-40_Windows_Portable.zip` và sẵn sàng multi-deploy lên 3 kho GitHub.
+
+================================================================================
+Phiên bản: v0.10.10-39 (Build 340) - Nâng Cấp Hệ Thống Cấp Độ Học Tập (Study EXP Leveling, Non-Linear Quadratic Formula, Milestone Drops & VocaVIP Rewards, Prestige Honor Chests)
+================================================================================
+1. [Hệ Thống Lên Cấp 100% Bằng Điểm Rèn Luyện (Study EXP)]:
+   - Lên cấp hoàn toàn tự động dựa trên tổng Điểm Rèn Luyện (Study EXP) tích lũy vĩnh viễn (`getUserStudyExp()`), không bao giờ trừ VoCoin khi lên cấp.
+   - Công thức lũy tiến bậc 2 chuẩn hóa: EXP_cần(L) = 150*L + 25*L^2; TotalEXP(N) = 75(N-1)N + 25(N-1)N(2N-1)/6.
+2. [Cơ Cấu Quà Tặng Lên Cấp & Mốc VIP Tròn]:
+   - Cấp thường (L < 50): Nhận L * 25 VoCoin, xen kẽ +1 VocaHint (cấp chẵn) hoặc +1 VocaSkip (cấp lẻ), pháo hoa Canvas + SFX chúc mừng.
+   - Cấp mốc tròn (10, 20, 30, 40, 50): Tặng ngày VocaVIP cộng dồn nối tiếp (hoặc quy đổi 250 VoCoin/ngày cho VIP Trọn Đời) kèm lượng lớn VoCoin, VocaSpin / FlowFreeze.
+3. [Max Level 50 & Rương Danh Dự (Prestige Honor Chest)]:
+   - Max Level 50. Mỗi +50,000 EXP tích lũy vượt mốc cấp 50 tự động mở khóa 1 Rương Danh Dự (+400 VoCoin + 2 VocaSpin) kèm thông báo hệ thống.
+4. [Giao Diện Level Pill & Thẻ Cấp Độ Hồ Sơ]:
+   - Header hiển thị Huy hiệu cấp độ tương tác (Level Pill) kèm icon rank động theo bậc (Tập sự, Đồng, Bạc, Vàng, Kim Cương, Đại Kiện Tướng).
+   - Modal Hồ Sơ tích hợp thẻ Cấp độ & Điểm Rèn Luyện với thanh tiến trình EXP thời gian thực và xem trước phần thưởng cấp tiếp theo.
+5. [Đồng Bộ Toàn Diện 7-Point Version Consistency & Multi-Deploy (v0.10.10-39 Build 340)]:
+   - Cập nhật phiên bản nhất quán trên toàn bộ 7 điểm hệ thống: `modal-settings.html`, `screen-decks.html`, `screen-deck-detail.html`, `sw.js` & `Release_App/sw.js`, `pubspec.yaml`, `Program.cs`, `push_github.ps1`.
+   - Biên dịch `VocaFlow.exe`, đóng gói `VocaFlow_v0.10.10-39_Windows_Portable.zip` và sẵn sàng multi-deploy lên 3 kho GitHub.
+
+================================================================================
+Phiên bản: v0.10.10-38 (Build 339) - Rà Soát Toàn Diện, Dọn Dẹp Mã Nguồn & Chuẩn Hóa Ghi Nhật Ký Hệ Thống (Clean Debug Logs, Standardize Logging Levels, Complete Extended Study Mode URL Routing, Isolate Exam Screen Security)
+================================================================================
+1. [Rà Soát Toàn Diện & Dọn Dẹp Mã Nguồn Rác (Console Cleanup)]:
+   - Rà soát toàn bộ các module JavaScript trong `src/scripts/`, loại bỏ triệt để các câu lệnh `console.log` debug thử nghiệm và chuỗi log bị lỗi encoding thừa thãi.
+   - Giữ lại các lệnh log quan trọng mang tính chất cứu hộ dữ liệu (AutoHeal/Dedupe) và chuyển đổi các log ngoại lệ sang `console.warn` / `console.info` có cấu trúc rõ ràng.
+2. [Hoàn Thiện Định Tuyến URL Cho 4 Chế Độ Học Mở Rộng]:
+   - Bổ sung URL routing cho 4 chế độ học tập mở rộng: `/study/writing`, `/study/cloze`, `/study/dictation`, `/study/translation` trong `showScreen()` và `closeModal()` tại `app.js`.
+   - Giúp người dùng có thể điều hướng trực tiếp bằng URL hoặc lưu bookmark phiên học tập.
+3. [Bảo Mật Phòng Thi Toàn Diện Cho Chế Độ Dịch Thuật]:
+   - Bổ sung `screen-translation` vào danh sách màn hình thi cử `isExamScreen` trong `app.js`.
+   - Cách ly tuyệt đối tính năng AI Mentor và Sổ Tay Lỗi Sai trong toàn bộ 8 chế độ học tập và kiểm tra để đảm bảo tính trung thực trong học tập.
+4. [Đồng Bộ Toàn Diện 7-Point Version Consistency & Multi-Deploy (v0.10.10-38 Build 339)]:
+   - Cập nhật phiên bản nhất quán trên toàn bộ 7 điểm hệ thống: `modal-settings.html`, `screen-decks.html`, `screen-deck-detail.html`, `sw.js` & `Release_App/sw.js`, `pubspec.yaml`, `Program.cs`, `push_github.ps1`.
+   - Biên dịch `VocaFlow.exe`, đóng gói `VocaFlow_v0.10.10-38_Windows_Portable.zip` và sẵn sàng multi-deploy lên 3 kho GitHub.
+
+================================================================================
+Phiên bản: v0.10.10-37 (Build 338) - Cổng Quản Trị Upgrade & Phát Hành Coupon / Sale Day (Coupon Codes, Sale Day Campaigns, Custom VIP TRY Days, Student Quick Pill Filters, Direct VIP Expiration Display)
+================================================================================
+1. [Tùy Chỉnh Số Ngày VocaVIP TRY Trong Sửa Ví (Vấn đề 14)]:
+   - Bổ sung tùy chọn custom_try kèm ô nhập số ngày linh hoạt (preset 3, 7, 14, 30 ngày hoặc tự nhập số nguyên dương) vào bảng Sửa Ví học viên.
+   - Gán tag ✨ VocaVIP TRY và tính toán hạn dùng chính xác (vipExpiresAt = Date.now() + customDays * 86400000).
+2. [Phát Hành Coupon Code & Chiến Dịch Sale Day Trên Cổng Quản Trị (Vấn đề 15)]:
+   - Coupon Codes: Cho phép Publisher/Admin phát hành mã giảm giá đa dạng (% hoặc VNĐ, áp dụng cho vip/shop/all, đơn tối thiểu, giảm tối đa, hạn dùng, giới hạn 1 lần/học viên), lưu trữ Cloud Realtime Database `/coupon_codes/${code}.json`, quản lý danh sách trực quan, tra cứu và xóa mã trên Cloud.
+   - Checkout VocaVIP Coupon: Tích hợp ô nhập mã coupon trên Bảng Giá VIP (modal-vip-pricing.html), tự động kiểm tra tính hợp lệ và hạn mức, tính toán chiết khấu, tự động sinh lại mã thanh toán VietQR và ghi nhận lịch sử áp dụng `/user_coupons/${uid}/${code}.json`.
+   - Chiến Dịch Sale Day Toàn Sàn: Thiết lập chiến dịch Flash Sale toàn sàn với % chiết khấu và thời hạn, lưu Cloud `/active_sale_campaign.json`, tự động kích hoạt banner thông báo rực rỡ và giảm giá toàn bộ VocaShop & Bảng Giá VIP.
+3. [Gọn Gàng Thẻ VoCoin Trên Dashboard Quản Lý Flower (Vấn đề 16)]:
+   - Rút gọn thẻ VoCoin trên Dashboard chỉ hiển thị "💰 Tổng VoCoin: X VoCoin", loại bỏ chuỗi giải thích dài dòng để giao diện gọn gàng, thanh thoát.
+4. [Bộ Lọc Nhanh Dạng Pill Cho Danh Sách Flower (Vấn đề 17)]:
+   - Tích hợp 3 nút pill Tất Cả, 👑 VIP, 🆓 Free kèm số lượng học viên đếm tự động dưới ô tìm kiếm để lọc nhanh danh sách Flower tức thì.
+5. [Hiển Thị Mốc Hết Hạn VIP Trực Tiếp Trên Thẻ Học Viên (Vấn đề 18)]:
+   - Hiển thị trực tiếp hạn dùng VIP dạng badge "⏳ Hạn: DD/MM/YYYY (còn X ngày)" hoặc "(Vĩnh viễn)" / "(Đã hết hạn)" ngay dưới huy hiệu VIP trên thẻ học viên.
+6. [Đồng Bộ Toàn Diện 7-Point Version Consistency & Multi-Deploy (v0.10.10-37 Build 338)]:
+   - Đồng bộ nhất quán toàn diện 7 điểm phiên bản trên Web PWA, Windows App, Flutter config, Service Worker và Release Scripts.
+
+================================================================================
 Phiên bản: v0.10.10-36 (Build 337) - Cuộc Cách Mạng Thành Tích (Achievement Revolution: 50 Badges) & Hệ Thống Chấm Đỏ Báo Hiệu Phần Thưởng Chưa Nhận
 ================================================================================
 1. [Mở Rộng Hệ Thống Thành Tích Lên 50 Danh Hiệu (Vấn đề 12)]:
@@ -182,7 +277,7 @@ Phiên bản: v0.10.10-27 (Build 328) - Nâng Cấp Gemini Flash-Lite & Flash Ch
    - Tối ưu trích xuất nghĩa tiếng Việt cốt lõi (extractCleanPrimaryMeaning), lược bỏ các cụm từ ghép đồng nghĩa rườm rà.
 
 ================================================================================
-Phiên bản: v0.10.10-26 (Build 327) - Nâng Cấp AI Chấm Bài Dịch Thuật Theo Độ Tương Đương Ngữ Nghĩa (Semantic Equivalence), Tích HỢp Cảnh Báo Thoát Giữa Chừng Kèm Kết Toán Balance v3 & Chuẩn Hóa 100% Thuật Toán Sinh Câu Ngữ Cảnh Tự Nhiên
+Phiên bản: v0.10.10-26 (Build 327) - Nâng Cấp AI Chấm Bài Dịch Thuật Theo Độ Tương Đương Ngữ Nghĩa (Semantic Equivalence), Tích Hợp Cảnh Báo Thoát Giữa Chừng Kèm Kết Toán Balance v3 & Chuẩn Hóa 100% Thuật Toán Sinh Câu Ngữ Cảnh Tự Nhiên
 ================================================================================
 1. [Nâng Cấp AI Chấm Bài & Heuristic Fallback (06f-translation-engine.js)]:
    - Chấm theo Độ Tương Đương Ngữ Nghĩa (Semantic Equivalence), Độ Trôi Chảy (Fluency) và Văn Phong Tự Nhiên.

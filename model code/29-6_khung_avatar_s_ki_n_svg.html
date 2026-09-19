@@ -1,0 +1,996 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bộ Sưu Tập 6 Khung Avatar Sự Kiện (SVG)</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts: Inter & Be Vietnam Pro -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: #0d1117;
+      background-image: 
+        radial-gradient(at 15% 15%, rgba(225, 29, 72, 0.08) 0px, transparent 45%),
+        radial-gradient(at 85% 20%, rgba(234, 179, 8, 0.07) 0px, transparent 45%),
+        radial-gradient(at 50% 85%, rgba(59, 130, 246, 0.08) 0px, transparent 50%);
+      font-family: 'Be Vietnam Pro', 'Inter', sans-serif;
+      color: #f1f5f9;
+      min-height: 100vh;
+    }
+
+    /* Vỏ khung avatar chuẩn */
+    .avatar-wrapper {
+      position: relative;
+      width: 160px;
+      height: 160px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      user-select: none;
+    }
+
+    /* Ảnh đại diện tròn lọt lòng */
+    .avatar-preview-img {
+      width: 104px;
+      height: 104px;
+      border-radius: 50%;
+      object-fit: cover;
+      background-color: #1e293b;
+      position: absolute;
+      z-index: 1;
+      transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    /* Lớp SVG khung phủ lên trên ảnh */
+    .frame-svg {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 2;
+      pointer-events: none;
+      overflow: visible;
+      transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), filter 0.3s ease;
+    }
+
+    /* Hover phóng to nhẹ khung */
+    .event-card:hover .avatar-preview-img {
+      transform: scale(1.05);
+    }
+    .event-card:hover .frame-svg {
+      transform: scale(1.06);
+    }
+
+    /* 1. Sinh nhật: Nón tiệc chính giữa nhún nhảy & sao lấp lánh phóng to từ tâm */
+    .event-card.birthday:hover .bday-hat {
+      transform-origin: 0px 14px;
+      animation: hatPartyWiggle 0.6s ease-in-out infinite alternate;
+    }
+    .bday-star-pulse {
+      transform-box: fill-box;
+      transform-origin: center;
+      animation: starTwinkleCenter 1.2s ease-in-out infinite alternate;
+    }
+    .event-card.birthday:hover .bday-star-pulse {
+      animation-duration: 0.6s;
+    }
+    @keyframes hatPartyWiggle {
+      0% { transform: rotate(-7deg); }
+      100% { transform: rotate(7deg); }
+    }
+    @keyframes starTwinkleCenter {
+      0% { transform: scale(0.65); opacity: 0.5; }
+      100% { transform: scale(1.35); opacity: 1; filter: drop-shadow(0 0 4px #facc15); }
+    }
+
+    /* 2. Giáng sinh: Mũ Noel lắc lư & chuông đung đưa chuẩn tâm đáy */
+    .event-card.christmas:hover .xmas-hat {
+      transform-origin: 0px 12px;
+      animation: santaHatTilt 0.7s ease-in-out infinite alternate;
+    }
+    .event-card.christmas:hover .xmas-bell {
+      transform-origin: 0px -6px;
+      animation: bellJingle 0.4s ease-in-out infinite alternate;
+    }
+    @keyframes santaHatTilt {
+      0% { transform: rotate(-4deg); }
+      100% { transform: rotate(5deg); }
+    }
+    @keyframes bellJingle {
+      0% { transform: rotate(-14deg); }
+      100% { transform: rotate(14deg); }
+    }
+
+    /* 3. Halloween: Bí ngô phát sáng & dơi vỗ cánh lượn tại chỗ */
+    .event-card.halloween:hover .spooky-pumpkin {
+      transform-box: fill-box;
+      transform-origin: center;
+      animation: pumpkinGlow 0.8s ease-in-out infinite alternate;
+    }
+    .event-card.halloween:hover .spooky-bat {
+      transform-origin: 0 0;
+      animation: batFlap 0.5s ease-in-out infinite alternate;
+    }
+    @keyframes pumpkinGlow {
+      0% { transform: scale(1); filter: drop-shadow(0 0 2px #f97316); }
+      100% { transform: scale(1.08); filter: drop-shadow(0 0 10px #ffedd5) drop-shadow(0 0 18px #ea580c); }
+    }
+    @keyframes batFlap {
+      0% { transform: translateY(0px) rotate(-6deg); }
+      100% { transform: translateY(-4px) rotate(8deg); }
+    }
+
+    /* 4. Quốc Khánh VN: Sao vàng chính giữa đỉnh tỏa hào quang không bị lệch */
+    .event-card.vietnam:hover .vn-star {
+      transform-origin: 0 0;
+      animation: starRadiance 1.2s ease-in-out infinite alternate;
+    }
+    .event-card.vietnam:hover .vn-rice-left {
+      transform-origin: 52px 126px;
+      animation: riceSwayLeft 1.6s ease-in-out infinite alternate;
+    }
+    .event-card.vietnam:hover .vn-rice-right {
+      transform-origin: 108px 126px;
+      animation: riceSwayRight 1.6s ease-in-out infinite alternate;
+    }
+    @keyframes starRadiance {
+      0% { transform: scale(1); filter: drop-shadow(0 0 4px #facc15); }
+      100% { transform: scale(1.15); filter: drop-shadow(0 0 10px #ffffff) drop-shadow(0 0 20px #eab308); }
+    }
+    @keyframes riceSwayLeft {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(-3.5deg); }
+    }
+    @keyframes riceSwayRight {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(3.5deg); }
+    }
+
+    /* 5. Tết: Lồng đèn đỏ đung đưa từ móc & hoa mai vàng xoay nhẹ tại chỗ */
+    .event-card.tet:hover .tet-lantern {
+      transform-origin: 0px 0px;
+      animation: lanternSway 0.9s ease-in-out infinite alternate;
+    }
+    .event-card.tet:hover .tet-blossom {
+      transform-origin: 0px 0px;
+      animation: blossomTwirl 1.4s ease-in-out infinite alternate;
+    }
+    @keyframes lanternSway {
+      0% { transform: rotate(-12deg); }
+      100% { transform: rotate(12deg); }
+    }
+    @keyframes blossomTwirl {
+      0% { transform: rotate(-8deg) scale(1); }
+      100% { transform: rotate(10deg) scale(1.06); }
+    }
+
+    /* 6. Phục sinh: Tai thỏ vẫy & trứng nhấp nháy */
+    .event-card.easter:hover .easter-ear-left {
+      transform-origin: 56px 45px;
+      animation: earWiggleLeft 0.5s ease-in-out infinite alternate;
+    }
+    .event-card.easter:hover .easter-ear-right {
+      transform-origin: 104px 45px;
+      animation: earWiggleRight 0.5s ease-in-out infinite alternate;
+    }
+    @keyframes earWiggleLeft {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(-8deg); }
+    }
+    @keyframes earWiggleRight {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(8deg); }
+    }
+  </style>
+</head>
+
+<body class="p-4 sm:p-6 lg:p-10">
+  <div class="max-w-7xl mx-auto">
+
+    <!-- Header -->
+    <header class="text-center max-w-3xl mx-auto mb-10">
+      <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-rose-500/10 border border-rose-500/25 text-rose-400 text-xs font-semibold uppercase tracking-wider mb-3">
+        <span>✨ 6 Sự Kiện & Lễ Hội Đặc Trưng</span>
+      </div>
+      <h1 class="text-2xl sm:text-4xl font-extrabold tracking-tight text-white mb-3">
+        Bộ Sưu Tập Khung Avatar Sự Kiện (SVG)
+      </h1>
+      <p class="text-sm sm:text-base text-slate-400">
+        Vẽ vector sắc nét từng chi tiết, tối ưu hoá kích thước chuẩn 160×160. Hỗ trợ sao chép mã SVG và xuất ảnh PNG tức thì.
+      </p>
+
+      <!-- Thanh chọn / tải ảnh Avatar thử nghiệm dùng chung cho 6 khung -->
+      <div class="mt-6 p-4 rounded-2xl bg-slate-900/80 border border-slate-800 shadow-xl flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div class="flex items-center gap-3">
+          <img id="currentGlobalAvatar" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80" alt="Current Avatar" class="w-11 h-11 rounded-full object-cover border-2 border-indigo-500/60 shadow">
+          <div class="text-left">
+            <div class="text-xs font-bold text-slate-200">Ảnh đại diện đang thử:</div>
+            <div class="text-[11px] text-slate-400">Áp dụng đồng loạt cho cả 6 khung sự kiện</div>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-2 flex-wrap justify-center">
+          <label class="cursor-pointer px-3.5 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold transition-all shadow-md shadow-indigo-600/30 flex items-center gap-1.5">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
+            <span>Tải ảnh của bạn</span>
+            <input type="file" id="imageUploader" accept="image/*" class="hidden">
+          </label>
+
+          <button onclick="setSampleImage('https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&auto=format&fit=crop&q=80')" class="px-2.5 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-medium border border-slate-700 transition">Nữ 1</button>
+          <button onclick="setSampleImage('https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&auto=format&fit=crop&q=80')" class="px-2.5 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-medium border border-slate-700 transition">Nam 1</button>
+          <button onclick="setSampleImage('https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=200&auto=format&fit=crop&q=80')" class="px-2.5 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-medium border border-slate-700 transition">Bé Mèo</button>
+        </div>
+      </div>
+    </header>
+
+    <main class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+      <!-- =========================================================
+           1. KHUNG SINH NHẬT (BIRTHDAY PARTY)
+           ========================================================= -->
+      <article class="event-card birthday bg-slate-900/60 hover:bg-slate-900 border border-slate-800 hover:border-pink-500/50 p-6 rounded-3xl transition-all duration-300 shadow-lg hover:shadow-pink-500/10 flex flex-col items-center text-center">
+        
+        <div class="avatar-wrapper mb-5">
+          <img class="avatar-preview-img global-avatar-sync" 
+               src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&auto=format&fit=crop&q=80" 
+               alt="Avatar Sinh Nhật">
+
+          <!-- SVG Khung Sinh Nhật -->
+          <svg id="svg-frame-birthday" class="frame-svg" viewBox="0 0 160 160" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="bdayGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#ff007f" />
+                <stop offset="35%" stop-color="#a855f7" />
+                <stop offset="70%" stop-color="#06b6d4" />
+                <stop offset="100%" stop-color="#facc15" />
+              </linearGradient>
+              <filter id="bdayGlow" x="-20%" y="-20%" width="140%" height="140%">
+                <feGaussianBlur stdDeviation="2" result="blur" />
+                <feMerge>
+                  <feMergeNode in="blur" />
+                  <feMergeNode in="SourceGraphic" />
+                </feMerge>
+              </filter>
+            </defs>
+
+            <!-- Vòng bo viền đa sắc cầu vồng tiệc tùng -->
+            <circle cx="80" cy="80" r="54" stroke="url(#bdayGrad)" stroke-width="4.5" stroke-linecap="round" />
+            <circle cx="80" cy="80" r="50" stroke="#ffffff" stroke-width="1.2" opacity="0.4" stroke-dasharray="4 8" />
+
+            <!-- Nón sinh nhật chóp nhọn đặt ngay CHÍNH GIỮA đỉnh đầu (12h) -->
+            <g transform="translate(80, 24)">
+              <g class="bday-hat">
+                <!-- Thân nón cân đối -->
+                <path d="M 0,-18 L -18,14 Q 0,20 18,14 Z" fill="#ff007f" stroke="#ffffff" stroke-width="1.5" stroke-linejoin="round" />
+                <!-- Sọc trang trí nón tiệc đa sắc -->
+                <path d="M -5,-7 L -14,8" stroke="#facc15" stroke-width="2.2" stroke-linecap="round" />
+                <path d="M 0,-3 L -4,15" stroke="#06b6d4" stroke-width="2.2" stroke-linecap="round" />
+                <path d="M 5,1 L 6,16" stroke="#a855f7" stroke-width="2.2" stroke-linecap="round" />
+                <path d="M 9,5 L 14,13" stroke="#fde047" stroke-width="2.2" stroke-linecap="round" />
+                <!-- Quả bông Pom-pom trên đỉnh chóp -->
+                <circle cx="0" cy="-18" r="4.5" fill="#facc15" stroke="#ffffff" stroke-width="1" />
+                <!-- Viền bông chân nón uốn cong nhẹ ôm vòng đầu -->
+                <ellipse cx="0" cy="14" rx="19" ry="4" fill="#ffffff" />
+              </g>
+            </g>
+
+            <!-- Bánh cupcake ngọt ngào có nến dưới đáy (6h) -->
+            <g transform="translate(80, 134)">
+              <!-- Đáy ly bánh -->
+              <polygon points="-11,5 -8,15 8,15 11,5" fill="#f59e0b" stroke="#78350f" stroke-width="0.8" />
+              <!-- Kem phủ hồng -->
+              <ellipse cx="0" cy="4" rx="13" ry="5" fill="#f43f5e" />
+              <ellipse cx="0" cy="1" rx="10" ry="4" fill="#fb7185" />
+              <ellipse cx="0" cy="-2" rx="6" ry="3" fill="#ffffff" />
+              <!-- Cây nến sinh nhật -->
+              <rect x="-1" y="-8" width="2" height="6" fill="#38bdf8" />
+              <!-- Ngọn lửa nến -->
+              <path d="M 0,-8 Q -2,-11 0,-14 Q 2,-11 0,-8 Z" fill="#facc15" />
+            </g>
+
+            <!-- Hạt pháo giấy (Confetti) & các ngôi sao lấp lánh phóng to chuẩn tâm từng hạt -->
+            <g>
+              <circle class="bday-star-pulse" cx="125" cy="40" r="3" fill="#06b6d4" style="animation-delay: 0.1s;" />
+              <rect class="bday-star-pulse" x="132" y="65" width="4" height="4" rx="1" fill="#facc15" transform="rotate(30, 134, 67)" style="animation-delay: 0.3s;" />
+              <circle class="bday-star-pulse" cx="130" cy="100" r="2.5" fill="#a855f7" style="animation-delay: 0.5s;" />
+              <rect class="bday-star-pulse" x="25" y="95" width="4" height="4" rx="1" fill="#ec4899" transform="rotate(45, 27, 97)" style="animation-delay: 0.2s;" />
+              <circle class="bday-star-pulse" cx="35" cy="120" r="2" fill="#38bdf8" style="animation-delay: 0.4s;" />
+              <!-- Ngôi sao 4 cánh nhấp nháy zoom từ chính giữa tâm -->
+              <g class="bday-star-pulse" style="animation-delay: 0.15s;">
+                <path d="M 124,24 Q 124,28 128,28 Q 124,28 124,32 Q 124,28 120,28 Q 124,28 124,24 Z" fill="#ffffff" />
+              </g>
+              <g class="bday-star-pulse" style="animation-delay: 0.45s;">
+                <path d="M 36,36 Q 36,40 40,40 Q 36,40 36,44 Q 36,40 32,40 Q 36,40 36,36 Z" fill="#fde047" />
+              </g>
+            </g>
+          </svg>
+        </div>
+
+        <h3 class="text-lg font-bold text-pink-400 mb-1">Sinh Nhật Rực Rỡ</h3>
+        <p class="text-xs text-slate-400 mb-4">Nón tiệc ngộ nghĩnh, bánh cupcake thắp nến và pháo giấy đa sắc.</p>
+        
+        <div class="mt-auto flex items-center gap-2 w-full">
+          <button onclick="copySvgCode('svg-frame-birthday', this)" class="flex-1 py-2 px-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-slate-200 transition border border-slate-700 flex items-center justify-center gap-1.5">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"/></svg>
+            <span>Sao chép SVG</span>
+          </button>
+          <button onclick="downloadFrameAsPng('svg-frame-birthday', 'Avatar_Sinh_Nhat.png')" class="py-2 px-3 rounded-xl bg-pink-600/20 hover:bg-pink-600 text-pink-300 hover:text-white text-xs font-semibold transition border border-pink-500/40">
+            Tải PNG
+          </button>
+        </div>
+      </article>
+
+      <!-- =========================================================
+           2. KHUNG GIÁNG SINH (MERRY CHRISTMAS)
+           ========================================================= -->
+      <article class="event-card christmas bg-slate-900/60 hover:bg-slate-900 border border-slate-800 hover:border-emerald-500/50 p-6 rounded-3xl transition-all duration-300 shadow-lg hover:shadow-emerald-500/10 flex flex-col items-center text-center">
+        
+        <div class="avatar-wrapper mb-5">
+          <img class="avatar-preview-img global-avatar-sync" 
+               src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&auto=format&fit=crop&q=80" 
+               alt="Avatar Giáng Sinh">
+
+          <!-- SVG Khung Giáng Sinh -->
+          <svg id="svg-frame-christmas" class="frame-svg" viewBox="0 0 160 160" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="xmasPineGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#15803d" />
+                <stop offset="50%" stop-color="#22c55e" />
+                <stop offset="100%" stop-color="#166534" />
+              </linearGradient>
+              <linearGradient id="candyCaneGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stop-color="#dc2626" />
+                <stop offset="100%" stop-color="#ef4444" />
+              </linearGradient>
+            </defs>
+
+            <!-- Vòng dây lá thông Noel quanh viền -->
+            <circle cx="80" cy="80" r="54" stroke="url(#xmasPineGrad)" stroke-width="5.5" stroke-linecap="round" />
+            <circle cx="80" cy="80" r="50" stroke="#fef08a" stroke-width="1.5" stroke-dasharray="3 7" opacity="0.8" />
+
+            <!-- Quả cầu châu Noel đính trên vòng lá thông -->
+            <circle cx="34" cy="60" r="4" fill="#dc2626" stroke="#ffffff" stroke-width="0.8" />
+            <circle cx="126" cy="62" r="4" fill="#eab308" stroke="#ffffff" stroke-width="0.8" />
+            <circle cx="35" cy="105" r="3.5" fill="#38bdf8" stroke="#ffffff" stroke-width="0.8" />
+            <circle cx="124" cy="102" r="3.5" fill="#dc2626" stroke="#ffffff" stroke-width="0.8" />
+
+            <!-- Mũ ông già Noel trùm trên đỉnh đầu (12h) cố định tâm -->
+            <g transform="translate(80, 36)">
+              <g class="xmas-hat">
+                <!-- Thân nón đỏ rũ sang phải -->
+                <path d="M -28,2 C -30,-20 15,-26 35,-8 C 34,-1 26,2 18,2 Z" fill="#dc2626" stroke="#991b1b" stroke-width="1" />
+                <!-- Bông chóp nón tròn trắng -->
+                <circle cx="38" cy="-6" r="6" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1" />
+                <!-- Vành bông nón bồng bềnh uốn cong -->
+                <rect x="-30" y="-2" width="56" height="10" rx="5" fill="#ffffff" stroke="#e2e8f0" stroke-width="1" />
+              </g>
+            </g>
+
+            <!-- Chuông vàng & nơ đỏ Noel dưới đáy (6h) cố định điểm treo -->
+            <g transform="translate(80, 134)">
+              <g class="xmas-bell">
+                <!-- Nơ đỏ -->
+                <ellipse cx="-7" cy="-7" rx="6" ry="3" fill="#dc2626" transform="rotate(-25, -7, -7)" />
+                <ellipse cx="7" cy="-7" rx="6" ry="3" fill="#dc2626" transform="rotate(25, 7, -7)" />
+                <circle cx="0" cy="-7" r="3" fill="#991b1b" />
+                <!-- Cặp chuông vàng leng keng -->
+                <path d="M -5,-5 C -5,0 -9,6 -10,9 L 0,9 C -1,6 -5,0 -5,-5 Z" fill="#eab308" stroke="#ca8a04" stroke-width="0.8" />
+                <path d="M 5,-5 C 5,0 1,6 0,9 L 10,9 C 9,6 5,0 5,-5 Z" fill="#facc15" stroke="#ca8a04" stroke-width="0.8" />
+                <circle cx="-5" cy="9.5" r="1.5" fill="#713f12" />
+                <circle cx="5" cy="9.5" r="1.5" fill="#713f12" />
+              </g>
+            </g>
+
+            <!-- Hoa tuyết trắng rơi rải rác -->
+            <g opacity="0.85">
+              <path d="M 28,34 L 28,42 M 24,38 L 32,38" stroke="#ffffff" stroke-width="1.2" stroke-linecap="round" />
+              <path d="M 132,80 L 132,86 M 129,83 L 135,83" stroke="#ffffff" stroke-width="1.2" stroke-linecap="round" />
+            </g>
+          </svg>
+        </div>
+
+        <h3 class="text-lg font-bold text-emerald-400 mb-1">Giáng Sinh An Lành</h3>
+        <p class="text-xs text-slate-400 mb-4">Mũ Noel đỏ ấm áp, vòng lá thông mùa đông đính chuông vàng leng keng.</p>
+        
+        <div class="mt-auto flex items-center gap-2 w-full">
+          <button onclick="copySvgCode('svg-frame-christmas', this)" class="flex-1 py-2 px-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-slate-200 transition border border-slate-700 flex items-center justify-center gap-1.5">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"/></svg>
+            <span>Sao chép SVG</span>
+          </button>
+          <button onclick="downloadFrameAsPng('svg-frame-christmas', 'Avatar_Giang_Sinh.png')" class="py-2 px-3 rounded-xl bg-emerald-600/20 hover:bg-emerald-600 text-emerald-300 hover:text-white text-xs font-semibold transition border border-emerald-500/40">
+            Tải PNG
+          </button>
+        </div>
+      </article>
+
+      <!-- =========================================================
+           3. KHUNG HALLOWEEN (SPOOKY NIGHT)
+           ========================================================= -->
+      <article class="event-card halloween bg-slate-900/60 hover:bg-slate-900 border border-slate-800 hover:border-amber-500/50 p-6 rounded-3xl transition-all duration-300 shadow-lg hover:shadow-amber-500/10 flex flex-col items-center text-center">
+        
+        <div class="avatar-wrapper mb-5">
+          <img class="avatar-preview-img global-avatar-sync" 
+               src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&auto=format&fit=crop&q=80" 
+               alt="Avatar Halloween">
+
+          <!-- SVG Khung Halloween -->
+          <svg id="svg-frame-halloween" class="frame-svg" viewBox="0 0 160 160" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="hwGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#f97316" />
+                <stop offset="50%" stop-color="#7c3aed" />
+                <stop offset="100%" stop-color="#ea580c" />
+              </linearGradient>
+            </defs>
+
+            <!-- Vòng tròn ma quái màu cam - tím -->
+            <circle cx="80" cy="80" r="54" stroke="url(#hwGrad)" stroke-width="4.5" />
+            <!-- Mạng nhện góc 2h -->
+            <path d="M 115,20 L 140,45 M 125,20 L 140,35 M 120,28 Q 130,28 132,40" stroke="#cbd5e1" stroke-width="1" opacity="0.6" fill="none" />
+
+            <!-- Chú dơi đêm đang bay lượn ở góc 9h cố định vị trí -->
+            <g transform="translate(26, 42)">
+              <g class="spooky-bat">
+                <path d="M 0,3 Q -8,-6 -14,-3 Q -10,6 0,8 Q 10,6 14,-3 Q 8,-6 0,3 Z" fill="#1e1b4b" stroke="#a855f7" stroke-width="0.8" />
+                <circle cx="-1.5" cy="3" r="0.8" fill="#f97316" />
+                <circle cx="1.5" cy="3" r="0.8" fill="#f97316" />
+              </g>
+            </g>
+
+            <!-- Mũ phù thủy huyền bí ở góc trên đỉnh (11h) -->
+            <g transform="translate(68, 26) rotate(-14)">
+              <!-- Chóp nón cao nhọn -->
+              <path d="M 0,-18 Q 4,-4 14,8 L -14,8 Q -6,-4 0,-18 Z" fill="#2e1065" stroke="#7c3aed" stroke-width="1.2" />
+              <!-- Đai nón màu cam rực rỡ + khóa vàng -->
+              <path d="M -12,4 L 12,4 L 13,8 L -13,8 Z" fill="#ea580c" />
+              <rect x="-3" y="3" width="6" height="6" fill="none" stroke="#facc15" stroke-width="1.2" />
+              <!-- Vành nón phù thủy xòe rộng -->
+              <ellipse cx="0" cy="9" rx="20" ry="4.5" fill="#1e1b4b" stroke="#7c3aed" stroke-width="1" />
+            </g>
+
+            <!-- Quả bí ngô Jack-o'-lantern phát sáng góc 5h cố định vị trí -->
+            <g transform="translate(122, 122)">
+              <g class="spooky-pumpkin">
+                <!-- Cuống xanh -->
+                <path d="M 0,-10 Q 3,-14 5,-13 L 3,-9 Z" fill="#15803d" />
+                <!-- Thân bí ngô cam múi tròn -->
+                <ellipse cx="-6" cy="0" rx="7" ry="10" fill="#ea580c" />
+                <ellipse cx="6" cy="0" rx="7" ry="10" fill="#ea580c" />
+                <ellipse cx="0" cy="1" rx="8.5" ry="10.5" fill="#f97316" stroke="#c2410c" stroke-width="0.8" />
+                <!-- Mắt tam giác phát sáng ma quái -->
+                <polygon points="-5,-2 -2,-2 -3.5,-5" fill="#fef08a" />
+                <polygon points="5,-2 2,-2 3.5,-5" fill="#fef08a" />
+                <polygon points="0,0 1.5,2 -1.5,2" fill="#fef08a" />
+                <!-- Nụ cười răng cưa tinh nghịch -->
+                <path d="M -5,4 L -3,6 L -1,4 L 1,6 L 3,4 L 5,6 Q 0,10 -5,4 Z" fill="#fef08a" />
+              </g>
+            </g>
+
+            <!-- Giọt ma pháp tím rơi góc 7h -->
+            <circle cx="34" cy="116" r="3.5" fill="#7c3aed" opacity="0.8" />
+            <circle cx="28" cy="125" r="2" fill="#a855f7" opacity="0.6" />
+          </svg>
+        </div>
+
+        <h3 class="text-lg font-bold text-amber-400 mb-1">Halloween Ma Mị</h3>
+        <p class="text-xs text-slate-400 mb-4">Mũ phù thủy bóng đêm, bí ngô phát sáng răng cưa và cánh dơi ma mị.</p>
+        
+        <div class="mt-auto flex items-center gap-2 w-full">
+          <button onclick="copySvgCode('svg-frame-halloween', this)" class="flex-1 py-2 px-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-slate-200 transition border border-slate-700 flex items-center justify-center gap-1.5">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"/></svg>
+            <span>Sao chép SVG</span>
+          </button>
+          <button onclick="downloadFrameAsPng('svg-frame-halloween', 'Avatar_Halloween.png')" class="py-2 px-3 rounded-xl bg-amber-600/20 hover:bg-amber-600 text-amber-300 hover:text-white text-xs font-semibold transition border border-amber-500/40">
+            Tải PNG
+          </button>
+        </div>
+      </article>
+
+      <!-- =========================================================
+           4. KHUNG QUỐC KHÁNH VIỆT NAM (2/9)
+           ========================================================= -->
+      <article class="event-card vietnam bg-slate-900/60 hover:bg-slate-900 border border-slate-800 hover:border-red-500/50 p-6 rounded-3xl transition-all duration-300 shadow-lg hover:shadow-red-500/10 flex flex-col items-center text-center">
+        
+        <div class="avatar-wrapper mb-5">
+          <img class="avatar-preview-img global-avatar-sync" 
+               src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&auto=format&fit=crop&q=80" 
+               alt="Avatar Quốc Khánh Việt Nam">
+
+          <!-- SVG Khung Quốc Khánh VN -->
+          <svg id="svg-frame-vietnam" class="frame-svg" viewBox="0 0 160 160" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="vnRedGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#ef4444" />
+                <stop offset="50%" stop-color="#b91c1c" />
+                <stop offset="100%" stop-color="#dc2626" />
+              </linearGradient>
+              <linearGradient id="goldStarGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#ffffff" />
+                <stop offset="30%" stop-color="#fde047" />
+                <stop offset="100%" stop-color="#eab308" />
+              </linearGradient>
+              <linearGradient id="riceGoldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#fffbeb" />
+                <stop offset="35%" stop-color="#fde047" />
+                <stop offset="75%" stop-color="#f59e0b" />
+                <stop offset="100%" stop-color="#b45309" />
+              </linearGradient>
+              <filter id="vnGlow" x="-30%" y="-30%" width="160%" height="160%">
+                <feGaussianBlur stdDeviation="3" result="blur" />
+                <feMerge>
+                  <feMergeNode in="blur" />
+                  <feMergeNode in="SourceGraphic" />
+                </feMerge>
+              </filter>
+            </defs>
+
+            <!-- Vòng khung đỏ thắm cờ Tổ quốc với viền chỉ vàng trang trọng -->
+            <circle cx="80" cy="80" r="54" stroke="url(#vnRedGrad)" stroke-width="5" />
+            <circle cx="80" cy="80" r="50" stroke="#fbbf24" stroke-width="1.5" />
+            <circle cx="80" cy="80" r="57" stroke="#fbbf24" stroke-width="0.8" opacity="0.6" stroke-dasharray="2 6" />
+
+            <!-- BÔNG LÚA VÀNG BÊN TRÁI: Ôm viền tròn và ngọn cúi đầu quay ra ngoài -->
+            <g class="vn-rice-stalk vn-rice-left">
+              <!-- Cọng thân lúa cong mềm mại -->
+              <path d="M 52,126 C 36,112 24,92 24,68 C 24,54 18,46 12,54" stroke="#d97706" stroke-width="1.3" fill="none" stroke-linecap="round" />
+              <!-- Các hạt lúa vàng căng mẩy xếp cặp so le -->
+              <g>
+                <!-- Hạt tầng 1 (gốc) -->
+                <g transform="translate(44, 118) rotate(-40)"><path d="M 0,-4 C 2.2,-2.6 2.2,2.6 0,4 C -2.2,2.6 -2.2,-2.6 0,-4 Z" fill="url(#riceGoldGrad)" stroke="#b45309" stroke-width="0.5" /><ellipse cx="-0.6" cy="-0.8" rx="0.6" ry="1.5" fill="#fff" opacity="0.6" /></g>
+                <g transform="translate(50, 121) rotate(-35)"><path d="M 0,-4 C 2.2,-2.6 2.2,2.6 0,4 C -2.2,2.6 -2.2,-2.6 0,-4 Z" fill="url(#riceGoldGrad)" stroke="#b45309" stroke-width="0.5" /></g>
+                <!-- Hạt tầng 2 -->
+                <g transform="translate(35, 104) rotate(-50)"><path d="M 0,-4.2 C 2.4,-2.8 2.4,2.8 0,4.2 C -2.4,2.8 -2.4,-2.8 0,-4.2 Z" fill="url(#riceGoldGrad)" stroke="#b45309" stroke-width="0.5" /><ellipse cx="-0.6" cy="-0.8" rx="0.6" ry="1.6" fill="#fff" opacity="0.6" /></g>
+                <g transform="translate(42, 108) rotate(-45)"><path d="M 0,-4 C 2.2,-2.6 2.2,2.6 0,4 C -2.2,2.6 -2.2,-2.6 0,-4 Z" fill="url(#riceGoldGrad)" stroke="#b45309" stroke-width="0.5" /></g>
+                <!-- Hạt tầng 3 -->
+                <g transform="translate(27, 91) rotate(-65)"><path d="M 0,-4.2 C 2.4,-2.8 2.4,2.8 0,4.2 C -2.4,2.8 -2.4,-2.8 0,-4.2 Z" fill="url(#riceGoldGrad)" stroke="#b45309" stroke-width="0.5" /><ellipse cx="-0.6" cy="-0.8" rx="0.6" ry="1.6" fill="#fff" opacity="0.6" /></g>
+                <g transform="translate(35, 95) rotate(-60)"><path d="M 0,-4 C 2.2,-2.6 2.2,2.6 0,4 C -2.2,2.6 -2.2,-2.6 0,-4 Z" fill="url(#riceGoldGrad)" stroke="#b45309" stroke-width="0.5" /></g>
+                <!-- Hạt tầng 4 -->
+                <g transform="translate(21, 77) rotate(-78)"><path d="M 0,-4.2 C 2.4,-2.8 2.4,2.8 0,4.2 C -2.4,2.8 -2.4,-2.8 0,-4.2 Z" fill="url(#riceGoldGrad)" stroke="#b45309" stroke-width="0.5" /><ellipse cx="-0.6" cy="-0.8" rx="0.6" ry="1.6" fill="#fff" opacity="0.6" /></g>
+                <g transform="translate(29, 81) rotate(-75)"><path d="M 0,-4 C 2.2,-2.6 2.2,2.6 0,4 C -2.2,2.6 -2.2,-2.6 0,-4 Z" fill="url(#riceGoldGrad)" stroke="#b45309" stroke-width="0.5" /></g>
+                <!-- Hạt tầng 5 (chớm uốn) -->
+                <g transform="translate(18, 64) rotate(-90)"><path d="M 0,-4.2 C 2.4,-2.8 2.4,2.8 0,4.2 C -2.4,2.8 -2.4,-2.8 0,-4.2 Z" fill="url(#riceGoldGrad)" stroke="#b45309" stroke-width="0.5" /><ellipse cx="-0.6" cy="-0.8" rx="0.6" ry="1.6" fill="#fff" opacity="0.6" /></g>
+                <g transform="translate(26, 68) rotate(-85)"><path d="M 0,-4 C 2.2,-2.6 2.2,2.6 0,4 C -2.2,2.6 -2.2,-2.6 0,-4 Z" fill="url(#riceGoldGrad)" stroke="#b45309" stroke-width="0.5" /></g>
+                <!-- Hạt tầng 6 (uốn cong ra ngoài) -->
+                <g transform="translate(19, 53) rotate(-115)"><path d="M 0,-4 C 2.3,-2.7 2.3,2.7 0,4 C -2.3,2.7 -2.3,-2.7 0,-4 Z" fill="url(#riceGoldGrad)" stroke="#b45309" stroke-width="0.5" /><ellipse cx="-0.6" cy="-0.8" rx="0.6" ry="1.5" fill="#fff" opacity="0.6" /></g>
+                <g transform="translate(27, 57) rotate(-105)"><path d="M 0,-3.8 C 2.1,-2.5 2.1,2.5 0,3.8 C -2.1,2.5 -2.1,-2.5 0,-3.8 Z" fill="url(#riceGoldGrad)" stroke="#b45309" stroke-width="0.5" /></g>
+                <!-- Hạt đỉnh uốn gục ra ngoài -->
+                <g transform="translate(17, 47) rotate(-145)"><path d="M 0,-3.8 C 2.1,-2.5 2.1,2.5 0,3.8 C -2.1,2.5 -2.1,-2.5 0,-3.8 Z" fill="url(#riceGoldGrad)" stroke="#b45309" stroke-width="0.5" /><ellipse cx="-0.6" cy="-0.8" rx="0.6" ry="1.5" fill="#fff" opacity="0.6" /></g>
+                <!-- Hạt ngọn trĩu xuống -->
+                <g transform="translate(12, 53) rotate(-170)"><path d="M 0,-3.6 C 2,-2.4 2,2.4 0,3.6 C -2,2.4 -2,-2.4 0,-3.6 Z" fill="url(#riceGoldGrad)" stroke="#b45309" stroke-width="0.5" /></g>
+                <g transform="translate(11, 59) rotate(175)"><path d="M 0,-3.4 C 1.9,-2.3 1.9,2.3 0,3.4 C -1.9,2.3 -1.9,-2.3 0,-3.4 Z" fill="url(#riceGoldGrad)" stroke="#b45309" stroke-width="0.5" /></g>
+              </g>
+              <!-- Râu lúa mảnh mai ở chóp ngọn -->
+              <path d="M 11,59 L 7,65 M 12,53 L 7,56 M 17,47 L 14,42" stroke="#f59e0b" stroke-width="0.7" stroke-linecap="round" />
+            </g>
+
+            <!-- BÔNG LÚA VÀNG BÊN PHẢI: Đối xứng hoàn hảo qua trục giữa, cúi đầu quay sang phải -->
+            <g class="vn-rice-stalk vn-rice-right">
+              <!-- Cọng thân lúa cong mềm mại -->
+              <path d="M 108,126 C 124,112 136,92 136,68 C 136,54 142,46 148,54" stroke="#d97706" stroke-width="1.3" fill="none" stroke-linecap="round" />
+              <!-- Các hạt lúa vàng căng mẩy xếp cặp so le -->
+              <g>
+                <!-- Hạt tầng 1 (gốc) -->
+                <g transform="translate(116, 118) rotate(40)"><path d="M 0,-4 C 2.2,-2.6 2.2,2.6 0,4 C -2.2,2.6 -2.2,-2.6 0,-4 Z" fill="url(#riceGoldGrad)" stroke="#b45309" stroke-width="0.5" /><ellipse cx="0.6" cy="-0.8" rx="0.6" ry="1.5" fill="#fff" opacity="0.6" /></g>
+                <g transform="translate(110, 121) rotate(35)"><path d="M 0,-4 C 2.2,-2.6 2.2,2.6 0,4 C -2.2,2.6 -2.2,-2.6 0,-4 Z" fill="url(#riceGoldGrad)" stroke="#b45309" stroke-width="0.5" /></g>
+                <!-- Hạt tầng 2 -->
+                <g transform="translate(125, 104) rotate(50)"><path d="M 0,-4.2 C 2.4,-2.8 2.4,2.8 0,4.2 C -2.4,2.8 -2.4,-2.8 0,-4.2 Z" fill="url(#riceGoldGrad)" stroke="#b45309" stroke-width="0.5" /><ellipse cx="0.6" cy="-0.8" rx="0.6" ry="1.6" fill="#fff" opacity="0.6" /></g>
+                <g transform="translate(118, 108) rotate(45)"><path d="M 0,-4 C 2.2,-2.6 2.2,2.6 0,4 C -2.2,2.6 -2.2,-2.6 0,-4 Z" fill="url(#riceGoldGrad)" stroke="#b45309" stroke-width="0.5" /></g>
+                <!-- Hạt tầng 3 -->
+                <g transform="translate(133, 91) rotate(65)"><path d="M 0,-4.2 C 2.4,-2.8 2.4,2.8 0,4.2 C -2.4,2.8 -2.4,-2.8 0,-4.2 Z" fill="url(#riceGoldGrad)" stroke="#b45309" stroke-width="0.5" /><ellipse cx="0.6" cy="-0.8" rx="0.6" ry="1.6" fill="#fff" opacity="0.6" /></g>
+                <g transform="translate(125, 95) rotate(60)"><path d="M 0,-4 C 2.2,-2.6 2.2,2.6 0,4 C -2.2,2.6 -2.2,-2.6 0,-4 Z" fill="url(#riceGoldGrad)" stroke="#b45309" stroke-width="0.5" /></g>
+                <!-- Hạt tầng 4 -->
+                <g transform="translate(139, 77) rotate(78)"><path d="M 0,-4.2 C 2.4,-2.8 2.4,2.8 0,4.2 C -2.4,2.8 -2.4,-2.8 0,-4.2 Z" fill="url(#riceGoldGrad)" stroke="#b45309" stroke-width="0.5" /><ellipse cx="0.6" cy="-0.8" rx="0.6" ry="1.6" fill="#fff" opacity="0.6" /></g>
+                <g transform="translate(131, 81) rotate(75)"><path d="M 0,-4 C 2.2,-2.6 2.2,2.6 0,4 C -2.2,2.6 -2.2,-2.6 0,-4 Z" fill="url(#riceGoldGrad)" stroke="#b45309" stroke-width="0.5" /></g>
+                <!-- Hạt tầng 5 (chớm uốn) -->
+                <g transform="translate(142, 64) rotate(90)"><path d="M 0,-4.2 C 2.4,-2.8 2.4,2.8 0,4.2 C -2.4,2.8 -2.4,-2.8 0,-4.2 Z" fill="url(#riceGoldGrad)" stroke="#b45309" stroke-width="0.5" /><ellipse cx="0.6" cy="-0.8" rx="0.6" ry="1.6" fill="#fff" opacity="0.6" /></g>
+                <g transform="translate(134, 68) rotate(85)"><path d="M 0,-4 C 2.2,-2.6 2.2,2.6 0,4 C -2.2,2.6 -2.2,-2.6 0,-4 Z" fill="url(#riceGoldGrad)" stroke="#b45309" stroke-width="0.5" /></g>
+                <!-- Hạt tầng 6 (uốn cong ra ngoài) -->
+                <g transform="translate(141, 53) rotate(115)"><path d="M 0,-4 C 2.3,-2.7 2.3,2.7 0,4 C -2.3,2.7 -2.3,-2.7 0,-4 Z" fill="url(#riceGoldGrad)" stroke="#b45309" stroke-width="0.5" /><ellipse cx="0.6" cy="-0.8" rx="0.6" ry="1.5" fill="#fff" opacity="0.6" /></g>
+                <g transform="translate(133, 57) rotate(105)"><path d="M 0,-3.8 C 2.1,-2.5 2.1,2.5 0,3.8 C -2.1,2.5 -2.1,-2.5 0,-3.8 Z" fill="url(#riceGoldGrad)" stroke="#b45309" stroke-width="0.5" /></g>
+                <!-- Hạt đỉnh uốn gục ra ngoài -->
+                <g transform="translate(143, 47) rotate(145)"><path d="M 0,-3.8 C 2.1,-2.5 2.1,2.5 0,3.8 C -2.1,2.5 -2.1,-2.5 0,-3.8 Z" fill="url(#riceGoldGrad)" stroke="#b45309" stroke-width="0.5" /><ellipse cx="0.6" cy="-0.8" rx="0.6" ry="1.5" fill="#fff" opacity="0.6" /></g>
+                <!-- Hạt ngọn trĩu xuống -->
+                <g transform="translate(148, 53) rotate(170)"><path d="M 0,-3.6 C 2,-2.4 2,2.4 0,3.6 C -2,2.4 -2,-2.4 0,-3.6 Z" fill="url(#riceGoldGrad)" stroke="#b45309" stroke-width="0.5" /></g>
+                <g transform="translate(149, 59) rotate(-175)"><path d="M 0,-3.4 C 1.9,-2.3 1.9,2.3 0,3.4 C -1.9,2.3 -1.9,-2.3 0,-3.4 Z" fill="url(#riceGoldGrad)" stroke="#b45309" stroke-width="0.5" /></g>
+              </g>
+              <!-- Râu lúa mảnh mai ở chóp ngọn -->
+              <path d="M 149,59 L 153,65 M 148,53 L 153,56 M 143,47 L 146,42" stroke="#f59e0b" stroke-width="0.7" stroke-linecap="round" />
+            </g>
+
+            <!-- Ngôi sao vàng 5 cánh tỏa sáng uy nghi ở đỉnh cao (12h) cố định tâm -->
+            <g transform="translate(80, 24)">
+              <g class="vn-star" filter="url(#vnGlow)">
+                <!-- Nền huy hiệu tròn đỏ lót sao -->
+                <circle cx="0" cy="0" r="14" fill="#b91c1c" stroke="#facc15" stroke-width="1.8" />
+                <!-- Ngôi sao vàng chuẩn 5 cánh -->
+                <polygon points="0,-10 3,-3 10,-3 4.5,1.5 6.5,8.5 0,4.5 -6.5,8.5 -4.5,1.5 -10,-3 -3,-3" fill="url(#goldStarGrad)" />
+              </g>
+            </g>
+
+            <!-- Dải lụa đỏ vàng & Hoa sen hồng thanh tao ở đáy (6h) -->
+            <g transform="translate(80, 136)">
+              <!-- Dải ruy băng đế đỏ viền vàng -->
+              <path d="M -30,-4 Q 0,-9 30,-4 L 26,5 Q 0,0 -26,5 Z" fill="#dc2626" stroke="#facc15" stroke-width="1" />
+              <!-- Bông hoa sen hồng biểu tượng -->
+              <!-- Cánh sen ngoài -->
+              <path d="M 0,2 C -10,-4 -12,-10 -6,-14 C -3,-10 0,-5 0,2 Z" fill="#f472b6" opacity="0.9" />
+              <path d="M 0,2 C 10,-4 12,-10 6,-14 C 3,-10 0,-5 0,2 Z" fill="#f472b6" opacity="0.9" />
+              <!-- Cánh sen chính tâm -->
+              <path d="M 0,-17 C -5,-12 -4,-4 0,2 C 4,-4 5,-12 0,-17 Z" fill="#fbcfe8" stroke="#ec4899" stroke-width="0.7" />
+              <!-- Lá sen ngọc đế hoa -->
+              <ellipse cx="0" cy="3" rx="10" ry="2.5" fill="#15803d" />
+            </g>
+          </svg>
+        </div>
+
+        <h3 class="text-lg font-bold text-red-400 mb-1">Quốc Khánh Việt Nam</h3>
+        <p class="text-xs text-slate-400 mb-4">Hai bông lúa vàng óng cúi đầu, ngôi sao rực rỡ và hoa sen hồng thanh tao 2/9.</p>
+        
+        <div class="mt-auto flex items-center gap-2 w-full">
+          <button onclick="copySvgCode('svg-frame-vietnam', this)" class="flex-1 py-2 px-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-slate-200 transition border border-slate-700 flex items-center justify-center gap-1.5">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"/></svg>
+            <span>Sao chép SVG</span>
+          </button>
+          <button onclick="downloadFrameAsPng('svg-frame-vietnam', 'Avatar_Quoc_Khanh_VN.png')" class="py-2 px-3 rounded-xl bg-red-600/20 hover:bg-red-600 text-red-300 hover:text-white text-xs font-semibold transition border border-red-500/40">
+            Tải PNG
+          </button>
+        </div>
+      </article>
+
+      <!-- =========================================================
+           5. KHUNG TẾT CỔ TRUYỀN (LUNAR NEW YEAR)
+           ========================================================= -->
+      <article class="event-card tet bg-slate-900/60 hover:bg-slate-900 border border-slate-800 hover:border-yellow-500/50 p-6 rounded-3xl transition-all duration-300 shadow-lg hover:shadow-yellow-500/10 flex flex-col items-center text-center">
+        
+        <div class="avatar-wrapper mb-5">
+          <img class="avatar-preview-img global-avatar-sync" 
+               src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&auto=format&fit=crop&q=80" 
+               alt="Avatar Tết Cổ Truyền">
+
+          <!-- SVG Khung Tết Cổ Truyền -->
+          <svg id="svg-frame-tet" class="frame-svg" viewBox="0 0 160 160" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="tetGoldRed" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#e11d48" />
+                <stop offset="40%" stop-color="#f59e0b" />
+                <stop offset="80%" stop-color="#dc2626" />
+                <stop offset="100%" stop-color="#eab308" />
+              </linearGradient>
+            </defs>
+
+            <!-- Vòng tròn kim tiền may mắn đầu năm -->
+            <circle cx="80" cy="80" r="54" stroke="url(#tetGoldRed)" stroke-width="4.8" />
+            <circle cx="80" cy="80" r="50" stroke="#fef08a" stroke-width="1.2" opacity="0.6" stroke-dasharray="3 7" />
+
+            <!-- Lồng đèn đỏ treo đung đưa góc 10h cố định điểm móc treo -->
+            <g transform="translate(32, 26)">
+              <g class="tet-lantern">
+                <!-- Dây treo từ điểm móc (0,0) -->
+                <line x1="0" y1="0" x2="0" y2="10" stroke="#facc15" stroke-width="1.2" />
+                <!-- Nắp vàng trên -->
+                <rect x="-5" y="10" width="10" height="2" rx="1" fill="#facc15" />
+                <!-- Thân lồng đèn đỏ phồng -->
+                <ellipse cx="0" cy="19" rx="8" ry="8" fill="#dc2626" stroke="#991b1b" stroke-width="0.8" />
+                <ellipse cx="0" cy="19" rx="4" ry="8" fill="none" stroke="#facc15" stroke-width="0.8" opacity="0.8" />
+                <!-- Nắp vàng dưới + Tua rua vàng -->
+                <rect x="-4" y="27" width="8" height="2" rx="1" fill="#facc15" />
+                <line x1="-2" y1="29" x2="-2" y2="38" stroke="#facc15" stroke-width="1" />
+                <line x1="0" y1="29" x2="0" y2="40" stroke="#f59e0b" stroke-width="1.2" />
+                <line x1="2" y1="29" x2="2" y2="38" stroke="#facc15" stroke-width="1" />
+              </g>
+            </g>
+
+            <!-- Cành hoa mai vàng 5 cánh góc 1h - 2h cố định gốc cành -->
+            <g transform="translate(126, 42)">
+              <g class="tet-blossom">
+                <!-- Cuống cành gỗ nâu -->
+                <path d="M -15,10 Q -5,0 10,-10" stroke="#78350f" stroke-width="1.8" fill="none" stroke-linecap="round" />
+                <!-- Bông hoa mai vàng chính -->
+                <g transform="translate(0, 0)">
+                  <circle cx="-5" cy="-4" r="3.8" fill="#facc15" />
+                  <circle cx="5" cy="-4" r="3.8" fill="#facc15" />
+                  <circle cx="-6" cy="3" r="3.8" fill="#facc15" />
+                  <circle cx="6" cy="3" r="3.8" fill="#facc15" />
+                  <circle cx="0" cy="6" r="3.8" fill="#facc15" />
+                  <!-- Nhụy hoa cam tươi -->
+                  <circle cx="0" cy="0" r="2.5" fill="#ea580c" />
+                </g>
+                <!-- Nụ hoa mai nhỏ -->
+                <circle cx="8" cy="-8" r="2.5" fill="#fde047" stroke="#ca8a04" stroke-width="0.6" />
+              </g>
+            </g>
+
+            <!-- Bánh Chưng xanh & Bao lì xì đỏ may mắn ở đáy (6h) -->
+            <g transform="translate(80, 134)">
+              <!-- Bao lì xì đỏ chúc phúc nghiêng bên phải -->
+              <rect x="2" y="-10" width="16" height="20" rx="2" fill="#dc2626" stroke="#facc15" stroke-width="1" transform="rotate(15, 10, 0)" />
+              <circle cx="10" cy="0" r="3" fill="#facc15" transform="rotate(15, 10, 0)" />
+
+              <!-- Bánh Chưng xanh vuông vắn buộc lạt giang vàng -->
+              <rect x="-17" y="-8" width="18" height="18" rx="2" fill="#15803d" stroke="#166534" stroke-width="1" transform="rotate(-8, -8, 1)" />
+              <!-- Dây lạt giang chữ thập -->
+              <line x1="-8" y1="-8" x2="-8" y2="10" stroke="#fef08a" stroke-width="1.2" transform="rotate(-8, -8, 1)" />
+              <line x1="-17" y1="1" x2="1" y2="1" stroke="#fef08a" stroke-width="1.2" transform="rotate(-8, -8, 1)" />
+              
+              <!-- Đồng xu vàng phong thủy đón lộc -->
+              <circle cx="0" cy="5" r="4.5" fill="#facc15" stroke="#b45309" stroke-width="0.8" />
+              <rect x="-1.5" y="3.5" width="3" height="3" fill="#b45309" />
+            </g>
+          </svg>
+        </div>
+
+        <h3 class="text-lg font-bold text-yellow-400 mb-1">Tết Nguyên Đán</h3>
+        <p class="text-xs text-slate-400 mb-4">Lồng đèn đỏ may mắn, cành mai vàng khoe sắc, bánh chưng xanh & bao lì xì.</p>
+        
+        <div class="mt-auto flex items-center gap-2 w-full">
+          <button onclick="copySvgCode('svg-frame-tet', this)" class="flex-1 py-2 px-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-slate-200 transition border border-slate-700 flex items-center justify-center gap-1.5">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"/></svg>
+            <span>Sao chép SVG</span>
+          </button>
+          <button onclick="downloadFrameAsPng('svg-frame-tet', 'Avatar_Tet_Nguyen_Dan.png')" class="py-2 px-3 rounded-xl bg-yellow-600/20 hover:bg-yellow-600 text-yellow-300 hover:text-white text-xs font-semibold transition border border-yellow-500/40">
+            Tải PNG
+          </button>
+        </div>
+      </article>
+
+      <!-- =========================================================
+           6. KHUNG PHỤC SINH (EASTER BUNNY & EGGS)
+           ========================================================= -->
+      <article class="event-card easter bg-slate-900/60 hover:bg-slate-900 border border-slate-800 hover:border-sky-500/50 p-6 rounded-3xl transition-all duration-300 shadow-lg hover:shadow-sky-500/10 flex flex-col items-center text-center">
+        
+        <div class="avatar-wrapper mb-5">
+          <img class="avatar-preview-img global-avatar-sync" 
+               src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&auto=format&fit=crop&q=80" 
+               alt="Avatar Phục Sinh">
+
+          <!-- SVG Khung Phục Sinh -->
+          <svg id="svg-frame-easter" class="frame-svg" viewBox="0 0 160 160" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="easterPastelGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#38bdf8" />
+                <stop offset="35%" stop-color="#c084fc" />
+                <stop offset="70%" stop-color="#f472b6" />
+                <stop offset="100%" stop-color="#4ade80" />
+              </linearGradient>
+            </defs>
+
+            <!-- Vòng bo viền mùa xuân pastel dịu mát -->
+            <circle cx="80" cy="80" r="54" stroke="url(#easterPastelGrad)" stroke-width="4.5" />
+            <circle cx="80" cy="80" r="50" stroke="#ffffff" stroke-width="1.2" opacity="0.6" stroke-dasharray="4 6" />
+
+            <!-- Đôi tai thỏ trắng muốt ngộ nghĩnh trên đỉnh (11h & 1h) -->
+            <!-- Tai trái -->
+            <g class="easter-ear-left">
+              <path d="M 46,38 C 38,10 50,4 56,8 C 64,13 62,30 58,38 Z" fill="#ffffff" stroke="#e2e8f0" stroke-width="1.2" />
+              <path d="M 49,34 C 44,15 50,11 54,14 C 59,18 57,28 55,34 Z" fill="#fbcfe8" />
+            </g>
+
+            <!-- Tai phải khẽ gập ngộ nghĩnh -->
+            <g class="easter-ear-right">
+              <path d="M 102,38 C 98,30 96,13 104,8 C 110,4 122,10 114,38 Z" fill="#ffffff" stroke="#e2e8f0" stroke-width="1.2" />
+              <path d="M 105,34 C 103,28 101,18 106,14 C 110,11 116,15 111,34 Z" fill="#fbcfe8" />
+              <!-- Bông hoa cúc nhỏ cài trên tai -->
+              <circle cx="98" cy="38" r="3" fill="#facc15" />
+              <circle cx="98" cy="38" r="1.2" fill="#ea580c" />
+            </g>
+
+            <!-- Bụi cỏ mùa xuân và 3 quả trứng phục sinh sắc màu ở đáy (6h) -->
+            <g transform="translate(80, 134)">
+              <!-- Bụi cỏ xanh non -->
+              <path d="M -26,12 L -22,2 L -18,12 L -14,0 L -10,12 L 10,12 L 14,0 L 18,12 L 22,2 L 26,12 Z" fill="#4ade80" />
+
+              <!-- Trứng 1 (Bên trái): Màu hồng sọc zigzag trắng -->
+              <g transform="translate(-14, 2) rotate(-15)">
+                <ellipse cx="0" cy="0" rx="6.5" ry="9" fill="#f472b6" stroke="#db2777" stroke-width="0.8" />
+                <path d="M -5,-1 L -3,1 L 0,-1 L 3,1 L 5,-1" stroke="#ffffff" stroke-width="1.2" fill="none" />
+                <circle cx="0" cy="-4" r="1.2" fill="#ffffff" />
+                <circle cx="0" cy="4" r="1.2" fill="#ffffff" />
+              </g>
+
+              <!-- Trứng 3 (Bên phải): Màu xanh ngọc chấm bi vàng -->
+              <g transform="translate(14, 2) rotate(15)">
+                <ellipse cx="0" cy="0" rx="6.5" ry="9" fill="#38bdf8" stroke="#0284c7" stroke-width="0.8" />
+                <circle cx="-2" cy="-3" r="1.3" fill="#fde047" />
+                <circle cx="2.5" cy="0" r="1.3" fill="#fde047" />
+                <circle cx="-1" cy="4" r="1.3" fill="#fde047" />
+              </g>
+
+              <!-- Trứng 2 (Chính giữa): Màu tím hoa cà thắt nơ xanh -->
+              <g transform="translate(0, 0)">
+                <ellipse cx="0" cy="0" rx="7.5" ry="10" fill="#c084fc" stroke="#9333ea" stroke-width="0.8" />
+                <line x1="-7" y1="0" x2="7" y2="0" stroke="#fef08a" stroke-width="2" />
+                <!-- Chấm bi hồng -->
+                <circle cx="-3" cy="-4" r="1.2" fill="#ffffff" />
+                <circle cx="3" cy="-4" r="1.2" fill="#ffffff" />
+                <circle cx="0" cy="5" r="1.2" fill="#ffffff" />
+              </g>
+            </g>
+          </svg>
+        </div>
+
+        <h3 class="text-lg font-bold text-sky-400 mb-1">Lễ Phục Sinh (Easter)</h3>
+        <p class="text-xs text-slate-400 mb-4">Đôi tai thỏ trắng đáng yêu, hoa cúc nhỏ và giỏ trứng Phục sinh vẽ sọc màu.</p>
+        
+        <div class="mt-auto flex items-center gap-2 w-full">
+          <button onclick="copySvgCode('svg-frame-easter', this)" class="flex-1 py-2 px-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-slate-200 transition border border-slate-700 flex items-center justify-center gap-1.5">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"/></svg>
+            <span>Sao chép SVG</span>
+          </button>
+          <button onclick="downloadFrameAsPng('svg-frame-easter', 'Avatar_Phuc_Sinh.png')" class="py-2 px-3 rounded-xl bg-sky-600/20 hover:bg-sky-600 text-sky-300 hover:text-white text-xs font-semibold transition border border-sky-500/40">
+            Tải PNG
+          </button>
+        </div>
+      </article>
+
+    </main>
+
+    <!-- Canvas ẩn phục vụ kết xuất ảnh PNG độ phân giải cao -->
+    <canvas id="exportCanvas" width="800" height="800" class="hidden"></canvas>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="fixed bottom-6 right-6 transform translate-y-24 opacity-0 transition-all duration-300 pointer-events-none bg-slate-800/95 border border-slate-700 text-white px-4 py-3 rounded-2xl shadow-2xl flex items-center gap-3 backdrop-blur-md z-50">
+      <div id="toastIcon" class="text-emerald-400">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+      </div>
+      <span id="toastMsg" class="text-xs font-semibold">Thông báo</span>
+    </div>
+
+  </div>
+
+  <script>
+    // 1. Quản lý thay đổi ảnh Avatar đồng loạt
+    function setSampleImage(url) {
+      document.getElementById('currentGlobalAvatar').src = url;
+      const avatarImages = document.querySelectorAll('.global-avatar-sync');
+      avatarImages.forEach(img => {
+        img.src = url;
+      });
+      showToast("Đã cập nhật ảnh avatar cho toàn bộ khung!");
+    }
+
+    // Tải ảnh từ máy tính cá nhân
+    const imageUploader = document.getElementById('imageUploader');
+    imageUploader.addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (file && file.type.startsWith('image/')) {
+        const reader = new FileReader();
+        reader.onload = (event) => {
+          setSampleImage(event.target.result);
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+
+    // 2. Sao chép mã nguồn SVG vào bộ nhớ tạm
+    function copySvgCode(svgId, buttonElement) {
+      const svgEl = document.getElementById(svgId);
+      if (!svgEl) return;
+
+      const serializer = new XMLSerializer();
+      const svgString = serializer.serializeToString(svgEl);
+
+      const textArea = document.createElement('textarea');
+      textArea.value = svgString;
+      document.body.appendChild(textArea);
+      textArea.select();
+      document.execCommand('copy');
+      document.body.removeChild(textArea);
+
+      // Phản hồi nút bấm
+      const originalText = buttonElement.innerHTML;
+      buttonElement.innerHTML = `
+        <svg class="w-3.5 h-3.5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+        <span class="text-emerald-400">Đã chép!</span>
+      `;
+      setTimeout(() => {
+        buttonElement.innerHTML = originalText;
+      }, 2000);
+
+      showToast("Đã sao chép mã nguồn SVG vào bộ nhớ tạm!");
+    }
+
+    // 3. Kết xuất và tải ảnh PNG độ nét cao (800x800px) kèm cả ảnh và khung
+    function downloadFrameAsPng(svgId, fileName) {
+      showToast("Đang tạo ảnh PNG chất lượng cao...", "loading");
+
+      const svgEl = document.getElementById(svgId);
+      const canvas = document.getElementById('exportCanvas');
+      const ctx = canvas.getContext('2d');
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      // Tìm ảnh avatar đang dùng
+      const card = svgEl.closest('.avatar-wrapper');
+      const avatarImgEl = card.querySelector('.global-avatar-sync');
+
+      // Tải và vẽ ảnh tròn avatar trước
+      const avatarImg = new Image();
+      avatarImg.crossOrigin = 'anonymous';
+      avatarImg.onload = () => {
+        // Tọa độ tương ứng: tâm 400, 400, bán kính 260px (tỉ lệ 54/160 * 800)
+        const centerX = canvas.width / 2;
+        const centerY = canvas.height / 2;
+        const radius = (52 / 160) * canvas.width;
+
+        // Cắt hình tròn cho avatar
+        ctx.save();
+        ctx.beginPath();
+        ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
+        ctx.closePath();
+        ctx.clip();
+        ctx.drawImage(avatarImg, centerX - radius, centerY - radius, radius * 2, radius * 2);
+        ctx.restore();
+
+        // Sau đó vẽ lớp SVG viền lên trên
+        const serializer = new XMLSerializer();
+        const svgString = serializer.serializeToString(svgEl);
+        const svgBlob = new Blob([svgString], { type: 'image/svg+xml;charset=utf-8' });
+        const URLObj = window.URL || window.webkitURL || window;
+        const blobUrl = URLObj.createObjectURL(svgBlob);
+
+        const frameImg = new Image();
+        frameImg.onload = () => {
+          ctx.drawImage(frameImg, 0, 0, canvas.width, canvas.height);
+          URLObj.revokeObjectURL(blobUrl);
+
+          // Tải file PNG
+          const pngUrl = canvas.toDataURL('image/png');
+          const downloadLink = document.createElement('a');
+          downloadLink.download = fileName;
+          downloadLink.href = pngUrl;
+          document.body.appendChild(downloadLink);
+          downloadLink.click();
+          document.body.removeChild(downloadLink);
+
+          showToast("Đã tải ảnh avatar PNG thành công!");
+        };
+        frameImg.src = blobUrl;
+      };
+
+      // Xử lý nạp ảnh fallback nếu có lỗi cors
+      avatarImg.onerror = () => {
+        showToast("Không thể tải ảnh ngoài do chính sách bảo mật, hãy thử tải ảnh từ máy tính.", "error");
+      };
+      avatarImg.src = avatarImgEl.src;
+    }
+
+    // 4. Hệ thống Toast thông báo
+    let toastTimeout;
+    function showToast(text, type = "success") {
+      const toast = document.getElementById('toast');
+      const toastMsg = document.getElementById('toastMsg');
+      const toastIcon = document.getElementById('toastIcon');
+
+      toastMsg.innerText = text;
+      if (type === "loading") {
+        toastIcon.innerHTML = `<svg class="w-5 h-5 animate-spin text-indigo-400" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path></svg>`;
+      } else if (type === "error") {
+        toastIcon.innerHTML = `<svg class="w-5 h-5 text-rose-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>`;
+      } else {
+        toastIcon.innerHTML = `<svg class="w-5 h-5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>`;
+      }
+
+      toast.classList.remove('translate-y-24', 'opacity-0');
+      toast.classList.add('translate-y-0', 'opacity-100');
+
+      clearTimeout(toastTimeout);
+      toastTimeout = setTimeout(() => {
+        toast.classList.add('translate-y-24', 'opacity-0');
+        toast.classList.remove('translate-y-0', 'opacity-100');
+      }, 2600);
+    }
+  </script>
+</body>
+</html>
