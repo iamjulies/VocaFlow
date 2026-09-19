@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Khung Avatar Ngọn Lửa Ngữ Âm (Speaking Lab)</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #060101; /* Nền tối sâu làm rực cháy sắc đỏ cam neon */
+            margin: 0;
+            font-family: system-ui, -apple-system, sans-serif;
+            overflow: hidden;
+        }
+
+        /* Container tổng thể - neo giữ lõi năng lượng tại tâm tuyệt đối */
+        .avatar-container {
+            position: relative;
+            width: 170px;
+            height: 170px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* 1. HÀO QUANG LỬA BÙNG CHÁY KHI ĐẠT ĐIỂM CAO (HIGH SCORE FLARE GLOW) */
+        .avatar-container::before {
+            content: '';
+            position: absolute;
+            width: 185px;
+            height: 185px;
+            border-radius: 50%;
+            /* Luồng sáng tỏa rộng đa tầng từ đỏ sang cam rực */
+            background: radial-gradient(circle, rgba(255, 69, 0, 0.6) 0%, rgba(255, 140, 0, 0.2) 55%, rgba(0, 0, 0, 0) 75%);
+            filter: blur(25px);
+            z-index: 0;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            /* Animation sáng rực rỡ bùng phát theo nhịp điểm sàn cao */
+            animation: flame-flare 1.8s ease-in-out infinite alternate;
+        }
+
+        @keyframes flame-flare {
+            0% { transform: translate(-50%, -50%) scale(0.9); opacity: 0.5; filter: blur(25px) brightness(1); }
+            100% { transform: translate(-50%, -50%) scale(1.22); opacity: 1; filter: blur(20px) brightness(1.6); }
+        }
+
+        /* 2. HIỆU ỨNG TIA LỬA BẮN TUNG TÓE THEO NHỊP (FLAME SPARKS) */
+        .flame-sparks {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .flame-sparks::before,
+        .flame-sparks::after {
+            content: '';
+            position: absolute;
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+            top: -2.5px;
+            left: -2.5px;
+            transform-origin: 0 0;
+            animation: spark-orbit 4s linear infinite;
+        }
+
+        /* Phân rải các hạt lửa cam vàng bao quanh chu vi */
+        .flame-sparks::before {
+            background: #ff4500;
+            box-shadow: 
+                -50px -65px 3px #ff8c00, 65px -60px 5px #ffd700,
+                -85px 25px 4px #ff4500, 80px 45px 2px #ffd700,
+                -15px 95px 6px #ff8c00, 25px -95px 4px #ff4500;
+        }
+
+        .flame-sparks::after {
+            background: #ffd700;
+            box-shadow: 
+                -70px -30px 4px #ff4500, 50px -85px 3px #ff8c00,
+                -55px 75px 2px #ffd700, 85px -35px 5px #ff4500;
+            animation-direction: reverse;
+            animation-duration: 2.8s;
+        }
+
+        @keyframes spark-orbit {
+            0% { transform: rotate(0deg) scale(0.9); }
+            100% { transform: rotate(360deg) scale(1.05); }
+        }
+
+        /* 3. KHUNG VIỀN NGỌN LỬA CHÍNH - CO GIÃN THEO NHỊP NÓI (SPEAKING PULSE) */
+        .speaking-fire-frame {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            /* Gradient vòng tròn chuyển sắc hỏa long rực rỡ */
+            background: conic-gradient(
+                from 0deg,
+                #ff0000 0%,   /* Đỏ lửa */
+                #ff4500 25%,  /* Cam bốc lửa */
+                #ffd700 50%,  /* Vàng tia lửa */
+                #ff8c00 75%,
+                #ff0000 100%
+            );
+            padding: 10px; /* Độ dày viền ngọn lửa */
+            box-sizing: border-box;
+            z-index: 1;
+            box-shadow: 0 0 25px rgba(255, 69, 0, 0.6), inset 0 2px 5px rgba(255,255,255,0.5);
+            /* Xoay 360 độ kết hợp nhịp co giãn giả lập giọng nói */
+            animation: fire-rotate 3s linear infinite, speaking-bounce 0.4s ease-in-out infinite alternate;
+        }
+
+        @keyframes fire-rotate {
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes speaking-bounce {
+            0% { scale: 0.97; }
+            100% { scale: 1.03; } /* Biên độ co giãn tạo độ nảy theo tần số giọng nói */
+        }
+
+        /* LÕI CHỨA AVATAR (Triệt tiêu lực xoay và lực nảy để ảnh đứng vững) */
+        .avatar-inside {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background-color: #140303;
+            border: 2px solid #ff4500; /* Viền trong đồng điệu nhiệt huyết */
+            box-sizing: border-box;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            animation: anti-fire-rotate 3s linear infinite, anti-speaking-bounce 0.4s ease-in-out infinite alternate;
+        }
+
+        @keyframes anti-fire-rotate {
+            100% { transform: rotate(-360deg); }
+        }
+
+        @keyframes anti-speaking-bounce {
+            0% { scale: 1.03; }
+            100% { scale: 0.97; }
+        }
+
+        .avatar-inside img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* 4. HUY HIỆU ĐÁY: TRẠNG THÁI LIÊN TIẾP (STREAK FIRE BADGE) */
+        .fire-badge {
+            position: absolute;
+            bottom: -9px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, #ff4500, #b91c1c);
+            border: 1.5px solid #ffd700;
+            padding: 3px 16px;
+            border-radius: 20px;
+            z-index: 4;
+            box-shadow: 0 4px 15px rgba(255, 69, 0, 0.6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+        }
+
+        /* Ký hiệu ngọn lửa lấp lánh */
+        .fire-badge::before {
+            content: '🔥';
+            font-size: 11px;
+            filter: drop-shadow(0 1px 2px rgba(0,0,0,0.4));
+        }
+
+        /* Chữ hiển thị phân khu tính năng */
+        .fire-badge span {
+            font-size: 10px;
+            font-weight: bold;
+            color: #ffffff;
+            letter-spacing: 1.5px;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.6);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="avatar-container">
+        <!-- Hệ thống tia lửa bắn tung tóe tự động -->
+        <div class="flame-sparks"></div>
+
+        <!-- Khung viền ngọn lửa chuyển động nảy tần số âm thanh -->
+        <div class="speaking-fire-frame">
+            <div class="avatar-inside">
+                <!-- Đường dẫn ảnh đại diện người dùng -->
+                <img src="https://dicebear.com" alt="Avatar">
+            </div>
+        </div>
+
+        <!-- Huy hiệu rực lửa Speaking Lab -->
+        <div class="fire-badge">
+            <span>SPEAKING LAB</span>
+        </div>
+    </div>
+
+</body>
+</html>

@@ -46,6 +46,18 @@ namespace VocaFlow
                 }
             };
 
+            Resize += (s, e) =>
+            {
+                if (WindowState == FormWindowState.Minimized)
+                {
+                    try
+                    {
+                        _webView?.CoreWebView2?.ExecuteScriptAsync("if (typeof document !== 'undefined') { window.dispatchEvent(new Event('visibilitychange')); }");
+                    }
+                    catch { }
+                }
+            };
+
             InitializeWebView();
         }
 
@@ -65,7 +77,12 @@ namespace VocaFlow
                     "VocaFlow_Desktop"
                 );
 
-                var env = await CoreWebView2Environment.CreateAsync(null, userDataFolder);
+                var options = new CoreWebView2EnvironmentOptions
+                {
+                    AdditionalBrowserArguments = "--enable-gpu-rasterization --enable-zero-copy --ignore-gpu-blocklist --disable-renderer-backgrounding=false"
+                };
+
+                var env = await CoreWebView2Environment.CreateAsync(null, userDataFolder, options);
                 await _webView.EnsureCoreWebView2Async(env);
 
                 _webView.CoreWebView2.Settings.IsStatusBarEnabled = false;

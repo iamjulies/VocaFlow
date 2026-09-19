@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Khung Avatar Lễ Hội Trung Thu</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #03040c; /* Nền tối xanh thẳm của đêm rằm mùng 8 */
+            margin: 0;
+            font-family: system-ui, -apple-system, sans-serif;
+            overflow: hidden;
+        }
+
+        /* Container tổng thể - giữ mọi lớp layer đồng tâm tuyệt đối */
+        .avatar-container {
+            position: relative;
+            width: 200px;
+            height: 200px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 10px;
+        }
+
+        /* Hào quang trăng rằm ấm áp (Co giãn nhẹ nhàng tựa ánh trăng tỏa bóng) */
+        .avatar-container::before {
+            content: '';
+            position: absolute;
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(254, 240, 138, 0.4) 0%, rgba(217, 119, 6, 0.1) 60%, rgba(0, 0, 0, 0) 75%);
+            filter: blur(25px);
+            z-index: 0;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            animation: moon-glow 3s ease-in-out infinite alternate;
+        }
+
+        @keyframes moon-glow {
+            0% { transform: translate(-50%, -50%) scale(0.95); opacity: 0.5; }
+            100% { transform: translate(-50%, -50%) scale(1.1); opacity: 1; }
+        }
+
+        /* Khung đồ họa SVG chứa toàn bộ thế giới cổ tích Trung thu */
+        .mid-autumn-svg {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            z-index: 3;
+            pointer-events: none;
+            filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.5));
+        }
+
+        /* Lõi chứa ảnh Avatar nằm ngay ngắn lọt lòng */
+        .avatar-core {
+            position: absolute;
+            width: 132px;
+            height: 132px;
+            border-radius: 50%;
+            background-color: #070913;
+            border: 2px solid #fef08a; /* Vòng định vị tơ tằm */
+            box-sizing: border-box;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1;
+            top: 34px;
+            left: 34px;
+        }
+
+        .avatar-core img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="avatar-container">
+        
+        <!-- ĐỒ HỌA VECTOR NGUYÊN KHỐI: ĐÊM RẰM TRUNG THU CỔ TÍCH -->
+        <svg class="mid-autumn-svg" xmlns="http://w3.org" viewBox="0 0 200 200">
+            <defs>
+                <!-- Gradient vầng trăng rằm và ánh vàng -->
+                <linearGradient id="moon-light" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stop-color="#ffffff" />
+                    <stop offset="40%" stop-color="#fef08a" />
+                    <stop offset="100%" stop-color="#f59e0b" />
+                </linearGradient>
+                <!-- Gradient bánh trung thu nướng -->
+                <linearGradient id="mooncakes" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stop-color="#fbbf24" />
+                    <stop offset="100%" stop-color="#78350f" />
+                </linearGradient>
+            </defs>
+
+            <!-- 1. VÒNG VIỀN ÁNH SÁNG TƠ TẰM QUAY ĐỀU CHU VI -->
+            <circle cx="100" cy="100" r="66" fill="none" stroke="url(#moon-light)" stroke-width="4" stroke-dasharray="12 6">
+                <animate attributeName="stroke-dashoffset" values="0;18" dur="3.5s" repeatCount="indefinite" />
+            </circle>
+            <!-- Lớp mây mờ bao quanh viền dưới -->
+            <path d="M 40,150 Q 70,165 100,155 Q 130,165 160,150" fill="none" stroke="#ffffff" stroke-width="2" opacity="0.2" />
+
+            <!-- 2. GÓC TRÊN BÊN PHẢI: VẦNG TRĂNG, CHỊ HẰNG VÀ THỎ NGỌC -->
+            <g id="sky-realm" transform="translate(110, 10)">
+                <!-- VẦNG TRĂNG TRÒN (Tỏa bóng nền) -->
+                <circle cx="45" cy="45" r="26" fill="url(#moon-light)" />
+                <circle cx="45" cy="45" r="29" fill="#fef08a" opacity="0.3" filter="blur(2px)" />
+
+                <!-- DÁNG CHỊ HẰNG NGA (Phác họa bóng mờ lướt lụa thanh thoát) -->
+                <g id="hang-nga" transform="translate(15, 15)">
+                    <!-- Dải lụa bay -->
+                    <path d="M -10,25 Q 5,10 25,22 Q 40,5 20,-5" fill="none" stroke="#f472b6" stroke-width="2.5" opacity="0.85" stroke-linecap="round" />
+                    <!-- Thân áo/Váy lụa dài -->
+                    <path d="M 22,10 Q 12,35 32,45 Q 22,25 24,12 Z" fill="#ffffff" opacity="0.9" />
+                    <!-- Đầu búi tóc cổ trang -->
+                    <circle cx="23" cy="7" r="4" fill="#1e293b" />
+                    <path d="M 23,3 Q 27,0 25,7" fill="#1e293b" />
+                </g>
+
+                <!-- CHÚ THỎ NGỌC DỄ THƯƠNG TRÔNG TRĂNG -->
+                <g id="jade-rabbit" transform="translate(50, 48)">
+                    <!-- Thân và Đầu tròn trắng muốt -->
+                    <ellipse cx="12" cy="14" rx="7" ry="5" fill="#ffffff" />
+                    <circle cx="16" cy="8" r="4.5" fill="#ffffff" />
+                    <!-- Đôi tai thỏ đứng dài -->
+                    <ellipse cx="14" cy="2" rx="1.5" ry="4" fill="#ffffff" transform="rotate(-10 14 2)" />
+                    <ellipse cx="18" cy="3" rx="1.2" ry="4" fill="#ffffff" transform="rotate(10 18 3)" />
+                    <ellipse cx="14" cy="2" rx="0.6" ry="2.5" fill="#f472b6" transform="rotate(-10 14 2)" />
+                    <!-- Đuôi bông và mắt hồng nhỏ xíu -->
+                    <circle cx="5" cy="14" r="1.8" fill="#ffffff" />
+                    <circle cx="17" cy="7" r="0.6" fill="#ef4444" />
+                </g>
+            </g>
+
+            <!-- 3. GÓC DƯỚI BÊN TRÁI: ĐÈN LỒNG ĐỎ VÀ BÁNH TRUNG THU NƯỚNG -->
+            <g id="festival-items" transform="translate(10, 105)">
+                <!-- CHIẾC ĐÈN LỒNG TRUYỀN THỐNG (Có hiệu ứng đung đưa) -->
+                <g id="lantern">
+                    <!-- Dây treo -->
+                    <line x1="25" y1="0" x2="25" y2="12" stroke="#f59e0b" stroke-width="1" />
+                    <!-- Thân đèn lồng hình quả trám đỏ rực -->
+                    <ellipse cx="25" cy="26" rx="13" ry="14" fill="#dc2626" stroke="#b91c1c" stroke-width="1" />
+                    <!-- Các dải vách múi đèn lồng mạ vàng -->
+                    <path d="M 25,12 C 18,12 18,40 25,40 C 32,40 32,12 25,12 Z" fill="none" stroke="#fbbf24" stroke-width="1" />
+                    <!-- Đầu núm và tua rua vàng đung đưa -->
+                    <rect x="21" y="10" width="8" height="2" fill="#fbbf24" />
+                    <rect x="21" y="40" width="8" height="2" fill="#fbbf24" />
+                    <line x1="25" y1="42" x2="25" y2="54" stroke="#fbbf24" stroke-width="1.5" />
+                    
+                    <!-- Hiệu ứng đèn đung đưa nhẹ nhàng -->
+                    <animateTransform attributeName="transform" type="rotate" values="-3 25 0; 3 25 0; -3 25 0" dur="2.5s" repeatCount="indefinite" />
+                </g>
+
+                <!-- CHIẾC BÁNH TRUNG THU NƯỚNG KHÍA HOA VĂN -->
+                <g id="cake" transform="translate(30, 42)">
+                    <!-- Khối tròn răng cưa rìa bánh -->
+                    <circle cx="20" cy="20" r="15" fill="url(#mooncakes)" stroke="#78350f" stroke-width="1" />
+                    <!-- Hoa văn khía đồng tâm bên trong mặt bánh -->
+                    <circle cx="20" cy="20" r="10" fill="none" stroke="#fcd34d" stroke-width="1" opacity="0.6" />
+                    <path d="M 20,5 L 20,35 M 5,20 L 35,20 M 9,9 L 31,31 M 9,31 L 31,9" fill="none" stroke="#78350f" stroke-width="1" opacity="0.5" />
+                    <circle cx="20" cy="20" r="4" fill="#78350f" opacity="0.4" />
+                </g>
+            </g>
+
+            <!-- 4. HẠT SAO ĐÊM VÀ ĐỐM ĐÈN HOA ĐĂNG BAY LƠ LỬNG -->
+            <g id="night-sparkles" opacity="0.8">
+                <circle cx="35" cy="50" r="1.5" fill="#fef08a" />
+                <circle cx="165" cy="155" r="2" fill="#f59e0b" />
+                <circle cx="85" cy="24" r="1" fill="#ffffff" />
+                <circle cx="145" cy="90" r="1.5" fill="#fef08a" />
+                <circle cx="40" cy="165" r="1.2" fill="#ffffff" />
+                <!-- Hoạt ảnh lấp lánh huyền ảo -->
+                <animate attributeName="opacity" values="0.4;1;0.4" dur="2s" repeatCount="indefinite" />
+            </g>
+        </svg>
+
+        <!-- LÕI TRÒN CHỨA AVATAR CỦA BẠN (CĂN CHUẨN TRỤC TÂM) -->
+        <div class="avatar-core">
+            <img src="https://dicebear.com" alt="Avatar">
+        </div>
+
+    </div>
+
+</body>
+</html>

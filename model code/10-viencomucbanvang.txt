@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Khung Avatar Cổ Bản Mực Vàng</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #0b0705; /* Nền mực tối sâu để làm bật sắc hổ phách và nhũ vàng */
+            margin: 0;
+            font-family: 'Georgia', serif;
+            overflow: hidden;
+        }
+
+        /* Container tổng thể - giữ mọi thứ đồng tâm */
+        .avatar-container {
+            position: relative;
+            width: 165px;
+            height: 165px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* HÀO QUANG HỔ PHÁCH CỔ ĐIỂN TỎA NHẸ PHÍA SAU */
+        .avatar-container::before {
+            content: '';
+            position: absolute;
+            width: 175px;
+            height: 175px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(217, 119, 6, 0.35) 0%, rgba(146, 64, 14, 0.05) 60%, rgba(0, 0, 0, 0) 75%);
+            filter: blur(20px);
+            z-index: 0;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            animation: amber-glow 3.5s ease-in-out infinite alternate;
+        }
+
+        @keyframes amber-glow {
+            0% { opacity: 0.5; transform: translate(-50%, -50%) scale(0.95); }
+            100% { opacity: 0.9; transform: translate(-50%, -50%) scale(1.05); }
+        }
+
+        /* HỆ THỐNG HẠT BỤI MỰC VÀNG LƠ LỬNG TRÊN GÓC VIỀN */
+        .gold-ink-particles {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            z-index: 3;
+            pointer-events: none;
+        }
+
+        /* Giả lập các hạt bụi mực nhũ vàng trôi lơ lửng, ẩn hiện */
+        .gold-ink-particles::before,
+        .gold-ink-particles::after {
+            content: '';
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            border-radius: 50%;
+            background: #fbbf24; /* Màu vàng nhũ */
+            top: -2px;
+            left: -2px;
+            transform-origin: 0 0;
+            filter: drop-shadow(0 0 6px #f59e0b);
+            animation: ink-float 5s ease-in-out infinite alternate;
+        }
+
+        /* Phân bố các hạt mực vàng ở các góc xung quanh viền tròn */
+        .gold-ink-particles::before {
+            box-shadow: 
+                -55px -65px 2px #f59e0b, 65px -55px 4px #fbbf24,
+                -75px 40px 3px #d97706, 75px 50px 1px #fbbf24,
+                -30px -85px 3px #fbbf24, 40px 80px 2px #d97706,
+                -80px -25px 4px #f59e0b, 20px -90px 3px #fbbf24;
+        }
+
+        /* Lớp hạt thứ hai chuyển động lệch nhịp tạo độ sâu tự nhiên */
+        .gold-ink-particles::after {
+            width: 3px;
+            height: 3px;
+            background: #ffffff;
+            box-shadow: 
+                -65px -35px 2px #fbbf24, 55px -75px 3px #d97706,
+                -45px 75px 1px #f59e0b, 85px -15px 4px #fbbf24,
+                -10px 95px 3px #f59e0b, -85px -50px 2px #fbbf24;
+            animation-delay: -2.5s;
+            animation-duration: 6s;
+        }
+
+        @keyframes ink-float {
+            0% { transform: translate(-3px, -5px) scale(0.8); opacity: 0.3; }
+            50% { transform: translate(4px, 2px) scale(1.1); opacity: 0.9; }
+            100% { transform: translate(-2px, 6px) scale(0.9); opacity: 0.5; }
+        }
+
+        /* KHUNG VIỀN HỔ PHÁCH CỔ ĐIỂN (Chất liệu ngọc quý/nhựa thông cổ) */
+        .amber-classic-frame {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            /* Hòa trộn sắc đỏ nâu, cam cháy và vàng mật ong của hổ phách */
+            background: conic-gradient(
+                from 45deg, 
+                #78350f, /* Nâu sậm */
+                #b45309, /* Cam cháy */
+                #d97706, /* Hổ phách sáng */
+                #f59e0b, /* Vàng mật ong */
+                #78350f, 
+                #d97706,
+                #78350f
+            );
+            padding: 10px; /* Độ dày viền */
+            box-sizing: border-box;
+            z-index: 1;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8), inset 0 2px 4px rgba(255, 255, 255, 0.4);
+            animation: slow-turn 12s linear infinite; /* Xoay rất chậm để mô phỏng vân đá dịch chuyển */
+        }
+
+        @keyframes slow-turn {
+            100% { transform: rotate(360deg); }
+        }
+
+        /* LÕI CHỨA AVATAR (Ngăn hiệu ứng xoay tác động lên ảnh) */
+        .avatar-inside {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background-color: #110a08;
+            border: 2px solid #92400e; /* Viền trong đồng điệu sắc cổ */
+            box-sizing: border-box;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            animation: anti-slow-turn 12s linear infinite;
+        }
+
+        @keyframes anti-slow-turn {
+            100% { transform: rotate(-360deg); }
+        }
+
+        .avatar-inside img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: sepia(0.15) contract(1.05); /* Thêm chút màu hoài cổ nhẹ cho ảnh */
+        }
+
+        /* HUY HIỆU CỔ BẢN (Dải lụa phong cách Thư pháp ở đáy) */
+        .ink-badge {
+            position: absolute;
+            bottom: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, #1e1b4b, #0f172a); /* Màu xanh mực mun/đen tuyền cổ kính */
+            border: 1.5px solid #d97706;
+            padding: 3px 20px;
+            border-radius: 4px; /* Dáng vuông vắn như thẻ bài/triện cổ */
+            z-index: 4;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Chữ Thư Pháp hoặc ký tự trang trí trên huy hiệu */
+        .ink-badge span {
+            font-size: 11px;
+            font-weight: bold;
+            color: #fef08a; /* Sắc vàng tơ tằm */
+            letter-spacing: 1px;
+            text-shadow: 0 0 4px #d97706;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="avatar-container">
+        <!-- Lớp hạt bụi mực vàng lơ lửng quanh góc viền -->
+        <div class="gold-ink-particles"></div>
+
+        <!-- Khung viền Hổ phách cổ điển chuyển vân chậm -->
+        <div class="amber-classic-frame">
+            <div class="avatar-inside">
+                <!-- Thay ảnh đại diện của bạn vào đây -->
+                <img src="https://dicebear.com" alt="Avatar">
+            </div>
+        </div>
+
+        <!-- Thẻ bài Cổ Bản ở đáy -->
+        <div class="ink-badge">
+            <span>古 本</span>
+        </div>
+    </div>
+
+</body>
+</html>

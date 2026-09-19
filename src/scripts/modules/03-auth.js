@@ -8311,10 +8311,10 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
       }
 
       if (realtimeNotificationPollTimer) clearInterval(realtimeNotificationPollTimer);
-      const pollMs = (typeof document !== 'undefined' && document.hidden) ? 180000 : 60000;
       realtimeNotificationPollTimer = setInterval(() => {
+        if (typeof document !== 'undefined' && document.hidden) return;
         pullCloudNotificationsSilently();
-      }, pollMs);
+      }, 60000);
     }
     window.startRealtimeNotificationListener = startRealtimeNotificationListener;
 
@@ -10389,7 +10389,7 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
         periodicBidirectionalSyncTimer = null;
       }
       periodicBidirectionalSyncTimer = setInterval(async () => {
-        if (!currentUser || !currentUser.uid || currentUser.uid.startsWith('guest_') || !navigator.onLine) return;
+        if ((typeof document !== 'undefined' && document.hidden) || !currentUser || !currentUser.uid || currentUser.uid.startsWith('guest_') || !navigator.onLine) return;
         if (isSyncing) return;
 
         // Bandwidth Optimization: Only check tiny lastSync timestamp first (30 bytes vs 2-4MB)

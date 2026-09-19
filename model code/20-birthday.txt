@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Khung Avatar Hologram Kỷ Niệm (10/08)</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #050508; /* Nền tối sâu thẳm giúp dải màu Hologram phản quang đẹp nhất */
+            margin: 0;
+            font-family: system-ui, -apple-system, sans-serif;
+            overflow: hidden;
+        }
+
+        /* Container tổng thể - giữ mọi lớp layer đồng tâm tuyệt đối */
+        .avatar-container {
+            position: relative;
+            width: 170px;
+            height: 170px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        /* 1. HIỆU ỨNG HÀO QUANG CẦU VỒNG (HOLOGRAM RADIAL GLOW) */
+        .avatar-container::before {
+            content: '';
+            position: absolute;
+            width: 185px;
+            height: 185px;
+            border-radius: 50%;
+            /* Lớp nền tỏa sắc mượt mà từ xanh ngọc sang hồng neon */
+            background: radial-gradient(circle, rgba(0, 242, 254, 0.3) 0%, rgba(255, 0, 128, 0.1) 50%, rgba(0, 0, 0, 0) 70%);
+            filter: blur(20px);
+            z-index: 0;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            transition: all 0.4s ease;
+        }
+
+        /* KHI RÊ CHUỘT: Hào quang cầu vồng phát sáng rực rỡ bùng nổ */
+        .avatar-container:hover::before {
+            background: radial-gradient(circle, rgba(0, 242, 254, 0.6) 0%, rgba(24d, 0, 255, 0.3) 40%, rgba(255, 234, 0, 0.15) 65%, rgba(0, 0, 0, 0) 80%);
+            filter: blur(15px);
+            width: 200px;
+            height: 200px;
+        }
+
+        /* 2. CÁC HẠT BỤI KIM TUYẾN PHẢN QUANG (HOLOGRAM SPARKLES) */
+        .holo-sparkles {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            z-index: 3;
+            pointer-events: none;
+            opacity: 0.3;
+            transition: opacity 0.4s ease;
+        }
+
+        .holo-sparkles::before,
+        .holo-sparkles::after {
+            content: '';
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            border-radius: 50%;
+            top: -2px;
+            left: -2px;
+            transform-origin: 0 0;
+            animation: holo-orbit 6s linear infinite;
+        }
+
+        /* Phân rải hạt sáng cầu vồng bao quanh chu vi viền */
+        .holo-sparkles::before {
+            background: #ffffff;
+            box-shadow: 
+                -50px -60px 2px #00f2fe, 60px -50px 3px #ff007f, 
+                -75px 35px 4px #ffea00, 75px 45px 2px #bd00ff,
+                -20px 85px 3px #ffffff, 30px -85px 2px #00f2fe;
+        }
+
+        .holo-sparkles::after {
+            background: #ff007f;
+            box-shadow: 
+                -60px -30px 3px #ffea00, 50px -75px 2px #bd00ff, 
+                -50px 65px 3px #00f2fe, 80px -30px 4px #ffffff;
+            animation-direction: reverse;
+            animation-duration: 4s;
+        }
+
+        @keyframes holo-orbit {
+            0% { transform: rotate(0deg) scale(0.95); }
+            100% { transform: rotate(360deg) scale(1.05); }
+        }
+
+        /* Rê chuột vào thì tăng mật độ sáng của hạt kim tuyến */
+        .avatar-container:hover .holo-sparkles {
+            opacity: 1;
+        }
+
+        /* 3. KHUNG VIỀN CHÍNH HOLOGRAM - gradient PHẢN QUANG CO GIÃN CHUYỂN ĐỘNG */
+        .hologram-frame {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            /* Bảng phối màu Hologram đặc trưng siêu bắt mắt */
+            background: conic-gradient(
+                from 0deg,
+                #a8ff78 0%,     /* Vàng chanh lục */
+                #78ffd6 15%,    /* Xanh ngọc ánh bạc */
+                #00f2fe 35%,    /* Cyan Neon */
+                #4facfe 50%,    /* Xanh saphire */
+                #bd00ff 65%,    /* Tím huyền ảo */
+                #ff007f 80%,    /* Hồng cánh sen */
+                #ffea00 92%,    /* Vàng ánh kim */
+                #a8ff78 100%
+            );
+            padding: 9px; /* Độ dày viền */
+            box-sizing: border-box;
+            z-index: 1;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.4), inset 0 2px 4px rgba(255,255,255,0.6);
+            /* Chuyển động xoay mượt mặc định */
+            animation: holo-rotate 6s linear infinite;
+            transition: all 0.4s ease;
+        }
+
+        @keyframes holo-rotate {
+            100% { transform: rotate(360deg); }
+        }
+
+        /* KHI RÊ CHUỘT: Viền sáng rực rỡ, gia tốc xoay nhanh tạo hiệu ứng quét tia phản quang cực mạnh */
+        .avatar-container:hover .hologram-frame {
+            animation: holo-rotate 2.5s linear infinite; /* Xoay nhanh gấp đôi */
+            filter: brightness(1.4); /* Tăng độ sáng lấp lánh */
+            box-shadow: 0 0 25px rgba(0, 242, 254, 0.6), 0 0 40px rgba(255, 0, 127, 0.3), inset 0 2px 6px #ffffff;
+        }
+
+        /* LÕI CHỨA AVATAR (Triệt tiêu lực xoay của khung ngoài giúp ảnh đứng thăng bằng) */
+        .avatar-inside {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background-color: #0a0a10;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            box-sizing: border-box;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            animation: anti-holo-rotate 6s linear infinite;
+            transition: all 0.4s ease;
+        }
+
+        @keyframes anti-holo-rotate {
+            100% { transform: rotate(-360deg); }
+        }
+
+        /* Triệt tiêu gia tốc xoay nhanh khi hover */
+        .avatar-container:hover .avatar-inside {
+            animation: anti-holo-rotate 2.5s linear infinite;
+            border-color: #ffffff;
+        }
+
+        .avatar-inside img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* 4. HUY HIỆU ĐÁY: NGÀY KỶ NIỆM SINH NHẬT CHỮ NỔI (10/08) */
+        .anniversary-badge {
+            position: absolute;
+            bottom: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, #00f2fe, #bd00ff, #ff007f);
+            border: 1.5px solid #ffffff;
+            padding: 3px 16px;
+            border-radius: 20px; /* Ruy-băng bo tròn cao cấp */
+            z-index: 4;
+            box-shadow: 0 4px 12px rgba(189, 0, 255, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.4s ease;
+        }
+
+        /* KHI RÊ CHUỘT: Huy hiệu phóng to nhẹ và rực sáng */
+        .avatar-container:hover .anniversary-badge {
+            transform: translateX(-50%) scale(1.08);
+            box-shadow: 0 6px 20px rgba(0, 242, 254, 0.7);
+            background: linear-gradient(135deg, #ffea00, #00f2fe, #ff007f);
+        }
+
+        /* Chữ hiển thị mốc thời gian kỷ niệm */
+        .anniversary-badge span {
+            font-size: 9px;
+            font-weight: 900;
+            color: #ffffff;
+            letter-spacing: 2px;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="avatar-container">
+        <!-- Hệ thống hạt bụi kim tuyến phát quang khi rà chuột -->
+        <div class="holo-sparkles"></div>
+
+        <!-- Khung viền cầu vồng Hologram lấp lánh phản quang -->
+        <div class="hologram-frame">
+            <div class="avatar-inside">
+                <!-- Thay link hình ảnh avatar của bạn tại thẻ src này nhé -->
+                <img src="https://dicebear.com" alt="Avatar">
+            </div>
+        </div>
+
+        <!-- Huy hiệu mốc ngày sinh nhật 10/08 ở đáy khung -->
+        <div class="anniversary-badge">
+            <span>ANNIV 10/08</span>
+        </div>
+    </div>
+
+</body>
+</html>

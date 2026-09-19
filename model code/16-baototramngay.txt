@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Khung Avatar Bão Tố Trăm Ngày (Flow 100)</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #050502; /* Nền siêu tối để làm nổi bật tia sét vàng */
+            margin: 0;
+            font-family: system-ui, -apple-system, sans-serif;
+            overflow: hidden;
+        }
+
+        /* Container tổng thể - giữ mọi lớp layer đồng tâm */
+        .avatar-container {
+            position: relative;
+            width: 170px;
+            height: 170px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* 1. HÀO QUANG TÍCH ĐIỆN VÀNG RỰC (ELECTRIC GOLD AURA) */
+        .avatar-container::before {
+            content: '';
+            position: absolute;
+            width: 185px;
+            height: 185px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(255, 215, 0, 0.5) 0%, rgba(218, 165, 32, 0.15) 60%, rgba(0, 0, 0, 0) 75%);
+            filter: blur(20px);
+            z-index: 0;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            animation: thunder-charge 1.5s ease-in-out infinite alternate;
+        }
+
+        @keyframes thunder-charge {
+            0% { transform: translate(-50%, -50%) scale(0.95); opacity: 0.5; filter: blur(20px) brightness(1); }
+            100% { transform: translate(-50%, -50%) scale(1.1); opacity: 1; filter: blur(15px) brightness(1.5); }
+        }
+
+        /* 2. CÁC TIA CHỚP NHỎ GIẬT NGẪU NHIÊN TRÊN CHU VI (RANDOM LIGHTNING SPARKS) */
+        .lightning-bolts {
+            position: absolute;
+            width: 112%;
+            height: 112%;
+            border-radius: 50%;
+            z-index: 3;
+            pointer-events: none;
+            /* Áp bộ lọc tạo răng cưa biến dạng tia sét */
+            filter: url('#lightning-fractal') drop-shadow(0 0 6px #ffea00); 
+            animation: lightning-strike 0.6s steps(1) infinite;
+        }
+
+        /* Tạo dải điện bao quanh viền */
+        .lightning-bolts::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border: 3px double #ffffff;
+            border-radius: 50%;
+            opacity: 0.8;
+        }
+
+        /* Hiệu ứng chớp giật tắt mở ngẫu nhiên của tia sét điện cao thế */
+        @keyframes lightning-strike {
+            0%, 85%, 100% { opacity: 0; transform: scale(1) rotate(0deg); }
+            5%, 45% { opacity: 1; transform: scale(1.03) rotate(45deg); }
+            10% { opacity: 0.3; transform: scale(0.98) rotate(-90deg); }
+            50% { opacity: 1; transform: scale(1.05) rotate(180deg); }
+            55% { opacity: 0; }
+        }
+
+        /* 3. KHUNG VIỀN TÍCH ĐIỆN CHÍNH - MÀU VÀNG HỔ PHÁCH CHẠY VÒNG */
+        .thunder-gold-frame {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: conic-gradient(from 0deg, #ffe600, #ff9900, #ffffff, #d4af37, #ffe600);
+            padding: 9px; /* Độ dày viền */
+            box-sizing: border-box;
+            z-index: 1;
+            box-shadow: 0 0 25px rgba(255, 230, 0, 0.6), inset 0 2px 5px rgba(255,255,255,0.7);
+            animation: rotate-frame 4s linear infinite;
+        }
+
+        @keyframes rotate-frame {
+            100% { transform: rotate(360deg); }
+        }
+
+        /* LÕI CHỨA AVATAR (Triệt tiêu lực xoay) */
+        .avatar-inside {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background-color: #0a0904;
+            border: 2px solid #ffaa00;
+            box-sizing: border-box;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            animation: anti-rotate-frame 4s linear infinite;
+        }
+
+        @keyframes anti-rotate-frame {
+            100% { transform: rotate(-360deg); }
+        }
+
+        .avatar-inside img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* 4. HUY HIỆU ĐÁY: CHIẾN THẦN TRĂM NGÀY (FLOW 100 BADGE) */
+        .thunder-badge {
+            position: absolute;
+            bottom: -9px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, #cc7a00, #ffcc00);
+            border: 1.5px solid #ffffff;
+            padding: 3px 16px;
+            border-radius: 4px; /* Dáng góc cạnh vuông vắn mạnh mẽ */
+            z-index: 4;
+            box-shadow: 0 4px 15px rgba(255, 204, 0, 0.6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+        }
+
+        /* Ký hiệu tia sét sấm sét */
+        .thunder-badge::before {
+            content: '⚡';
+            font-size: 11px;
+            filter: drop-shadow(0 1px 2px rgba(0,0,0,0.4));
+            animation: badge-bolt 0.4s ease infinite alternate;
+        }
+
+        @keyframes badge-bolt {
+            0% { opacity: 0.5; }
+            100% { opacity: 1; transform: scale(1.1); }
+        }
+
+        /* Chữ hiển thị tên viền */
+        .thunder-badge span {
+            font-size: 10px;
+            font-weight: bold;
+            color: #ffffff;
+            letter-spacing: 1.5px;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- BỘ LỌC SVG: Biến các đường tròn CSS thành tia chớp gãy khúc ngẫu nhiên -->
+    <svg style="position: absolute; width: 0; height: 0;">
+        <filter id="lightning-fractal">
+            <!-- feTurbulence tạo độ gồ ghề nhấp nhô cực mạnh -->
+            <feTurbulence type="fractalNoise" baseFrequency="0.07" numOctaves="3" result="noise" />
+            <!-- feDisplacementMap bẻ gãy nét vẽ tròn của vòng biên để tạo hình tia sét -->
+            <feDisplacementMap in="SourceGraphic" in2="noise" scale="18" xChannelSelector="R" yChannelSelector="G" />
+        </filter>
+    </svg>
+
+    <div class="avatar-container">
+        <!-- Lớp tia chớp giật ngẫu nhiên chạy quanh chu vi -->
+        <div class="lightning-bolts"></div>
+
+        <!-- Khung viền tích điện vàng rực xoay tròn bắt sáng -->
+        <div class="thunder-gold-frame">
+            <div class="avatar-inside">
+                <img src="https://dicebear.com" alt="Avatar">
+            </div>
+        </div>
+
+        <!-- Huy hiệu Chiến Thần Flow 100 -->
+        <div class="thunder-badge">
+            <span>FLOW 100</span>
+        </div>
+    </div>
+
+</body>
+</html>

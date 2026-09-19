@@ -405,11 +405,24 @@
     if (typeof autoHealVipRegression === 'function') autoHealVipRegression();
     if (typeof autoHealExcessVipSpinsToday === 'function') autoHealExcessVipSpinsToday();
     if (typeof healErroneousFreezeDeduction === 'function') healErroneousFreezeDeduction();
-    if (typeof checkAndTriggerVipExpirationWarning === 'function') checkAndTriggerVipExpirationWarning();
     if (typeof updateMistakeBadgeUI === 'function') updateMistakeBadgeUI();
     if (typeof initSpaRouter === 'function') {
       initSpaRouter();
     } else {
       checkUrlProfileDeepLink();
+    }
+  });
+
+  // Global Visibility & Idle Power Manager (v0.10.10-36)
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) {
+      // Background / Minimized: pause non-essential intensive tasks
+      if (typeof stopRewardedAdCycle === 'function' && typeof adWatchInterval !== 'undefined' && adWatchInterval) {
+        // Handled in rewarded ads anti-cheat
+      }
+    } else {
+      // Foreground / Restored: fast refresh cooldowns & notifications silently
+      if (typeof updateAdButtonCooldownState === 'function') updateAdButtonCooldownState();
+      if (typeof checkAndTriggerVipExpirationWarning === 'function') checkAndTriggerVipExpirationWarning();
     }
   });

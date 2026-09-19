@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Khung Avatar Lễ Hội Giáng Sinh</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #05140d; /* Nền tối xanh lá thông để làm bật sắc đỏ trắng Giáng Sinh */
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow: hidden;
+        }
+
+        /* Container tổng thể - giữ mọi lớp layer đồng tâm tuyệt đối */
+        .avatar-container {
+            position: relative;
+            width: 190px;
+            height: 190px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Hào quang ấm áp đêm Giáng Sinh (Co giãn nhẹ nhàng) */
+        .avatar-container::before {
+            content: '';
+            position: absolute;
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(239, 68, 68, 0.4) 0%, rgba(34, 197, 94, 0.15) 55%, rgba(0, 0, 0, 0) 75%);
+            filter: blur(20px);
+            z-index: 0;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            animation: christmas-pulse 2.5s ease-in-out infinite alternate;
+        }
+
+        @keyframes christmas-pulse {
+            0% { transform: translate(-50%, -50%) scale(0.95); opacity: 0.6; }
+            100% { transform: translate(-50%, -50%) scale(1.08); opacity: 1; }
+        }
+
+        /* Khung đồ họa SVG nguyên khối chứa các biểu tượng Giáng Sinh */
+        .christmas-svg {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            z-index: 3;
+            pointer-events: none;
+            filter: drop-shadow(0 4px 10px rgba(0,0,0,0.5));
+        }
+
+        /* Lõi chứa ảnh Avatar nằm lọt lòng chuẩn xác */
+        .avatar-core {
+            position: absolute;
+            width: 130px;
+            height: 130px;
+            border-radius: 50%;
+            background-color: #0b1a13;
+            border: 3px solid #22c55e; /* Vòng định vị màu xanh lá thông */
+            box-sizing: border-box;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1;
+            top: 30px;
+            left: 30px;
+        }
+
+        .avatar-core img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="avatar-container">
+        
+        <!-- ĐỒ HỌA VECTOR NGUYÊN KHỐI: GIÁNG SINH AN LÀNH BẤT ĐỐI XỨNG -->
+        <svg class="christmas-svg" xmlns="http://w3.org" viewBox="0 0 190 190">
+            <defs>
+                <!-- Kẹo gậy sọc Đỏ - Trắng chuyển động -->
+                <linearGradient id="candy-cane" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stop-color="#ef4444" />
+                    <stop offset="50%" stop-color="#ffffff" />
+                    <stop offset="100%" stop-color="#ef4444" />
+                </linearGradient>
+                <!-- Vàng kim của ngôi sao -->
+                <linearGradient id="gold-star" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stop-color="#fff5c0" />
+                    <stop offset="100%" stop-color="#eab308" />
+                </linearGradient>
+            </defs>
+
+            <!-- 1. VÒNG VIỀN THANH KẸO NGỌT XOAY TRÒN NHẸ NHÀNG -->
+            <circle cx="95" cy="95" r="66" fill="none" stroke="url(#candy-cane)" stroke-width="5" stroke-dasharray="16 8">
+                <animate attributeName="stroke-dashoffset" values="0;24" dur="2s" repeatCount="indefinite" />
+            </circle>
+            <!-- Vòng trang trí hạt cườm tuyết -->
+            <circle cx="95" cy="95" r="72" fill="none" stroke="#ffffff" stroke-width="2" stroke-dasharray="2 6" opacity="0.7" />
+
+            <!-- 2. GÓC TRÊN BÊN TRÁI: CÂY THÔNG NOEL & NGÔI SAO VÀNG -->
+            <g id="christmas-tree" transform="translate(15, 15)">
+                <!-- Bóng nền phát sáng -->
+                <polygon points="25,5 5,45 45,45" fill="#15803d" opacity="0.3" filter="blur(4px)" />
+                <!-- Các tầng lá thông -->
+                <polygon points="25,12 13,28 37,28" fill="#22c55e" />
+                <polygon points="25,22 8,40 42,40" fill="#16a34a" />
+                <polygon points="25,32 3,52 47,52" fill="#15803d" />
+                <!-- Thân cây -->
+                <rect x="22" y="52" width="6" height="8" fill="#78350f" />
+                
+                <!-- NGÔI SAO VÀNG LẤP LÁNH TRÊN ĐỈNH (Có hiệu ứng chớp tắt) -->
+                <g id="star">
+                    <polygon points="25,2 27,8 33,8 28,12 30,18 25,14 20,18 22,12 17,8 23,8" fill="url(#gold-star)">
+                        <animate attributeName="opacity" values="1;0.4;1" dur="1.5s" repeatCount="indefinite" />
+                    </polygon>
+                </g>
+            </g>
+
+            <!-- 3. GÓC DƯỚI BÊN PHẢI: ÔNG GIÀ NOEL & HỘP QUÀ -->
+            <g id="santa-claus" transform="translate(125, 120)">
+                <!-- HỘP QUÀ (Quà Noel thắt nơ) -->
+                <rect x="0" y="25" width="22" height="22" fill="#3b82f6" rx="2" />
+                <rect x="9" y="25" width="4" height="22" fill="#ef4444" />
+                <rect x="0" y="34" width="22" height="4" fill="#ef4444" />
+                <!-- Nơ hộp quà -->
+                <path d="M 6,21 Q 11,25 11,25 Q 11,25 16,21 Q 11,25 11,25 Z" fill="#ef4444" stroke="#ef4444" stroke-width="1" />
+
+                <!-- ÔNG GIÀ NOEL (Santa Chibi dễ thương) -->
+                <!-- Thân/Áo đỏ -->
+                <circle cx="35" cy="35" r="16" fill="#ef4444" />
+                <!-- Chòm râu trắng cheàng -->
+                <path d="M 22,30 Q 35,52 48,30 Q 35,36 22,30 Z" fill="#ffffff" />
+                <!-- Khuôn mặt -->
+                <circle cx="35" cy="27" r="9" fill="#fed7aa" />
+                <!-- Đôi mắt cười -->
+                <circle cx="32" cy="26" r="1" fill="#1e293b" />
+                <circle cx="38" cy="26" r="1" fill="#1e293b" />
+                <!-- Mũ Noel đỏ viền bông trắng -->
+                <path d="M 24,24 Q 35,6 44,24 Z" fill="#ef4444" />
+                <rect x="24" y="22" width="20" height="3" fill="#ffffff" rx="1.5" />
+                <circle cx="35" cy="7" r="3" fill="#ffffff" />
+            </g>
+
+            <!-- 4. HIỆU ỨNG TUYẾT RƠI LƠ LỬNG (SPARKLING SNOW) -->
+            <g id="snowflakes" opacity="0.75">
+                <circle cx="45" cy="110" r="2" fill="#ffffff" />
+                <circle cx="155" cy="70" r="1.5" fill="#ffffff" />
+                <circle cx="95" cy="25" r="2.5" fill="#ffffff" />
+                <circle cx="105" cy="165" r="1.5" fill="#ffffff" />
+                <!-- Hiệu ứng tuyết nhấp nháy sinh động -->
+                <animate attributeName="opacity" values="0.4;0.9;0.4" dur="2s" repeatCount="indefinite" />
+            </g>
+        </svg>
+
+        <!-- LÕI TRÒN CHỨA AVATAR CỦA BẠN (CĂN CHUẨN TÂM) -->
+        <div class="avatar-core">
+            <!-- Bạn chỉ cần thay link ảnh đại diện của mình vào đây -->
+            <img src="https://dicebear.com" alt="Avatar">
+        </div>
+
+    </div>
+
+</body>
+</html>

@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Khung Avatar Sóng Nước Chân Thực</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #030a10; /* Nền tối đại dương */
+            margin: 0;
+            font-family: system-ui, -apple-system, sans-serif;
+            overflow: hidden;
+        }
+
+        /* Container tổng thể - giữ mọi lớp layer đồng tâm */
+        .avatar-container {
+            position: relative;
+            width: 170px;
+            height: 170px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* 1. LỚP HÀO QUANG SÓNG NƯỚC NGẦM (REALISTIC WATER AURA) */
+        .avatar-container::before {
+            content: '';
+            position: absolute;
+            width: 190px;
+            height: 190px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(0, 242, 254, 0.4) 0%, rgba(0, 119, 182, 0.2) 60%, rgba(0, 0, 0, 0) 75%);
+            filter: blur(15px) url('#water-displacement'); /* Áp bộ lọc sóng nước */
+            z-index: 0;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        /* 2. KHUNG VIỀN DÒNG CHẢY - GỢN SÓNG BIẾN DẠNG LIÊN TỤC */
+        .water-real-frame {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            /* Màu nước biển sâu pha bọt pha lê */
+            background: linear-gradient(135deg, #00f2fe, #0077b6, #ffffff, #4facfe, #00f2fe);
+            padding: 10px; /* Độ dày viền */
+            box-sizing: border-box;
+            z-index: 1;
+            box-shadow: 0 0 25px rgba(0, 242, 254, 0.5), inset 0 2px 8px rgba(255,255,255,0.7);
+            
+            /* Áp bộ lọc sóng nước SVG */
+            filter: url('#water-displacement'); 
+        }
+
+        /* 3. LÕI CHỨA AVATAR (Giữ phẳng lặng để không làm méo hình khuôn mặt) */
+        .avatar-inside {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background-color: #02070d;
+            border: 2px solid rgba(0, 242, 254, 0.5);
+            box-sizing: border-box;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            z-index: 2;
+        }
+
+        .avatar-inside img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* 4. HUY HIỆU ĐÁY */
+        .flow-badge {
+            position: absolute;
+            bottom: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, #0077b6, #00f2fe);
+            border: 1.5px solid #ffffff;
+            padding: 3px 18px;
+            border-radius: 20px;
+            z-index: 4;
+            box-shadow: 0 4px 15px rgba(0, 242, 254, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+        }
+
+        .flow-badge span {
+            font-size: 10px;
+            font-weight: bold;
+            color: #ffffff;
+            letter-spacing: 1.5px;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.4);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- BỘ LỌC SVG: Trái tim tạo nên hiệu ứng sóng nước thật -->
+    <svg style="position: absolute; width: 0; height: 0;">
+        <filter id="water-displacement">
+            <!-- feTurbulence tạo ra bản đồ nhiễu động răng cưa tự nhiên -->
+            <feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="2" result="noise">
+                <!-- Chuyển động thay đổi hình dáng sóng liên tục không ngừng -->
+                <animate attributeName="baseFrequency" dur="10s" values="0.04; 0.02; 0.04" repeatCount="indefinite" />
+            </feTurbulence>
+            <!-- feDisplacementMap lấy bản đồ nhiễu động ở trên để làm méo (uốn lượn) sợi viền CSS -->
+            <feDisplacementMap in="SourceGraphic" in2="noise" scale="12" xChannelSelector="R" yChannelSelector="G" />
+        </filter>
+    </svg>
+
+    <div class="avatar-container">
+        <!-- Khung viền uốn lượn gợn sóng thật -->
+        <div class="water-real-frame">
+            <div class="avatar-inside">
+                <!-- Ảnh đại diện người dùng (Được bảo vệ không bị méo) -->
+                <img src="https://dicebear.com" alt="Avatar">
+            </div>
+        </div>
+
+        <!-- Huy hiệu đáy -->
+        <div class="flow-badge">
+            <span>FLOW 30</span>
+        </div>
+    </div>
+
+</body>
+</html>

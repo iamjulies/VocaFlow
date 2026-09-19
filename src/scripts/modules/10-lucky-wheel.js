@@ -1048,7 +1048,8 @@
       openLuckyWheelModal();
     }
 
-    // Cooldown ticker every 1 second
+    // Cooldown ticker every 1 second (skips when hidden or idle)
     setInterval(() => {
+      if (typeof document !== 'undefined' && document.hidden) return;
       updateAdButtonCooldownState();
     }, 1000);

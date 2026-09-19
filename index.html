@@ -71,66 +71,13 @@
     }
 
     /* =========================================================================
-       VIP GLOW & SHIMMER EFFECTS (v0.10.9-40 QUÝ TỘC KIM LOẠI HOÀNG GIA)
+       VIP GLOW & SHIMMER EFFECTS (v0.10.10-36 PERFORMANCE OPTIMIZED)
        ========================================================================= */
-    @keyframes shimmerGold {
-      0% { background-position: 0% center; }
-      100% { background-position: 200% center; }
-    }
-
-    @keyframes goldGlow {
-      0% {
-        filter: drop-shadow(0 0 2px rgba(254, 240, 138, 0.4)) 
-                drop-shadow(0 0 6px rgba(234, 179, 8, 0.3));
-      }
-      100% {
-        filter: drop-shadow(0 0 8px rgba(254, 240, 138, 0.85)) 
-                drop-shadow(0 0 18px rgba(234, 179, 8, 0.6))
-                drop-shadow(0 0 24px rgba(244, 162, 97, 0.4));
-      }
-    }
-
-    @keyframes crownFloat {
-      0%, 100% { transform: translateY(0) rotate(0deg); }
-      50% { transform: translateY(-3px) rotate(3deg); }
-    }
-
-    @keyframes crownGlow {
-      0% {
-        filter: drop-shadow(0 0 2px rgba(254, 240, 138, 0.5));
-      }
-      100% {
-        filter: drop-shadow(0 0 10px rgba(234, 179, 8, 0.95))
-                drop-shadow(0 0 20px rgba(244, 162, 97, 0.5));
-      }
-    }
-
-    /* Backwards compatibility aliases */
-    @keyframes vip-combo {
-      0% { background-position: 0% center; }
-      100% { background-position: 200% center; }
-    }
-
-    @keyframes crownFloatPulse {
-      0%, 100% { transform: translateY(0) rotate(0deg); }
-      50% { transform: translateY(-3px) rotate(3deg); }
-    }
-
-    @keyframes avatarVipRingGlow {
-      0%, 100% {
-        box-shadow: 0 0 0 2.5px #fbbf24, 0 0 12px rgba(251, 191, 36, 0.6);
-      }
-      50% {
-        box-shadow: 0 0 0 3px #f59e0b, 0 0 22px rgba(251, 191, 36, 0.95), 0 0 30px rgba(236, 72, 153, 0.5);
-      }
-    }
-
     .vip-name-wrapper {
       display: inline-flex !important;
       align-items: center !important;
       vertical-align: middle !important;
       transform: translateZ(0) !important;
-      will-change: transform !important;
       gap: 3px !important;
     }
 
@@ -142,56 +89,64 @@
       background: linear-gradient(
         90deg, 
         #fef08a 0%,    /* Vàng nhạt */
-        #fde047 20%,   /* Vàng nguyên bản */
-        #eab308 40%,   /* Vàng kim loại */
-        #f4a261 60%,   /* Vàng đào */
-        #b5838d 80%,   /* Vàng hồng / Vàng đồng */
-        #fef08a 100%   /* Quay lại vàng nhạt để lặp vô tận mượt mà */
+        #fde047 25%,   /* Vàng sáng */
+        #eab308 50%,   /* Vàng kim loại */
+        #f59e0b 75%,   /* Vàng cam */
+        #fef08a 100%
       ) !important;
-      background-size: 200% auto !important;
       -webkit-background-clip: text !important;
       -webkit-text-fill-color: transparent !important;
       background-clip: text !important;
       text-fill-color: transparent !important;
-      -webkit-font-smoothing: subpixel-antialiased !important;
-      backface-visibility: hidden !important;
-      animation: 
-        shimmerGold 4s linear infinite,
-        goldGlow 1.8s ease-in-out infinite alternate !important;
+      -webkit-font-smoothing: antialiased !important;
+      transform: translateZ(0) !important;
+      filter: drop-shadow(0 0 6px rgba(245, 158, 11, 0.4));
       vertical-align: middle !important;
     }
 
     .vip-crown-icon {
       display: inline-block !important;
-      animation: 
-        crownFloat 2s ease-in-out infinite,
-        crownGlow 1.8s ease-in-out infinite alternate !important;
-      backface-visibility: hidden !important;
+      transform: translateZ(0) !important;
       -webkit-font-smoothing: antialiased !important;
       transform-origin: center !important;
       line-height: 1 !important;
       margin-left: 2px !important;
       vertical-align: middle !important;
-      -webkit-text-fill-color: initial !important;
-      -webkit-background-clip: initial !important;
+      filter: drop-shadow(0 2px 4px rgba(245, 158, 11, 0.5));
       font-style: normal !important;
     }
 
     .vip-avatar-glow {
       border-radius: 50% !important;
-      animation: avatarVipRingGlow 3s ease-in-out infinite !important;
+      box-shadow: 0 0 0 2.5px #fbbf24, 0 0 12px rgba(251, 191, 36, 0.6) !important;
+      transform: translateZ(0) !important;
     }
 
     /* =========================================================================
-       VIP ROTATING LIGHT BORDER EFFECT (v0.10.9-40 MODEL1 ANHSANG)
+       VIP ROTATING LIGHT BORDER EFFECT (SMART HOVER-ACTIVATED ONLY)
        ========================================================================= */
+    @keyframes rotateLight {
+      0% {
+        transform: rotate(0deg);
+      }
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+
     .deck-card.vip-deck-card {
-      border: 1px solid transparent !important;
+      border: 1.5px solid rgba(245, 158, 11, 0.45) !important;
       position: relative !important;
       overflow: hidden !important;
-      box-shadow: 0 4px 20px rgba(245, 158, 11, 0.22);
+      box-shadow: 0 4px 18px rgba(245, 158, 11, 0.18);
+      transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
     }
-    .deck-card.vip-deck-card::before {
+    .deck-card.vip-deck-card:hover {
+      border-color: #fbbf24 !important;
+      box-shadow: 0 10px 30px rgba(245, 158, 11, 0.35);
+      transform: translateY(-2px);
+    }
+    .deck-card.vip-deck-card:hover::before {
       content: '';
       position: absolute;
       top: -100%;
@@ -199,7 +154,7 @@
       width: 300%;
       height: 300%;
       background: conic-gradient(transparent, #ffd700, #ff8c00, #ec4899, transparent 40%);
-      animation: rotateLight 3.5s linear infinite;
+      animation: rotateLight 3s linear infinite;
       z-index: 0;
     }
     .deck-card.vip-deck-card::after {
@@ -217,34 +172,48 @@
     .deck-card.vip-deck-card .deck-card-strip {
       z-index: 3;
     }
-    .deck-card.vip-deck-card:hover {
-      box-shadow: 0 10px 30px rgba(245, 158, 11, 0.35);
-    }
 
     /* VIP Locked Deck Card State (v0.10.10-33) */
     .deck-card.vip-deck-locked {
       border: 1.5px solid rgba(239, 68, 68, 0.5) !important;
       box-shadow: 0 4px 18px rgba(239, 68, 68, 0.22) !important;
       position: relative !important;
+      transition: transform 0.2s, box-shadow 0.2s;
     }
-    .deck-card.vip-deck-locked::before {
+    .deck-card.vip-deck-locked:hover::before {
+      content: '';
+      position: absolute;
+      top: -100%;
+      left: -100%;
+      width: 300%;
+      height: 300%;
       background: conic-gradient(transparent, #ef4444, #dc2626, #f87171, transparent 40%) !important;
+      animation: rotateLight 3s linear infinite;
+      z-index: 0;
     }
     .deck-card.vip-deck-locked .deck-title {
       color: #fca5a5 !important;
     }
     .deck-card.vip-deck-locked:hover {
       box-shadow: 0 10px 30px rgba(239, 68, 68, 0.35) !important;
+      transform: translateY(-2px);
     }
 
     /* VIP Plan Pricing Cards Light Effect */
     .vip-plan-card {
       position: relative !important;
       overflow: hidden !important;
-      border: 1px solid transparent !important;
+      border: 1.5px solid var(--border) !important;
       box-sizing: border-box;
+      transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
     }
-    .vip-plan-card::before {
+    .vip-plan-card.tier-monthly { border-color: rgba(251, 191, 36, 0.4) !important; }
+    .vip-plan-card.tier-yearly { border-color: rgba(245, 158, 11, 0.5) !important; box-shadow: 0 4px 20px rgba(245, 158, 11, 0.2); }
+    .vip-plan-card.tier-lifetime { border-color: rgba(168, 85, 247, 0.5) !important; box-shadow: 0 4px 20px rgba(168, 85, 247, 0.2); }
+    .vip-plan-card:hover {
+      transform: translateY(-3px);
+    }
+    .vip-plan-card:hover::before {
       content: '';
       position: absolute;
       top: -100%;
@@ -254,16 +223,16 @@
       animation: rotateLight 3.5s linear infinite;
       z-index: 0;
     }
-    .vip-plan-card.tier-monthly::before,
-    #vip-card-monthly::before {
+    .vip-plan-card.tier-monthly:hover::before,
+    #vip-card-monthly:hover::before {
       background: conic-gradient(transparent, #ffd700, #f59e0b, transparent 40%);
     }
-    .vip-plan-card.tier-yearly::before,
-    #vip-card-yearly::before {
+    .vip-plan-card.tier-yearly:hover::before,
+    #vip-card-yearly:hover::before {
       background: conic-gradient(transparent, #ffd700, #ff8c00, #ec4899, transparent 45%);
     }
-    .vip-plan-card.tier-lifetime::before,
-    #vip-card-lifetime::before {
+    .vip-plan-card.tier-lifetime:hover::before,
+    #vip-card-lifetime:hover::before {
       background: conic-gradient(transparent, #00d2ff, #a855f7, #ec4899, transparent 45%);
     }
     .vip-plan-card::after {
@@ -293,10 +262,16 @@
       width: 100% !important;
       min-height: fit-content !important;
       box-sizing: border-box !important;
-      border: 1px solid transparent !important;
-      box-shadow: 0 4px 20px rgba(245, 158, 11, 0.25) !important;
+      border: 1.5px solid rgba(245, 158, 11, 0.45) !important;
+      box-shadow: 0 4px 18px rgba(245, 158, 11, 0.18) !important;
+      transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
     }
-    .vip-vocalib-card::before {
+    .vip-vocalib-card:hover {
+      border-color: #fbbf24 !important;
+      box-shadow: 0 8px 26px rgba(245, 158, 11, 0.35) !important;
+      transform: translateY(-2px);
+    }
+    .vip-vocalib-card:hover::before {
       content: '';
       position: absolute;
       top: -100%;
@@ -1809,16 +1784,22 @@
       align-items: center;
       box-sizing: border-box;
       cursor: pointer;
-      transition: transform 0.15s, box-shadow 0.2s;
+      transition: transform 0.15s, box-shadow 0.2s, border-color 0.2s;
       min-width: 0;
       width: 100%;
+      border: 1.5px solid rgba(255, 255, 255, 0.12);
     }
+    .pinned-badge-card.tier-bronze { border-color: rgba(205, 127, 50, 0.5); }
+    .pinned-badge-card.tier-silver { border-color: rgba(203, 213, 225, 0.5); }
+    .pinned-badge-card.tier-gold { border-color: rgba(255, 215, 0, 0.6); box-shadow: 0 0 10px rgba(255, 215, 0, 0.18); }
+    .pinned-badge-card.tier-diamond { border-color: rgba(0, 210, 255, 0.6); box-shadow: 0 0 10px rgba(0, 210, 255, 0.2); }
+    .pinned-badge-card.tier-mythic { border-color: rgba(236, 72, 153, 0.6); box-shadow: 0 0 12px rgba(236, 72, 153, 0.25); }
 
     .pinned-badge-card:hover {
       transform: translateY(-2px);
     }
 
-    .pinned-badge-card::before {
+    .pinned-badge-card:hover::before {
       content: '';
       position: absolute;
       width: 250%;
@@ -1827,19 +1808,19 @@
       z-index: 0;
     }
 
-    .pinned-badge-card.tier-bronze::before {
+    .pinned-badge-card.tier-bronze:hover::before {
       background: conic-gradient(transparent, #cd7f32, #d97706, transparent 40%);
     }
-    .pinned-badge-card.tier-silver::before {
+    .pinned-badge-card.tier-silver:hover::before {
       background: conic-gradient(transparent, #cbd5e1, #94a3b8, transparent 40%);
     }
-    .pinned-badge-card.tier-gold::before {
+    .pinned-badge-card.tier-gold:hover::before {
       background: conic-gradient(transparent, #ffd700, #ff8c00, transparent 40%);
     }
-    .pinned-badge-card.tier-diamond::before {
+    .pinned-badge-card.tier-diamond:hover::before {
       background: conic-gradient(transparent, #00d2ff, #0066ff, transparent 40%);
     }
-    .pinned-badge-card.tier-mythic::before {
+    .pinned-badge-card.tier-mythic:hover::before {
       background: conic-gradient(transparent, #f472b6, #ec4899, #f59e0b, transparent 45%);
     }
 
@@ -2961,52 +2942,19 @@
     .flow-wave-connector {
       position: absolute;
       top: 50%;
-      transform: translateY(-50%);
+      transform: translateY(-50%) translateZ(0);
       height: 6px;
+      border-radius: 3px;
       z-index: 1;
       pointer-events: none;
       overflow: hidden;
       background: linear-gradient(
         90deg, 
         #00a8ff 0%, 
-        #00d2ff 25%, 
-        #00a8ff 50%, 
-        #00f5ff 75%, 
+        #00f5ff 50%, 
         #00a8ff 100%
       );
-      background-size: 50px 100%;
-      animation: waterFlow 1s linear infinite, waterGlow 2s ease-in-out infinite alternate;
-      box-shadow: 0 0 10px rgba(0, 210, 255, 0.6);
-    }
-
-    .flow-wave-connector::after {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
-      background-size: 25px 100%;
-      animation: innerWave 0.7s linear infinite reverse;
-    }
-
-    @keyframes waterFlow {
-      0% { background-position-x: 0px; }
-      100% { background-position-x: 50px; }
-    }
-
-    @keyframes waterGlow {
-      0% {
-        opacity: 0.8;
-        filter: drop-shadow(0 0 2px #00d2ff) saturate(1);
-      }
-      100% {
-        opacity: 1;
-        filter: drop-shadow(0 0 6px #00f5ff) saturate(1.4);
-      }
-    }
-
-    @keyframes innerWave {
-      0% { background-position-x: 0px; }
-      100% { background-position-x: 25px; }
+      box-shadow: 0 0 8px rgba(0, 210, 255, 0.5);
     }
 
     /* =========================================================================
@@ -4533,8 +4481,8 @@
       100% { transform: rotate(0deg); }
     }
     @keyframes aiPulseGlow {
-      0%, 100% { transform: scale(1); filter: drop-shadow(0 0 10px rgba(99, 102, 241, 0.45)); }
-      50% { transform: scale(1.12); filter: drop-shadow(0 0 24px rgba(168, 85, 247, 0.85)); }
+      0%, 100% { transform: scale(1) translateZ(0); opacity: 0.85; }
+      50% { transform: scale(1.12) translateZ(0); opacity: 1; }
     }
     @keyframes aiWaveDot {
       0%, 80%, 100% { transform: scale(0.6); opacity: 0.35; }
@@ -26573,10 +26521,10 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
       }
 
       if (realtimeNotificationPollTimer) clearInterval(realtimeNotificationPollTimer);
-      const pollMs = (typeof document !== 'undefined' && document.hidden) ? 180000 : 60000;
       realtimeNotificationPollTimer = setInterval(() => {
+        if (typeof document !== 'undefined' && document.hidden) return;
         pullCloudNotificationsSilently();
-      }, pollMs);
+      }, 60000);
     }
     window.startRealtimeNotificationListener = startRealtimeNotificationListener;
 
@@ -28651,7 +28599,7 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
         periodicBidirectionalSyncTimer = null;
       }
       periodicBidirectionalSyncTimer = setInterval(async () => {
-        if (!currentUser || !currentUser.uid || currentUser.uid.startsWith('guest_') || !navigator.onLine) return;
+        if ((typeof document !== 'undefined' && document.hidden) || !currentUser || !currentUser.uid || currentUser.uid.startsWith('guest_') || !navigator.onLine) return;
         if (isSyncing) return;
 
         // Bandwidth Optimization: Only check tiny lastSync timestamp first (30 bytes vs 2-4MB)
@@ -51153,8 +51101,9 @@ Quy tắc phản hồi quan trọng:
       openLuckyWheelModal();
     }
 
-    // Cooldown ticker every 1 second
+    // Cooldown ticker every 1 second (skips when hidden or idle)
     setInterval(() => {
+      if (typeof document !== 'undefined' && document.hidden) return;
       updateAdButtonCooldownState();
     }, 1000);
 
@@ -66958,12 +66907,25 @@ Quy tắc phản hồi quan trọng:
     if (typeof autoHealVipRegression === 'function') autoHealVipRegression();
     if (typeof autoHealExcessVipSpinsToday === 'function') autoHealExcessVipSpinsToday();
     if (typeof healErroneousFreezeDeduction === 'function') healErroneousFreezeDeduction();
-    if (typeof checkAndTriggerVipExpirationWarning === 'function') checkAndTriggerVipExpirationWarning();
     if (typeof updateMistakeBadgeUI === 'function') updateMistakeBadgeUI();
     if (typeof initSpaRouter === 'function') {
       initSpaRouter();
     } else {
       checkUrlProfileDeepLink();
+    }
+  });
+
+  // Global Visibility & Idle Power Manager (v0.10.10-36)
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) {
+      // Background / Minimized: pause non-essential intensive tasks
+      if (typeof stopRewardedAdCycle === 'function' && typeof adWatchInterval !== 'undefined' && adWatchInterval) {
+        // Handled in rewarded ads anti-cheat
+      }
+    } else {
+      // Foreground / Restored: fast refresh cooldowns & notifications silently
+      if (typeof updateAdButtonCooldownState === 'function') updateAdButtonCooldownState();
+      if (typeof checkAndTriggerVipExpirationWarning === 'function') checkAndTriggerVipExpirationWarning();
     }
   });
 

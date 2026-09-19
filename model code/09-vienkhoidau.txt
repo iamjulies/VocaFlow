@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Khung Avatar Mầm Xanh Khởi Đầu (Lv 1 - 5)</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #0c110d; /* Nền tối sinh thái để làm nổi bật sắc xanh lá */
+            margin: 0;
+            font-family: sans-serif;
+            overflow: hidden;
+        }
+
+        /* Container tổng thể - neo giữ mọi thành phần tại tâm chuẩn */
+        .avatar-container {
+            position: relative;
+            width: 160px;
+            height: 160px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Hiệu ứng hào quang mầm xanh tỏa sáng nhẹ dịu (Aura Glow) */
+        .avatar-container::before {
+            content: '';
+            position: absolute;
+            width: 170px;
+            height: 170px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(140, 211, 65, 0.4) 0%, rgba(58, 143, 44, 0.1) 50%, rgba(0, 0, 0, 0) 70%);
+            filter: blur(20px);
+            z-index: 0;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            animation: sprout-glow 2.5s ease-in-out infinite alternate;
+        }
+
+        @keyframes sprout-glow {
+            0% { transform: translate(-50%, -50%) scale(0.92); opacity: 0.6; }
+            100% { transform: translate(-50%, -50%) scale(1.08); opacity: 1; }
+        }
+
+        /* KHUNG MẦM XANH: Xoay nhẹ góc bắt sáng nhẹ nhàng */
+        .sprout-frame {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            /* Gradient xanh lá non thiên nhiên đa tầng */
+            background: conic-gradient(from 0deg, #a7ff83, #17b978, #a7ff83, #ffffff, #17b978, #a7ff83);
+            padding: 9px; /* Độ dày viền */
+            box-sizing: border-box;
+            z-index: 1;
+            box-shadow: 0 0 20px rgba(23, 185, 120, 0.4), inset 0 2px 4px rgba(255,255,255,0.6);
+            animation: rotate-sprout 6s linear infinite;
+        }
+
+        @keyframes rotate-sprout {
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Lõi chứa ảnh avatar (Triệt tiêu lực xoay của khung ngoài) */
+        .avatar-inside {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background-color: #111a13;
+            border: 2px solid #17b978; /* Viền mỏng ngăn cách ảnh */
+            box-sizing: border-box;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            animation: anti-rotate-sprout 6s linear infinite;
+        }
+
+        @keyframes anti-rotate-sprout {
+            100% { transform: rotate(-360deg); }
+        }
+
+        .avatar-inside img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* Hai mầm cây nhỏ mọc đối xứng ở hai biên */
+        .sprout-leaf {
+            position: absolute;
+            font-size: 24px;
+            z-index: 3;
+            top: 50%;
+            margin-top: -16px;
+            filter: drop-shadow(0 0 8px rgba(167, 255, 131, 0.8));
+            animation: leaf-float 2s ease-in-out infinite alternate;
+        }
+
+        .leaf-left {
+            left: -15px;
+            transform: scaleX(-1); /* Lật mặt lá bên trái */
+        }
+
+        .leaf-right {
+            right: -15px;
+        }
+
+        @keyframes leaf-float {
+            0% { translateY(0px); }
+            100% { translateY(-4px); }
+        }
+
+        /* Huy hiệu gỗ tân thủ ở đáy khung */
+        .sprout-badge {
+            position: absolute;
+            bottom: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, #a7ff83, #11999e);
+            border: 2px solid #ffffff;
+            padding: 2px 14px;
+            border-radius: 20px;
+            z-index: 4;
+            box-shadow: 0 4px 12px rgba(23, 185, 120, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Chữ hiển thị level nhỏ gọn */
+        .sprout-badge span {
+            font-size: 11px;
+            font-weight: bold;
+            color: #ffffff;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="avatar-container">
+        <!-- Hai chiếc mầm xanh đung đưa hai bên -->
+        <div class="sprout-leaf leaf-left">🌱</div>
+        <div class="sprout-leaf leaf-right">🌱</div>
+
+        <!-- Khung chuyển sắc xoay tròn mượt mà -->
+        <div class="sprout-frame">
+            <div class="avatar-inside">
+                <!-- Đường dẫn ảnh đại diện -->
+                <img src="https://dicebear.com" alt="Avatar">
+            </div>
+        </div>
+
+        <!-- Huy hiệu hiển thị cấp bậc Tân Thủ -->
+        <div class="sprout-badge">
+            <span>LV 1~5</span>
+        </div>
+    </div>
+
+</body>
+</html>

@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Khung Avatar Bạc Tinh Xảo</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #121214; /* Nền tối tôn vinh ánh bạc */
+            margin: 0;
+            font-family: sans-serif;
+        }
+
+        /* Container bao quanh khung */
+        .avatar-container {
+            position: relative;
+            width: 155px;
+            height: 155px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Hiệu ứng hào quang bạc tỏa ra phía sau */
+        .avatar-container::before {
+            content: '';
+            position: absolute;
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            background: #cfd8dc;
+            filter: blur(25px);
+            opacity: 0.3;
+            z-index: 0;
+        }
+
+        /* Khung viền Bạc Tinh Xảo với hiệu ứng ánh sáng chạy vòng tròn */
+        .silver-frame {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            /* Bảng màu gradient ánh kim bạch kim xen kẽ */
+            background: conic-gradient(from 0deg, #90a4ae, #eceff1, #b0bec5, #ffffff, #78909c, #eceff1, #90a4ae);
+            padding: 9px; /* Độ dày viền bạc */
+            box-sizing: border-box;
+            z-index: 1;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.5);
+            animation: silver-glow 4s linear infinite; /* Kích hoạt luồng sáng xoay */
+        }
+
+        /* Hiệu ứng xoay góc bắt sáng giả lập bề mặt kim loại 3D */
+        @keyframes silver-glow {
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Lõi bên trong giữ ảnh cố định (không bị xoay theo khung viền) */
+        .avatar-inside {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background-color: #1e293b;
+            border: 2px solid #455a64; /* Viền mỏng ngăn cách */
+            box-sizing: border-box;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transform: rotate(-360deg); /* Triệt tiêu chuyển động xoay của khung ngoài */
+            animation: anti-rotate 4s linear infinite;
+        }
+
+        @keyframes anti-rotate {
+            100% {
+                transform: rotate(0deg);
+            }
+        }
+
+        /* Ảnh người dùng inside */
+        .avatar-inside img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* Huy hiệu Bạc Tinh Xảo đính góc dưới */
+        .silver-badge {
+            position: absolute;
+            bottom: -6px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, #ffffff, #78909c);
+            border: 2px solid #eceff1;
+            padding: 3px 12px;
+            border-radius: 12px;
+            z-index: 2;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.6);
+            display: flex;
+            gap: 2px;
+            align-items: center;
+        }
+
+        /* Các ngôi sao xếp hạng nhỏ nhắn tinh tế đại diện cho Rank Bạc */
+        .silver-badge span {
+            font-size: 11px;
+            color: #ffffff;
+            text-shadow: 0 0 5px #b0bec5, 0 1px 2px rgba(0,0,0,0.8);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="avatar-container">
+        <!-- Khung bạc chuyển động lấp lánh -->
+        <div class="silver-frame">
+            <!-- Ảnh người dùng (Giữ thẳng đứng ổn định) -->
+            <div class="avatar-inside">
+                <img src="https://dicebear.com" alt="Avatar">
+            </div>
+        </div>
+        <!-- Huy hiệu Tinh Xảo (2 Sao) -->
+        <div class="silver-badge">
+            <span>★</span>
+            <span>★</span>
+        </div>
+    </div>
+
+</body>
+</html>

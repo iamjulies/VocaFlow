@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vị Thần Ngôn Ngữ - Vòng Xoáy Thần Thoại</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #040206; /* Nền tối sâu thẳm vũ trụ */
+            margin: 0;
+            overflow: hidden;
+        }
+
+        /* Container giữ chặt hệ thống không bị dịch tâm */
+        .avatar-container {
+            position: relative;
+            width: 220px;
+            height: 220px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Hào quang năng lượng bùng phát tỏa sáng rực rỡ */
+        .avatar-container::before {
+            content: '';
+            position: absolute;
+            width: 195px;
+            height: 195px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(255, 191, 0, 0.5) 0%, rgba(0, 242, 254, 0.15) 60%, rgba(0, 0, 0, 0) 75%);
+            filter: blur(25px);
+            z-index: 0;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            animation: divine-flash 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes divine-flash {
+            0% { opacity: 0.5; transform: translate(-50%, -50%) scale(0.93); }
+            100% { opacity: 1; transform: translate(-50%, -50%) scale(1.12) brightness(1.3); }
+        }
+
+        /* Khung đồ họa SVG nguyên khối */
+        .mythic-god-svg {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            z-index: 3;
+            pointer-events: none;
+            filter: drop-shadow(0 0 15px rgba(255, 215, 0, 0.7));
+        }
+
+        /* Lõi tròn chứa ảnh Avatar cố định */
+        .avatar-core {
+            position: absolute;
+            width: 130px;
+            height: 130px;
+            border-radius: 50%;
+            background-color: #0b0813;
+            border: 2px solid #00f2fe; /* Đổi sang viền xanh Cyan Neon đồng điệu hệ điện toán */
+            box-sizing: border-box;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1;
+            top: 45px;
+            left: 45px;
+        }
+
+        .avatar-core img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="avatar-container">
+        
+        <!-- ĐỒ HỌA VECTOR NGUYÊN KHỐI: VIỀN XOÁY NĂNG LƯỢNG MƯỢT MÀ -->
+        <svg class="mythic-god-svg" xmlns="http://w3.org" viewBox="0 0 220 220">
+            <defs>
+                <!-- Gradient vàng kim loại hoàng gia đa tầng -->
+                <linearGradient id="royal-gold" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stop-color="#fff9d0" />
+                    <stop offset="30%" stop-color="#ffd700" />
+                    <stop offset="70%" stop-color="#b38728" />
+                    <stop offset="100%" stop-color="#fff9d0" />
+                </linearGradient>
+                <!-- Gradient sấm sét chuyển màu sắc nét -->
+                <linearGradient id="lightning-glow" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" stop-color="#ffffff" />
+                    <stop offset="50%" stop-color="#00f2fe" />
+                    <stop offset="100%" stop-color="#ff006e" />
+                </linearGradient>
+            </defs>
+
+            <!-- 1. HỆ THỐNG VIỀN TRÒN HOÀNG KIM CUỘN SÓNG (ĐÃ SỬA: TĂNG ĐỘ DÀY & THÊM CHUYỂN ĐỘNG XOAY) -->
+            <!-- Vòng phụ phản quang bao ngoài -->
+            <circle cx="110" cy="110" r="72" fill="none" stroke="#ff006e" stroke-width="1.5" opacity="0.4" />
+            <!-- Vòng viền chính: Tăng stroke-width lên 7 và nhúng animation cuộn chảy vô cực -->
+            <circle cx="110" cy="110" r="66" fill="none" stroke="url(#royal-gold)" stroke-width="7" stroke-dasharray="24 10">
+                <animate attributeName="stroke-dashoffset" values="0;68" dur="2.5s" repeatCount="indefinite" />
+            </circle>
+            <!-- Vòng viền laser chỉ mảnh bọc sát lõi ảnh -->
+            <circle cx="110" cy="110" r="62.5" fill="none" stroke="#00f2fe" stroke-width="1.5" opacity="0.6" />
+
+            <!-- 2. HÌNH TƯỢNG VỊ THẦN (GÓC TRÊN BÊN TRÁI) -->
+            <g id="clear-god-figure">
+                <!-- Hào quang nền của riêng Thần -->
+                <circle cx="50" cy="50" r="30" fill="#ffd700" opacity="0.15" filter="blur(8px)" />
+                
+                <!-- Khuôn mặt và Tai cấu trúc phẳng rõ ràng -->
+                <path d="M 35,42 C 35,30 65,30 65,42 C 65,52 35,52 35,42 Z" fill="#ffebd3" stroke="#5c4308" stroke-width="1.5" />
+                
+                <!-- Mái tóc thần thoại bồng bềnh hai bên -->
+                <path d="M 32,38 Q 22,46 32,54 M 68,38 Q 78,46 68,54" fill="none" stroke="url(#royal-gold)" stroke-width="6" stroke-linecap="round" />
+
+                <!-- Vương miện Hoàng gia 3 chóp nhọn trên đỉnh đầu -->
+                <path d="M 40,32 L 42,16 L 50,24 L 58,16 L 60,32 Z" fill="url(#royal-gold)" stroke="#5c4308" stroke-width="1.5" stroke-linejoin="round" />
+                <circle cx="50" cy="24" r="1.5" fill="#ffffff" />
+
+                <!-- Cặp mắt Thần phát sáng quyền năng màu Cyan Neon -->
+                <ellipse cx="44" cy="40" rx="3.5" ry="2" fill="#00f2fe" />
+                <ellipse cx="56" cy="40" rx="3.5" ry="2" fill="#00f2fe" />
+                <ellipse cx="44" cy="40" rx="1.5" ry="0.8" fill="#ffffff" />
+                <ellipse cx="56" cy="40" rx="1.5" ry="0.8" fill="#ffffff" />
+
+                <!-- Bộ râu thần dài oai nghiêm vuốt dài bo mềm mại ôm lấy viền tròn avatar -->
+                <path d="M 35,46 Q 30,85 50,88 Q 70,85 65,46 Q 50,56 35,46 Z" fill="#ffffff" stroke="url(#royal-gold)" stroke-width="1.5" stroke-linejoin="round" />
+                <!-- Đường nét tết râu thần nghệ thuật -->
+                <path d="M 50,56 L 50,85" fill="none" stroke="#e2e8f0" stroke-width="1.5" stroke-linecap="round" />
+            </g>
+
+            <!-- 3. HỆ GAI THẦN BINH GÓC CẠNH (BIÊN DƯỚI BÊN PHẢI) -->
+            <g id="divine-spikes">
+                <!-- Chùm gai vát nhọn đúc khối dứt khoát -->
+                <path d="M 165,150 L 208,185 L 176,168 L 198,206 L 158,178 L 168,214 L 142,182" fill="none" stroke="url(#royal-gold)" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" />
+                <polygon points="176,168 198,206 158,178" fill="url(#royal-gold)" opacity="0.3" />
+            </g>
+
+            <!-- 4. LỚP XUNG KÍCH SẤM SÉT CHẠY QUANH CHU VI -->
+            <g id="lightning-discharge">
+                <!-- Sét lớn phóng từ vai thần bao trọn biên phải xuống chùm gai -->
+                <path d="M 72,55 L 115,25 L 152,48 L 180,92 L 168,126 L 195,155" fill="none" stroke="url(#lightning-glow)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                    <animate attributeName="stroke-width" values="3;5;2.5;4.5;3" dur="0.4s" repeatCount="indefinite" />
+                </path>
+                <!-- Sét phụ bo dọc biên trái tạo độ cân bằng năng lượng điện thế -->
+                <path d="M 30,68 L 15,105 L 38,138 L 22,168 L 62,188 L 105,184" fill="none" stroke="#00f2fe" stroke-width="2" stroke-linejoin="round">
+                    <animate attributeName="opacity" values="1;0.3;0.8;0.2;1" dur="0.3s" repeatCount="indefinite" />
+                </path>
+            </g>
+        </svg>
+
+        <!-- LÕI CHỨA AVATAR CỐ ĐỊNH -->
+        <div class="avatar-core">
+            <img src="https://dicebear.com" alt="Avatar">
+        </div>
+
+    </div>
+
+</body>
+</html>

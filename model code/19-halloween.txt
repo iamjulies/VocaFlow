@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Khung Avatar Huyền Bí Dạ Nguyệt (Halloween)</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #030106; /* Nền đen ánh tím siêu tối của đêm Halloween */
+            margin: 0;
+            font-family: system-ui, -apple-system, sans-serif;
+            overflow: hidden;
+        }
+
+        /* Container tổng thể - giữ mọi lớp layer đồng tâm tuyệt đối */
+        .avatar-container {
+            position: relative;
+            width: 170px;
+            height: 170px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* 1. HIỆU ỨNG HÀO QUANG LỬA MA TRƠI LẬP LÒE (WILL-O'-WISP AURA) */
+        .avatar-container::before {
+            content: '';
+            position: absolute;
+            width: 190px;
+            height: 190px;
+            border-radius: 50%;
+            /* Luồng sáng ma mị từ tím neon sang xanh linh hồn */
+            background: radial-gradient(circle, rgba(189, 0, 255, 0.5) 0%, rgba(0, 242, 254, 0.2) 50%, rgba(0, 0, 0, 0) 75%);
+            filter: blur(25px);
+            z-index: 0;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            /* Kết hợp hiệu ứng co giãn nhịp thở và chớp tắt lập lòe của lửa ma trơi */
+            animation: ghost-flame 1.2s ease-in-out infinite alternate;
+        }
+
+        @keyframes ghost-flame {
+            0% { transform: translate(-50%, -50%) scale(0.9); opacity: 0.4; filter: blur(25px) brightness(0.8); }
+            50% { opacity: 0.9; filter: blur(20px) brightness(1.4); }
+            100% { transform: translate(-50%, -50%) scale(1.15); opacity: 0.6; filter: blur(25px) brightness(1); }
+        }
+
+        /* 2. CÁC HẠT ĐỐM LỬA LINH HỒN BAY LƠ LỬNG (GHOST SPARKS) */
+        .ghost-sparks {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .ghost-sparks::before,
+        .ghost-sparks::after {
+            content: '';
+            position: absolute;
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+            top: -2.5px;
+            left: -2.5px;
+            transform-origin: 0 0;
+            animation: ghost-orbit 4s linear infinite;
+        }
+
+        /* Phân rải các đốm lửa ma trơi lơ lửng quanh chu vi */
+        .ghost-sparks::before {
+            background: #bd00ff;
+            box-shadow: 
+                -50px -65px 4px #bd00ff, 65px -60px 5px #00f2fe,
+                -85px 25px 3px #bd00ff, 80px 45px 5px #00f2fe,
+                -20px 95px 4px #bd00ff, 35px -95px 3px #ffffff;
+        }
+
+        .ghost-sparks::after {
+            background: #00f2fe;
+            box-shadow: 
+                -65px -35px 5px #00f2fe, 55px -85px 4px #bd00ff,
+                -55px 75px 3px #ffffff, 85px -35px 4px #bd00ff;
+            animation-direction: reverse;
+            animation-duration: 2.8s;
+        }
+
+        @keyframes ghost-orbit {
+            0% { transform: rotate(0deg) scale(0.92); }
+            100% { transform: rotate(360deg) scale(1.08); }
+        }
+
+        /* 3. KHUNG VIỀN TÍM ĐEN CHÍNH - XOAY CHUYỂN gradient MA QUÁI */
+        .halloween-frame {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            /* Bảng màu dốc kết hợp tím Neon rực rỡ, xanh đại dương huyền bí và bóng đêm đen kịt */
+            background: conic-gradient(
+                from 0deg,
+                #bd00ff 0%,     /* Tím Neon */
+                #00f2fe 25%,    /* Xanh ngọc phát quang */
+                #090214 45%,    /* Đen bóng đêm */
+                #7b2cbf 70%,    /* Tím huyền bí */
+                #bd00ff 100%
+            );
+            padding: 9px; /* Độ dày viền ma quái */
+            box-sizing: border-box;
+            z-index: 1;
+            box-shadow: 0 0 25px rgba(189, 0, 255, 0.6), inset 0 2px 6px rgba(0, 242, 254, 0.5);
+            animation: frame-rotate 3.5s linear infinite;
+        }
+
+        @keyframes frame-rotate {
+            100% { transform: rotate(360deg); }
+        }
+
+        /* LÕI CHỨA AVATAR (Triệt tiêu lực xoay của khung ngoài giúp ảnh đứng thăng bằng) */
+        .avatar-inside {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background-color: #06020d;
+            border: 2px solid rgba(189, 0, 255, 0.4); /* Viền trong đồng điệu màn đêm */
+            box-sizing: border-box;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            animation: anti-frame-rotate 3.5s linear infinite;
+        }
+
+        @keyframes anti-frame-rotate {
+            100% { transform: rotate(-360deg); }
+        }
+
+        .avatar-inside img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* 4. HUY HIỆU ĐÁY: ĐÊM HALLOWEEN KỲ BÍ (HALLOWEEN BADGE) */
+        .halloween-badge {
+            position: absolute;
+            bottom: -9px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, #10002b, #3c096c);
+            border: 1.5px solid #00f2fe;
+            padding: 3px 16px;
+            border-radius: 4px; /* Dáng vuông vắn, vát nhẹ phong cách hầm hố */
+            z-index: 4;
+            box-shadow: 0 4px 15px rgba(189, 0, 255, 0.6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+        }
+
+        /* Biểu tượng ngọn nến hoặc ma trơi lấp lánh */
+        .halloween-badge::before {
+            content: '🔮';
+            font-size: 11px;
+            filter: drop-shadow(0 1px 2px rgba(0,0,0,0.5));
+            animation: crystal-bounce 1s ease-in-out infinite alternate;
+        }
+
+        @keyframes crystal-bounce {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(-2px); }
+        }
+
+        /* Chữ hiển thị tên sự kiện */
+        .halloween-badge span {
+            font-size: 9px;
+            font-weight: bold;
+            color: #ffffff;
+            letter-spacing: 2px;
+            text-shadow: 0 0 5px #00f2fe, 0 0 10px #bd00ff;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="avatar-container">
+        <!-- Hệ thống hạt lửa ma trơi lơ lửng quanh chu vi -->
+        <div class="ghost-sparks"></div>
+
+        <!-- Khung viền tím đen rực lửa ma trơi chuyển vân liên tục -->
+        <div class="halloween-frame">
+            <div class="avatar-inside">
+                <!-- Đường dẫn ảnh đại diện người dùng -->
+                <img src="https://dicebear.com" alt="Avatar">
+            </div>
+        </div>
+
+        <!-- Huy hiệu Dạ Nguyệt Huyền Bí ở đáy -->
+        <div class="halloween-badge">
+            <span>HALLOWEEN</span>
+        </div>
+    </div>
+
+</body>
+</html>

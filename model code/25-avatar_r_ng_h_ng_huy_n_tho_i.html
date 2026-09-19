@@ -1,0 +1,1050 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Khung Avatar Rồng Hồng Huyền Thoại (Mythic Pink Dragon Frame)</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts: Orbitron & Inter & Cinzel Decorative -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800;900&family=Inter:wght@300;400;500;600;700&family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            mythic: {
+              50: '#fff0f7',
+              100: '#ffe4f2',
+              300: '#ff80bf',
+              500: '#ff007f',
+              600: '#e6006f',
+              700: '#b30059',
+              900: '#4d0026',
+              950: '#1a000d',
+            }
+          },
+          fontFamily: {
+            fantasy: ['Cinzel', 'serif'],
+            cyber: ['Orbitron', 'sans-serif'],
+            sans: ['Inter', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    /* Nền không gian tối ma ảo */
+    body {
+      background-color: #08030b;
+      background-image: 
+        radial-gradient(at 0% 0%, rgba(255, 0, 127, 0.15) 0px, transparent 50%),
+        radial-gradient(at 100% 100%, rgba(138, 0, 82, 0.2) 0px, transparent 50%),
+        radial-gradient(at 50% 50%, rgba(30, 8, 38, 0.6) 0px, transparent 80%);
+      color: #fce7f3;
+      font-family: 'Inter', sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* Hiệu ứng rung màn hình khi rồng khè lửa dữ dội */
+    @keyframes dragonRoarTremor {
+      0% { transform: translate(0, 0) rotate(0deg); }
+      20% { transform: translate(-2px, 2px) rotate(-0.4deg); }
+      40% { transform: translate(2px, -1px) rotate(0.4deg); }
+      60% { transform: translate(-1px, -2px) rotate(0deg); }
+      80% { transform: translate(2px, 1px) rotate(0.2deg); }
+      100% { transform: translate(0, 0) rotate(0deg); }
+    }
+
+    .shaking {
+      animation: dragonRoarTremor 0.12s infinite;
+    }
+
+    /* Đuôi xoáy & xung động lửa ma pháp */
+    @keyframes firePulse {
+      0%, 100% { filter: drop-shadow(0 0 10px #ff007f) drop-shadow(0 0 25px #ff66b2); opacity: 0.95; }
+      50% { filter: drop-shadow(0 0 20px #ffffff) drop-shadow(0 0 45px #ff007f); opacity: 1; }
+    }
+
+    @keyframes flameFlow {
+      0% { stroke-dashoffset: 0; }
+      100% { stroke-dashoffset: -200; }
+    }
+
+    @keyframes emberFloat {
+      0% { transform: translate(0, 0) scale(1); opacity: 1; }
+      100% { transform: translate(var(--tx, 40px), var(--ty, -50px)) scale(0); opacity: 0; }
+    }
+
+    /* Trạng thái ngọn lửa: ẩn mặc định, bùng cháy khi active */
+    .fire-layer {
+      opacity: 0;
+      transform-origin: 320px 130px;
+      transform: scale(0.65) rotate(-5deg);
+      transition: opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+                  transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+      pointer-events: none;
+    }
+
+    .fire-active .fire-layer {
+      opacity: 1;
+      transform: scale(1) rotate(0deg);
+      animation: firePulse 1.8s infinite ease-in-out;
+    }
+
+    /* Mở miệng rồng khi khè lửa */
+    .dragon-jaw {
+      transform-origin: 260px 130px;
+      transition: transform 0.3s ease-out;
+    }
+    .fire-active .dragon-jaw {
+      transform: rotate(14deg) translateY(2px);
+    }
+
+    /* Đồng tử mắt rồng rực sáng */
+    .dragon-eye {
+      transition: filter 0.3s ease, fill 0.3s ease;
+    }
+    .fire-active .dragon-eye {
+      filter: drop-shadow(0 0 8px #ffffff) drop-shadow(0 0 16px #ff007f);
+      fill: #ffffff;
+    }
+
+    /* Lửa dòng xoáy */
+    .fire-active .plasma-stream {
+      animation: flameFlow 2s linear infinite;
+    }
+
+    /* Tùy chỉnh thanh trượt Custom Range */
+    input[type=range] {
+      accent-color: #ff007f;
+    }
+
+    /* Scrollbar đẹp mắt */
+    ::-webkit-scrollbar {
+      width: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #110517;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #800040;
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #ff007f;
+    }
+  </style>
+</head>
+
+<body class="p-3 sm:p-6 lg:p-8">
+  <div class="max-w-7xl mx-auto">
+    <!-- Header Banner -->
+    <header class="flex flex-col md:flex-row items-center justify-between gap-4 pb-6 border-b border-pink-500/20 mb-8">
+      <div class="flex items-center gap-3">
+        <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-pink-600 to-rose-300 p-0.5 shadow-lg shadow-pink-600/30 flex items-center justify-center">
+          <div class="w-full h-full bg-[#120216] rounded-2xl flex items-center justify-center text-pink-400">
+            <i data-lucide="sparkles" class="w-6 h-6 animate-pulse"></i>
+          </div>
+        </div>
+        <div>
+          <h1 class="text-2xl sm:text-3xl font-black font-fantasy tracking-wider bg-gradient-to-r from-pink-200 via-pink-400 to-rose-400 bg-clip-text text-transparent">
+            MYTHIC PINK DRAGON
+          </h1>
+          <p class="text-xs sm:text-sm text-pink-300/70 font-medium">
+            Khung Avatar Rồng Phương Tây Bất Đối Xứng • Khè Lửa Ma Thuật
+          </p>
+        </div>
+      </div>
+
+      <!-- Quick Action Badges -->
+      <div class="flex items-center gap-3 flex-wrap">
+        <div id="statusBadge" class="px-3.5 py-1.5 rounded-full border border-pink-500/30 bg-pink-950/40 text-pink-300 text-xs font-semibold flex items-center gap-2 shadow-inner">
+          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+          <span>Trạng thái: <strong class="text-white">Rồng Ngủ Say</strong></span>
+        </div>
+        <button id="soundToggleBtn" class="px-3.5 py-1.5 rounded-xl border border-pink-500/30 bg-pink-950/60 hover:bg-pink-900/60 text-pink-200 text-xs font-medium flex items-center gap-2 transition-all cursor-pointer">
+          <i data-lucide="volume-2" class="w-4 h-4 text-pink-400" id="soundIcon"></i>
+          <span id="soundText">Âm thanh: Bật</span>
+        </button>
+      </div>
+    </header>
+
+    <main class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+      
+      <!-- CỘT TRÁI: Khu vực hiển thị Avatar & Tương tác Hover (7 Cột) -->
+      <section class="lg:col-span-7 flex flex-col items-center">
+        <!-- Vùng chứa Stage Khung Avatar Rồng -->
+        <div class="relative w-full max-w-[550px] aspect-square flex items-center justify-center p-2 sm:p-4 rounded-3xl bg-gradient-to-b from-[#180521]/80 to-[#0d0112]/90 border border-pink-500/20 shadow-2xl shadow-pink-950/50 backdrop-blur-md">
+          
+          <!-- Hướng dẫn tương tác nổi -->
+          <div class="absolute top-4 left-4 z-20 pointer-events-none flex items-center gap-2 bg-black/60 border border-pink-500/30 px-3 py-1 rounded-full text-[11px] text-pink-200/90 backdrop-blur-md">
+            <i data-lucide="mouse-pointer-click" class="w-3.5 h-3.5 text-pink-400"></i>
+            <span>Rê chuột hoặc chạm để Rồng phun lửa</span>
+          </div>
+
+          <!-- Lớp hào quang phía sau (Aura Glow) -->
+          <div id="ambientAura" class="absolute inset-8 rounded-full bg-pink-600/20 filter blur-3xl transition-all duration-500 pointer-events-none -z-0"></div>
+
+          <!-- CONTAINER CHÍNH CHỨA KHUNG SVG -->
+          <div id="dragonStage" class="relative w-full h-full select-none cursor-pointer transition-transform duration-300">
+
+            <svg id="masterDragonSvg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600" class="w-full h-full overflow-visible drop-shadow-[0_0_20px_rgba(255,0,127,0.3)]">
+              <defs>
+                <!-- Clip path cho Avatar tròn đường kính 350px (r=175) tại tâm (300, 300) -->
+                <clipPath id="avatarCircularClip">
+                  <circle cx="300" cy="300" r="174" />
+                </clipPath>
+
+                <!-- Bộ lọc phát sáng huyền bí -->
+                <filter id="pink-mythic-glow" x="-30%" y="-30%" width="160%" height="160%">
+                  <feGaussianBlur stdDeviation="5" result="blur1" />
+                  <feGaussianBlur stdDeviation="15" result="blur2" />
+                  <feMerge>
+                    <feMergeNode in="blur2" />
+                    <feMergeNode in="blur1" />
+                    <feMergeNode in="SourceGraphic" />
+                  </feMerge>
+                </filter>
+
+                <!-- Bộ lọc lửa ma thuật Plasma nén nhiệt cao -->
+                <filter id="fire-inferno-glow" x="-50%" y="-50%" width="200%" height="200%">
+                  <feGaussianBlur stdDeviation="3" result="core" />
+                  <feGaussianBlur stdDeviation="10" result="mid" />
+                  <feGaussianBlur stdDeviation="22" result="outer" />
+                  <feMerge>
+                    <feMergeNode in="outer" />
+                    <feMergeNode in="mid" />
+                    <feMergeNode in="core" />
+                    <feMergeNode in="SourceGraphic" />
+                  </feMerge>
+                </filter>
+
+                <!-- Gradients màu sắc Vảy Rồng Hồng Huyền Thoại -->
+                <linearGradient id="dragonScalesGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stop-color="#fff0f8" />
+                  <stop offset="25%" stop-color="#ff3399" />
+                  <stop offset="65%" stop-color="#99004d" />
+                  <stop offset="100%" stop-color="#2b0016" />
+                </linearGradient>
+
+                <!-- Gradient Cánh màng dơi ma pháp -->
+                <linearGradient id="dragonWingMembrane" x1="10%" y1="0%" x2="90%" y2="90%">
+                  <stop offset="0%" stop-color="#ff66b2" stop-opacity="0.8" />
+                  <stop offset="50%" stop-color="#99004d" stop-opacity="0.5" />
+                  <stop offset="100%" stop-color="#24001c" stop-opacity="0.15" />
+                </linearGradient>
+
+                <!-- Gradient Lửa plasma trắng hồng cực nhiệt -->
+                <linearGradient id="plasmaFireGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stop-color="#ffffff" />
+                  <stop offset="20%" stop-color="#ffb3da" />
+                  <stop offset="55%" stop-color="#ff007f" />
+                  <stop offset="85%" stop-color="#99004d" />
+                  <stop offset="100%" stop-color="#ff007f" stop-opacity="0" />
+                </linearGradient>
+
+                <!-- Gradient Vòng ma trận cổ ngữ -->
+                <radialGradient id="matrixRingGrad" cx="50%" cy="50%" r="50%">
+                  <stop offset="85%" stop-color="#ff007f" />
+                  <stop offset="95%" stop-color="#ff99cc" />
+                  <stop offset="100%" stop-color="#ffffff" />
+                </radialGradient>
+
+                <!-- Gradient Sừng hoàng kim ánh hồng -->
+                <linearGradient id="hornMetallicGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stop-color="#ffffff" />
+                  <stop offset="40%" stop-color="#ffb8db" />
+                  <stop offset="85%" stop-color="#a60053" />
+                </linearGradient>
+              </defs>
+
+              <!-- 1. HÌNH ẢNH AVATAR NGƯỜI DÙNG (Cắt tròn hoàn hảo tại tâm R=174) -->
+              <g id="avatarWrapperGroup" clip-path="url(#avatarCircularClip)">
+                <!-- Nền mặc định lót trong suốt/tối -->
+                <rect x="125" y="125" width="350" height="350" fill="#17031e" />
+                <!-- Thẻ hình ảnh avatar tương tác (pan, zoom qua code JS) -->
+                <image id="userAvatarImage" 
+                       href="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=600&q=80" 
+                       x="125" y="125" width="350" height="350" 
+                       preserveAspectRatio="xMidYMid slice" />
+                <!-- Lớp phủ bóng mờ viền nội bộ tạo chiều sâu cho ảnh avatar -->
+                <circle cx="300" cy="300" r="174" fill="none" stroke="rgba(0,0,0,0.4)" stroke-width="8" />
+              </g>
+
+              <!-- 2. CÁC VÀNH ĐAI NĂNG LƯỢNG TRÒN (Magic Frame Circles) -->
+              <g id="frameRingsGroup" filter="url(#pink-mythic-glow)">
+                <!-- Vòng ngoài nét đứt cổ ngữ -->
+                <circle cx="300" cy="300" r="186" fill="none" stroke="#ff007f" stroke-width="2" stroke-dasharray="8 14 3 14" opacity="0.6" />
+                <!-- Vành khung chính R=176 dày dặn -->
+                <circle cx="300" cy="300" r="176" fill="none" stroke="url(#matrixRingGrad)" stroke-width="6.5" stroke-linecap="round" />
+                <!-- Vòng phát sáng mỏng tinh khiết phía trong mép ảnh -->
+                <circle cx="300" cy="300" r="171" fill="none" stroke="#ffe6f3" stroke-width="1.6" stroke-dasharray="3 15 35 15" opacity="0.85" />
+                <!-- Ký tự ngọc ma thuật trang trí 4 hướng -->
+                <circle cx="300" cy="477" r="3.5" fill="#ffffff" />
+                <circle cx="123" cy="300" r="3.5" fill="#ffffff" />
+                <circle cx="477" cy="300" r="3.5" fill="#ffffff" />
+              </g>
+
+              <!-- 3. ĐUÔI RỒNG QUẤN GÓC DƯỚI BÊN TRÁI (7h - 9h) -->
+              <g id="dragonTail" filter="url(#pink-mythic-glow)">
+                <!-- Thân đuôi uốn lượn ôm khít khung -->
+                <path d="M 165,415 C 120,465 155,530 220,535 C 275,540 280,488 240,480 C 185,465 155,395 133,325 C 124,295 125,265 128,240" 
+                      fill="none" stroke="url(#dragonScalesGrad)" stroke-width="22" stroke-linecap="round" />
+                <!-- Gai nhọn dọc đốt sống đuôi -->
+                <polygon points="142,440 120,470 155,455" fill="#ffe6f2" />
+                <polygon points="172,480 156,515 190,495" fill="#ffe6f2" />
+                <polygon points="215,510 210,548 236,520" fill="#ffe6f2" />
+                <polygon points="248,495 278,525 255,478" fill="#ffe6f2" />
+                <!-- Mũi giáo xẻ đuôi rồng uy lực -->
+                <path d="M 245,480 Q 305,505 325,488 Q 285,465 245,480 Z" fill="url(#hornMetallicGrad)" stroke="#ffffff" stroke-width="1.5" />
+              </g>
+
+              <!-- 4. MÓNG VUỐT BÁM VÀNH KHUNG (Vị trí 9h) -->
+              <g id="dragonClaw" filter="url(#pink-mythic-glow)">
+                <path d="M 98,280 C 108,275 126,285 138,295 C 145,288 152,298 140,305 C 148,302 153,312 138,318 C 145,318 145,328 132,328 C 120,325 105,310 94,300 Z" 
+                      fill="url(#dragonScalesGrad)" />
+                <!-- Móng vuốt sắc nhọn bấu vào viền -->
+                <path d="M 138,295 Q 155,296 150,304" stroke="#ffffff" stroke-width="3" fill="none" stroke-linecap="round" />
+                <path d="M 140,305 Q 158,310 151,317" stroke="#ffffff" stroke-width="3" fill="none" stroke-linecap="round" />
+                <path d="M 135,318 Q 152,325 142,332" stroke="#ffffff" stroke-width="3" fill="none" stroke-linecap="round" />
+              </g>
+
+              <!-- 5. ĐÔI CÁNH DƠI PHƯƠNG TÂY VƯƠN RỘNG (Góc trên trái 9h - 11h) -->
+              <g id="dragonWings" filter="url(#pink-mythic-glow)">
+                <!-- Cánh phụ phía sau tạo độ sâu tầng lớp -->
+                <path d="M 175,135 Q 145,65 105,30 Q 130,50 150,90 Q 168,120 175,135 Z" fill="#660033" opacity="0.85" />
+                <path d="M 105,30 Q 100,10 90,5 Q 95,20 102,33 Z" fill="#ffffff" />
+                <path d="M 105,30 Q 85,75 75,120 Q 110,95 150,90 Z" fill="url(#dragonWingMembrane)" opacity="0.6" />
+
+                <!-- Cánh đại bàng/dơi chính vươn hùng vĩ vượt khung tròn -->
+                <path d="M 165,190 Q 110,120 45,85 Q 25,75 5,90 Q 30,105 75,135 Q 115,175 140,225 Z" 
+                      fill="url(#dragonScalesGrad)" />
+                <!-- Móng vuốt ngọn cánh -->
+                <path d="M 45,85 Q 35,60 20,55 Q 30,75 42,88 Z" fill="#ffffff" />
+                <!-- Nan xương cánh chịu lực -->
+                <path d="M 45,85 Q 40,150 25,215" stroke="#ff80bf" stroke-width="4.5" fill="none" stroke-linecap="round" />
+                <path d="M 75,135 Q 70,205 60,265" stroke="#ff3385" stroke-width="4" fill="none" stroke-linecap="round" />
+                <path d="M 115,175 Q 105,230 95,290" stroke="#99004d" stroke-width="3.5" fill="none" stroke-linecap="round" />
+                <!-- Màng cánh ma thuật -->
+                <path d="M 45,85 Q 40,160 25,215 Q 45,190 60,265 Q 85,225 95,290 Q 120,240 140,225 C 115,175 75,135 45,85 Z" 
+                      fill="url(#dragonWingMembrane)" />
+              </g>
+
+              <!-- 6. ĐẦU, CỔ VÀ SỪNG RỒNG UY NGHIÊM -->
+              <g id="dragonHeadAndNeck" filter="url(#pink-mythic-glow)">
+                <!-- Cổ cơ bắp cuộn sóng -->
+                <path d="M 128,245 C 120,175 155,128 200,95 C 215,85 232,85 245,95 C 230,115 205,140 185,185 C 170,220 160,250 155,270 Z" 
+                      fill="url(#dragonScalesGrad)" />
+                <!-- Gai lưng cổ -->
+                <polygon points="152,145 125,120 162,130" fill="#ffffff" />
+                <polygon points="172,120 148,88 185,108" fill="#ffb3da" />
+                <polygon points="198,98 185,62 212,88" fill="#ffe6f2" />
+
+                <!-- Cặp Sừng Rồng Phương Tây vuốt dài sắc nhọn -->
+                <path d="M 218,80 C 205,48 170,38 145,42 C 170,55 195,68 210,83 Z" fill="#800040" />
+                <path d="M 228,75 C 220,28 175,-8 118,0 C 160,18 200,48 215,82 Z" 
+                      fill="url(#hornMetallicGrad)" stroke="#ffffff" stroke-width="1.5" />
+                <path d="M 235,78 C 240,38 215,8 180,3 C 210,23 225,48 228,82 Z" fill="#ff1a8c" opacity="0.85" />
+
+                <!-- Khối đầu và Hộp sọ -->
+                <path d="M 215,75 C 240,75 272,90 295,110 C 265,115 245,120 225,105 Z" fill="url(#dragonScalesGrad)" />
+                
+                <!-- Hàm trên vươn dài đầy nhe nanh đe dọa -->
+                <path d="M 255,85 C 285,92 320,110 340,125 C 305,125 275,110 245,95 Z" fill="url(#dragonScalesGrad)" />
+                <polygon points="315,122 323,138 328,125" fill="#ffffff" />
+                <polygon points="295,116 300,130 306,120" fill="#ffffff" />
+                <polygon points="275,110 278,122 284,113" fill="#ffffff" />
+
+                <!-- Hàm dưới chuyển động mở rộng khi gầm/phun lửa -->
+                <g class="dragon-jaw">
+                  <path d="M 260,133 C 285,148 310,156 325,158 C 305,146 290,138 270,133 Z" fill="#99004d" />
+                  <polygon points="300,148 308,136 314,151" fill="#ffffff" />
+                  <polygon points="282,140 288,130 293,142" fill="#ffffff" />
+                </g>
+
+                <!-- Mắt Rồng Thần Tinh Anh -->
+                <ellipse cx="262" cy="94" rx="7.5" ry="4.5" transform="rotate(-15, 262, 94)" class="dragon-eye" fill="#ffccd9" />
+                <polygon points="258,94 266,92 263,96" fill="#24001c" />
+              </g>
+
+              <!-- 7. LUỒNG LỬA MA THUẬT HUYỀN THOẠI (Kích hoạt khi Hover/Tương tác) -->
+              <g id="dragonFlameLayer" class="fire-layer" filter="url(#fire-inferno-glow)">
+                
+                <!-- Quầng lửa Plasma cuộn xoáy khổng lồ bao quanh mạn phải khung (12h -> 5h) -->
+                <path d="M 320,130 C 375,100 455,105 515,160 C 575,215 590,305 560,395 C 530,470 465,530 385,555 C 440,512 470,470 480,405 C 495,310 465,225 400,175 C 368,150 332,138 320,130 Z" 
+                      fill="url(#plasmaFireGrad)" />
+
+                <!-- Lưỡi lửa bất đối xứng bốc trào ra bên ngoài -->
+                <path d="M 495,145 Q 565,125 595,175 Q 545,198 525,208 Z" fill="url(#plasmaFireGrad)" />
+                <path d="M 550,245 Q 620,255 605,315 Q 565,305 545,295 Z" fill="url(#plasmaFireGrad)" />
+                <path d="M 555,365 Q 605,410 575,465 Q 535,425 525,395 Z" fill="url(#plasmaFireGrad)" />
+                <path d="M 475,470 Q 495,545 430,575 Q 430,520 415,492 Z" fill="url(#plasmaFireGrad)" />
+
+                <!-- Lõi lửa trắng hồng tinh khiết cực nhiệt (Ultra Heat Core) -->
+                <path d="M 330,133 C 380,120 440,135 480,180 C 525,230 535,300 510,370 C 488,425 442,475 378,505 C 418,465 440,420 445,365 C 455,295 435,230 382,185 C 358,165 338,146 330,133 Z" 
+                      fill="#ffffff" opacity="0.95" />
+
+                <!-- Các dải Plasma xoáy chuyển động uốn lượn -->
+                <path class="plasma-stream" d="M 335,135 C 420,140 510,210 510,320 C 510,420 430,480 370,510" 
+                      fill="none" stroke="#ffffff" stroke-width="4.5" stroke-dasharray="25 15 45 15" stroke-linecap="round" />
+                <path class="plasma-stream" d="M 345,145 C 440,165 480,240 470,350 C 460,420 400,470 360,490" 
+                      fill="none" stroke="#ffb3da" stroke-width="3" stroke-dasharray="15 25" stroke-linecap="round" opacity="0.8" />
+
+                <!-- Tinh thể ma thuật & tia lửa hình sao bay bổng lấp lánh -->
+                <g fill="#ffffff">
+                  <!-- Đốm lửa lớn -->
+                  <circle cx="545" cy="155" r="5" />
+                  <circle cx="598" cy="230" r="3.5" />
+                  <circle cx="585" cy="355" r="5.5" />
+                  <circle cx="505" cy="495" r="4" />
+                  <circle cx="445" cy="555" r="3.5" />
+                  <!-- Ngôi sao ma thuật 4 cánh -->
+                  <path d="M 535,190 Q 535,205 535,220 Q 535,205 550,205 Q 535,205 535,190 Z" />
+                  <path d="M 570,305 Q 570,318 570,331 Q 570,318 583,318 Q 570,318 570,305 Z" />
+                  <path d="M 480,455 Q 480,470 480,485 Q 480,470 495,470 Q 480,470 480,455 Z" />
+                </g>
+
+                <!-- Quả cầu năng lượng bùng nổ ngay trước hàm rồng -->
+                <circle cx="335" cy="133" r="18" fill="#ffffff" />
+                <circle cx="335" cy="133" r="10" fill="#ffb8db" />
+              </g>
+
+            </svg>
+          </div>
+        </div>
+
+        <!-- Thanh trạng thái & Nút giữ lửa nhanh dưới Canvas -->
+        <div class="w-full max-w-[550px] mt-4 flex items-center justify-between gap-3 bg-[#130319]/80 border border-pink-500/20 p-3 rounded-2xl">
+          <button id="freezeFlameBtn" class="flex-1 py-2.5 px-4 rounded-xl font-fantasy text-xs sm:text-sm tracking-wider font-bold bg-gradient-to-r from-pink-600 to-rose-600 hover:from-pink-500 hover:to-rose-500 text-white shadow-lg shadow-pink-600/30 flex items-center justify-center gap-2 transition-all active:scale-95 cursor-pointer">
+            <i data-lucide="flame" class="w-4 h-4"></i>
+            <span id="freezeBtnText">Giữ Phun Lửa Liên Tục</span>
+          </button>
+          
+          <button id="resetViewBtn" title="Đặt lại góc ảnh" class="p-2.5 rounded-xl border border-pink-500/30 bg-pink-950/40 hover:bg-pink-900/40 text-pink-300 transition-all cursor-pointer">
+            <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
+          </button>
+        </div>
+      </section>
+
+      <!-- CỘT PHẢI: Bảng Điều Khiển & Tuỳ Chỉnh (5 Cột) -->
+      <section class="lg:col-span-5 space-y-6 w-full">
+        
+        <!-- Tab 1: Quản lý Ảnh Đại Diện (Avatar Management) -->
+        <div class="bg-[#14041b]/90 border border-pink-500/20 rounded-3xl p-5 sm:p-6 backdrop-blur-md shadow-xl shadow-black/40 space-y-5">
+          <div class="flex items-center justify-between border-b border-pink-500/20 pb-3">
+            <h2 class="font-fantasy font-bold text-lg text-pink-200 flex items-center gap-2">
+              <i data-lucide="image" class="w-5 h-5 text-pink-400"></i>
+              Ảnh Đại Diện Của Bạn
+            </h2>
+            <span class="text-xs text-pink-400/80 font-medium">Định dạng tròn r=174</span>
+          </div>
+
+          <!-- Nút tải ảnh lên & Thả file -->
+          <div>
+            <label class="block text-xs font-semibold text-pink-300 mb-2">Tải ảnh từ thiết bị:</label>
+            <div id="dropZone" class="border-2 border-dashed border-pink-500/40 hover:border-pink-400 rounded-2xl p-4 text-center cursor-pointer bg-pink-950/20 hover:bg-pink-950/40 transition-all flex flex-col items-center justify-center gap-2">
+              <input type="file" id="avatarFileInput" accept="image/*" class="hidden">
+              <i data-lucide="upload-cloud" class="w-7 h-7 text-pink-400"></i>
+              <p class="text-xs text-pink-200">Nhấp để chọn ảnh hoặc kéo thả vào đây</p>
+              <span class="text-[10px] text-pink-400/60">Hỗ trợ PNG, JPG, WEBP, GIF</span>
+            </div>
+          </div>
+
+          <!-- Chọn nhanh ảnh mẫu có sẵn -->
+          <div>
+            <label class="block text-xs font-semibold text-pink-300 mb-2">Hoặc chọn avatar mẫu:</label>
+            <div class="grid grid-cols-4 gap-2.5">
+              <button data-sample="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=600&q=80" class="sample-btn group relative aspect-square rounded-xl overflow-hidden border-2 border-pink-500/30 hover:border-pink-400 transition-all focus:ring-2 focus:ring-pink-400">
+                <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300" alt="Sample 1">
+              </button>
+              <button data-sample="https://images.unsplash.com/photo-1566492031773-4f4e44671857?auto=format&fit=crop&w=600&q=80" class="sample-btn group relative aspect-square rounded-xl overflow-hidden border-2 border-pink-500/30 hover:border-pink-400 transition-all focus:ring-2 focus:ring-pink-400">
+                <img src="https://images.unsplash.com/photo-1566492031773-4f4e44671857?auto=format&fit=crop&w=150&q=80" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300" alt="Sample 2">
+              </button>
+              <button data-sample="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=600&q=80" class="sample-btn group relative aspect-square rounded-xl overflow-hidden border-2 border-pink-500/30 hover:border-pink-400 transition-all focus:ring-2 focus:ring-pink-400">
+                <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=150&q=80" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300" alt="Sample 3">
+              </button>
+              <button data-sample="https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=600&q=80" class="sample-btn group relative aspect-square rounded-xl overflow-hidden border-2 border-pink-500/30 hover:border-pink-400 transition-all focus:ring-2 focus:ring-pink-400">
+                <img src="https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=150&q=80" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300" alt="Sample 4">
+              </button>
+            </div>
+          </div>
+
+          <!-- Tinh chỉnh Kích thước & Vị trí ảnh lọt lòng khung tròn -->
+          <div class="space-y-3.5 pt-2 border-t border-pink-500/20">
+            <div>
+              <div class="flex justify-between text-xs text-pink-300 mb-1">
+                <span>Thu phóng (Zoom):</span>
+                <span id="zoomVal" class="font-mono text-pink-400">100%</span>
+              </div>
+              <input type="range" id="zoomSlider" min="50" max="250" value="100" class="w-full h-1.5 bg-pink-950/60 rounded-lg appearance-none cursor-pointer">
+            </div>
+
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <div class="flex justify-between text-xs text-pink-300 mb-1">
+                  <span>Dịch X:</span>
+                  <span id="panXVal" class="font-mono text-pink-400">0px</span>
+                </div>
+                <input type="range" id="panXSlider" min="-150" max="150" value="0" class="w-full h-1.5 bg-pink-950/60 rounded-lg appearance-none cursor-pointer">
+              </div>
+              <div>
+                <div class="flex justify-between text-xs text-pink-300 mb-1">
+                  <span>Dịch Y:</span>
+                  <span id="panYVal" class="font-mono text-pink-400">0px</span>
+                </div>
+                <input type="range" id="panYSlider" min="-150" max="150" value="0" class="w-full h-1.5 bg-pink-950/60 rounded-lg appearance-none cursor-pointer">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab 2: Tùy Chỉnh Hào Quang & Hiệu Ứng Lửa -->
+        <div class="bg-[#14041b]/90 border border-pink-500/20 rounded-3xl p-5 sm:p-6 backdrop-blur-md shadow-xl shadow-black/40 space-y-5">
+          <div class="flex items-center justify-between border-b border-pink-500/20 pb-3">
+            <h2 class="font-fantasy font-bold text-lg text-pink-200 flex items-center gap-2">
+              <i data-lucide="zap" class="w-5 h-5 text-pink-400"></i>
+              Hiệu Ứng Hào Quang & Âm Thanh
+            </h2>
+          </div>
+
+          <!-- Cường độ sáng Hào quang (Glow Intensity) -->
+          <div>
+            <div class="flex justify-between text-xs text-pink-300 mb-1">
+              <span>Độ sáng hào quang Hồng Neon:</span>
+              <span id="glowVal" class="font-mono text-pink-400">Cao (100%)</span>
+            </div>
+            <input type="range" id="glowSlider" min="20" max="200" value="100" class="w-full h-1.5 bg-pink-950/60 rounded-lg appearance-none cursor-pointer">
+          </div>
+
+          <!-- Âm lượng tiếng rồng gầm khè lửa -->
+          <div>
+            <div class="flex justify-between text-xs text-pink-300 mb-1">
+              <span>Âm lượng tiếng rồng khè lửa:</span>
+              <span id="volumeVal" class="font-mono text-pink-400">80%</span>
+            </div>
+            <input type="range" id="volumeSlider" min="0" max="100" value="80" class="w-full h-1.5 bg-pink-950/60 rounded-lg appearance-none cursor-pointer">
+          </div>
+        </div>
+
+        <!-- Tab 3: Xuất File Avatar PNG & Mã SVG -->
+        <div class="bg-[#14041b]/90 border border-pink-500/20 rounded-3xl p-5 sm:p-6 backdrop-blur-md shadow-xl shadow-black/40 space-y-4">
+          <h2 class="font-fantasy font-bold text-lg text-pink-200 flex items-center gap-2 border-b border-pink-500/20 pb-3">
+            <i data-lucide="download" class="w-5 h-5 text-pink-400"></i>
+            Tải Về & Xuất Bản
+          </h2>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <!-- Nút Tải PNG HD -->
+            <button id="downloadPngBtn" class="py-3 px-4 rounded-2xl bg-gradient-to-r from-pink-600 to-rose-600 hover:from-pink-500 hover:to-rose-500 text-white font-semibold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-lg shadow-pink-600/30 transition-all active:scale-95 cursor-pointer">
+              <i data-lucide="file-image" class="w-4 h-4"></i>
+              <span>Xuất Ảnh PNG (HD)</span>
+            </button>
+
+            <!-- Nút Copy SVG Code -->
+            <button id="copySvgBtn" class="py-3 px-4 rounded-2xl border border-pink-500/40 bg-pink-950/50 hover:bg-pink-900/50 text-pink-200 font-semibold text-xs sm:text-sm flex items-center justify-center gap-2 transition-all active:scale-95 cursor-pointer">
+              <i data-lucide="code" class="w-4 h-4"></i>
+              <span id="copySvgText">Sao chép mã SVG</span>
+            </button>
+          </div>
+
+          <p class="text-[11px] text-pink-300/60 text-center">
+            *Ảnh xuất có độ phân giải 1200×1200px sắc nét, nền trong suốt, hỗ trợ đặt avatar Facebook, Discord, Steam, TikTok.
+          </p>
+        </div>
+
+      </section>
+    </main>
+
+    <!-- Canvas ẩn phục vụ quá trình Render chất lượng cao khi xuất ảnh PNG -->
+    <canvas id="exportCanvas" width="1200" height="1200" class="hidden"></canvas>
+
+    <!-- Thông báo Toaster phản hồi người dùng -->
+    <div id="toastNotification" class="fixed bottom-6 right-6 z-50 transform translate-y-24 opacity-0 transition-all duration-300 pointer-events-none bg-gradient-to-r from-pink-950 to-purple-950 border border-pink-500/50 text-pink-100 px-4 py-3 rounded-2xl shadow-2xl flex items-center gap-3 backdrop-blur-md">
+      <div id="toastIcon" class="text-pink-400"></div>
+      <span id="toastMessage" class="text-xs font-semibold"></span>
+    </div>
+  </div>
+
+  <script>
+    /**
+     * HỆ THỐNG ÂM THANH MA THUẬT (Web Audio API Procedural Sound Synthesizer)
+     * Tổng hợp âm thanh tiếng rồng gầm gừ tần số thấp kết hợp luồng gió lửa khè bùng cháy dữ dội.
+     * Hoàn toàn tự thân tạo sóng âm, không cần load bất kỳ file âm thanh MP3 bên ngoài.
+     */
+    class DragonAudioSynthesizer {
+      constructor() {
+        this.ctx = null;
+        this.masterGain = null;
+        this.isPlaying = false;
+        this.volume = 0.8;
+        this.isMuted = false;
+        
+        // Nodes âm thanh đang chạy
+        this.roarOsc = null;
+        this.fireNoiseNode = null;
+        this.roarGain = null;
+        this.fireGain = null;
+      }
+
+      init() {
+        if (!this.ctx) {
+          const AudioContext = window.AudioContext || window.webkitAudioContext;
+          this.ctx = new AudioContext();
+          this.masterGain = this.ctx.createGain();
+          this.masterGain.gain.setValueAtTime(this.isMuted ? 0 : this.volume, this.ctx.currentTime);
+          this.masterGain.connect(this.ctx.destination);
+        }
+        if (this.ctx.state === 'suspended') {
+          this.ctx.resume();
+        }
+      }
+
+      setVolume(val) {
+        this.volume = val;
+        if (this.masterGain && !this.isMuted) {
+          this.masterGain.gain.setValueAtTime(this.volume, this.ctx.currentTime);
+        }
+      }
+
+      toggleMute() {
+        this.isMuted = !this.isMuted;
+        if (this.masterGain) {
+          this.masterGain.gain.setValueAtTime(this.isMuted ? 0 : this.volume, this.ctx.currentTime);
+        }
+        return !this.isMuted;
+      }
+
+      // Tạo buffer tiếng ồn trắng giả lập ngọn lửa
+      createNoiseBuffer() {
+        const bufferSize = this.ctx.sampleRate * 2;
+        const buffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
+        const data = buffer.getChannelData(0);
+        let lastOut = 0.0;
+        for (let i = 0; i < bufferSize; i++) {
+          // Lọc tiếng ồn hồng/nâu ấm áp (Pink/Brown noise approximation for realistic fire whoosh)
+          const white = Math.random() * 2 - 1;
+          data[i] = (lastOut + (0.02 * white)) / 1.02;
+          lastOut = data[i];
+          data[i] *= 3.5;
+        }
+        return buffer;
+      }
+
+      startRoarAndFlame() {
+        if (this.isPlaying) return;
+        this.init();
+        this.isPlaying = true;
+        const now = this.ctx.currentTime;
+
+        // 1. Tiếng Rồng Gầm Thần (Sub-Bass Roar Oscillator)
+        this.roarOsc = this.ctx.createOscillator();
+        this.roarOsc.type = 'sawtooth';
+        // Tần số tụt từ 130Hz -> 45Hz tạo cảm giác rồng hạ giọng gầm vang dội
+        this.roarOsc.frequency.setValueAtTime(125, now);
+        this.roarOsc.frequency.exponentialRampToValueAtTime(45, now + 0.5);
+
+        // Lowpass filter cho giọng gầm ấm và gầm rú
+        const roarFilter = this.ctx.createBiquadFilter();
+        roarFilter.type = 'lowpass';
+        roarFilter.frequency.setValueAtTime(320, now);
+        roarFilter.Q.setValueAtTime(4, now);
+
+        this.roarGain = this.ctx.createGain();
+        this.roarGain.gain.setValueAtTime(0.01, now);
+        this.roarGain.gain.exponentialRampToValueAtTime(0.7, now + 0.15);
+        this.roarGain.gain.exponentialRampToValueAtTime(0.2, now + 0.8);
+
+        this.roarOsc.connect(roarFilter);
+        roarFilter.connect(this.roarGain);
+        this.roarGain.connect(this.masterGain);
+        this.roarOsc.start(now);
+
+        // 2. Tiếng Khè Lửa Ma Thuật (Plasma Flame Blast Whoosh)
+        const noiseBuffer = this.createNoiseBuffer();
+        this.fireNoiseNode = this.ctx.createBufferSource();
+        this.fireNoiseNode.buffer = noiseBuffer;
+        this.fireNoiseNode.loop = true;
+
+        // Bandpass Filter mô phỏng luồng áp suất lửa rít qua hàm rồng
+        const flameFilter = this.ctx.createBiquadFilter();
+        flameFilter.type = 'bandpass';
+        flameFilter.frequency.setValueAtTime(650, now);
+        flameFilter.Q.setValueAtTime(1.8, now);
+
+        // LFO tạo nhịp thở ngọn lửa bập bùng
+        const flameLfo = this.ctx.createOscillator();
+        flameLfo.frequency.setValueAtTime(7, now);
+        const lfoGain = this.ctx.createGain();
+        lfoGain.gain.setValueAtTime(200, now);
+        flameLfo.connect(lfoGain);
+        lfoGain.connect(flameFilter.frequency);
+        flameLfo.start(now);
+
+        this.fireGain = this.ctx.createGain();
+        this.fireGain.gain.setValueAtTime(0.001, now);
+        this.fireGain.gain.exponentialRampToValueAtTime(0.9, now + 0.2);
+
+        this.fireNoiseNode.connect(flameFilter);
+        flameFilter.connect(this.fireGain);
+        this.fireGain.connect(this.masterGain);
+        this.fireNoiseNode.start(now);
+      }
+
+      stopFlame() {
+        if (!this.isPlaying || !this.ctx) return;
+        const now = this.ctx.currentTime;
+        
+        // Giảm mượt âm lượng tránh tiếng click
+        if (this.roarGain) {
+          this.roarGain.gain.cancelScheduledValues(now);
+          this.roarGain.gain.setValueAtTime(this.roarGain.gain.value, now);
+          this.roarGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.25);
+        }
+        if (this.fireGain) {
+          this.fireGain.gain.cancelScheduledValues(now);
+          this.fireGain.gain.setValueAtTime(this.fireGain.gain.value, now);
+          this.fireGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.25);
+        }
+
+        setTimeout(() => {
+          try {
+            if (this.roarOsc) { this.roarOsc.stop(); this.roarOsc.disconnect(); }
+            if (this.fireNoiseNode) { this.fireNoiseNode.stop(); this.fireNoiseNode.disconnect(); }
+          } catch(e) {}
+          this.isPlaying = false;
+        }, 260);
+      }
+    }
+
+    // Khởi tạo hệ thống âm thanh
+    const dragonAudio = new DragonAudioSynthesizer();
+
+    // DOM Elements
+    const dragonStage = document.getElementById('dragonStage');
+    const masterDragonSvg = document.getElementById('masterDragonSvg');
+    const statusBadge = document.getElementById('statusBadge');
+    const ambientAura = document.getElementById('ambientAura');
+    const freezeFlameBtn = document.getElementById('freezeFlameBtn');
+    const freezeBtnText = document.getElementById('freezeBtnText');
+    const soundToggleBtn = document.getElementById('soundToggleBtn');
+    const soundText = document.getElementById('soundText');
+    const soundIcon = document.getElementById('soundIcon');
+    const resetViewBtn = document.getElementById('resetViewBtn');
+
+    // Avatar Transform Elements
+    const userAvatarImage = document.getElementById('userAvatarImage');
+    const dropZone = document.getElementById('dropZone');
+    const avatarFileInput = document.getElementById('avatarFileInput');
+    const zoomSlider = document.getElementById('zoomSlider');
+    const zoomVal = document.getElementById('zoomVal');
+    const panXSlider = document.getElementById('panXSlider');
+    const panXVal = document.getElementById('panXVal');
+    const panYSlider = document.getElementById('panYSlider');
+    const panYVal = document.getElementById('panYVal');
+    const sampleBtns = document.querySelectorAll('.sample-btn');
+
+    // Controls Elements
+    const glowSlider = document.getElementById('glowSlider');
+    const glowVal = document.getElementById('glowVal');
+    const volumeSlider = document.getElementById('volumeSlider');
+    const volumeVal = document.getElementById('volumeVal');
+    const downloadPngBtn = document.getElementById('downloadPngBtn');
+    const copySvgBtn = document.getElementById('copySvgBtn');
+    const copySvgText = document.getElementById('copySvgText');
+    const toast = document.getElementById('toastNotification');
+    const toastMessage = document.getElementById('toastMessage');
+    const toastIcon = document.getElementById('toastIcon');
+
+    // Trạng thái ứng dụng
+    let isLockedFlame = false;
+    let isHovering = false;
+    let avatarTransform = {
+      scale: 1,
+      panX: 0,
+      panY: 0
+    };
+
+    // Kích hoạt trạng thái rồng phun lửa
+    function activateDragonFire() {
+      masterDragonSvg.classList.add('fire-active');
+      dragonStage.classList.add('shaking');
+      ambientAura.style.opacity = '1';
+      ambientAura.style.filter = 'blur(45px)';
+      statusBadge.innerHTML = `
+        <span class="w-2 h-2 rounded-full bg-rose-500 animate-ping"></span>
+        <span class="text-rose-300">RỒNG ĐANG PHUN LỬA!</span>
+      `;
+      statusBadge.className = "px-3.5 py-1.5 rounded-full border border-rose-500/60 bg-rose-950/70 text-rose-300 text-xs font-semibold flex items-center gap-2 shadow-lg shadow-rose-900/50";
+      
+      // Chạy âm thanh
+      dragonAudio.startRoarAndFlame();
+    }
+
+    // Tắt trạng thái rồng phun lửa
+    function deactivateDragonFire() {
+      if (isLockedFlame) return; // Nếu đang bật chế độ giữ lửa liên tục thì không tắt
+      masterDragonSvg.classList.remove('fire-active');
+      dragonStage.classList.remove('shaking');
+      ambientAura.style.opacity = '0.4';
+      ambientAura.style.filter = 'blur(25px)';
+      statusBadge.innerHTML = `
+        <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+        <span>Trạng thái: <strong class="text-white">Rồng Ngủ Say</strong></span>
+      `;
+      statusBadge.className = "px-3.5 py-1.5 rounded-full border border-pink-500/30 bg-pink-950/40 text-pink-300 text-xs font-semibold flex items-center gap-2 shadow-inner";
+      
+      // Dừng âm thanh
+      dragonAudio.stopFlame();
+    }
+
+    // Sự kiện Di Chuột (Hover) trên Desktop
+    dragonStage.addEventListener('mouseenter', () => {
+      isHovering = true;
+      activateDragonFire();
+    });
+
+    dragonStage.addEventListener('mouseleave', () => {
+      isHovering = false;
+      deactivateDragonFire();
+    });
+
+    // Hỗ trợ cảm ứng Chạm (Touch) trên Mobile / Tablet
+    dragonStage.addEventListener('touchstart', (e) => {
+      e.preventDefault();
+      if (!isLockedFlame) {
+        activateDragonFire();
+      }
+    }, { passive: false });
+
+    dragonStage.addEventListener('touchend', () => {
+      if (!isLockedFlame) {
+        setTimeout(deactivateDragonFire, 1200);
+      }
+    });
+
+    // Nút Bật/Tắt Giữ Phun Lửa Liên Tục
+    freezeFlameBtn.addEventListener('click', () => {
+      isLockedFlame = !isLockedFlame;
+      if (isLockedFlame) {
+        activateDragonFire();
+        freezeFlameBtn.classList.remove('from-pink-600', 'to-rose-600');
+        freezeFlameBtn.classList.add('from-amber-600', 'to-orange-600', 'ring-2', 'ring-orange-400');
+        freezeBtnText.innerText = "Tắt Giữ Phun Lửa";
+        showToast("Đã khóa chế độ Phun Lửa Liên Tục!", "flame");
+      } else {
+        freezeFlameBtn.classList.add('from-pink-600', 'to-rose-600');
+        freezeFlameBtn.classList.remove('from-amber-600', 'to-orange-600', 'ring-2', 'ring-orange-400');
+        freezeBtnText.innerText = "Giữ Phun Lửa Liên Tục";
+        if (!isHovering) {
+          deactivateDragonFire();
+        }
+        showToast("Đã chuyển về chế độ rồng tự do", "sparkles");
+      }
+    });
+
+    // Bật / Tắt âm thanh
+    soundToggleBtn.addEventListener('click', () => {
+      const isSoundOn = dragonAudio.toggleMute();
+      if (isSoundOn) {
+        soundText.innerText = "Âm thanh: Bật";
+        soundIcon.setAttribute('data-lucide', 'volume-2');
+        showToast("Đã bật âm thanh tiếng rồng", "volume-2");
+      } else {
+        soundText.innerText = "Âm thanh: Tắt";
+        soundIcon.setAttribute('data-lucide', 'volume-x');
+        showToast("Đã tắt âm thanh", "volume-x");
+      }
+      lucide.createIcons();
+    });
+
+    // Slider chỉnh âm lượng
+    volumeSlider.addEventListener('input', (e) => {
+      const val = parseInt(e.target.value);
+      volumeVal.innerText = `${val}%`;
+      dragonAudio.setVolume(val / 100);
+    });
+
+    // Slider chỉnh độ sáng hào quang
+    glowSlider.addEventListener('input', (e) => {
+      const val = parseInt(e.target.value);
+      glowVal.innerText = val > 140 ? 'Cực Đại' : val < 60 ? 'Dịu Nhẹ' : `${val}%`;
+      ambientAura.style.transform = `scale(${val / 100})`;
+      ambientAura.style.opacity = (val / 150).toFixed(2);
+    });
+
+    // Cập nhật tọa độ và kích thước ảnh Avatar trong thẻ SVG
+    function updateAvatarSVGPosition() {
+      // Vùng tâm khung chuẩn: X=125, Y=125, Width=350, Height=350 (Tâm 300, 300)
+      const baseSize = 350;
+      const newSize = baseSize * avatarTransform.scale;
+      // Căn giữa khi phóng to + cộng offset dịch chuyển pan
+      const offsetX = 300 - (newSize / 2) + avatarTransform.panX;
+      const offsetY = 300 - (newSize / 2) + avatarTransform.panY;
+
+      userAvatarImage.setAttribute('x', offsetX);
+      userAvatarImage.setAttribute('y', offsetY);
+      userAvatarImage.setAttribute('width', newSize);
+      userAvatarImage.setAttribute('height', newSize);
+    }
+
+    // Xử lý thanh trượt Zoom & Pan
+    zoomSlider.addEventListener('input', (e) => {
+      avatarTransform.scale = parseInt(e.target.value) / 100;
+      zoomVal.innerText = `${e.target.value}%`;
+      updateAvatarSVGPosition();
+    });
+
+    panXSlider.addEventListener('input', (e) => {
+      avatarTransform.panX = parseInt(e.target.value);
+      panXVal.innerText = `${e.target.value}px`;
+      updateAvatarSVGPosition();
+    });
+
+    panYSlider.addEventListener('input', (e) => {
+      avatarTransform.panY = parseInt(e.target.value);
+      panYVal.innerText = `${e.target.value}px`;
+      updateAvatarSVGPosition();
+    });
+
+    // Nút đặt lại góc nhìn ảnh avatar
+    resetViewBtn.addEventListener('click', () => {
+      avatarTransform = { scale: 1, panX: 0, panY: 0 };
+      zoomSlider.value = 100; zoomVal.innerText = '100%';
+      panXSlider.value = 0; panXVal.innerText = '0px';
+      panYSlider.value = 0; panYVal.innerText = '0px';
+      updateAvatarSVGPosition();
+      showToast("Đã đặt lại vị trí ảnh avatar", "rotate-ccw");
+    });
+
+    // Tải ảnh từ máy tính (File Reader)
+    function handleImageFile(file) {
+      if (!file || !file.type.startsWith('image/')) {
+        showToast("Vui lòng chọn đúng tệp hình ảnh!", "alert-circle");
+        return;
+      }
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        userAvatarImage.setAttribute('href', e.target.result);
+        showToast("Đã cập nhật ảnh avatar thành công!", "check-circle");
+      };
+      reader.readAsDataURL(file);
+    }
+
+    dropZone.addEventListener('click', () => avatarFileInput.click());
+    avatarFileInput.addEventListener('change', (e) => {
+      if (e.target.files.length > 0) {
+        handleImageFile(e.target.files[0]);
+      }
+    });
+
+    // Kéo thả ảnh (Drag & Drop)
+    dropZone.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      dropZone.classList.add('border-pink-300', 'bg-pink-900/40');
+    });
+    dropZone.addEventListener('dragleave', () => {
+      dropZone.classList.remove('border-pink-300', 'bg-pink-900/40');
+    });
+    dropZone.addEventListener('drop', (e) => {
+      e.preventDefault();
+      dropZone.classList.remove('border-pink-300', 'bg-pink-900/40');
+      if (e.dataTransfer.files.length > 0) {
+        handleImageFile(e.dataTransfer.files[0]);
+      }
+    });
+
+    // Chọn avatar mẫu
+    sampleBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const url = btn.getAttribute('data-sample');
+        userAvatarImage.setAttribute('href', url);
+        showToast("Đã áp dụng ảnh avatar mẫu", "sparkles");
+      });
+    });
+
+    // Thông báo Toast Notification
+    function showToast(msg, iconName = 'sparkles') {
+      toastMessage.innerText = msg;
+      toastIcon.innerHTML = `<i data-lucide="${iconName}" class="w-4 h-4"></i>`;
+      lucide.createIcons();
+      toast.classList.remove('translate-y-24', 'opacity-0');
+      toast.classList.add('translate-y-0', 'opacity-100');
+      setTimeout(() => {
+        toast.classList.add('translate-y-24', 'opacity-0');
+        toast.classList.remove('translate-y-0', 'opacity-100');
+      }, 2800);
+    }
+
+    // Sao chép mã nguồn SVG
+    copySvgBtn.addEventListener('click', () => {
+      const svgClone = masterDragonSvg.cloneNode(true);
+      // Giữ lửa nếu đang phun
+      const svgString = new XMLSerializer().serializeToString(svgClone);
+
+      const tempInput = document.createElement('textarea');
+      tempInput.value = svgString;
+      document.body.appendChild(tempInput);
+      tempInput.select();
+      document.execCommand('copy');
+      document.body.removeChild(tempInput);
+
+      copySvgText.innerText = "Đã sao chép!";
+      showToast("Đã sao chép mã SVG vào bộ nhớ tạm!", "copy");
+      setTimeout(() => {
+        copySvgText.innerText = "Sao chép mã SVG";
+      }, 2200);
+    });
+
+    // Xuất hình ảnh PNG độ nét cao (1200x1200px)
+    downloadPngBtn.addEventListener('click', () => {
+      showToast("Đang kết xuất ảnh chất lượng cao 1200x1200px...", "loader");
+      
+      const canvas = document.getElementById('exportCanvas');
+      const ctx = canvas.getContext('2d');
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      // Nhân bản SVG để render
+      const svgClone = masterDragonSvg.cloneNode(true);
+      // Luôn bật lớp lửa khi tải ảnh để tạo hiệu ứng hoành tráng nhất
+      svgClone.querySelector('#dragonFlameLayer').style.opacity = '1';
+      svgClone.querySelector('#dragonFlameLayer').style.transform = 'scale(1) rotate(0deg)';
+
+      const svgData = new XMLSerializer().serializeToString(svgClone);
+      const svgBlob = new Blob([svgData], { type: 'image/svg+xml;charset=utf-8' });
+      const URLObj = window.URL || window.webkitURL || window;
+      const blobURL = URLObj.createObjectURL(svgBlob);
+
+      const img = new Image();
+      img.crossOrigin = 'anonymous';
+      img.onload = () => {
+        // Vẽ SVG với độ phân giải đầy đủ
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        URLObj.revokeObjectURL(blobURL);
+
+        // Xuất file PNG
+        const pngUrl = canvas.toDataURL('image/png');
+        const downloadLink = document.createElement('a');
+        downloadLink.download = 'Avatar_Rong_Hong_Huyen_Thoai.png';
+        downloadLink.href = pngUrl;
+        document.body.appendChild(downloadLink);
+        downloadLink.click();
+        document.body.removeChild(downloadLink);
+
+        showToast("Đã tải thành công file avatar PNG!", "check-circle");
+      };
+      img.src = blobURL;
+    });
+
+    // Khởi tạo các biểu tượng Lucide
+    lucide.createIcons();
+  </script>
+</body>
+</html>

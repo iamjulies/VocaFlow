@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Khung Avatar Kỷ Niệm Quốc Khánh Việt Nam</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #050202; /* Nền tối sâu để làm rực sắc đỏ cờ và ánh vàng vinh quang */
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow: hidden;
+        }
+
+        /* Container tổng thể - giữ mọi lớp layer đồng tâm tuyệt đối */
+        .avatar-container {
+            position: relative;
+            width: 195px;
+            height: 195px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 10px;
+        }
+
+        /* Hào quang đỏ vàng vinh quang (Co giãn nhẹ nhàng tựa vầng thái dương) */
+        .avatar-container::before {
+            content: '';
+            position: absolute;
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(239, 68, 68, 0.45) 0%, rgba(234, 179, 8, 0.15) 55%, rgba(0, 0, 0, 0) 75%);
+            filter: blur(25px);
+            z-index: 0;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            animation: glory-pulse 3s ease-in-out infinite alternate;
+        }
+
+        @keyframes glory-pulse {
+            0% { transform: translate(-50%, -50%) scale(0.93); opacity: 0.6; }
+            100% { transform: translate(-50%, -50%) scale(1.1); opacity: 1; filter: blur(20px) brightness(1.2); }
+        }
+
+        /* Khung đồ họa SVG nguyên khối chứa các biểu tượng Quốc Khánh */
+        .national-day-svg {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            z-index: 3;
+            pointer-events: none;
+            filter: drop-shadow(0 4px 12px rgba(0,0,0,0.6));
+        }
+
+        /* Lõi chứa ảnh Avatar nằm lọt lòng chuẩn xác */
+        .avatar-core {
+            position: absolute;
+            width: 132px;
+            height: 132px;
+            border-radius: 50%;
+            background-color: #0f0505;
+            border: 3px solid #eab308; /* Vòng định vị màu vàng hoàng kim */
+            box-sizing: border-box;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1;
+            top: 31.5px;
+            left: 31.5px;
+        }
+
+        .avatar-core img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="avatar-container">
+        
+        <!-- ĐỒ HỌA VECTOR NGUYÊN KHỐI: QUỐC KHÁNH VIỆT NAM HÀO HÙNG -->
+        <svg class="national-day-svg" xmlns="http://w3.org" viewBox="0 0 195 195">
+            <defs>
+                <!-- Gradient vàng hoàng kim rực rỡ -->
+                <linearGradient id="gold-glory" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stop-color="#fff5c0" />
+                    <stop offset="50%" stop-color="#eab308" />
+                    <stop offset="100%" stop-color="#ca8a04" />
+                </linearGradient>
+                <!-- Gradient đỏ cờ Tổ Quốc -->
+                <linearGradient id="flag-red" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stop-color="#f87171" />
+                    <stop offset="100%" stop-color="#dc2626" />
+                </linearGradient>
+                <!-- Gradient đá xám đúc Lăng Bác -->
+                <linearGradient id="lang-stone" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" stop-color="#94a3b8" />
+                    <stop offset="100%" stop-color="#475569" />
+                </linearGradient>
+            </defs>
+
+            <!-- 1. VÒNG VIỀN ÁNH SÁNG HOÀNG KIM CHẠY QUANH CHU VI -->
+            <circle cx="97.5" cy="97.5" r="66" fill="none" stroke="url(#gold-glory)" stroke-width="4.5" stroke-dasharray="14 7">
+                <animate attributeName="stroke-dashoffset" values="0;21" dur="3s" repeatCount="indefinite" />
+            </circle>
+            <!-- Vòng hào quang đỏ bảo vệ biên trong -->
+            <circle cx="97.5" cy="97.5" r="71" fill="none" stroke="#dc2626" stroke-width="1.5" opacity="0.6" />
+
+            <!-- 2. GÓC TRÊN BÊN PHẢI: LÁ CỜ ĐỎ SAO VÀNG TUNG BAY (Có hiệu ứng sóng động) -->
+            <g id="vietnam-flag" transform="translate(115, 10)">
+                <!-- Thân lá cờ đỏ uốn lượn mềm mại -->
+                <path d="M 5,25 Q 20,10 40,22 Q 55,30 70,15 L 68,45 Q 53,60 38,52 Q 18,40 5,50 Z" fill="url(#flag-red)" stroke="#b91c1c" stroke-width="1" />
+                <!-- Cán cờ mạ vàng -->
+                <line x1="5" y1="5" x2="5" y2="58" stroke="url(#gold-glory)" stroke-width="3" stroke-linecap="round" />
+                <circle cx="5" cy="4" r="2.5" fill="#ffffff" />
+                
+                <!-- NGÔI SAO VÀNG NẰM CHÍNH GIỮA LÁ CỜ -->
+                <g id="flag-star" transform="translate(30, 28) scale(0.7)">
+                    <polygon points="10,0 13,7 20,7 15,11 17,18 10,14 3,18 5,11 0,7 7,7" fill="#facc15" stroke="#eab308" stroke-width="0.5" />
+                </g>
+                <!-- Hiệu ứng gợn sóng mờ tạo chuyển động vẫy cờ -->
+                <animateTransform attributeName="transform" type="translate" values="115,10; 115,12; 115,10" dur="2s" repeatCount="indefinite" />
+            </g>
+
+            <!-- 3. GÓC DƯỚI BÊN TRÁI: LĂNG CHỦ TỊCH HỒ CHÍ MINH TRANG NGHIÊM -->
+            <g id="lang-bac" transform="translate(5, 115)">
+                <!-- Bóng nền tre xanh -->
+                <rect x="0" y="20" width="10" height="40" fill="#16a34a" opacity="0.4" filter="blur(2px)" />
+                <rect x="58" y="20" width="10" height="40" fill="#16a34a" opacity="0.4" filter="blur(2px)" />
+                <!-- Hàng tre ngọc ngà hai bên -->
+                <path d="M 3,60 L 3,15 M 8,60 L 8,22 M 60,60 L 60,20 M 65,60 L 65,15" stroke="#15803d" stroke-width="2" stroke-linecap="round" opacity="0.8" />
+
+                <!-- Cấu trúc khối đá Lăng Bác -->
+                <!-- Bậc thềm nền móng -->
+                <rect x="10" y="52" width="48" height="8" fill="#334155" />
+                <rect x="12" y="46" width="44" height="6" fill="#475569" />
+                <!-- Tầng hàng cột hiên Lăng -->
+                <rect x="15" y="26" width="38" height="20" fill="url(#lang-stone)" />
+                <!-- Các hàng cột vách đứng -->
+                <rect x="18" y="26" width="3" height="20" fill="#1e293b" />
+                <rect x="25" y="26" width="3" height="20" fill="#1e293b" />
+                <rect x="32" y="26" width="3" height="20" fill="#1e293b" />
+                <rect x="39" y="26" width="3" height="20" fill="#1e293b" />
+                <rect x="46" y="26" width="3" height="20" fill="#1e293b" />
+                <!-- Mái Lăng vát khối đặc trưng -->
+                <polygon points="13,26 55,26 51,14 17,14" fill="#334155" />
+                <rect x="17" y="14" width="34" height="4" fill="#64748b" />
+                <!-- Dòng chữ "CHỦ TỊCH HỒ-CHÍ-MINH" giả lập bằng vệt chỉ vàng -->
+                <rect x="23" y="20" width="22" height="2" fill="#facc15" opacity="0.9" />
+            </g>
+
+            <!-- 4. HUY HIỆU ĐÁY TRANG TRỌNG: SỐ NĂM KỶ NIỆM VÀ HOA SEN -->
+            <g id="national-badge" transform="translate(97.5, 172)">
+                <!-- Ruy-băng nền đó thắm thắt nơ -->
+                <path d="M -45,-5 L 45,-5 L 35,12 L -35,12 Z" fill="url(#flag-red)" stroke="url(#gold-glory)" stroke-width="1.5" />
+                
+                <!-- BÔNG HOA SEN VÀNG NẰM NỀN (Biểu tượng cao quý) -->
+                <path d="M 0,-16 C -10,-10 -8,2 0,5 C 8,2 10,-10 0,-16 Z" fill="#facc15" opacity="0.3" />
+                <path d="M -5,-12 C -15,-6 -5,5 0,5 C -5,5 -15,-6 -5,-12 Z" fill="#eab308" opacity="0.2" />
+                <path d="M 5,-12 C 15,-6 5,5 0,5 C 5,5 15,-6 5,-12 Z" fill="#eab308" opacity="0.2" />
+
+                <!-- CHỮ VÀ SỐ KỶ NIỆM QUỐC KHÁNH 2-9 (Nét chữ dày đậm đà) -->
+                <text x="0" y="6" fill="#ffffff" font-size="10" font-weight="900" text-anchor="middle" letter-spacing="1" style="text-shadow: 0 1px 3px rgba(0,0,0,0.8), 0 0 4px #eab308;">2 - 9</text>
+            </g>
+
+            <!-- 5. HẠT ÁNH SÁNG HOÀNG KIM LẤP LÁNH (FESTIVAL SPARKLES) -->
+            <g id="glory-particles" opacity="0.8">
+                <circle cx="35" cy="55" r="1.5" fill="#facc15" />
+                <circle cx="165" cy="140" r="2" fill="#ffffff" />
+                <circle cx="80" cy="22" r="1" fill="#facc15" />
+                <circle cx="140" cy="165" r="1.5" fill="#ffffff" />
+                <animate attributeName="opacity" values="0.4;1;0.4" dur="2.5s" repeatCount="indefinite" />
+            </g>
+        </svg>
+
+        <!-- LÕI TRÒN CHỨA AVATAR CỦA BẠN (CĂN CHUẨN TRỤC TÂM) -->
+        <div class="avatar-core">
+            <img src="https://dicebear.com" alt="Avatar">
+        </div>
+
+    </div>
+
+</body>
+</html>

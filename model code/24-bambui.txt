@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Khung Avatar Bụi Thời Gian (0 Điểm)</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #030304; /* Nền tối gần như tuyệt đối để làm bật lớp tơ nhện xám */
+            margin: 0;
+            font-family: system-ui, -apple-system, sans-serif;
+            overflow: hidden;
+        }
+
+        /* Container tổng thể - giữ mọi lớp layer đồng tâm tuyệt đối */
+        .avatar-container {
+            position: relative;
+            width: 190px;
+            height: 190px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Hào quang tro bụi mờ ảo (Chớp tắt lập lòe chậm rãi như sương mù) */
+        .avatar-container::before {
+            content: '';
+            position: absolute;
+            width: 195px;
+            height: 195px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(148, 163, 184, 0.25) 0%, rgba(71, 85, 105, 0.05) 60%, rgba(0, 0, 0, 0) 75%);
+            filter: blur(20px);
+            z-index: 0;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            animation: dust-flicker 4s ease-in-out infinite alternate;
+        }
+
+        @keyframes dust-flicker {
+            0% { opacity: 0.3; transform: translate(-50%, -50%) scale(0.95); }
+            100% { opacity: 0.8; transform: translate(-50%, -50%) scale(1.05); }
+        }
+
+        /* Khung đồ họa SVG nguyên khối chứa mạng nhện và bụi bặm */
+        .time-dust-svg {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            z-index: 3;
+            pointer-events: none;
+            filter: drop-shadow(0 4px 8px rgba(0,0,0,0.7));
+        }
+
+        /* Lõi chứa ảnh Avatar nằm ngay ngắn, phẳng lặng ngăn cách tơ nhện */
+        .avatar-core {
+            position: absolute;
+            width: 132px;
+            height: 132px;
+            border-radius: 50%;
+            background-color: #0d0e12;
+            border: 2px solid #475569; /* Viền trong màu xám đá sậm cũ kỹ */
+            box-sizing: border-box;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1;
+            top: 29px;
+            left: 29px;
+        }
+
+        .avatar-core img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: grayscale(0.6) contrast(0.9); /* Làm mờ nhẹ ảnh gốc để hợp concept đóng bụi */
+        }
+    </style>
+</head>
+<body>
+
+    <div class="avatar-container">
+        
+        <!-- ĐỒ HỌA VECTOR NGUYÊN KHỐI: MẠNG NHỆN VÀ BỤI THỜI GIAN BẤT ĐỐI XỨNG -->
+        <svg class="time-dust-svg" xmlns="http://w3.org" viewBox="0 0 190 190">
+            <defs>
+                <!-- Gradient màu xám tro bụi bặm cũ kỹ -->
+                <linearGradient id="ash-gray" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stop-color="#cbd5e1" />
+                    <stop offset="50%" stop-color="#94a3b8" />
+                    <stop offset="100%" stop-color="#475569" />
+                </linearGradient>
+            </defs>
+
+            <!-- 1. VÒNG VIỀN CHÍNH MÀU XÁM TRO ĐÃ BỊ NỨT VỠ/XƯỚC (RÚT ĐỘ DÀY) -->
+            <circle cx="95" cy="95" r="66" fill="none" stroke="url(#ash-gray)" stroke-width="3.5" stroke-dasharray="40 4 10 8 50 6" opacity="0.85" />
+            <circle cx="95" cy="95" r="70" fill="none" stroke="#334155" stroke-width="1" opacity="0.5" />
+
+            <!-- 2. GÓC TRÊN BÊN PHẢI: MẠNG NHỆN LỚN GIĂNG CHÉO BẤT ĐỐI XỨNG -->
+            <g id="spider-web-top-right" opacity="0.65">
+                <!-- Các sợi tơ gốc đâm từ tâm viền ra góc ngoài -->
+                <line x1="141" y1="48" x2="185" y2="15" stroke="#94a3b8" stroke-width="1" />
+                <line x1="150" y1="65" x2="190" y2="45" stroke="#94a3b8" stroke-width="1" />
+                <line x1="130" y1="35" x2="165" y2="2" stroke="#94a3b8" stroke-width="1" />
+                
+                <!-- Các đường vòng tơ nhện kết nối uốn cong -->
+                <path d="M 145,53 Q 160,40 168,26" fill="none" stroke="#cbd5e1" stroke-width="0.75" />
+                <path d="M 152,59 Q 172,44 178,20" fill="none" stroke="#cbd5e1" stroke-width="0.75" />
+                <path d="M 160,65 Q 185,46 188,12" fill="none" stroke="#cbd5e1" stroke-width="0.75" />
+            </g>
+
+            <!-- 3. GÓC DƯỚI BÊN TRÁI: MẠNG NHỆN CŨ RÁCH RƯỚI NỐI LÊN VIỀN -->
+            <g id="spider-web-bottom-left" opacity="0.55">
+                <line x1="49" y1="141" x2="10" y2="180" stroke="#94a3b8" stroke-width="1" />
+                <line x1="40" y1="130" x2="2" y2="150" stroke="#94a3b8" stroke-width="1" />
+                <line x1="60" y1="150" x2="30" y2="190" stroke="#94a3b8" stroke-width="1" />
+                
+                <path d="M 45,137 Q 28,150 18,162" fill="none" stroke="#cbd5e1" stroke-width="0.75" />
+                <path d="M 52,143 Q 32,165 10,175" fill="none" stroke="#cbd5e1" stroke-width="0.75" />
+            </g>
+
+            <!-- 4. HUY HIỆU ĐÁY: BẢNG TÊN HOANG PHẾ ĐÓNG BỤI (0 POINTS) -->
+            <g id="dust-badge" transform="translate(95, 168)">
+                <!-- Thanh bài vát góc màu đá phong hóa nứt nẻ -->
+                <polygon points="-35,-6 35,-6 40,4 32,12 -32,12 -40,4" fill="#1e293b" stroke="#475569" stroke-width="1.5" />
+                <!-- Chữ hiển thị cấp bậc/điểm số đóng băng -->
+                <text x="0" y="6" fill="#94a3b8" font-size="8.5" font-weight="bold" text-anchor="middle" letter-spacing="1">0 POINTS</text>
+            </g>
+
+            <!-- 5. HIỆU ỨNG HẠT BỤI LƠ LỬNG TRÔI DẠT CHẬM RÃI (FLOATING DUST PARTICLES) -->
+            <g id="floating-dust">
+                <circle cx="35" cy="45" r="1.5" fill="#94a3b8" />
+                <circle cx="160" cy="130" r="2" fill="#cbd5e1" />
+                <circle cx="95" cy="22" r="1" fill="#475569" />
+                <circle cx="140" cy="160" r="1.2" fill="#cbd5e1" />
+                <circle cx="50" cy="115" r="2.2" fill="#94a3b8" />
+                <!-- Hoạt ảnh bụi trôi dạt vô định, mờ ảo -->
+                <animate attributeName="opacity" values="0.2;0.7;0.2" dur="5s" repeatCount="indefinite" />
+            </g>
+        </svg>
+
+        <!-- LÕI TRÒN CHỨA AVATAR (CĂN CHUẨN TRỤC TÂM) -->
+        <div class="avatar-core">
+            <!-- Đường dẫn ảnh đại diện -->
+            <img src="https://dicebear.com" alt="Avatar">
+        </div>
+
+    </div>
+
+</body>
+</html>

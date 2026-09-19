@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Khung Avatar Mắt Thần Ngữ Cảnh (Cloze Test)</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #030712; /* Nền tối không gian để làm rực sắc xanh Cyan Neon */
+            margin: 0;
+            font-family: 'Courier New', Courier, monospace;
+            overflow: hidden;
+        }
+
+        /* Container tổng thể - giữ mọi lớp layer đồng tâm tuyệt đối */
+        .avatar-container {
+            position: relative;
+            width: 170px;
+            height: 170px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* 1. HIỆU ỨNG HÀO QUANG RADAR (RADAR GLOW) LAN TOẢ CHẬM */
+        .avatar-container::before {
+            content: '';
+            position: absolute;
+            width: 190px;
+            height: 190px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(0, 242, 254, 0.4) 0%, rgba(0, 119, 182, 0.1) 50%, rgba(0, 0, 0, 0) 70%);
+            filter: blur(20px);
+            z-index: 0;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            animation: radar-pulse 3s cubic-bezier(0.25, 0.46, 0.45, 0.94) infinite;
+        }
+
+        @keyframes radar-pulse {
+            0% { transform: translate(-50%, -50%) scale(0.9); opacity: 0.4; }
+            50% { opacity: 0.8; }
+            100% { transform: translate(-50%, -50%) scale(1.15); opacity: 0; }
+        }
+
+        /* 2. CÁC ĐƯỜNG ĐỊNH VỊ CÔNG NGHỆ CHỮ THẬP (CROSSHAIR TECH) */
+        .tech-crosshair {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            z-index: 3;
+            pointer-events: none;
+            animation: tech-blink 2s steps(2, start) infinite;
+        }
+
+        /* Tạo hai vạch quét laser nhỏ đối xứng hai bên biên khung */
+        .tech-crosshair::before,
+        .tech-crosshair::after {
+            content: '';
+            position: absolute;
+            background: #00f2fe;
+            box-shadow: 0 0 8px #00f2fe;
+        }
+
+        /* Thước ngắm bên trái */
+        .tech-crosshair::before {
+            left: -12px;
+            top: 50%;
+            width: 14px;
+            height: 2px;
+            transform: translateY(-50%);
+        }
+
+        /* Thước ngắm bên phải */
+        .tech-crosshair::after {
+            right: -12px;
+            top: 50%;
+            width: 14px;
+            height: 2px;
+            transform: translateY(-50%);
+        }
+
+        @keyframes tech-blink {
+            0%, 100% { opacity: 0.4; }
+            50% { opacity: 0.9; }
+        }
+
+        /* 3. KHUNG VIỀN RADAR QUÉT 360° CYAN NEON */
+        .radar-cyan-frame {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            /* Gradient góc quét tạo thành vệt sáng nhọn như kim quét radar */
+            background: conic-gradient(
+                from 0deg, 
+                #00f2fe 0%,      /* Điểm bắt sáng rực nhất */
+                rgba(0, 242, 254, 0.4) 15%, 
+                rgba(0, 119, 182, 0.1) 40%, 
+                rgba(0, 242, 254, 0) 60%,
+                #00f2fe 100%
+            );
+            padding: 8px; /* Độ dày viền mắt thần */
+            box-sizing: border-box;
+            z-index: 1;
+            box-shadow: 0 0 25px rgba(0, 242, 254, 0.5), inset 0 0 10px rgba(0, 242, 254, 0.4);
+            animation: radar-scan 2s linear infinite;
+        }
+
+        @keyframes radar-scan {
+            100% { transform: rotate(360deg); }
+        }
+
+        /* LÕI CHỨA AVATAR (Triệt tiêu gia tốc xoay để ảnh đứng thăng bằng) */
+        .avatar-inside {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background-color: #040814;
+            border: 2px dashed rgba(0, 242, 254, 0.6); /* Đường viền đứt nét phong cách HUD kỹ thuật số */
+            box-sizing: border-box;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            animation: anti-radar-scan 2s linear infinite;
+        }
+
+        @keyframes anti-radar-scan {
+            100% { transform: rotate(-360deg); }
+        }
+
+        .avatar-inside img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: hue-rotate(180deg) brightness(1.1); /* Chuyển nhẹ hệ màu ảnh sang hướng cyber */
+        }
+
+        /* 4. HUY HIỆU ĐÁY: TRẠNG THÁI HỆ THỐNG (HUD BAR) */
+        .hud-status-badge {
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(4, 12, 32, 0.85);
+            backdrop-filter: blur(4px);
+            border: 1.5px solid #00f2fe;
+            padding: 2px 14px;
+            border-radius: 2px; /* Kiểu vuông vắn của bảng điều khiển điện tử */
+            z-index: 4;
+            box-shadow: 0 4px 15px rgba(0, 242, 254, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+        }
+
+        /* Chấm đèn tín hiệu nhấp nháy báo hiệu đang quét (SCANNING) */
+        .hud-status-badge::before {
+            content: '';
+            width: 6px;
+            height: 6px;
+            background-color: #00f2fe;
+            border-radius: 50%;
+            box-shadow: 0 0 6px #00f2fe;
+            animation: laser-dot 1s ease-in-out infinite alternate;
+        }
+
+        @keyframes laser-dot {
+            0% { opacity: 0.3; }
+            100% { opacity: 1; }
+        }
+
+        /* Chữ hiển thị mã số hoặc trạng thái phân tích */
+        .hud-status-badge span {
+            font-size: 10px;
+            font-weight: bold;
+            color: #00f2fe;
+            letter-spacing: 2px;
+            text-shadow: 0 0 4px rgba(0, 242, 254, 0.6);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="avatar-container">
+        <!-- Vạch ngắm mục tiêu chữ thập hai bên -->
+        <div class="tech-crosshair"></div>
+
+        <!-- Khung viền kính ngắm radar Cyan xoay tròn 360 độ -->
+        <div class="radar-cyan-frame">
+            <div class="avatar-inside">
+                <!-- Đường dẫn ảnh đại diện -->
+                <img src="https://dicebear.com" alt="Avatar">
+            </div>
+        </div>
+
+        <!-- Thanh trạng thái phân tích dữ liệu điện tử (HUD) ở đáy -->
+        <div class="hud-status-badge">
+            <span>CLOZE TEST</span>
+        </div>
+    </div>
+
+</body>
+</html>
