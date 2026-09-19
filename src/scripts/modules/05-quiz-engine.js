@@ -1,5 +1,5 @@
 // =========================================================================
-// VOCAFLOW 05-QUIZ-ENGINE.JS (v0.10.10-38 Build 339)
+// VOCAFLOW 05-QUIZ-ENGINE.JS (v0.10.10-39 Build 340)
 // Quiz study mode, scoring, question generation, AI explanation & Mistake Notebook
 // =========================================================================
 

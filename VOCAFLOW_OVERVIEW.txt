@@ -1,4 +1,22 @@
 ================================================================================
+Phiên bản: v0.10.10-39 (Build 340) - Nâng Cấp Hệ Thống Cấp Độ Học Tập (Study EXP Leveling, Non-Linear Quadratic Formula, Milestone Drops & VocaVIP Rewards, Prestige Honor Chests)
+================================================================================
+1. [Hệ Thống Lên Cấp 100% Bằng Điểm Rèn Luyện (Study EXP)]:
+   - Lên cấp hoàn toàn tự động dựa trên tổng Điểm Rèn Luyện (Study EXP) tích lũy vĩnh viễn (`getUserStudyExp()`), không bao giờ trừ VoCoin khi lên cấp.
+   - Công thức lũy tiến bậc 2 chuẩn hóa: EXP_cần(L) = 150*L + 25*L^2; TotalEXP(N) = 75(N-1)N + 25(N-1)N(2N-1)/6.
+2. [Cơ Cấu Quà Tặng Lên Cấp & Mốc VIP Tròn]:
+   - Cấp thường (L < 50): Nhận L * 25 VoCoin, xen kẽ +1 VocaHint (cấp chẵn) hoặc +1 VocaSkip (cấp lẻ), pháo hoa Canvas + SFX chúc mừng.
+   - Cấp mốc tròn (10, 20, 30, 40, 50): Tặng ngày VocaVIP cộng dồn nối tiếp (hoặc quy đổi 250 VoCoin/ngày cho VIP Trọn Đời) kèm lượng lớn VoCoin, VocaSpin / FlowFreeze.
+3. [Max Level 50 & Rương Danh Dự (Prestige Honor Chest)]:
+   - Max Level 50. Mỗi +50,000 EXP tích lũy vượt mốc cấp 50 tự động mở khóa 1 Rương Danh Dự (+400 VoCoin + 2 VocaSpin) kèm thông báo hệ thống.
+4. [Giao Diện Level Pill & Thẻ Cấp Độ Hồ Sơ]:
+   - Header hiển thị Huy hiệu cấp độ tương tác (Level Pill) kèm icon rank động theo bậc (Tập sự, Đồng, Bạc, Vàng, Kim Cương, Đại Kiện Tướng).
+   - Modal Hồ Sơ tích hợp thẻ Cấp độ & Điểm Rèn Luyện với thanh tiến trình EXP thời gian thực và xem trước phần thưởng cấp tiếp theo.
+5. [Đồng Bộ Toàn Diện 7-Point Version Consistency & Multi-Deploy (v0.10.10-39 Build 340)]:
+   - Cập nhật phiên bản nhất quán trên toàn bộ 7 điểm hệ thống: `modal-settings.html`, `screen-decks.html`, `screen-deck-detail.html`, `sw.js` & `Release_App/sw.js`, `pubspec.yaml`, `Program.cs`, `push_github.ps1`.
+   - Biên dịch `VocaFlow.exe`, đóng gói `VocaFlow_v0.10.10-39_Windows_Portable.zip` và sẵn sàng multi-deploy lên 3 kho GitHub.
+
+================================================================================
 Phiên bản: v0.10.10-38 (Build 339) - Rà Soát Toàn Diện, Dọn Dẹp Mã Nguồn & Chuẩn Hóa Ghi Nhật Ký Hệ Thống (Clean Debug Logs, Standardize Logging Levels, Complete Extended Study Mode URL Routing, Isolate Exam Screen Security)
 ================================================================================
 1. [Rà Soát Toàn Diện & Dọn Dẹp Mã Nguồn Rác (Console Cleanup)]:

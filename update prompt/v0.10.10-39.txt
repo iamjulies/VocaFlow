@@ -1,3 +1,26 @@
 v0.10.10-39 (NÂNG CẤP CHẾ ĐỘ LEVEL UP)
+1. Bản Chất: Chỉ Dùng Điểm Rèn Luyện (EXP) Để Lên Cấp
+Duy nhất Điểm Rèn Luyện: Chuẩn $100\%$ là chỉ dùng EXP tích lũy. VoCoin là tiền tệ có thể tiêu hao (mua lượt quay, hint, skip), nếu trừ cả VoCoin khi lên cấp sẽ gây ức chế. EXP là giá trị bất biến, càng học càng tăng.   
+Không chia nhánh phức tạp: EXP tăng là tự động nhảy cấp, không bắt người học phải làm thủ tục "bấm thăng cấp" thủ công để giữ trải nghiệm mượt mà.
+2. Công Thức Tính EXP Mỗi Cấp (Đường Cong Lũy Tiến Bậc 2)
+Trong game RPG và các app học thuật, công thức kết hợp bậc nhất và bậc hai là tối ưu nhất: giai đoạn đầu lên cấp cực nhanh để tạo cảm giác hưng phấn (dopamine rush), càng lên cao càng đòi hỏi độ bền bỉ.$$EXP_{\text{cần}}(L) = 150 \times L + 25 \times L^2$$
+$EXP_{\text{cần}}(L)$: Số điểm rèn luyện cần để leo từ cấp $L$ lên cấp $L+1$.
+3. Cơ Cấu Quà Tặng Lên Cấp (Level-up Drops)
+Mỗi khi lên cấp lẻ bình thường, hệ thống "thưởng nóng" ngay tại chỗ:
+Tặng VoCoin: $Lvl \times 25\text{ VoCoin}$.   
+Tặng vật phẩm trợ giúp: Tặng $+1\text{ VocaHint}$ hoặc $+1\text{ VocaSkip}$ xen kẽ.   
+Pháo hoa chúc mừng: Bắn pháo hoa Canvas kèm âm thanh SFX đặc trưng.   
+4. Mốc Level Tròn (10, 20, 30, 40, 50) & Chiến Lược Tặng VIP
+Rất nên tặng VocaVIP ngắn hạn ở các mốc này. Đây là chiến thuật "mời dùng thử vị kem ngon nhất": người học Free cày cuốc chăm chỉ được nếm trải đặc quyền VIP 1–3 ngày, mở full 4 Lab mở rộng, khi quen trải nghiệm mượt mà họ sẽ có động lực quét mã VietQR mua gói Năm hoặc Trọn đời.   
+Lv 10: +2 Ngày VocaVIP + $200\text{ VoCoin}$ + $2\text{ VocaSpin}$ + Khung Đồng Sơ Cấp (Bronze Frame)
+Lv 20: +4 Ngày VocaVIP + $500\text{ VoCoin}$ + $2\text{ FlowFreeze}$ + Khung Bạc Tinh Xảo (Silver Frame)
+Lv 30: +6 Ngày VocaVIP + $1000\text{ VoCoin}$ + $6\text{ VocaSpin}$ + Khung Vàng Hoàng Gia (Gold Shimmer)
+Lv 40: +8 Ngày VocaVIP + $1500\text{ VoCoin}$ + $4\text{ FlowFreeze}$ + Khung Lam Ngọc (Diamond Glow)
+Lv 50: +10 Ngày VocaVIP + $3000\text{ VoCoin}$ + $10\text{ VocaSpin}$ + Khung Thần Thoại Conic 360° + Danh xưng Grandmaster
+(Nếu người dùng vốn đã sở hữu VIP Tháng/Năm, thời hạn VIP tặng thêm sẽ tự động cộng dồn nối tiếp vào vipExpiresAt; nếu là VIP Trọn Đời sẽ quy đổi thành VoCoin tương ứng).   
+Lưu ý: Các Khung viền và Danh xưng sẽ được bổ sung vào các phiên bản sau, hiện tại tạm thời bỏ xó chúng đã.
+5. Có Nên Có Level Max Không?
+Nên chốt Max Level là 50 cho giai đoạn hiện tại (sau này quy mô lớn có thể mở rộng lên 100). Đặt mốc 50 tạo cảm giác có đích đến cụ thể (End-game goal) để người học dốc sức chinh phục.
+Cơ chế chống lãng phí khi chạm Max Level 50: Khi đã ở cấp 50, điểm rèn luyện vẫn tiếp tục tích lũy để xếp hạng trên Leaderboard; đồng thời mỗi khi nạp đủ $50.000\text{ EXP}$ sau đó, hệ thống tặng thưởng một rương quà danh dự ($+400\text{ VoCoin}$ + $2\text{ VocaSpin}$) thay vì lên cấp tiếp.   
 đọc và thực hiện các file markdown có trong "C:\Users\DELL\Documents\Modding\browser" (nếu quên)
 

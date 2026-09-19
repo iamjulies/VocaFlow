@@ -1,9 +1,6 @@
 // =========================================================================
-
-// VOCAFLOW 03-AUTH.JS (v0.10.10-38 Build 339)
-
+// VOCAFLOW 03-AUTH.JS (v0.10.10-39 Build 340)
 // Firebase Auth, Realtime Sync, Public Profiles, Social Graph, Monetization & Billing
-
 // =========================================================================
 
     // =========================================================================
@@ -7148,6 +7145,13 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
     // AUTO-SEED OFFICIAL UPDATE POST, HOLIDAY/SALE EVENTS & GLOWING NOTIFICATIONS (v0.10.10-33 / Build 334)
     // =========================================================================
     const VOCAFLOW_OFFICIAL_RELEASES_REGISTRY = {
+      'v0.10.10-39': {
+        postId: 'official_update_v0_10_10_39',
+        releaseTime: '2026-09-20T00:30:00.000Z',
+        title: '⭐ Nâng Cấp Hệ Thống Thăng Cấp EXP, Quà Tặng Lên Cấp & Mốc VocaVIP (v0.10.10-39 Build 340)!',
+        summary: 'Ra mắt Hệ thống Thăng Cấp (Level Up Engine) thuần Điểm Rèn Luyện (Study EXP) lũy tiến bậc 2, nhận quà tức thì mỗi khi lên cấp, mốc tròn 10-20-30-40-50 tặng ngày VocaVIP dùng thử, Max Level 50 kèm Rương Danh Dự vô tận.',
+        content: `🎉 Chào mừng bạn đến với bản cập nhật VocaFlow v0.10.10-39 (Build 340)!\n\n✨ Những điểm mới nổi bật:\n⭐ Hệ Thống Thăng Cấp Thuần Điểm Rèn Luyện (Study EXP): Chuẩn 100% chỉ dùng EXP tích lũy vĩnh viễn, không bao giờ trừ VoCoin khi lên cấp, tự động thăng cấp trơn tru ngay khi kết thúc bài học.\n📈 Đường Cong EXP Lũy Tiến Bậc 2: Công thức RPG đỉnh cao (150*L + 25*L^2) giúp giai đoạn đầu lên cấp nhanh tạo hứng khởi, càng lên cao càng tôn vinh độ bền bỉ.\n🎁 Cơ Cấu Quà Tặng Lên Cấp (Level Drops): Mỗi khi lên cấp bình thường, nhận ngay Lvl x 25 VoCoin + 1 VocaHint / VocaSkip xen kẽ kèm pháo hoa chúc mừng rực rỡ.\n👑 Mốc Level Tròn (10, 20, 30, 40, 50) Tặng VocaVIP: Mở khóa đặc quyền VocaVIP ngắn hạn (+2 đến +10 ngày), nhận thêm hàng nghìn VoCoin, VocaSpin và FlowFreeze bảo vệ chuỗi ngày học.\n🏆 Max Level 50 & Rương Danh Dự (Prestige Honor Chest): Chinh phục đỉnh cao Cấp 50; mỗi +50.000 EXP sau đó tiếp tục nhận Rương Danh Dự (+400 VoCoin & +2 VocaSpin).\n\nChúc bạn có những giờ phút rèn luyện đầy hứng khởi và sớm bứt phá đỉnh cao Cấp 50 cùng VocaFlow! 🚀🌟`
+      },
       'v0.10.10-38': {
         postId: 'official_update_v0_10_10_38',
         releaseTime: '2026-09-19T23:30:00.000Z',

@@ -1,5 +1,5 @@
 // =========================================================================
-// VOCAFLOW 06-SPELLING-ENGINE.JS (v0.10.10-38 Build 339)
+// VOCAFLOW 06-SPELLING-ENGINE.JS (v0.10.10-39 Build 340)
 // Spelling mode, virtual keyboard, syllable clues, phonetics & score calculation
 // =========================================================================
 

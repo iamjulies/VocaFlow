@@ -74,6 +74,29 @@
           </div>
         </div>
 
+        <!-- LEVEL & STUDY EXP CARD (v0.10.10-39) -->
+        <div class="profile-level-card" style="background: linear-gradient(135deg, rgba(245, 158, 11, 0.12), rgba(99, 102, 241, 0.12)); border: 1px solid rgba(245, 158, 11, 0.35); border-radius: 14px; padding: 12px 14px; margin-bottom: 12px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <span class="badge" id="profile-level-number" style="background: linear-gradient(135deg, #f59e0b, #d97706); color: #000; font-size: 12px; font-weight: 900; padding: 3px 8px; border-radius: 8px;">Lv.1</span>
+              <strong id="profile-level-title" style="font-size: 13.5px; color: #fbbf24;">Tân Binh Tri Thức</strong>
+            </div>
+            <div style="font-size: 11.5px; color: var(--text-muted); font-weight: 700;">
+              <span>🏆 Tổng EXP: </span><strong id="profile-total-study-exp" style="color: #38bdf8;">0 EXP</strong>
+            </div>
+          </div>
+
+          <!-- PROGRESS BAR -->
+          <div style="background: rgba(0,0,0,0.4); border-radius: 8px; height: 10px; overflow: hidden; position: relative; margin-bottom: 6px; border: 1px solid rgba(255,255,255,0.08);">
+            <div id="profile-exp-progress-fill" style="background: linear-gradient(90deg, #f59e0b, #38bdf8); height: 100%; width: 0%; border-radius: 8px; transition: width 0.3s ease;"></div>
+          </div>
+
+          <div style="display: flex; justify-content: space-between; align-items: center; font-size: 11px;">
+            <span id="profile-exp-progress-text" style="color: var(--text-muted); font-family: monospace;">0 / 175 EXP (0%)</span>
+            <span id="profile-next-level-reward-preview" style="color: #fde68a; font-weight: 600;">🎁 Lên Cấp 2: +50 VoCoin, +1 VocaHint</span>
+          </div>
+        </div>
+
         <!-- ACTION BUTTONS ROW (INSTAGRAM STYLE) -->
         <div class="ig-actions-row">
           <button type="button" class="ig-btn ig-btn-outline" onclick="toggleProfileEditSection()" style="flex: 1.2;">

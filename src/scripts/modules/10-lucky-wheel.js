@@ -1,5 +1,5 @@
 // =========================================================================
-// VOCAFLOW 10-LUCKY-WHEEL.JS (v0.10.10-38 Build 339)
+// VOCAFLOW 10-LUCKY-WHEEL.JS (v0.10.10-39 Build 340)
 // Lucky wheel canvas, spin purchase, rewarded video ads, monetization
 // =========================================================================
 

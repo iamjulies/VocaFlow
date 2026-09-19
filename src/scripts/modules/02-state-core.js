@@ -1,13 +1,13 @@
-// VOCAFLOW 02-STATE-CORE.JS (v0.10.10-38 Build 339)
+// VOCAFLOW 02-STATE-CORE.JS (v0.10.10-39 Build 340)
 // Global constants, core database state, storage keys, recovery & audio engine
 // =========================================================================
 
     // =========================================================================
-    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.10-38 Build 339)
+    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.10-39 Build 340)
     // =========================================================================
-    const VOCAFLOW_APP_VERSION = 'v0.10.10-38';
-    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.10-38 (Build 339)';
-    const VOCAFLOW_APP_BUILD = 339;
+    const VOCAFLOW_APP_VERSION = 'v0.10.10-39';
+    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.10-39 (Build 340)';
+    const VOCAFLOW_APP_BUILD = 340;
     window.VOCAFLOW_APP_VERSION = VOCAFLOW_APP_VERSION;
     window.VOCAFLOW_APP_FULL_TITLE = VOCAFLOW_APP_FULL_TITLE;
     window.VOCAFLOW_APP_BUILD = VOCAFLOW_APP_BUILD;
@@ -845,10 +845,16 @@
     window.calculateSessionFinalPointsV3 = calculateSessionFinalPointsV3;
 
     // =========================================================================
-    // UNIFIED STUDY EXP / TRAINING POINTS ENGINE (v0.10.10-34)
-    // Formula: FinalEXP = floor( (Sum_i 10 * Quality_i) * W_mode * M_diff * Phi(N_done) * Psi(N_done/N_total) * M_VIP * M_Flow )
+    // VOCAFLOW UNIFIED LEVEL UP & STUDY EXP ENGINE (v0.10.10-39 Build 340)
+    // Level EXP Curve: EXP_req(L) = 150 * L + 25 * L^2
+    // Closed Form: TotalEXP(N) = 75 * (N - 1) * N + 25 * (N - 1) * N * (2N - 1) / 6
+    // Max Level: 50 (Prestige Chests: +400 VoCoin, +2 VocaSpin every +50,000 EXP after Lv 50)
     // =========================================================================
+    const MAX_USER_LEVEL = 50;
+    const PRESTIGE_CHEST_EXP_STEP = 50000;
     const STORAGE_KEY_USER_STUDY_EXP = 'vocaflow_user_study_exp';
+    const STORAGE_KEY_LAST_CLAIMED_LEVEL = 'vocaflow_last_claimed_level';
+    const STORAGE_KEY_CLAIMED_PRESTIGE_CHESTS = 'vocaflow_claimed_prestige_chests';
 
     function getUserStudyExp() {
       const raw = localStorage.getItem(STORAGE_KEY_USER_STUDY_EXP);
@@ -871,12 +877,340 @@
         currentUser.trainingExp = clean;
         localStorage.setItem(STORAGE_KEY_AUTH, JSON.stringify(currentUser));
       }
+      updateLevelUI();
       saveDatabase(true);
       if (typeof pushCurrentDatabaseToCloud === 'function') {
         pushCurrentDatabaseToCloud();
       }
     }
     window.setUserStudyExp = setUserStudyExp;
+
+    function getExpRequiredForNextLevel(level) {
+      const l = Math.max(1, parseInt(level, 10) || 1);
+      if (l >= MAX_USER_LEVEL) return PRESTIGE_CHEST_EXP_STEP;
+      return 150 * l + 25 * l * l;
+    }
+    window.getExpRequiredForNextLevel = getExpRequiredForNextLevel;
+
+    function getTotalExpForLevel(level) {
+      const n = Math.max(1, parseInt(level, 10) || 1);
+      if (n <= 1) return 0;
+      const targetLevel = Math.min(n, MAX_USER_LEVEL);
+      const sumL = ((targetLevel - 1) * targetLevel) / 2;
+      const sumL2 = ((targetLevel - 1) * targetLevel * (2 * targetLevel - 1)) / 6;
+      return 150 * sumL + 25 * sumL2;
+    }
+    window.getTotalExpForLevel = getTotalExpForLevel;
+
+    function getLevelTitle(level) {
+      const l = Math.max(1, parseInt(level, 10) || 1);
+      if (l >= 50) return 'Đại Tông Sư (Grandmaster)';
+      if (l >= 40) return 'Đại Học Giả Hoàng Gia';
+      if (l >= 30) return 'Bậc Thầy Tinh Thông';
+      if (l >= 20) return 'Học Giả Bền Bỉ';
+      if (l >= 10) return 'Học Viên Tiên Phong';
+      if (l >= 5) return 'Tập Sự Siêng Năng';
+      return 'Tân Binh Tri Thức';
+    }
+    window.getLevelTitle = getLevelTitle;
+
+    function getLevelTierClass(level) {
+      const l = Math.max(1, parseInt(level, 10) || 1);
+      if (l >= 50) return 'rank-grandmaster';
+      if (l >= 40) return 'rank-diamond';
+      if (l >= 30) return 'rank-gold';
+      if (l >= 20) return 'rank-silver';
+      if (l >= 10) return 'rank-bronze';
+      return 'rank-novice';
+    }
+    window.getLevelTierClass = getLevelTierClass;
+
+    function calculateUserLevel(totalExp) {
+      const exp = Math.max(0, parseInt(totalExp, 10) || 0);
+      let level = 1;
+      for (let l = 1; l < MAX_USER_LEVEL; l++) {
+        if (exp >= getTotalExpForLevel(l + 1)) {
+          level = l + 1;
+        } else {
+          break;
+        }
+      }
+
+      const isMaxLevel = level >= MAX_USER_LEVEL;
+      const baseExpForCurrentLevel = getTotalExpForLevel(level);
+      const nextLevelReqExp = isMaxLevel ? PRESTIGE_CHEST_EXP_STEP : getExpRequiredForNextLevel(level);
+      
+      let currentLevelExp = 0;
+      let progressPercent = 0;
+      let prestigeChestsTotal = 0;
+
+      if (!isMaxLevel) {
+        currentLevelExp = exp - baseExpForCurrentLevel;
+        progressPercent = Math.min(100, Math.max(0, Math.floor((currentLevelExp / nextLevelReqExp) * 100)));
+      } else {
+        const excessExp = Math.max(0, exp - getTotalExpForLevel(MAX_USER_LEVEL));
+        prestigeChestsTotal = Math.floor(excessExp / PRESTIGE_CHEST_EXP_STEP);
+        currentLevelExp = excessExp % PRESTIGE_CHEST_EXP_STEP;
+        progressPercent = Math.min(100, Math.max(0, Math.floor((currentLevelExp / PRESTIGE_CHEST_EXP_STEP) * 100)));
+      }
+
+      return {
+        level,
+        isMaxLevel,
+        totalExp: exp,
+        currentLevelExp,
+        nextLevelReqExp,
+        progressPercent,
+        prestigeChestsTotal,
+        title: getLevelTitle(level)
+      };
+    }
+    window.calculateUserLevel = calculateUserLevel;
+
+    function getCurrentUserLevelInfo() {
+      const totalExp = getUserStudyExp();
+      return calculateUserLevel(totalExp);
+    }
+    window.getCurrentUserLevelInfo = getCurrentUserLevelInfo;
+
+    function getLevelRewards(targetLevel) {
+      const l = parseInt(targetLevel, 10);
+      if (isNaN(l) || l <= 1) return null;
+
+      // Special Round Milestone Rewards (10, 20, 30, 40, 50)
+      if (l === 10) {
+        return { level: 10, points: 200, vipDays: 2, luckySpins: 2, flowFreezes: 0, hints: 0, skips: 0, isMilestone: true, milestoneName: 'Cột Mốc Cấp 10 (Học Viên Tiên Phong)' };
+      }
+      if (l === 20) {
+        return { level: 20, points: 500, vipDays: 4, luckySpins: 0, flowFreezes: 2, hints: 0, skips: 0, isMilestone: true, milestoneName: 'Cột Mốc Cấp 20 (Học Giả Bền Bỉ)' };
+      }
+      if (l === 30) {
+        return { level: 30, points: 1000, vipDays: 6, luckySpins: 6, flowFreezes: 0, hints: 0, skips: 0, isMilestone: true, milestoneName: 'Cột Mốc Cấp 30 (Bậc Thầy Tinh Thông)' };
+      }
+      if (l === 40) {
+        return { level: 40, points: 1500, vipDays: 8, luckySpins: 0, flowFreezes: 4, hints: 0, skips: 0, isMilestone: true, milestoneName: 'Cột Mốc Cấp 40 (Đại Học Giả Hoàng Gia)' };
+      }
+      if (l === 50) {
+        return { level: 50, points: 3000, vipDays: 10, luckySpins: 10, flowFreezes: 0, hints: 0, skips: 0, isMilestone: true, milestoneName: 'Đỉnh Cao Cấp 50 (Grandmaster Max Level)' };
+      }
+
+      // Normal Regular Level Up Rewards
+      return {
+        level: l,
+        points: l * 25,
+        vipDays: 0,
+        luckySpins: 0,
+        flowFreezes: 0,
+        hints: (l % 2 === 0 ? 1 : 0),
+        skips: (l % 2 === 1 ? 1 : 0),
+        isMilestone: false
+      };
+    }
+    window.getLevelRewards = getLevelRewards;
+
+    function getLastClaimedLevel() {
+      const local = parseInt(localStorage.getItem(STORAGE_KEY_LAST_CLAIMED_LEVEL), 10);
+      if (!isNaN(local)) return Math.max(1, local);
+      if (currentUser && typeof currentUser.lastClaimedLevel === 'number') {
+        return Math.max(1, currentUser.lastClaimedLevel);
+      }
+      return 1;
+    }
+    window.getLastClaimedLevel = getLastClaimedLevel;
+
+    function setLastClaimedLevel(level) {
+      const clean = Math.max(1, parseInt(level, 10) || 1);
+      localStorage.setItem(STORAGE_KEY_LAST_CLAIMED_LEVEL, clean.toString());
+      if (currentUser) {
+        currentUser.lastClaimedLevel = clean;
+        localStorage.setItem(STORAGE_KEY_AUTH, JSON.stringify(currentUser));
+      }
+      saveDatabase(true);
+      if (typeof pushCurrentDatabaseToCloud === 'function') {
+        pushCurrentDatabaseToCloud();
+      }
+    }
+    window.setLastClaimedLevel = setLastClaimedLevel;
+
+    function getClaimedPrestigeChests() {
+      const local = parseInt(localStorage.getItem(STORAGE_KEY_CLAIMED_PRESTIGE_CHESTS), 10);
+      if (!isNaN(local)) return Math.max(0, local);
+      if (currentUser && typeof currentUser.claimedPrestigeChests === 'number') {
+        return Math.max(0, currentUser.claimedPrestigeChests);
+      }
+      return 0;
+    }
+    window.getClaimedPrestigeChests = getClaimedPrestigeChests;
+
+    function setClaimedPrestigeChests(count) {
+      const clean = Math.max(0, parseInt(count, 10) || 0);
+      localStorage.setItem(STORAGE_KEY_CLAIMED_PRESTIGE_CHESTS, clean.toString());
+      if (currentUser) {
+        currentUser.claimedPrestigeChests = clean;
+        localStorage.setItem(STORAGE_KEY_AUTH, JSON.stringify(currentUser));
+      }
+      saveDatabase(true);
+      if (typeof pushCurrentDatabaseToCloud === 'function') {
+        pushCurrentDatabaseToCloud();
+      }
+    }
+    window.setClaimedPrestigeChests = setClaimedPrestigeChests;
+
+    function checkAndProcessLevelUp(oldExp, newExp) {
+      const oldInfo = calculateUserLevel(oldExp);
+      const newInfo = calculateUserLevel(newExp);
+
+      let lastClaimed = getLastClaimedLevel();
+      if (lastClaimed < 1) lastClaimed = 1;
+
+      if (newInfo.level > lastClaimed) {
+        const levelsToAward = [];
+        let totalPts = 0;
+        let totalHints = 0;
+        let totalSkips = 0;
+        let totalSpins = 0;
+        let totalFreezes = 0;
+        let totalVipDays = 0;
+        let hasMilestone = false;
+
+        for (let lvl = lastClaimed + 1; lvl <= newInfo.level; lvl++) {
+          const rw = getLevelRewards(lvl);
+          if (rw) {
+            levelsToAward.push(rw);
+            totalPts += rw.points || 0;
+            totalHints += rw.hints || 0;
+            totalSkips += rw.skips || 0;
+            totalSpins += rw.luckySpins || 0;
+            totalFreezes += rw.flowFreezes || 0;
+            totalVipDays += rw.vipDays || 0;
+            if (rw.isMilestone) hasMilestone = true;
+          }
+        }
+
+        // Apply awards
+        if (totalPts > 0 && typeof setUserPoints === 'function') {
+          setUserPoints(getUserPoints() + totalPts);
+        }
+        if (totalHints > 0 && typeof setUserHints === 'function') {
+          setUserHints(getUserHints() + totalHints);
+        }
+        if (totalSkips > 0 && typeof setUserSkips === 'function') {
+          setUserSkips(getUserSkips() + totalSkips);
+        }
+        if (totalSpins > 0 && typeof setLuckySpinsCount === 'function') {
+          setLuckySpinsCount(getLuckySpinsCount() + totalSpins);
+        }
+        if (totalFreezes > 0 && typeof setUserFlowFreezes === 'function') {
+          setUserFlowFreezes(getUserFlowFreezes() + totalFreezes);
+        }
+
+        // Apply VocaVIP days
+        if (totalVipDays > 0) {
+          if (!currentUser) currentUser = { isVip: false };
+          if (currentUser.vipTier === 'lifetime') {
+            const convertedCoin = totalVipDays * 250;
+            if (typeof setUserPoints === 'function') {
+              setUserPoints(getUserPoints() + convertedCoin);
+            }
+          } else {
+            const now = Date.now();
+            const currentExpiry = (currentUser.isVip && currentUser.vipExpiresAt && currentUser.vipExpiresAt > now) 
+              ? currentUser.vipExpiresAt 
+              : now;
+            currentUser.isVip = true;
+            if (!currentUser.vipTier || currentUser.vipTier === 'free') {
+              currentUser.vipTier = 'trial';
+            }
+            currentUser.vipExpiresAt = currentExpiry + (totalVipDays * 86400000);
+            localStorage.setItem(STORAGE_KEY_AUTH, JSON.stringify(currentUser));
+            if (typeof updateVipUI === 'function') updateVipUI();
+          }
+        }
+
+        setLastClaimedLevel(newInfo.level);
+
+        // Record Ledger
+        if (typeof addLedgerEntry === 'function' && totalPts > 0) {
+          const desc = `Thăng cấp Cấp ${newInfo.level} (${getLevelTitle(newInfo.level)}) +${totalPts} VoCoin` + (totalVipDays > 0 ? ` +${totalVipDays} ngày VIP` : '');
+          addLedgerEntry('LEVEL_UP_REWARD', totalPts, desc, getUserPoints());
+        }
+
+        // Trigger celebratory fireworks & sound
+        if (typeof launchCanvasFireworks === 'function') launchCanvasFireworks();
+        if (typeof playSfx === 'function') playSfx('fireworks');
+
+        // Add Notification
+        if (typeof addNotification === 'function') {
+          addNotification({
+            type: 'LEVEL_UP',
+            title: `🎉 Chúc mừng bạn đã thăng cấp Cấp ${newInfo.level}!`,
+            body: `Bạn đã đạt ${getLevelTitle(newInfo.level)}! Phần thưởng nhận được: +${totalPts} VoCoin` +
+                  (totalVipDays > 0 ? `, +${totalVipDays} ngày VocaVIP` : '') +
+                  (totalSpins > 0 ? `, +${totalSpins} VocaSpin` : '') +
+                  (totalFreezes > 0 ? `, +${totalFreezes} FlowFreeze` : '') +
+                  (totalHints > 0 ? `, +${totalHints} VocaHint` : '') +
+                  (totalSkips > 0 ? `, +${totalSkips} VocaSkip` : '') + `. Tiếp tục phát huy nhé! 🚀`,
+            date: new Date().toISOString(),
+            read: false
+          });
+        }
+
+        // Show celebration modal
+        if (typeof showLevelUpCelebrationModal === 'function') {
+          showLevelUpCelebrationModal({
+            fromLevel: oldInfo.level,
+            toLevel: newInfo.level,
+            title: getLevelTitle(newInfo.level),
+            totalPts,
+            totalHints,
+            totalSkips,
+            totalSpins,
+            totalFreezes,
+            totalVipDays,
+            hasMilestone,
+            isMaxLevel: newInfo.isMaxLevel
+          });
+        }
+
+        updateLevelUI();
+      }
+
+      // Check Max Level 50 Prestige Chests
+      if (newInfo.isMaxLevel && newInfo.prestigeChestsTotal > getClaimedPrestigeChests()) {
+        const prevClaimedChests = getClaimedPrestigeChests();
+        const newChests = newInfo.prestigeChestsTotal - prevClaimedChests;
+        if (newChests > 0) {
+          const chestPts = newChests * 400;
+          const chestSpins = newChests * 2;
+          if (typeof setUserPoints === 'function') setUserPoints(getUserPoints() + chestPts);
+          if (typeof setLuckySpinsCount === 'function') setLuckySpinsCount(getLuckySpinsCount() + chestSpins);
+          setClaimedPrestigeChests(newInfo.prestigeChestsTotal);
+
+          if (typeof addLedgerEntry === 'function') {
+            addLedgerEntry('PRESTIGE_CHEST', chestPts, `Rương Danh Dự Cấp 50 (+${newChests} rương: +${chestPts} VoCoin, +${chestSpins} Spin)`, getUserPoints());
+          }
+          if (typeof launchCanvasFireworks === 'function') launchCanvasFireworks();
+          if (typeof playSfx === 'function') playSfx('fireworks');
+
+          if (typeof addNotification === 'function') {
+            addNotification({
+              type: 'PRESTIGE_CHEST',
+              title: `👑 Nhận Rương Danh Dự Cấp 50 (+${newChests} Rương)!`,
+              body: `Bạn đã tích lũy thêm ${newChests * 50000} EXP rèn luyện tại Cấp 50 MAX! Thưởng: +${chestPts} VoCoin, +${chestSpins} VocaSpin.`,
+              date: new Date().toISOString(),
+              read: false
+            });
+          }
+
+          if (typeof showPrestigeChestModal === 'function') {
+            showPrestigeChestModal(newChests, chestPts, chestSpins);
+          }
+
+          updateLevelUI();
+        }
+      }
+    }
+    window.checkAndProcessLevelUp = checkAndProcessLevelUp;
 
     function addStudyExp(amount, mode = 'study', details = '') {
       const num = Math.max(0, parseInt(amount, 10) || 0);
@@ -892,9 +1226,256 @@
       const curDaily = parseInt(localStorage.getItem(dailyKey) || '0', 10) || 0;
       localStorage.setItem(dailyKey, (curDaily + num).toString());
 
+      // Level up processing
+      checkAndProcessLevelUp(current, updated);
+
       return updated;
     }
     window.addStudyExp = addStudyExp;
+
+    function updateLevelUI() {
+      const info = getCurrentUserLevelInfo();
+      
+      // Header Level Badge
+      const headerLvl = document.getElementById('header-user-level-badge');
+      if (headerLvl) {
+        headerLvl.textContent = info.isMaxLevel ? '👑 Lv.50 MAX' : `⭐ Lv.${info.level}`;
+        headerLvl.className = `badge badge-level-pill ${getLevelTierClass(info.level)}`;
+      }
+
+      // Profile Modal Elements
+      const profLvlNumber = document.getElementById('profile-level-number');
+      if (profLvlNumber) profLvlNumber.textContent = info.isMaxLevel ? 'Lv.50 MAX' : `Lv.${info.level}`;
+
+      const profLvlTitle = document.getElementById('profile-level-title');
+      if (profLvlTitle) profLvlTitle.textContent = info.title;
+
+      const profExpProgressFill = document.getElementById('profile-exp-progress-fill');
+      if (profExpProgressFill) profExpProgressFill.style.width = `${info.progressPercent}%`;
+
+      const profExpProgressText = document.getElementById('profile-exp-progress-text');
+      if (profExpProgressText) {
+        if (info.isMaxLevel) {
+          profExpProgressText.textContent = `${formatNumber(info.currentLevelExp)} / ${formatNumber(info.nextLevelReqExp)} EXP (Rương Danh Dự: ${info.prestigeChestsTotal})`;
+        } else {
+          profExpProgressText.textContent = `${formatNumber(info.currentLevelExp)} / ${formatNumber(info.nextLevelReqExp)} EXP (${info.progressPercent}%)`;
+        }
+      }
+
+      const profTotalExp = document.getElementById('profile-total-study-exp');
+      if (profTotalExp) profTotalExp.textContent = formatNumber(info.totalExp) + ' EXP';
+
+      const profNextReward = document.getElementById('profile-next-level-reward-preview');
+      if (profNextReward) {
+        if (info.isMaxLevel) {
+          profNextReward.textContent = `🎁 Mỗi +50.000 EXP: +400 VoCoin, +2 VocaSpin`;
+        } else {
+          const nextLvl = info.level + 1;
+          const rw = getLevelRewards(nextLvl);
+          if (rw) {
+            let rwTxt = `+${rw.points} VoCoin`;
+            if (rw.vipDays > 0) rwTxt += `, +${rw.vipDays} ngày VIP`;
+            if (rw.luckySpins > 0) rwTxt += `, +${rw.luckySpins} VocaSpin`;
+            if (rw.flowFreezes > 0) rwTxt += `, +${rw.flowFreezes} FlowFreeze`;
+            if (rw.hints > 0) rwTxt += `, +${rw.hints} VocaHint`;
+            if (rw.skips > 0) rwTxt += `, +${rw.skips} VocaSkip`;
+            profNextReward.textContent = `🎁 Lên Cấp ${nextLvl}: ${rwTxt}`;
+          }
+        }
+      }
+    }
+    window.updateLevelUI = updateLevelUI;
+
+    let levelUpFireworksAnimId = null;
+
+    function launchLevelUpFireworks() {
+      const canvas = document.getElementById('level-up-fireworks-canvas');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      if (!ctx) return;
+
+      canvas.width = canvas.parentElement ? canvas.parentElement.clientWidth : 480;
+      canvas.height = canvas.parentElement ? canvas.parentElement.clientHeight : 450;
+
+      if (levelUpFireworksAnimId) {
+        cancelAnimationFrame(levelUpFireworksAnimId);
+        levelUpFireworksAnimId = null;
+      }
+
+      const particles = [];
+      const colors = ['#fbbf24', '#f59e0b', '#38bdf8', '#10b981', '#ec4899', '#a855f7', '#6366f1', '#e11d48'];
+
+      function createExplosion(x, y, count) {
+        for (let i = 0; i < count; i++) {
+          const angle = Math.random() * Math.PI * 2;
+          const speed = Math.random() * 5 + 2;
+          particles.push({
+            x, y,
+            vx: Math.cos(angle) * speed,
+            vy: Math.sin(angle) * speed - 1.2,
+            color: colors[Math.floor(Math.random() * colors.length)],
+            radius: Math.random() * 3.5 + 1.5,
+            alpha: 1,
+            decay: Math.random() * 0.015 + 0.01,
+            gravity: 0.12
+          });
+        }
+      }
+
+      function launchRocket() {
+        const x = Math.random() * (canvas.width * 0.7) + (canvas.width * 0.15);
+        const y = Math.random() * (canvas.height * 0.45) + (canvas.height * 0.15);
+        createExplosion(x, y, 40);
+      }
+
+      launchRocket();
+      setTimeout(launchRocket, 200);
+      setTimeout(launchRocket, 450);
+
+      function render() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        for (let i = particles.length - 1; i >= 0; i--) {
+          const p = particles[i];
+          p.x += p.vx;
+          p.y += p.vy;
+          p.vy += p.gravity;
+          p.alpha -= p.decay;
+
+          if (p.alpha <= 0) {
+            particles.splice(i, 1);
+            continue;
+          }
+
+          ctx.save();
+          ctx.globalAlpha = p.alpha;
+          ctx.fillStyle = p.color;
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.restore();
+        }
+
+        if (particles.length > 0) {
+          levelUpFireworksAnimId = requestAnimationFrame(render);
+        } else {
+          levelUpFireworksAnimId = null;
+        }
+      }
+
+      render();
+    }
+    window.launchLevelUpFireworks = launchLevelUpFireworks;
+
+    function showLevelUpCelebrationModal(data) {
+      if (!data) return;
+      const titleEl = document.getElementById('level-up-modal-title');
+      if (titleEl) {
+        titleEl.textContent = data.isMaxLevel ? 'CẤP ĐỘ 50 (MAX)' : `CẤP ĐỘ ${data.toLevel}`;
+      }
+
+      const rankTitleEl = document.getElementById('level-up-modal-rank-title');
+      if (rankTitleEl) {
+        rankTitleEl.textContent = data.title || getLevelTitle(data.toLevel);
+      }
+
+      const badgeIconEl = document.getElementById('level-up-badge-icon');
+      if (badgeIconEl) {
+        if (data.toLevel >= 50) badgeIconEl.textContent = '👑';
+        else if (data.toLevel >= 40) badgeIconEl.textContent = '💎';
+        else if (data.toLevel >= 30) badgeIconEl.textContent = '🏆';
+        else if (data.toLevel >= 20) badgeIconEl.textContent = '🥈';
+        else if (data.toLevel >= 10) badgeIconEl.textContent = '🥉';
+        else badgeIconEl.textContent = '🌟';
+      }
+
+      const milestoneBanner = document.getElementById('level-up-milestone-banner');
+      const milestoneText = document.getElementById('level-up-milestone-text');
+      if (milestoneBanner && milestoneText) {
+        if (data.hasMilestone || data.totalVipDays > 0) {
+          milestoneBanner.style.display = 'block';
+          milestoneText.textContent = `👑 Cột Mốc Hoàng Gia - Tặng +${data.totalVipDays} Ngày VocaVIP!`;
+        } else {
+          milestoneBanner.style.display = 'none';
+        }
+      }
+
+      const grid = document.getElementById('level-up-rewards-grid');
+      if (grid) {
+        let html = '';
+        if (data.totalPts > 0) {
+          html += `
+            <div style="background: rgba(245, 158, 11, 0.12); border: 1px solid rgba(245, 158, 11, 0.35); border-radius: 10px; padding: 8px 10px; display: flex; align-items: center; gap: 8px; text-align: left;">
+              <span style="font-size: 20px;">💰</span>
+              <div>
+                <div style="font-size: 11px; color: #fbbf24; font-weight: 700;">VoCoin Thưởng</div>
+                <div style="font-size: 14px; font-weight: 800; color: #f59e0b;">+${formatNumber(data.totalPts)}</div>
+              </div>
+            </div>`;
+        }
+        if (data.totalVipDays > 0) {
+          html += `
+            <div style="background: linear-gradient(135deg, rgba(236, 72, 153, 0.15), rgba(245, 158, 11, 0.15)); border: 1px solid rgba(236, 72, 153, 0.4); border-radius: 10px; padding: 8px 10px; display: flex; align-items: center; gap: 8px; text-align: left;">
+              <span style="font-size: 20px;">👑</span>
+              <div>
+                <div style="font-size: 11px; color: #f472b6; font-weight: 700;">VocaVIP Dùng Thử</div>
+                <div style="font-size: 14px; font-weight: 800; color: #ec4899;">+${data.totalVipDays} Ngày</div>
+              </div>
+            </div>`;
+        }
+        if (data.totalSpins > 0) {
+          html += `
+            <div style="background: rgba(56, 189, 248, 0.12); border: 1px solid rgba(56, 189, 248, 0.35); border-radius: 10px; padding: 8px 10px; display: flex; align-items: center; gap: 8px; text-align: left;">
+              <span style="font-size: 20px;">🎡</span>
+              <div>
+                <div style="font-size: 11px; color: #38bdf8; font-weight: 700;">VocaSpin Vòng Quay</div>
+                <div style="font-size: 14px; font-weight: 800; color: #0284c7;">+${data.totalSpins} Lượt</div>
+              </div>
+            </div>`;
+        }
+        if (data.totalFreezes > 0) {
+          html += `
+            <div style="background: rgba(6, 182, 212, 0.12); border: 1px solid rgba(6, 182, 212, 0.35); border-radius: 10px; padding: 8px 10px; display: flex; align-items: center; gap: 8px; text-align: left;">
+              <span style="font-size: 20px;">❄️</span>
+              <div>
+                <div style="font-size: 11px; color: #22d3ee; font-weight: 700;">Băng Bảo Vệ Flow</div>
+                <div style="font-size: 14px; font-weight: 800; color: #0891b2;">+${data.totalFreezes} Freeze</div>
+              </div>
+            </div>`;
+        }
+        if (data.totalHints > 0) {
+          html += `
+            <div style="background: rgba(16, 185, 129, 0.12); border: 1px solid rgba(16, 185, 129, 0.35); border-radius: 10px; padding: 8px 10px; display: flex; align-items: center; gap: 8px; text-align: left;">
+              <span style="font-size: 20px;">💡</span>
+              <div>
+                <div style="font-size: 11px; color: #34d399; font-weight: 700;">Gợi Ý AI VocaHint</div>
+                <div style="font-size: 14px; font-weight: 800; color: #059669;">+${data.totalHints} Gợi Ý</div>
+              </div>
+            </div>`;
+        }
+        if (data.totalSkips > 0) {
+          html += `
+            <div style="background: rgba(168, 85, 247, 0.12); border: 1px solid rgba(168, 85, 247, 0.35); border-radius: 10px; padding: 8px 10px; display: flex; align-items: center; gap: 8px; text-align: left;">
+              <span style="font-size: 20px;">⏭️</span>
+              <div>
+                <div style="font-size: 11px; color: #c084fc; font-weight: 700;">Bỏ Qua VocaSkip</div>
+                <div style="font-size: 14px; font-weight: 800; color: #9333ea;">+${data.totalSkips} Bỏ Qua</div>
+              </div>
+            </div>`;
+        }
+        grid.innerHTML = html;
+      }
+
+      if (typeof openModal === 'function') openModal('modal-level-up');
+      setTimeout(launchLevelUpFireworks, 150);
+    }
+    window.showLevelUpCelebrationModal = showLevelUpCelebrationModal;
+
+    function showPrestigeChestModal(chests, pts, spins) {
+      if (typeof showToast === 'function') {
+        showToast(`👑 RƯƠNG DANH DỰ CẤP 50: Nhận +${formatNumber(pts)} VoCoin & +${spins} VocaSpin!`);
+      }
+    }
+    window.showPrestigeChestModal = showPrestigeChestModal;
 
     function calculateUnifiedStudyExp(mode, sessionItems, totalExpectedCount, difficultyMultOrOptions = 1.0) {
       const normMode = (mode || 'quiz').toLowerCase().replace(/[^a-z]/g, '');
@@ -1884,6 +2465,8 @@
 
       const spellingSkipsCount = document.getElementById('spelling-skips-count');
       if (spellingSkipsCount) spellingSkipsCount.textContent = formatNumber(skips > 0 ? skips : 100);
+
+      if (typeof updateLevelUI === 'function') updateLevelUI();
     }
 
     async function syncEconomyToCloud() {
@@ -1904,6 +2487,9 @@
           points: pts,
           hints: hts,
           skips: sks,
+          studyExp: getUserStudyExp(),
+          lastClaimedLevel: getLastClaimedLevel(),
+          claimedPrestigeChests: getClaimedPrestigeChests(),
           luckySpins: cleanSpins,
           luckySpinsDate: lastSpinDate,
           lastVipSpinDate: lastVipDate,
@@ -2046,10 +2632,31 @@
             const remotePoints = typeof data.points === 'number' ? data.points : parseInt(data.points, 10);
             const remoteHints = typeof data.hints === 'number' ? data.hints : parseInt(data.hints, 10);
             const remoteSkips = typeof data.skips === 'number' ? data.skips : parseInt(data.skips, 10);
-            const remoteSpins = typeof data.luckySpins === 'number' ? data.luckySpins : parseInt(data.luckySpins, 10);
             if (!isNaN(remotePoints)) localStorage.setItem(STORAGE_KEY_USER_POINTS, remotePoints.toString());
             if (!isNaN(remoteHints)) localStorage.setItem(STORAGE_KEY_USER_HINTS, remoteHints.toString());
             if (!isNaN(remoteSkips)) localStorage.setItem(STORAGE_KEY_USER_SKIPS, remoteSkips.toString());
+
+            const remoteStudyExp = typeof data.studyExp === 'number' ? data.studyExp : parseInt(data.studyExp, 10);
+            if (!isNaN(remoteStudyExp) && remoteStudyExp >= 0) {
+              const localExp = getUserStudyExp();
+              if (remoteStudyExp > localExp) {
+                setUserStudyExp(remoteStudyExp);
+              }
+            }
+            const remoteLastLevel = typeof data.lastClaimedLevel === 'number' ? data.lastClaimedLevel : parseInt(data.lastClaimedLevel, 10);
+            if (!isNaN(remoteLastLevel) && remoteLastLevel >= 1) {
+              const localLastLevel = getLastClaimedLevel();
+              if (remoteLastLevel > localLastLevel) {
+                setLastClaimedLevel(remoteLastLevel);
+              }
+            }
+            const remotePrestigeChests = typeof data.claimedPrestigeChests === 'number' ? data.claimedPrestigeChests : parseInt(data.claimedPrestigeChests, 10);
+            if (!isNaN(remotePrestigeChests) && remotePrestigeChests >= 0) {
+              const localChests = getClaimedPrestigeChests();
+              if (remotePrestigeChests > localChests) {
+                setClaimedPrestigeChests(remotePrestigeChests);
+              }
+            }
 
             // TIMESTAMP GUARD: Protect local spins if updated recently or newer than remote
             const localEcoTime = parseInt(localStorage.getItem(STORAGE_KEY_ECONOMY_TIME) || '0', 10);

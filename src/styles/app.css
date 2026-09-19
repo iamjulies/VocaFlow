@@ -4982,6 +4982,65 @@
       color: var(--text, #e2e8f0);
     }
 
+    /* =========================================================================
+       LEVEL UP & USER RANK STYLES (v0.10.10-39 Build 340)
+       ========================================================================= */
+    .badge-level-pill {
+      font-weight: 800;
+      transition: all 0.2s ease;
+      cursor: pointer;
+    }
+    .badge-level-pill.rank-novice {
+      background: rgba(148, 163, 184, 0.15);
+      color: #94a3b8;
+      border: 1px solid rgba(148, 163, 184, 0.35);
+    }
+    .badge-level-pill.rank-bronze {
+      background: rgba(217, 119, 6, 0.15);
+      color: #f59e0b;
+      border: 1px solid rgba(217, 119, 6, 0.4);
+    }
+    .badge-level-pill.rank-silver {
+      background: rgba(203, 213, 225, 0.18);
+      color: #e2e8f0;
+      border: 1px solid rgba(203, 213, 225, 0.45);
+      box-shadow: 0 0 6px rgba(203, 213, 225, 0.2);
+    }
+    .badge-level-pill.rank-gold {
+      background: rgba(245, 158, 11, 0.2);
+      color: #fbbf24;
+      border: 1px solid rgba(245, 158, 11, 0.5);
+      box-shadow: 0 0 8px rgba(245, 158, 11, 0.3);
+    }
+    .badge-level-pill.rank-diamond {
+      background: rgba(56, 189, 248, 0.2);
+      color: #38bdf8;
+      border: 1px solid rgba(56, 189, 248, 0.5);
+      box-shadow: 0 0 10px rgba(56, 189, 248, 0.35);
+    }
+    .badge-level-pill.rank-grandmaster {
+      background: linear-gradient(135deg, rgba(236, 72, 153, 0.25), rgba(245, 158, 11, 0.25));
+      color: #fde047;
+      border: 1px solid rgba(250, 204, 21, 0.6);
+      box-shadow: 0 0 14px rgba(250, 204, 21, 0.5);
+      animation: grandmaster-pulse 2s infinite ease-in-out;
+    }
+
+    @keyframes grandmaster-pulse {
+      0%, 100% { box-shadow: 0 0 8px rgba(250, 204, 21, 0.4); }
+      50% { box-shadow: 0 0 18px rgba(236, 72, 153, 0.7); }
+    }
+
+    .level-up-anim-badge {
+      display: inline-block;
+      animation: levelup-float 2s ease-in-out infinite;
+    }
+    @keyframes levelup-float {
+      0%, 100% { transform: translateY(0) scale(1); }
+      50% { transform: translateY(-6px) scale(1.08); }
+    }
+
+
 
 
 

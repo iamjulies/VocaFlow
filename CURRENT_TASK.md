@@ -1,37 +1,41 @@
 # CURRENT TASK & TRẠNG THÁI CÔNG VIỆC HIỆN TẠI (VOCAFLOW)
 
-> **Phiên bản mục tiêu:** `v0.10.10-38 (Build 339)`  
+> **Phiên bản mục tiêu:** `v0.10.10-39 (Build 340)`  
 > **Cập nhật lần cuối:** 2026-09-19  
 > **Trạng thái:** 🚀 **ĐANG TIẾN HÀNH BUILD, KIỂM THỬ CDP & MULTI-DEPLOY GITHUB**
 
 ---
 
-## 🎯 1. DANH SÁCH NHIỆM VỤ ĐÃ GIẢI QUYẾT (v0.10.10-38 Build 339)
+## 🎯 1. DANH SÁCH NHIỆM VỤ ĐÃ GIẢI QUYẾT (v0.10.10-39 Build 340)
 
-- [x] **Rà Soát & Dọn Dẹp Mã Nguồn Rác (`src/scripts/modules/`)**:
-  - Rà soát toàn bộ các module JavaScript, dọn dẹp các lệnh `console.log` debug thừa và các chuỗi log bị lỗi mã hóa UTF-8.
-  - Chuẩn hóa các cảnh báo ngoại lệ và thông báo mạng sang `console.warn` và `console.info`.
-- [x] **Bảo Mật Phòng Thi Toàn Diện Cho Chế Độ Dịch Thuật (`src/scripts/app.js`)**:
-  - Bổ sung `screen-translation` vào danh sách `isExamScreen` để cách ly hoàn toàn AI Mentor và Sổ Tay Lỗi Sai trong tất cả 8 chế độ học/thi.
-- [x] **Hoàn Thiện Định Tuyến URL Cho 4 Chế Độ Học Mở Rộng (`src/scripts/app.js`)**:
-  - Bổ sung định tuyến SPA URL cho `/study/writing`, `/study/cloze`, `/study/dictation`, `/study/translation` trong `showScreen()` và `closeModal()`.
-- [x] **Đồng Bộ Toàn Diện 7-Point Version Consistency & Multi-Deploy (`v0.10.10-38 Build 339`)**:
-  - `src/components/modals/modal-settings.html` (`VocaFlow v0.10.10-38 (Build 339)`)
-  - `src/components/screens/screen-decks.html` (`v0.10.10-38 (Build 339)`)
-  - `src/components/screens/screen-deck-detail.html` (`v0.10.10-38 (Build 339)`)
-  - `src/scripts/modules/01-router.js` (`v0.10.10-38 Build 339`)
-  - `src/scripts/modules/02-state-core.js` (`const VOCAFLOW_APP_VERSION = 'v0.10.10-38'`, `const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.10-38 (Build 339)'`, `VOCAFLOW_APP_BUILD = 339`)
-  - `src/scripts/modules/03-auth.js` (`v0.10.10-38 Build 339` & What's new registry)
-  - `src/scripts/modules/04-decks-manager.js` - `12-achievements.js` (`v0.10.10-38 Build 339`)
-  - `sw.js` & `Release_App/sw.js` (`vocaflow-pwa-v0.10.10-38`)
-  - `pubspec.yaml` (`version: 0.10.10+339`)
-  - `VocaFlow_Desktop/Program.cs` (`VocaFlow v0.10.10-38`)
-  - `GITHUB_RELEASE/push_github.ps1` (`v0.10.10-38 (Build 339)`)
+- [x] **Hệ Thống Lên Cấp 100% Bằng Điểm Rèn Luyện (Study EXP) (`src/scripts/modules/02-state-core.js`)**:
+  - Tự động lên cấp dựa trên tổng Điểm Rèn Luyện (Study EXP) tích lũy vĩnh viễn (`getUserStudyExp()`), không bao giờ trừ VoCoin.
+  - Công thức bậc 2 chuẩn hóa: $EXP_{\text{cần}}(L) = 150 \times L + 25 \times L^2$; $TotalEXP(N) = 75(N-1)N + \frac{25(N-1)N(2N-1)}{6}$.
+- [x] **Cơ Cấu Quà Tặng Lên Cấp & Mốc VIP Tròn (`02-state-core.js`, `modal-level-up.html`)**:
+  - Cấp thường ($L < 50$): Nhận $L \times 25\text{ VoCoin}$, xen kẽ $+1\text{ VocaHint}$ (chẵn) hoặc $+1\text{ VocaSkip}$ (lẻ), hiệu ứng pháo hoa Canvas + SFX.
+  - Mốc tròn (10, 20, 30, 40, 50): Thưởng VIP (+2, +4, +6, +8, +10 ngày) cộng dồn nối tiếp (hoặc quy đổi $250\text{ VoCoin}$/ngày cho VIP Trọn Đời) + $200 \to 3000\text{ VoCoin}$ + VocaSpin / FlowFreeze.
+- [x] **Max Level 50 & Rương Danh Dự Prestige Honor Chest (`02-state-core.js`)**:
+  - Giới hạn Max Level 50. Mỗi $+50.000\text{ EXP}$ sau mốc cấp 50 tự động mở 1 Rương Danh Dự ($+400\text{ VoCoin} + 2\text{ VocaSpin}$).
+- [x] **Giao Diện Level Pill & Thẻ Cấp Độ Hồ Sơ (`header.html`, `modal-profile.html`, `app.css`)**:
+  - Header tích hợp Level Pill badge tương tác và icon rank động theo bậc (Tập sự, Đồng, Bạc, Vàng, Kim Cương, Đại Kiện Tướng).
+  - Modal Hồ Sơ tích hợp thẻ Cấp độ & Điểm Rèn Luyện với thanh tiến trình EXP thời gian thực và xem trước phần thưởng cấp tiếp theo.
+- [x] **Đồng Bộ Toàn Diện 7-Point Version Consistency & Multi-Deploy (`v0.10.10-39 Build 340`)**:
+  - `src/components/modals/modal-settings.html` (`VocaFlow v0.10.10-39 (Build 340)`)
+  - `src/components/screens/screen-decks.html` (`v0.10.10-39 (Build 340)`)
+  - `src/components/screens/screen-deck-detail.html` (`v0.10.10-39 (Build 340)`)
+  - `src/scripts/modules/01-router.js` (`v0.10.10-39 Build 340`)
+  - `src/scripts/modules/02-state-core.js` (`const VOCAFLOW_APP_VERSION = 'v0.10.10-39'`, `const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.10-39 (Build 340)'`, `VOCAFLOW_APP_BUILD = 340`)
+  - `src/scripts/modules/03-auth.js` (`v0.10.10-39 Build 340` & What's new registry)
+  - `src/scripts/modules/04-decks-manager.js` - `12-achievements.js` (`v0.10.10-39 Build 340`)
+  - `sw.js` & `Release_App/sw.js` (`vocaflow-pwa-v0.10.10-39`)
+  - `pubspec.yaml` (`version: 0.10.10+340`)
+  - `VocaFlow_Desktop/Program.cs` (`VocaFlow v0.10.10-39`)
+  - `GITHUB_RELEASE/push_github.ps1` (`v0.10.10-39 (Build 340)`)
   - `VOCAFLOW_OVERVIEW.txt`
 
 ---
 
-## 🎯 2. DANH SÁCH NHIỆM VỤ CÁC PHIÊN BẢN TRƯỚC (v0.10.10-37 Build 338)
+## 🎯 2. DANH SÁCH NHIỆM VỤ CÁC PHIÊN BẢN TRƯỚC (v0.10.10-38 Build 339)
 
 - [x] **Vấn đề 7: Hoàn Thiện Kết Toán Điểm Thống Nhất Toàn Diện Cho Luyện Nói & Viết Câu (`07-speaking-engine.js`, `06c-writing-engine.js`)**:
   - Khắc phục triệt để lỗi thiếu kết toán số dư ví VoCoin (`setUserPoints`, `addLedgerEntry`) và Điểm Rèn Luyện (`addStudyExp`) trong `finishSpeakingSession()` và `finishWritingSession()`.
