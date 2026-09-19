@@ -1,0 +1,7 @@
+v0.10.10-41 (TỦ ĐỒ KHUNG VIỀN, HIỆU ỨNG TÊN VÀ DANH XƯNG)
+tủ đồ truy cập ở /me hoặc ở dấu ba chấm
+tủ đồ chia làm 3 ngăn:
+- khung viền: chứa tất cả các khung viền đã sở hữu
+- hiệu ứng tên: chứa tất cả các hiệu ứng tên đã sở hữu
+- danh xưng: chứa tất cả các danh xưng đã sở hữu
+set cơ bản của người mới là "C:\Users\DELL\Pictures\Screenshots\Ảnh chụp màn hình 2026-09-20 001144.png"

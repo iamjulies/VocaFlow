@@ -1,5 +1,5 @@
 // =========================================================================
-// VOCAFLOW 03-AUTH.JS (v0.10.10-39 Build 340)
+// VOCAFLOW 03-AUTH.JS (v0.10.10-40 Build 341)
 // Firebase Auth, Realtime Sync, Public Profiles, Social Graph, Monetization & Billing
 // =========================================================================
 
@@ -5244,6 +5244,7 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
         let targetFollowingCount = 0;
         let authorDecks = [];
         let targetPoints = 0;
+        let targetStudyExp = 0;
         let targetFlowDays = 0;
         let targetPinnedBadges = [];
         let targetDailyStudyTime = {};
@@ -5261,6 +5262,7 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
           resolvedBio = 'Đội ngũ phát triển VocaFlow • Biên soạn VocaStore trọng tâm chuẩn GDPT & Quốc Tế.';
           authorDecks = allDecks.filter(d => d.id.startsWith('lib_deck_') || d.author === 'VocaFlow Chuẩn');
           targetPoints = 999999;
+          targetStudyExp = 2500000; // Max Level 50
           targetFlowDays = 365;
           targetPinnedBadges = ['ach_deck_master', 'ach_speaking_pro', 'ach_grandmaster'];
           targetFollowerCount = 9999;
@@ -5289,6 +5291,7 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
           resolvedBio = currentUser.bio || localStorage.getItem('vocaflow_user_bio') || '';
           authorDecks = allDecks.filter(d => (d.authorUid && d.authorUid === currentUser.uid) || (d.author || '').trim().toLowerCase() === (authorName || '').trim().toLowerCase() || (d.author || '').trim().toLowerCase() === (currentUser.displayName || '').trim().toLowerCase());
           targetPoints = (typeof getUserPoints === 'function' ? getUserPoints() : 0);
+          targetStudyExp = (typeof getUserStudyExp === 'function' ? getUserStudyExp() : parseInt(localStorage.getItem('vocaflow_user_study_exp') || '0', 10));
           targetFlowDays = (typeof calculateCurrentFlow === 'function' ? calculateCurrentFlow().currentFlow : 0);
           targetPinnedBadges = Array.isArray(userPinnedBadges) ? userPinnedBadges : [];
           targetFollowerCount = Math.max(currentUser.followerCount || 0, Object.keys(myFollowersMap || {}).length);
@@ -5359,6 +5362,11 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
                   else if (uData.wallet && typeof uData.wallet.points === 'number') targetPoints = uData.wallet.points;
                   else if (typeof uData.points === 'number') targetPoints = uData.points;
                   else if (uData.profile && typeof uData.profile.points === 'number') targetPoints = uData.profile.points;
+
+                  if (uData.profile && typeof uData.profile.studyExp === 'number') targetStudyExp = uData.profile.studyExp;
+                  else if (uData.economy && typeof uData.economy.studyExp === 'number') targetStudyExp = uData.economy.studyExp;
+                  else if (typeof uData.studyExp === 'number') targetStudyExp = uData.studyExp;
+                  else if (typeof uData.exp === 'number') targetStudyExp = uData.exp;
 
                   if (uData.profile && typeof uData.profile === 'object') {
                     if (uData.profile.displayName) resolvedName = uData.profile.displayName;
@@ -5454,7 +5462,19 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
             resolvedAvatar = matchedStudent.avatar || matchedStudent.displayName || resolvedAvatar;
             resolvedBio = matchedStudent.bio || resolvedBio || '';
             if (typeof matchedStudent.points === 'number' && targetPoints === 0) targetPoints = matchedStudent.points;
+            if (typeof matchedStudent.studyExp === 'number' && targetStudyExp === 0) targetStudyExp = matchedStudent.studyExp;
+            else if (typeof matchedStudent.exp === 'number' && targetStudyExp === 0) targetStudyExp = matchedStudent.exp;
             if (Array.isArray(matchedStudent.pinnedBadges) && targetPinnedBadges.length === 0) targetPinnedBadges = matchedStudent.pinnedBadges;
+          }
+
+          if (targetStudyExp === 0 && targetLedger && targetLedger.length > 0) {
+            targetLedger.forEach(entry => {
+              if (entry && typeof entry.studyExp === 'number' && entry.studyExp > 0) {
+                targetStudyExp += entry.studyExp;
+              } else if (entry && entry.type && String(entry.type).startsWith('STUDY')) {
+                targetStudyExp += Math.max(0, entry.amount || 0);
+              }
+            });
           }
           if (authorDecks.length === 0) {
             authorDecks = allDecks.filter(d => 
@@ -5499,6 +5519,7 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
         const pubSubBadgeEl = document.getElementById('pub-view-sub-badge');
 
         const totalWords = authorDecks.reduce((sum, d) => sum + (Array.isArray(d.words) ? d.words.length : 0), 0);
+        const targetLevelInfo = (typeof calculateUserLevel === 'function') ? calculateUserLevel(targetStudyExp) : { level: 1, title: 'Người Khai Sáng', isMaxLevel: false, currentLevelExp: 0, nextLevelExp: 2000, progressPercent: 0 };
 
         currentPublicProfileAuthor = {
           targetUid: targetUid,
@@ -5522,6 +5543,9 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
           dailyStats: targetDailyStats,
           points: targetPoints,
           vocoins: targetPoints,
+          studyExp: targetStudyExp,
+          level: targetLevelInfo.level,
+          levelInfo: targetLevelInfo,
           flowDays: targetFlowDays,
           flow: targetFlowDays,
           pinnedBadges: targetPinnedBadges,
@@ -5536,6 +5560,23 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
         if (resolvedName) window.__vocaChartAuthorRegistry[resolvedName] = currentPublicProfileAuthor;
 
         updatePubViewFollowBtn(targetUid);
+
+        // Update Level Badge beside handle
+        const pubLevelBadgeEl = document.getElementById('pub-view-level-badge');
+        if (pubLevelBadgeEl) {
+          if (targetLevelInfo.isMaxLevel) {
+            pubLevelBadgeEl.innerHTML = `<span style="font-size: 11px;">👑</span> Cấp 50 MAX`;
+            pubLevelBadgeEl.style.background = 'linear-gradient(135deg, rgba(168,85,247,0.25), rgba(236,72,153,0.25))';
+            pubLevelBadgeEl.style.color = '#c084fc';
+            pubLevelBadgeEl.style.border = '1px solid rgba(168,85,247,0.5)';
+          } else {
+            pubLevelBadgeEl.innerHTML = `<span style="font-size: 11px;">🎖️</span> Cấp ${targetLevelInfo.level}`;
+            pubLevelBadgeEl.style.background = 'linear-gradient(135deg, rgba(245,158,11,0.2), rgba(234,179,8,0.3))';
+            pubLevelBadgeEl.style.color = '#fbbf24';
+            pubLevelBadgeEl.style.border = '1px solid rgba(245,158,11,0.5)';
+          }
+          pubLevelBadgeEl.title = `Cấp ${targetLevelInfo.level}: ${targetLevelInfo.title} (${formatNumber(targetStudyExp)} EXP)`;
+        }
 
         const pubFollowerEl = document.getElementById('pub-view-follower-count');
         const pubFollowingEl = document.getElementById('pub-view-following-count');
@@ -5696,6 +5737,40 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
         if (statFlowEl) statFlowEl.textContent = `${formatNumber(targetFlowDays)} Ngày`;
         if (statDecksEl) statDecksEl.textContent = `${formatNumber(authorDecks.length)} bộ`;
         if (statWordsEl) statWordsEl.textContent = `${formatNumber(totalWords)} từ`;
+
+        const statLevelEl = document.getElementById('pub-view-stat-level');
+        if (statLevelEl) statLevelEl.textContent = `Cấp ${targetLevelInfo.level}`;
+        const statExpEl = document.getElementById('pub-view-stat-exp');
+        if (statExpEl) statExpEl.textContent = `${formatNumber(targetStudyExp)} EXP`;
+
+        // Update Public Level Card (in Stats tab)
+        const pubLevelTitleDisplay = document.getElementById('pub-view-level-title-display');
+        const pubLevelExpSubtext = document.getElementById('pub-view-level-exp-subtext');
+        const pubLevelPill = document.getElementById('pub-view-level-pill');
+        const pubLevelProgressBar = document.getElementById('pub-view-level-progress-bar');
+        const pubLevelProgressText = document.getElementById('pub-view-level-progress-text');
+        const pubLevelPercentText = document.getElementById('pub-view-level-percent-text');
+
+        if (pubLevelTitleDisplay) pubLevelTitleDisplay.textContent = `Cấp ${targetLevelInfo.level} • ${targetLevelInfo.title}`;
+        if (pubLevelExpSubtext) pubLevelExpSubtext.textContent = `Tổng kinh nghiệm: ${formatNumber(targetStudyExp)} EXP`;
+        if (pubLevelPill) {
+          if (targetLevelInfo.isMaxLevel) {
+            pubLevelPill.innerHTML = '👑 MAX 50';
+            pubLevelPill.style.background = 'linear-gradient(135deg, #a855f7, #ec4899)';
+          } else {
+            pubLevelPill.textContent = `Lv ${targetLevelInfo.level}`;
+            pubLevelPill.style.background = 'linear-gradient(135deg, #f59e0b, #d97706)';
+          }
+        }
+        if (pubLevelProgressBar) pubLevelProgressBar.style.width = `${targetLevelInfo.progressPercent}%`;
+        if (pubLevelProgressText) {
+          if (targetLevelInfo.isMaxLevel) {
+            pubLevelProgressText.textContent = `MAX LEVEL 50 • Đỉnh Cao Tri Thức`;
+          } else {
+            pubLevelProgressText.textContent = `${formatNumber(targetLevelInfo.currentLevelExp)} / ${formatNumber(targetLevelInfo.nextLevelExp)} EXP`;
+          }
+        }
+        if (pubLevelPercentText) pubLevelPercentText.textContent = `${targetLevelInfo.progressPercent}%`;
 
         const statDecksNumEl = document.getElementById('pub-view-stat-decks-num');
         if (statDecksNumEl) statDecksNumEl.textContent = formatNumber(authorDecks.length);
@@ -7145,6 +7220,13 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
     // AUTO-SEED OFFICIAL UPDATE POST, HOLIDAY/SALE EVENTS & GLOWING NOTIFICATIONS (v0.10.10-33 / Build 334)
     // =========================================================================
     const VOCAFLOW_OFFICIAL_RELEASES_REGISTRY = {
+      'v0.10.10-40': {
+        postId: 'official_update_v0_10_10_40',
+        releaseTime: '2026-09-20T01:30:00.000Z',
+        title: '📊 Chuẩn Hóa Biểu Đồ Hoạt Động 7 Ngày & Đồng Bộ Cấp Độ Hồ Sơ Toàn Diện (v0.10.10-40 Build 341)!',
+        summary: 'Sửa triệt để sai lệch dữ liệu biểu đồ Hoạt Động & Hiệu Suất 7 Ngày; đồng bộ 2 chiều Cấp độ & Điểm Rèn Luyện (Study EXP) trên Thẻ Cấp Độ Hồ Sơ Cá Nhân & Hồ Sơ Công Khai; sửa lỗi thông báo thăng cấp rỗng nội dung.',
+        content: `🎉 Chào mừng bạn đến với bản cập nhật VocaFlow v0.10.10-40 (Build 341)!\n\n✨ Những điểm mới nổi bật:\n📊 Chuẩn Hóa Biểu Đồ Hoạt Động & Hiệu Suất 7 Ngày: Tính toán chuẩn xác tổng Điểm Rèn Luyện (Study EXP) và VoCoin từ sổ cái tài chính và dữ liệu học tập hàng ngày theo giờ địa phương, đảm bảo các chỉ số tổng và tooltip luôn trùng khớp 100% giữa các lần mở modal.\n🎖️ Đồng Bộ Thẻ Cấp Độ Hồ Sơ Cá Nhân: Tự động cập nhật cấp độ và thanh tiến trình EXP ngay khi mở modal hồ sơ, đồng bộ đám mây 2 chiều (Cloud Push & Pull) bảo vệ tuyệt đối tiến trình rèn luyện trên mọi thiết bị.\n🌐 Hiển Thị Cấp Độ Trên Hồ Sơ Công Khai: Bổ sung huy hiệu Cấp độ (Level Badge), chip chỉ số Cấp & EXP cùng Thẻ Cấp Độ Tiến Trình trực quan trên trang cá nhân của bạn bè và tác giả.\n🔔 Sửa Lỗi Thông Báo Thăng Cấp: Khắc phục triệt để lỗi thông báo lên cấp bị rỗng nội dung, tích hợp giao diện thông báo vinh danh ngôi sao vàng rực rỡ và chuyển hướng tức thì tới trang hồ sơ khi nhấn vào.\n\nChúc bạn có những giờ phút rèn luyện hứng khởi và không ngừng nâng cao cấp độ cùng VocaFlow! 🚀📊🎖️`
+      },
       'v0.10.10-39': {
         postId: 'official_update_v0_10_10_39',
         releaseTime: '2026-09-20T00:30:00.000Z',
@@ -9273,6 +9355,7 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
 
     function openProfileModal(initialTab = 'decks', communityFilter = null) {
       updateAuthUI();
+      if (typeof updateLevelUI === 'function') updateLevelUI();
       if (typeof checkMasteryAchievements === 'function') checkMasteryAchievements();
       if (typeof renderProfilePinnedBadges === 'function') renderProfilePinnedBadges();
       if (typeof switchProfileTab === 'function') switchProfileTab(initialTab, communityFilter);
@@ -9366,6 +9449,12 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
       localStorage.removeItem('vocaflow_deleted_notifications');
       localStorage.removeItem('vocaflow_notifications_cleared_time');
       if (typeof updateNotificationsUI === 'function') updateNotificationsUI();
+
+      // Level & Prestige complete wipeout
+      localStorage.removeItem('vocaflow_user_study_exp');
+      localStorage.removeItem('vocaflow_user_last_claimed_level');
+      localStorage.removeItem('vocaflow_claimed_prestige_chests');
+      if (typeof updateLevelUI === 'function') updateLevelUI();
 
       // AI Mentor Chat & Quota complete wipeout
       aiChatHistory = [];
@@ -9698,6 +9787,10 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
         const avToSave = (typeof currentAv === 'string' && (currentAv.startsWith('data:image') || currentAv.startsWith('http'))) ? currentAv : '';
         const avTimeToSave = parseInt(localStorage.getItem('vocaflow_avatar_time') || Date.now().toString(), 10);
         const refToSave = localStorage.getItem('vocaflow_referred_by') || (currentUser && currentUser.referredBy) || '';
+        const currentStudyExp = (typeof getUserStudyExp === 'function') ? getUserStudyExp() : parseInt(localStorage.getItem('vocaflow_user_study_exp') || '0', 10);
+        const currentLvlInfo = (typeof calculateUserLevel === 'function') ? calculateUserLevel(currentStudyExp) : { level: 1 };
+        const currentLastClaimedLevel = parseInt(localStorage.getItem('vocaflow_user_last_claimed_level') || '1', 10);
+        const currentPrestigeChests = parseInt(localStorage.getItem('vocaflow_claimed_prestige_chests') || '0', 10);
 
         const payload = {
           profile: {
@@ -9713,6 +9806,10 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
             referredBy: refToSave,
             pinnedBadges: userPinnedBadges,
             achievementsCount: Object.values(userAchievements).filter(a => a && a.unlocked).length,
+            studyExp: currentStudyExp,
+            level: currentLvlInfo.level,
+            lastClaimedLevel: currentLastClaimedLevel,
+            claimedPrestigeChests: currentPrestigeChests,
             geminiApiKey: geminiApiKey || '',
             geminiApiKeys: getStoredApiKeys(),
             followerCount: Math.max(currentUser.followerCount || 0, Object.keys(myFollowersMap || {}).length),
@@ -9723,6 +9820,10 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
             lastActiveAt: Date.now(),
             lastSync: new Date().toISOString()
           },
+          studyExp: currentStudyExp,
+          level: currentLvlInfo.level,
+          lastClaimedLevel: currentLastClaimedLevel,
+          claimedPrestigeChests: currentPrestigeChests,
           following: myFollowingMap,
           ...(Object.keys(myFollowersMap || {}).length > 0 ? { followers: myFollowersMap } : {}),
           notifications: (() => {
@@ -9748,6 +9849,10 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
             points: getUserPoints(),
             hints: getUserHints(),
             skips: getUserSkips(),
+            studyExp: currentStudyExp,
+            level: currentLvlInfo.level,
+            lastClaimedLevel: currentLastClaimedLevel,
+            claimedPrestigeChests: currentPrestigeChests,
             flowFreezes: getUserFlowFreezes(),
             luckySpins: Math.max(0, parseInt(localStorage.getItem('vocaflow_lucky_spins_left') || '0', 10)),
             luckySpinsDate: localStorage.getItem('vocaflow_last_spin_date') || getTodayString(),
@@ -9981,7 +10086,31 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
         const lAd = parseInt(localStorage.getItem('vocaflow_last_ad_watch_time') || '0', 10);
         if (!isNaN(rAd) && rAd > lAd) localStorage.setItem('vocaflow_last_ad_watch_time', rAd.toString());
       }
+
+      if (ecoData.studyExp !== undefined) {
+        const remoteExp = parseInt(ecoData.studyExp, 10);
+        const localExp = (typeof getUserStudyExp === 'function') ? getUserStudyExp() : parseInt(localStorage.getItem('vocaflow_user_study_exp') || '0', 10);
+        if (!isNaN(remoteExp) && remoteExp > localExp) {
+          localStorage.setItem('vocaflow_user_study_exp', remoteExp.toString());
+        }
+      }
+      if (ecoData.lastClaimedLevel !== undefined) {
+        const remoteClaimedLvl = parseInt(ecoData.lastClaimedLevel, 10);
+        const localClaimedLvl = parseInt(localStorage.getItem('vocaflow_user_last_claimed_level') || '1', 10);
+        if (!isNaN(remoteClaimedLvl) && remoteClaimedLvl > localClaimedLvl) {
+          localStorage.setItem('vocaflow_user_last_claimed_level', remoteClaimedLvl.toString());
+        }
+      }
+      if (ecoData.claimedPrestigeChests !== undefined) {
+        const remotePrestige = parseInt(ecoData.claimedPrestigeChests, 10);
+        const localPrestige = parseInt(localStorage.getItem('vocaflow_claimed_prestige_chests') || '0', 10);
+        if (!isNaN(remotePrestige) && remotePrestige > localPrestige) {
+          localStorage.setItem('vocaflow_claimed_prestige_chests', remotePrestige.toString());
+        }
+      }
+
       updateEconomyUI();
+      if (typeof updateLevelUI === 'function') updateLevelUI();
       if (typeof updateLuckyWheelUI === 'function') updateLuckyWheelUI();
       if (typeof updateShopBonusesUI === 'function') updateShopBonusesUI();
       if (typeof updateAdButtonCooldownState === 'function') updateAdButtonCooldownState();
@@ -10507,6 +10636,24 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
       if (cloudData.economy && typeof cloudData.economy === 'object') {
         applyCloudEconomyPatch(cloudData.economy);
       }
+
+      // Level & Study EXP Top-Level/Profile Sync (v0.10.10-40)
+      const topStudyExp = parseInt((cloudData.profile && cloudData.profile.studyExp) || cloudData.studyExp || '0', 10);
+      const curStudyExp = (typeof getUserStudyExp === 'function') ? getUserStudyExp() : parseInt(localStorage.getItem('vocaflow_user_study_exp') || '0', 10);
+      if (!isNaN(topStudyExp) && topStudyExp > curStudyExp) {
+        localStorage.setItem('vocaflow_user_study_exp', topStudyExp.toString());
+      }
+      const topLastClaimed = parseInt((cloudData.profile && cloudData.profile.lastClaimedLevel) || cloudData.lastClaimedLevel || '0', 10);
+      const curLastClaimed = parseInt(localStorage.getItem('vocaflow_user_last_claimed_level') || '1', 10);
+      if (!isNaN(topLastClaimed) && topLastClaimed > curLastClaimed) {
+        localStorage.setItem('vocaflow_user_last_claimed_level', topLastClaimed.toString());
+      }
+      const topPrestige = parseInt((cloudData.profile && cloudData.profile.claimedPrestigeChests) || cloudData.claimedPrestigeChests || '0', 10);
+      const curPrestige = parseInt(localStorage.getItem('vocaflow_claimed_prestige_chests') || '0', 10);
+      if (!isNaN(topPrestige) && topPrestige > curPrestige) {
+        localStorage.setItem('vocaflow_claimed_prestige_chests', topPrestige.toString());
+      }
+      if (typeof updateLevelUI === 'function') updateLevelUI();
 
       if (cloudData.ledger && typeof cloudData.ledger === 'object') {
         const cloudEntries = Object.values(cloudData.ledger).filter(e => e && e.timestamp && e.amount !== 0 && e.type !== 'VIP_DAILY_SPIN');

@@ -1,5 +1,5 @@
 // =========================================================================
-// VOCAFLOW 06D-CLOZE-ENGINE.JS (v0.10.10-39 Build 340 - EXTENDED LEARNING MODE BETA)
+// VOCAFLOW 06D-CLOZE-ENGINE.JS (v0.10.10-40 Build 341 - EXTENDED LEARNING MODE BETA)
 // Contextual Reading & Cloze Test Passage Generator with Strict JSON Schema
 // =========================================================================
 

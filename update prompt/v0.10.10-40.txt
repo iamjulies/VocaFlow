@@ -1,2 +1,6 @@
-v0.10.10-40 (CẬP NHẬT KHUNG ẢNH ĐẠI DIỆN)
+v0.10.10-40
+- vấn đề 1: "C:\Users\DELL\Pictures\Screenshots\Ảnh chụp màn hình 2026-09-19 234819.png" "C:\Users\DELL\Pictures\Screenshots\Ảnh chụp màn hình 2026-09-19 234903.png" sao lại có sự sai khác này và sửa kiểu gì?
+- vấn đề 2: "C:\Users\DELL\Pictures\Screenshots\Ảnh chụp màn hình 2026-09-19 235002.png" "C:\Users\DELL\Pictures\Screenshots\Ảnh chụp màn hình 2026-09-19 235021.png" sao lại có sự sai khác này và sửa kiểu gì?
+-vấn đề 3: chưa hiện level lên public profile
+- vấn đề 4: "C:\Users\DELL\Pictures\Screenshots\Ảnh chụp màn hình 2026-09-19 235746.png" thông báo lên cấp bị đui
 đọc và thực hiện các file markdown có trong "C:\Users\DELL\Documents\Modding\browser" (nếu quên)

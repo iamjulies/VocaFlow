@@ -1,12 +1,45 @@
 # CURRENT TASK & TRẠNG THÁI CÔNG VIỆC HIỆN TẠI (VOCAFLOW)
 
-> **Phiên bản mục tiêu:** `v0.10.10-39 (Build 340)`  
-> **Cập nhật lần cuối:** 2026-09-19  
+> **Phiên bản mục tiêu:** `v0.10.10-40 (Build 341)`  
+> **Cập nhật lần cuối:** 2026-09-20  
 > **Trạng thái:** 🚀 **ĐANG TIẾN HÀNH BUILD, KIỂM THỬ CDP & MULTI-DEPLOY GITHUB**
 
 ---
 
-## 🎯 1. DANH SÁCH NHIỆM VỤ ĐÃ GIẢI QUYẾT (v0.10.10-39 Build 340)
+## 🎯 1. DANH SÁCH NHIỆM VỤ ĐÃ GIẢI QUYẾT (v0.10.10-40 Build 341)
+
+- [x] **Vấn đề 1: Sửa Sai Lệch Dữ Liệu Biểu Đồ 7 Ngày (`src/scripts/modules/02-state-core.js`)**:
+  - Chuẩn hóa tính toán ngày địa phương và trích xuất `ledgerStudyExp` chuẩn xác mà không bị thoát sớm.
+  - Áp dụng `Math.max(storedDailyExp, ledgerStudyExp)` cho current user và `Math.max(authorDailyExp, targetLedgerExp)` cho target author.
+- [x] **Vấn đề 2: Sửa Lỗi Không Đồng Bộ Cấp Độ & EXP Trên Thẻ Cấp Độ Hồ Sơ (`03-auth.js`)**:
+  - Gọi `updateLevelUI()` khi mở modal hồ sơ (`openProfileModal`).
+  - Đồng bộ 2 chiều `studyExp`, `level`, `lastClaimedLevel`, `claimedPrestigeChests` lên Cloud payload và khi pull/merge realtime.
+  - Xóa sạch dữ liệu cấp độ khi đăng xuất (`doLogout`).
+- [x] **Vấn đề 3: Hiển Thị Cấp Độ Trên Hồ Sơ Công Khai (`modal-public-profile.html`, `03-auth.js`)**:
+  - Thêm `#pub-view-level-badge` trên thanh tiêu đề hồ sơ công khai.
+  - Thêm chip thống kê Cấp Độ `#pub-view-stat-level` và Điểm Rèn Luyện `#pub-view-stat-exp`.
+  - Thêm Thẻ Cấp Độ Tiến Trình `#pub-view-level-card` trong tab Chỉ số & Rèn luyện.
+- [x] **Vấn đề 4: Sửa Lỗi Thông Báo Lên Cấp Bị "Đui" (`12-achievements.js`, `02-state-core.js`)**:
+  - Hỗ trợ chữ ký đa hình trong `addNotification` (Object `{ type, title, message, ... }` hoặc Positional args).
+  - Render chuyên biệt `LEVEL_UP` và `PRESTIGE_CHEST` với màu vàng kim, icon ngôi sao/vương miện và badge phần thưởng.
+  - Xử lý click mở ngay tab Chỉ số của modal Hồ sơ.
+- [x] **Đồng Bộ Toàn Diện 7-Point Version Consistency & Multi-Deploy (`v0.10.10-40 Build 341`)**:
+  - `src/components/modals/modal-settings.html` (`VocaFlow v0.10.10-40 (Build 341)`)
+  - `src/components/screens/screen-decks.html` (`v0.10.10-40 (Build 341)`)
+  - `src/components/screens/screen-deck-detail.html` (`v0.10.10-40 (Build 341)`)
+  - `src/scripts/modules/01-router.js` (`v0.10.10-40 Build 341`)
+  - `src/scripts/modules/02-state-core.js` (`const VOCAFLOW_APP_VERSION = 'v0.10.10-40'`, `const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.10-40 (Build 341)'`, `VOCAFLOW_APP_BUILD = 341`)
+  - `src/scripts/modules/03-auth.js` (`v0.10.10-40 Build 341` & What's new registry)
+  - `src/scripts/modules/04-decks-manager.js` - `12-achievements.js` (`v0.10.10-40 Build 341`)
+  - `sw.js` & `Release_App/sw.js` (`vocaflow-pwa-v0.10.10-40`)
+  - `pubspec.yaml` (`version: 0.10.10+341`)
+  - `VocaFlow_Desktop/Program.cs` (`VocaFlow v0.10.10-40`)
+  - `GITHUB_RELEASE/push_github.ps1` (`v0.10.10-40 (Build 341)`)
+  - `VOCAFLOW_OVERVIEW.txt`
+
+---
+
+## 🎯 2. DANH SÁCH NHIỆM VỤ CÁC PHIÊN BẢN TRƯỚC (v0.10.10-39 Build 340)
 
 - [x] **Hệ Thống Lên Cấp 100% Bằng Điểm Rèn Luyện (Study EXP) (`src/scripts/modules/02-state-core.js`)**:
   - Tự động lên cấp dựa trên tổng Điểm Rèn Luyện (Study EXP) tích lũy vĩnh viễn (`getUserStudyExp()`), không bao giờ trừ VoCoin.

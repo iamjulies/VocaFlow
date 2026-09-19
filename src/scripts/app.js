@@ -1,6 +1,6 @@
 // =========================================================================
 
-// VOCAFLOW APP.JS - CORE LIFECYCLE & GLOBAL BRIDGE ENTRY POINT (v0.10.10-39 Build 340)
+// VOCAFLOW APP.JS - CORE LIFECYCLE & GLOBAL BRIDGE ENTRY POINT (v0.10.10-40 Build 341)
 
 // Screen Switcher, Universal Modal Manager, Keyboard Shortcuts & Bootstrap
 

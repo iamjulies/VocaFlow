@@ -5,6 +5,7 @@
         <div class="ig-profile-handle-title">
           <span style="font-size: 18px;">👤</span>
           <span id="pub-view-handle" style="font-family: monospace; font-size: 15.5px; font-weight: 800; color: var(--text);">@member</span>
+          <span id="pub-view-level-badge" class="badge" style="font-size: 10px; padding: 2px 7px; border-radius: 6px; background: linear-gradient(135deg, rgba(245,158,11,0.2), rgba(234,179,8,0.3)); color: #fbbf24; border: 1px solid rgba(245,158,11,0.5); font-weight: 800;">🎖️ Cấp 1</span>
           <span id="pub-view-badge" class="badge" style="font-size: 10px; padding: 1px 6px; background: rgba(99, 102, 241, 0.2); color: #a5b4fc; border: 1px solid rgba(99, 102, 241, 0.3);">🌟 Tác Giả Đóng Góp</span>
         </div>
         <div style="display: flex; align-items: center; gap: 8px;">
@@ -56,6 +57,8 @@
 
           <!-- INFO CHIPS ROW -->
           <div class="ig-chips-row">
+            <span class="ig-chip chip-level" style="background: rgba(245,158,11,0.15); border-color: rgba(245,158,11,0.35); color: #fbbf24;" title="Cấp độ rèn luyện">🎖️ <span id="pub-view-stat-level">Cấp 1</span></span>
+            <span class="ig-chip chip-exp" style="background: rgba(129,140,248,0.15); border-color: rgba(129,140,248,0.35); color: #818cf8;" title="Điểm kinh nghiệm rèn luyện (Study EXP)">⭐ <span id="pub-view-stat-exp">0 EXP</span></span>
             <span class="ig-chip chip-coin" title="Số dư VoCoin">💰 <span id="pub-view-stat-points">0 VoCoin</span></span>
             <span class="ig-chip chip-flow" title="Chuỗi ngày học liên tục">🌊 <span id="pub-view-stat-flow">0 Ngày</span></span>
             <span class="ig-chip" title="Tổng số từ vựng chia sẻ">📝 <span id="pub-view-stat-words">0 từ</span></span>
@@ -108,6 +111,27 @@
 
         <!-- TAB PANEL 2: STATS -->
         <div id="pub-tab-panel-stats" style="display: none;">
+          <!-- PUBLIC PROFILE LEVEL CARD -->
+          <div id="pub-view-level-card" style="margin-bottom: 14px; background: linear-gradient(135deg, rgba(99,102,241,0.12), rgba(168,85,247,0.1)); border: 1.5px solid rgba(99,102,241,0.35); border-radius: 12px; padding: 12px 14px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <span style="font-size: 20px;">🎖️</span>
+                <div>
+                  <div style="font-weight: 800; font-size: 13.5px; color: var(--text);" id="pub-view-level-title-display">Cấp 1 • Người Khai Sáng</div>
+                  <div style="font-size: 11px; color: var(--text-muted);" id="pub-view-level-exp-subtext">Tổng kinh nghiệm: 0 EXP</div>
+                </div>
+              </div>
+              <span id="pub-view-level-pill" class="badge" style="background: linear-gradient(135deg, #f59e0b, #d97706); color: #fff; font-weight: 800; font-size: 11px; padding: 2px 8px; border-radius: 8px;">Lv 1</span>
+            </div>
+            <div style="width: 100%; height: 8px; background: rgba(0,0,0,0.25); border-radius: 10px; overflow: hidden; margin-bottom: 4px;">
+              <div id="pub-view-level-progress-bar" style="height: 100%; width: 0%; background: linear-gradient(90deg, #6366f1, #a855f7, #ec4899); border-radius: 10px; transition: width 0.3s;"></div>
+            </div>
+            <div style="display: flex; justify-content: space-between; font-size: 10px; color: var(--text-muted);">
+              <span id="pub-view-level-progress-text">0 / 2,000 EXP</span>
+              <span id="pub-view-level-percent-text">0%</span>
+            </div>
+          </div>
+
           <div id="pub-profile-7day-chart-container" style="margin-bottom: 14px;">
             <!-- Rendered dynamically via render7DayPerformanceChart('pub-profile-7day-chart-container') -->
           </div>

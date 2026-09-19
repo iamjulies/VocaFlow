@@ -1,4 +1,26 @@
 ================================================================================
+Phiên bản: v0.10.10-40 (Build 341) - Sửa Lệch Biểu Đồ 7 Ngày, Đồng Bộ Cấp Độ & EXP Hồ Sơ, Cấp Độ Hồ Sơ Công Khai & Nâng Cấp Thông Báo Lên Cấp (7-Day Performance Real Data, Profile Level Monotonic Cloud Sync, Public Profile Level Card & Badges, Polymorphic Level Up Notifications)
+================================================================================
+1. [Sửa Sai Lệch Dữ Liệu Biểu Đồ 7 Ngày (Vấn đề 1)]:
+   - Chuẩn hóa tính toán ngày địa phương (formatLocalDateString) và tính toán chính xác tổng Điểm Rèn Luyện (Study EXP) và VoCoin kiếm được từ nhật ký `userLedger`.
+   - Lấy `Math.max(storedDailyExp, ledgerStudyExp)` cho current user và `Math.max(authorDailyExp, targetLedgerExp)` cho target author, loại bỏ điều kiện thoát sớm gây thiếu dữ liệu các ngày trước.
+2. [Sửa Lỗi Không Đồng Bộ Cấp Độ & EXP Trên Thẻ Cấp Độ Hồ Sơ (Vấn đề 2)]:
+   - Kích hoạt `updateLevelUI()` ngay khi mở modal hồ sơ (`openProfileModal`), đảm bảo hiển thị đúng Cấp độ và EXP ngay từ lần đầu mở modal.
+   - Đồng bộ 2 chiều `studyExp`, `level`, `lastClaimedLevel`, `claimedPrestigeChests` lên Cloud payload (`profile`, `economy`, top-level) và hợp nhất đơn điệu tăng dần khi pull/patch dữ liệu.
+   - Xóa sạch dữ liệu cấp độ khi đăng xuất (`doLogout`).
+3. [Bổ Sung Hiển Thị Cấp Độ Trên Hồ Sơ Công Khai (Vấn đề 3)]:
+   - Thêm Huy hiệu Cấp độ `#pub-view-level-badge` trên thanh tiêu đề hồ sơ công khai.
+   - Thêm 2 chip thống kê Cấp Độ `#pub-view-stat-level` và Điểm Rèn Luyện `#pub-view-stat-exp` trên hàng thông số cá nhân.
+   - Thêm Thẻ Cấp Độ Tiến Trình `#pub-view-level-card` trong tab Chỉ số & Rèn luyện với thanh phần trăm EXP trực quan.
+4. [Nâng Cấp Thông Báo Lên Cấp Đa Hình & Tương Tác Trực Tiếp (Vấn đề 4)]:
+   - Nâng cấp hàm `addNotification` hỗ trợ chữ ký đa hình (Object `{ type, title, message, actionType, ... }` hoặc Positional args).
+   - Render chuyên biệt thông báo `LEVEL_UP` và `PRESTIGE_CHEST` với sắc vàng kim rực rỡ, icon ngôi sao/vương miện và badge phần thưởng nổi bật.
+   - Bấm vào thông báo lên cấp tự động điều hướng mở ngay tab Chỉ số của modal Hồ sơ cá nhân.
+5. [Đồng Bộ Toàn Diện 7-Point Version Consistency & Multi-Deploy (v0.10.10-40 Build 341)]:
+   - Cập nhật phiên bản nhất quán trên toàn bộ 7 điểm hệ thống: `modal-settings.html`, `screen-decks.html`, `screen-deck-detail.html`, `sw.js` & `Release_App/sw.js`, `pubspec.yaml`, `Program.cs`, `push_github.ps1`.
+   - Biên dịch `VocaFlow.exe`, đóng gói `VocaFlow_v0.10.10-40_Windows_Portable.zip` và sẵn sàng multi-deploy lên 3 kho GitHub.
+
+================================================================================
 Phiên bản: v0.10.10-39 (Build 340) - Nâng Cấp Hệ Thống Cấp Độ Học Tập (Study EXP Leveling, Non-Linear Quadratic Formula, Milestone Drops & VocaVIP Rewards, Prestige Honor Chests)
 ================================================================================
 1. [Hệ Thống Lên Cấp 100% Bằng Điểm Rèn Luyện (Study EXP)]:

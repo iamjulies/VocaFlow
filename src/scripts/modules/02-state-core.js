@@ -1,13 +1,13 @@
-// VOCAFLOW 02-STATE-CORE.JS (v0.10.10-39 Build 340)
+// VOCAFLOW 02-STATE-CORE.JS (v0.10.10-40 Build 341)
 // Global constants, core database state, storage keys, recovery & audio engine
 // =========================================================================
 
     // =========================================================================
-    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.10-39 Build 340)
+    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.10-40 Build 341)
     // =========================================================================
-    const VOCAFLOW_APP_VERSION = 'v0.10.10-39';
-    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.10-39 (Build 340)';
-    const VOCAFLOW_APP_BUILD = 340;
+    const VOCAFLOW_APP_VERSION = 'v0.10.10-40';
+    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.10-40 (Build 341)';
+    const VOCAFLOW_APP_BUILD = 341;
     window.VOCAFLOW_APP_VERSION = VOCAFLOW_APP_VERSION;
     window.VOCAFLOW_APP_FULL_TITLE = VOCAFLOW_APP_FULL_TITLE;
     window.VOCAFLOW_APP_BUILD = VOCAFLOW_APP_BUILD;
@@ -845,7 +845,7 @@
     window.calculateSessionFinalPointsV3 = calculateSessionFinalPointsV3;
 
     // =========================================================================
-    // VOCAFLOW UNIFIED LEVEL UP & STUDY EXP ENGINE (v0.10.10-39 Build 340)
+    // VOCAFLOW UNIFIED LEVEL UP & STUDY EXP ENGINE (v0.10.10-40 Build 341)
     // Level EXP Curve: EXP_req(L) = 150 * L + 25 * L^2
     // Closed Form: TotalEXP(N) = 75 * (N - 1) * N + 25 * (N - 1) * N * (2N - 1) / 6
     // Max Level: 50 (Prestige Chests: +400 VoCoin, +2 VocaSpin every +50,000 EXP after Lv 50)
@@ -1144,14 +1144,16 @@
           addNotification({
             type: 'LEVEL_UP',
             title: `🎉 Chúc mừng bạn đã thăng cấp Cấp ${newInfo.level}!`,
-            body: `Bạn đã đạt ${getLevelTitle(newInfo.level)}! Phần thưởng nhận được: +${totalPts} VoCoin` +
-                  (totalVipDays > 0 ? `, +${totalVipDays} ngày VocaVIP` : '') +
-                  (totalSpins > 0 ? `, +${totalSpins} VocaSpin` : '') +
-                  (totalFreezes > 0 ? `, +${totalFreezes} FlowFreeze` : '') +
-                  (totalHints > 0 ? `, +${totalHints} VocaHint` : '') +
-                  (totalSkips > 0 ? `, +${totalSkips} VocaSkip` : '') + `. Tiếp tục phát huy nhé! 🚀`,
-            date: new Date().toISOString(),
-            read: false
+            message: `Bạn đã đạt ${getLevelTitle(newInfo.level)}! Phần thưởng nhận được: +${totalPts} VoCoin` +
+                     (totalVipDays > 0 ? `, +${totalVipDays} ngày VocaVIP` : '') +
+                     (totalSpins > 0 ? `, +${totalSpins} VocaSpin` : '') +
+                     (totalFreezes > 0 ? `, +${totalFreezes} FlowFreeze` : '') +
+                     (totalHints > 0 ? `, +${totalHints} VocaHint` : '') +
+                     (totalSkips > 0 ? `, +${totalSkips} VocaSkip` : '') + `. Tiếp tục phát huy nhé! 🚀`,
+            actionType: 'OPEN_LEVEL',
+            actionData: { level: newInfo.level },
+            timestamp: new Date().toISOString(),
+            isRead: false
           });
         }
 
@@ -1196,9 +1198,11 @@
             addNotification({
               type: 'PRESTIGE_CHEST',
               title: `👑 Nhận Rương Danh Dự Cấp 50 (+${newChests} Rương)!`,
-              body: `Bạn đã tích lũy thêm ${newChests * 50000} EXP rèn luyện tại Cấp 50 MAX! Thưởng: +${chestPts} VoCoin, +${chestSpins} VocaSpin.`,
-              date: new Date().toISOString(),
-              read: false
+              message: `Bạn đã tích lũy thêm ${newChests * 50000} EXP rèn luyện tại Cấp 50 MAX! Thưởng: +${chestPts} VoCoin, +${chestSpins} VocaSpin.`,
+              actionType: 'OPEN_LEVEL',
+              actionData: { level: 50, prestigeChests: newInfo.prestigeChestsTotal },
+              timestamp: new Date().toISOString(),
+              isRead: false
             });
           }
 
@@ -4470,14 +4474,12 @@
         let studyPoints = 0;
 
         if (isCurrent) {
-          // Current user: check daily study exp tracker or aggregate from userLedger
+          // Current user: check daily study exp tracker and aggregate from userLedger
           const uid = (currentUser && (currentUser.id || currentUser.uid || currentUser.email)) ? (currentUser.id || currentUser.uid || currentUser.email) : 'guest';
           const dailyKey = `vocaflow_daily_study_exp_${dateStr}_${uid}`;
           const storedDailyExp = parseInt(localStorage.getItem(dailyKey) || '0', 10);
-          if (storedDailyExp > 0) {
-            studyPoints = storedDailyExp;
-          }
 
+          let ledgerStudyExp = 0;
           if (Array.isArray(userLedger)) {
             userLedger.forEach(entry => {
               if (!entry || !entry.timestamp) return;
@@ -4490,16 +4492,15 @@
                 if (entry.amount && entry.amount > 0) {
                   vocoinsEarned += entry.amount;
                 }
-                if (studyPoints === 0) {
-                  if (typeof entry.studyExp === 'number' && entry.studyExp > 0) {
-                    studyPoints += entry.studyExp;
-                  } else if (entry.type && String(entry.type).startsWith('STUDY')) {
-                    studyPoints += Math.max(0, entry.amount || 0);
-                  }
+                if (typeof entry.studyExp === 'number' && entry.studyExp > 0) {
+                  ledgerStudyExp += entry.studyExp;
+                } else if (entry.type && String(entry.type).startsWith('STUDY')) {
+                  ledgerStudyExp += Math.max(0, entry.amount || 0);
                 }
               }
             });
           }
+          studyPoints = Math.max(storedDailyExp, ledgerStudyExp);
         } else {
           // Public profile author: aggregate from targetAuthor.ledger or targetAuthor.dailyStats
           let targetEntries = [];
@@ -4513,6 +4514,18 @@
             targetEntries = Object.values(targetAuthor.stats.ledger);
           }
 
+          let authorDailyExp = 0;
+          let authorDailyCoins = 0;
+          if (targetAuthor?.dailyStats && typeof targetAuthor.dailyStats === 'object') {
+            const ds = targetAuthor.dailyStats[dateStr];
+            if (ds) {
+              authorDailyCoins = ds.vocoinsEarned || ds.coins || 0;
+              authorDailyExp = ds.studyExp || ds.studyPoints || ds.points || 0;
+            }
+          }
+
+          let targetLedgerExp = 0;
+          let targetLedgerCoins = 0;
           if (targetEntries.length > 0) {
             targetEntries.forEach(entry => {
               if (!entry || !entry.timestamp) return;
@@ -4522,21 +4535,17 @@
               const eD = String(entryDate.getDate()).padStart(2, '0');
               const eDateStr = `${eY}-${eM}-${eD}`;
               if (eDateStr === dateStr) {
-                if (entry.amount && entry.amount > 0) vocoinsEarned += entry.amount;
+                if (entry.amount && entry.amount > 0) targetLedgerCoins += entry.amount;
                 if (typeof entry.studyExp === 'number' && entry.studyExp > 0) {
-                  studyPoints += entry.studyExp;
+                  targetLedgerExp += entry.studyExp;
                 } else if (entry.type && String(entry.type).startsWith('STUDY')) {
-                  studyPoints += Math.max(0, entry.amount || 0);
+                  targetLedgerExp += Math.max(0, entry.amount || 0);
                 }
               }
             });
-          } else if (targetAuthor?.dailyStats && typeof targetAuthor.dailyStats === 'object') {
-            const ds = targetAuthor.dailyStats[dateStr];
-            if (ds) {
-              vocoinsEarned = ds.vocoinsEarned || ds.coins || 0;
-              studyPoints = ds.studyExp || ds.studyPoints || ds.points || 0;
-            }
           }
+          vocoinsEarned = Math.max(authorDailyCoins, targetLedgerCoins);
+          studyPoints = Math.max(authorDailyExp, targetLedgerExp);
         }
 
         days.push({

@@ -1,6 +1,6 @@
 // =========================================================================
 
-// VOCAFLOW 12-ACHIEVEMENTS.JS (v0.10.10-39 Build 340)
+// VOCAFLOW 12-ACHIEVEMENTS.JS (v0.10.10-40 Build 341)
 
 // Badges, daily tasks, highlights showcase, notifications, VocaMail, User Guide
 
@@ -211,8 +211,32 @@
       return result;
     }
 
-    function addNotification(type, title, message, actionType = null, actionData = null, customId = null, customTimestamp = null) {
-      const notifId = customId || ('notif_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5));
+    function addNotification(typeOrObj, title, message, actionType = null, actionData = null, customId = null, customTimestamp = null) {
+      let type, notifTitle, notifMessage, notifActionType, notifActionData, notifCustomId, notifCustomTimestamp, notifRewardType, notifRewardAmount;
+
+      if (typeOrObj && typeof typeOrObj === 'object') {
+        type = typeOrObj.type || 'SYSTEM';
+        notifTitle = typeOrObj.title || '';
+        notifMessage = typeOrObj.message || typeOrObj.body || typeOrObj.content || '';
+        notifActionType = typeOrObj.actionType || (type === 'LEVEL_UP' || type === 'PRESTIGE_CHEST' ? 'OPEN_LEVEL' : null);
+        notifActionData = typeOrObj.actionData || null;
+        notifCustomId = typeOrObj.id || typeOrObj.customId || null;
+        notifCustomTimestamp = typeOrObj.timestamp || typeOrObj.date || typeOrObj.customTimestamp || null;
+        notifRewardType = typeOrObj.rewardType || null;
+        notifRewardAmount = typeOrObj.rewardAmount || null;
+      } else {
+        type = typeOrObj || 'SYSTEM';
+        notifTitle = title || '';
+        notifMessage = message || '';
+        notifActionType = actionType || (type === 'LEVEL_UP' || type === 'PRESTIGE_CHEST' ? 'OPEN_LEVEL' : null);
+        notifActionData = actionData;
+        notifCustomId = customId;
+        notifCustomTimestamp = customTimestamp;
+        notifRewardType = null;
+        notifRewardAmount = null;
+      }
+
+      const notifId = notifCustomId || ('notif_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5));
       
       // 1. Never add if deleted by user
       if (deletedNotificationIds.has(notifId)) return null;
@@ -221,8 +245,8 @@
       const todayDayStr = (typeof formatLocalDateString === 'function') ? formatLocalDateString(new Date()) : new Date().toISOString().slice(0, 10);
       const existing = userNotifications.find(n => {
         if (n.id === notifId) return true;
-        if (actionType === 'PREVIEW_DECK' && actionData && actionData.deckId && n.actionType === 'PREVIEW_DECK' && n.actionData && n.actionData.deckId === actionData.deckId) return true;
-        if (type === 'VIP_BONUS' && (title === n.title || (title && title.includes('Quà Tặng VIP Hằng Ngày') && n.title && n.title.includes('Quà Tặng VIP Hằng Ngày')))) {
+        if (notifActionType === 'PREVIEW_DECK' && notifActionData && notifActionData.deckId && n.actionType === 'PREVIEW_DECK' && n.actionData && n.actionData.deckId === notifActionData.deckId) return true;
+        if (type === 'VIP_BONUS' && (notifTitle === n.title || (notifTitle && notifTitle.includes('Quà Tặng VIP Hằng Ngày') && n.title && n.title.includes('Quà Tặng VIP Hằng Ngày')))) {
           const nDay = (n.timestamp && typeof n.timestamp === 'string') ? n.timestamp.slice(0, 10) : '';
           if (nDay === todayDayStr) return true;
         }
@@ -232,13 +256,14 @@
 
       const notif = {
         id: notifId,
-        type: type, // 'NEW_DECK' | 'NEW_FOLLOWER' | 'FINANCIAL' | 'SYSTEM'
-        title: title,
-        message: message,
-        timestamp: customTimestamp || new Date().toISOString(),
+        type: type, // 'NEW_DECK' | 'NEW_FOLLOWER' | 'FINANCIAL' | 'SYSTEM' | 'LEVEL_UP' | 'PRESTIGE_CHEST'
+        title: notifTitle,
+        message: notifMessage,
+        timestamp: notifCustomTimestamp || new Date().toISOString(),
         isRead: false,
-        actionType: actionType,
-        actionData: actionData
+        actionType: notifActionType,
+        actionData: notifActionData,
+        ...(notifRewardType ? { rewardType: notifRewardType, rewardAmount: notifRewardAmount } : {})
       };
 
       userNotifications.unshift(notif);
@@ -496,9 +521,10 @@
           const title = (n.title || '').toLowerCase();
           const actionType = n.actionType || '';
           if (currentNotificationFilter === 'REWARD') {
-            return type === 'REWARD' || type === 'VIP_BONUS' || type === 'STUDY' || n.rewardType ||
+            return type === 'REWARD' || type === 'VIP_BONUS' || type === 'STUDY' || type === 'LEVEL_UP' || type === 'PRESTIGE_CHEST' || n.rewardType ||
                    title.includes('thưởng') || title.includes('quà') || title.includes('trúng') ||
-                   title.includes('spin') || title.includes('quảng cáo') || title.includes('vòng quay');
+                   title.includes('spin') || title.includes('quảng cáo') || title.includes('vòng quay') ||
+                   title.includes('thăng cấp') || title.includes('lên cấp') || title.includes('rương danh dự');
           }
           if (currentNotificationFilter === 'FINANCIAL') {
             return type === 'FINANCIAL' || title.includes('vocoin') || title.includes('ví') ||
@@ -550,6 +576,11 @@
           typeColor = '#c084fc';
           typeBg = 'rgba(168,85,247,0.22)';
           typeBorder = 'rgba(168,85,247,0.5)';
+        } else if (n.type === 'LEVEL_UP' || n.type === 'PRESTIGE_CHEST' || tLower.includes('thăng cấp') || tLower.includes('lên cấp') || tLower.includes('level up') || tLower.includes('rương danh dự')) {
+          typeIcon = (n.type === 'PRESTIGE_CHEST' || tLower.includes('rương')) ? '👑' : '⭐';
+          typeColor = '#fbbf24';
+          typeBg = 'rgba(245,158,11,0.2)';
+          typeBorder = 'rgba(245,158,11,0.55)';
         } else if (n.type === 'mention' || tLower.includes('nhắc đến') || tLower.includes('tag') || tLower.includes('followers')) {
           typeIcon = '🏷️';
           typeColor = '#ec4899';
@@ -797,6 +828,14 @@
       if (aType === 'OPEN_ACHIEVEMENTS' || title.includes('danh hiệu') || title.includes('thành tựu') || title.includes('huy hiệu')) {
         openAchievementsModal();
         return;
+      }
+
+      // 8.5. Level Up & Prestige Chests (v0.10.10-40)
+      if (aType === 'OPEN_LEVEL' || aType === 'OPEN_PROFILE' || nType === 'LEVEL_UP' || nType === 'PRESTIGE_CHEST' || title.includes('thăng cấp') || title.includes('lên cấp') || title.includes('rương danh dự')) {
+        if (typeof openProfileModal === 'function') {
+          openProfileModal('stats');
+          return;
+        }
       }
 
       // 9. Flow / Streak
