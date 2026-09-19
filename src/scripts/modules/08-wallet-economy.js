@@ -843,6 +843,19 @@
           checkAndUnlockAchievement(t.id);
         }
       });
+
+      // Clean Slate (Xóa Sổ Ký Ức) - v0.10.10-36
+      const currentMistakes = (typeof getMistakeWordsList === 'function') ? getMistakeWordsList() : [];
+      const peakMistakes = parseInt(localStorage.getItem('vocaflow_peak_mistake_count') || '0', 10);
+      if (currentMistakes.length === 0 && peakMistakes >= 15) {
+        checkAndUnlockAchievement('discipline_clean_slate');
+      }
+
+      // Unstoppable Flow (Dòng Chảy Thép) - v0.10.10-36
+      const flowData = (typeof calculateCurrentFlow === 'function') ? calculateCurrentFlow() : { pureFlow: 0 };
+      const pureDays = flowData.pureFlow || parseInt(localStorage.getItem('vocaflow_pure_streak_days') || '0', 10);
+      updateAchievementProgress('discipline_unstoppable_flow', pureDays);
+
       saveAchievementsState();
     }
 
@@ -908,6 +921,20 @@
         localStorage.setItem('vocaflow_vip_jackpot_streak', '0');
       }
 
+      let spinHistory = [];
+      try {
+        spinHistory = JSON.parse(localStorage.getItem('vocaflow_spin_history') || '[]');
+      } catch (e) { spinHistory = []; }
+
+      const isConsecutiveThreePrizes = (spinHistory.length >= 2 && spinHistory[0] === prize.label && spinHistory[1] === prize.label);
+      if (isConsecutiveThreePrizes) {
+        checkAndUnlockAchievement('luck_same_prize_3');
+      }
+
+      spinHistory.unshift(prize.label);
+      if (spinHistory.length > 10) spinHistory = spinHistory.slice(0, 10);
+      localStorage.setItem('vocaflow_spin_history', JSON.stringify(spinHistory));
+
       const isLowest = prize && ((prize.type === 'POINTS' && prize.val <= 50) || (prize.type === 'SKIPS' && prize.val <= 1));
       if (isLowest) {
         let unluckyStreak = parseInt(localStorage.getItem('vocaflow_lowest_prize_streak') || '0', 10) + 1;
@@ -956,6 +983,31 @@
       }
       updateAchievementProgress('community_followers_20', followerCount);
       updateAchievementProgress('community_followers_50', followerCount);
+
+      // Community CEO's Buddy (@iamjulies / UID: MjfiTs6bthWAjB6Me200uHKlGFc2) - v0.10.10-36
+      if (typeof myFollowersMap !== 'undefined' && myFollowersMap && typeof myFollowersMap === 'object') {
+        const isFollowedByCeo = !!myFollowersMap['MjfiTs6bthWAjB6Me200uHKlGFc2'] ||
+          Object.values(myFollowersMap).some(f => f && (f.uid === 'MjfiTs6bthWAjB6Me200uHKlGFc2' || f.handle === 'iamjulies' || f.username === 'iamjulies'));
+        if (isFollowedByCeo) {
+          checkAndUnlockAchievement('community_ceos_buddy');
+        }
+      }
+
+      // Inspiring Voice (Đăng bài VocaCommunity) - v0.10.10-36
+      let postCount = parseInt(localStorage.getItem('vocaflow_community_posts_count') || '0', 10);
+      updateAchievementProgress('community_inspiring_voice', postCount);
+
+      // Atomic Focus (Hiệu suất não bộ η ≤ 10%) - v0.10.10-36
+      const earnedToday = (typeof getTodayEarnedCoins === 'function') ? getTodayEarnedCoins() : 0;
+      const isVip = (typeof isUserVip === 'function') ? isUserVip() : false;
+      const etaToday = (typeof getDailyFatigueEfficiency === 'function') ? getDailyFatigueEfficiency(earnedToday, isVip) : 1.0;
+      if (etaToday <= 0.10 || (isVip && earnedToday >= 1200) || (!isVip && earnedToday >= 600)) {
+        checkAndUnlockAchievement('discipline_atomic_focus');
+      }
+
+      // Meme Connoisseur (VIP Cat Meme Reaction 50 times) - v0.10.10-36
+      let memeCount = parseInt(localStorage.getItem('vocaflow_vip_cat_memes_count') || '0', 10);
+      updateAchievementProgress('easter_meme_connoisseur', memeCount);
 
       let refCount = 0;
       try {
@@ -1038,6 +1090,7 @@
       filterAchievementsTab(currentAchievementsTab || 'all');
       filterAchievementsTier(currentAchievementsTier || 'all');
       renderAchievementsList();
+      if (typeof updateAchievementsBadgeUI === 'function') updateAchievementsBadgeUI();
       openModal('modal-achievements');
     }
 
@@ -1384,6 +1437,13 @@
       }
 
       vipMemeTriggerTimestamp = Date.now();
+
+      // Track VIP Cat Meme Reaction for Easter Egg achievement (v0.10.10-36)
+      let memeCount = parseInt(localStorage.getItem('vocaflow_vip_cat_memes_count') || '0', 10) + 1;
+      localStorage.setItem('vocaflow_vip_cat_memes_count', memeCount.toString());
+      if (typeof updateAchievementProgress === 'function') {
+        updateAchievementProgress('easter_meme_connoisseur', memeCount);
+      }
 
       // Pure vanilla GIF centered on screen (no frames/boxes)
       overlay.innerHTML = `

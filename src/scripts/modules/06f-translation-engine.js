@@ -1,5 +1,5 @@
 // =========================================================================
-// VOCAFLOW 06F-TRANSLATION-ENGINE.JS (v0.10.10-35 Build 336 - TRANSLATION LAB VIP β)
+// VOCAFLOW 06F-TRANSLATION-ENGINE.JS (v0.10.10-36 Build 337 - TRANSLATION LAB VIP β)
 // Bidirectional Translation Engine (EN ↔ VI) with Direct Gemini AI Generation, Multi-Tier VocaHint & Balance v3
 // =========================================================================
 
@@ -1198,6 +1198,12 @@ function renderTranslationEvaluationResult(evalResult, userTranslation) {
   translationGradedIndices.add(currentTranslationIndex);
   translationSessionScores.push(score);
 
+  const curQ = translationQuestionsList[currentTranslationIndex];
+  if (curQ) {
+    curQ.score = score;
+    curQ.direction = curQ.task?.direction || translationActiveDirection;
+  }
+
   // Verdict banner styling
   const verdictBanner = document.getElementById('translation-verdict-banner');
   const verdictText = document.getElementById('translation-verdict-text');
@@ -1329,6 +1335,20 @@ function finishTranslationSession() {
   const durationStr = `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
   if (done > 0 && typeof addDailyStudySeconds === 'function') {
     addDailyStudySeconds(durationSec, 'translation');
+  }
+
+  // Check Bilingual Master (Cầu Nối Song Ngữ) - v0.10.10-36
+  const enToViQuestions = translationQuestionsList.filter(q => (q.direction === 'en_to_vi' || (q.task && q.task.direction === 'en_to_vi')) && typeof q.score === 'number');
+  const viToEnQuestions = translationQuestionsList.filter(q => (q.direction === 'vi_to_en' || (q.task && q.task.direction === 'vi_to_en')) && typeof q.score === 'number');
+  const hasValidEnToVi = enToViQuestions.length > 0 && enToViQuestions.some(q => q.score >= 90);
+  const hasValidViToEn = viToEnQuestions.length > 0 && viToEnQuestions.some(q => q.score >= 90);
+
+  if ((translationActiveDirection === 'random' || (enToViQuestions.length > 0 && viToEnQuestions.length > 0)) && hasValidEnToVi && hasValidViToEn) {
+    if (typeof checkAndUnlockAchievement === 'function') {
+      checkAndUnlockAchievement('extended_bilingual_master');
+    } else if (typeof updateAchievementProgress === 'function') {
+      updateAchievementProgress('extended_bilingual_master', 1);
+    }
   }
 
   // Calculate Average Accuracy Score & Pass Rate

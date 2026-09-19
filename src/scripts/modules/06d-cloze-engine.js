@@ -1,5 +1,5 @@
 // =========================================================================
-// VOCAFLOW 06D-CLOZE-ENGINE.JS (v0.10.10-35 Build 336 - EXTENDED LEARNING MODE BETA)
+// VOCAFLOW 06D-CLOZE-ENGINE.JS (v0.10.10-36 Build 337 - EXTENDED LEARNING MODE BETA)
 // Contextual Reading & Cloze Test Passage Generator with Strict JSON Schema
 // =========================================================================
 
@@ -1446,6 +1446,15 @@ function evaluateClozeResults() {
 
   const accuracyPct = Math.round((correctCount / blanks.length) * 100);
   const isFloorPassed = accuracyPct >= diffCfg.floorScore;
+
+  // Check Context Detective (Bậc Thầy Ngữ Cảnh) - v0.10.10-36
+  if (blanks.length >= 10 && accuracyPct === 100 && (typeof clozeSkipsUsed === 'undefined' || clozeSkipsUsed === 0)) {
+    if (typeof checkAndUnlockAchievement === 'function') {
+      checkAndUnlockAchievement('extended_context_detective');
+    } else if (typeof updateAchievementProgress === 'function') {
+      updateAchievementProgress('extended_context_detective', 1);
+    }
+  }
 
   // Calculate Xu Reward
   const minXu = diffCfg.baseXuRange[0];

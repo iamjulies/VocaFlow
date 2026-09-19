@@ -4,3 +4,4 @@ v0.10.10-37 (Nâng cấp Cổng quản trị)
 - Vấn để 16: "C:\Users\DELL\Pictures\Screenshots\Ảnh chụp màn hình 2026-09-19 002153.png" chỉ hiện Vocoin ở đây thôi cho nó gọn
 - Vấn đề 17: Bộ Lọc Nhanh Dạng Pill (Quick Filters) Cạnh Ô Tìm KiếmThực trạng: Hiện tại chỉ có thanh tìm kiếm thủ công.   Nâng cấp: Thêm 3 nút pill bấm lọc nhanh ngay dưới thanh tìm kiếm: Tất cả, VIP, Free
 - Vấn đề 18: Hiển thị Mốc Hết Hạn VIP Trực Tiếp: Thực trạng: Thẻ chỉ mới hiện nhãn chung VocaVIP MONTHLY hoặc VocaVIP YEARLY.   Nâng cấp: Thêm một dòng chữ nhỏ hoặc tooltip ngay dưới huy hiệu VIP: Hạn: DD/MM/YYYY (còn X ngày).   Lợi ích: Admin nhìn lướt qua danh sách là biết học viên nào sắp hết hạn VIP để đối soát hoặc gửi thông báo chăm sóc mà không cần phải nhấp vào nút "Sửa Ví".   
+đọc và thực hiện các file markdown có trong "C:\Users\DELL\Documents\Modding\browser" (nếu quên)

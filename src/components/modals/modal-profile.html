@@ -168,8 +168,9 @@
         <div style="margin-bottom: 14px;">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
             <span style="font-size: 11.5px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">🎖️ Danh Hiệu Nổi Bật (Highlights)</span>
-            <button type="button" class="btn btn-outline btn-sm" onclick="openAchievementsModal()" style="font-size: 11px; padding: 2px 8px; color: #ffd700; border-color: rgba(245,158,11,0.4); font-weight: 700; background: rgba(245,158,11,0.08);">
-              🏆 Kho Huy Hiệu
+            <button type="button" class="btn btn-outline btn-sm" onclick="openAchievementsModal()" style="font-size: 11px; padding: 2px 8px; color: #ffd700; border-color: rgba(245,158,11,0.4); font-weight: 700; background: rgba(245,158,11,0.08); position: relative; display: inline-flex; align-items: center; gap: 4px;">
+              <span>🏆 Kho Huy Hiệu</span>
+              <span id="profile-unclaimed-achieve-badge" class="badge" style="display: none; background: #ef4444; color: white; font-size: 9.5px; font-weight: 800; padding: 1px 5px; border-radius: 8px; box-shadow: 0 1px 4px rgba(239,68,68,0.5);">0</span>
             </button>
           </div>
           <div id="profile-pinned-badges-showcase" class="ig-highlights-container">
@@ -185,8 +186,9 @@
           <button type="button" class="ig-tab-btn" id="profile-tab-btn-stats" onclick="switchProfileTab('stats')">
             <span>📊</span> <span>Chỉ Số</span>
           </button>
-          <button type="button" class="ig-tab-btn" id="profile-tab-btn-achievements" onclick="switchProfileTab('achievements')">
+          <button type="button" class="ig-tab-btn" id="profile-tab-btn-achievements" onclick="switchProfileTab('achievements')" style="position: relative;">
             <span>🏆</span> <span>Thành Tựu</span>
+            <span id="profile-tab-btn-achieve-badge" class="badge" style="display: none; background: #ef4444; color: white; font-size: 9px; font-weight: 800; padding: 0 4px; border-radius: 8px; margin-left: 2px;">0</span>
           </button>
           <button type="button" class="ig-tab-btn" id="profile-tab-btn-community" onclick="switchProfileTab('community')">
             <span>💬</span> <span>Cộng Đồng</span>
@@ -370,8 +372,9 @@
             <div style="font-size: 32px; margin-bottom: 6px;">🏆✨</div>
             <div style="font-size: 14px; font-weight: 800; color: #fbbf24; margin-bottom: 4px;">Hệ Thống Danh Hiệu & Thành Tựu</div>
             <p style="font-size: 12px; color: var(--text-muted); margin: 0 0 12px 0;">Thu thập huy hiệu qua việc học từ, giữ FlowStreak, và tham gia cộng đồng.</p>
-            <button type="button" class="btn btn-primary btn-sm" onclick="openAchievementsModal()" style="font-weight: 700; background: linear-gradient(135deg, #f59e0b, #d97706); border: none; padding: 6px 16px;">
-              🏅 Mở Toàn Bộ Bảng Danh Hiệu
+            <button type="button" class="btn btn-primary btn-sm" onclick="openAchievementsModal()" style="font-weight: 700; background: linear-gradient(135deg, #f59e0b, #d97706); border: none; padding: 6px 16px; display: inline-flex; align-items: center; gap: 6px;">
+              <span>🏅 Mở Toàn Bộ Bảng Danh Hiệu</span>
+              <span id="profile-tab-unclaimed-achieve-badge" class="badge" style="display: none; background: #ef4444; color: white; font-size: 10px; font-weight: 800; padding: 1px 6px; border-radius: 10px;">0</span>
             </button>
           </div>
         </div>

@@ -1,3 +1,2 @@
-v0.10.10-39 (NÂNG CẤP CHẾ ĐỘ LEVEL UP)
+v0.10.10-40 (CẬP NHẬT KHUNG ẢNH ĐẠI DIỆN)
 đọc và thực hiện các file markdown có trong "C:\Users\DELL\Documents\Modding\browser" (nếu quên)
-

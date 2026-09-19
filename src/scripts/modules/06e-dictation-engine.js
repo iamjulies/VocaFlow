@@ -1,5 +1,5 @@
 // =========================================================================
-// VOCAFLOW 06E-DICTATION-ENGINE.JS (v0.10.10-35 Build 336 - SENTENCE DICTATION VIP β)
+// VOCAFLOW 06E-DICTATION-ENGINE.JS (v0.10.10-36 Build 337 - SENTENCE DICTATION VIP β)
 // Full Sentence Dictation Engine with Natural Speech, Speed Slider, AI Scoring & Sequence Alignment
 // =========================================================================
 
@@ -1187,6 +1187,16 @@ async function submitDictationEvaluation() {
       scoreDisplay.textContent = `${accuracyScore} / 100đ`;
       if (typeof playVocaSfx === 'function') playVocaSfx('correct');
       if (typeof triggerVipMemeReaction === 'function') triggerVipMemeReaction('right');
+
+      // Check Golden Ears (Đôi Tai Vàng) - v0.10.10-36
+      const listensUsed = dictationMaxListens - dictationListensLeft;
+      if (currentDictationDifficulty === 'expert' && isPassed && listensUsed === 1) {
+        if (typeof checkAndUnlockAchievement === 'function') {
+          checkAndUnlockAchievement('extended_golden_ears');
+        } else if (typeof updateAchievementProgress === 'function') {
+          updateAchievementProgress('extended_golden_ears', 1);
+        }
+      }
     } else {
       verdictBanner.style.background = 'rgba(239, 68, 68, 0.15)';
       verdictBanner.style.border = '1px solid #ef4444';

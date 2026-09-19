@@ -1,6 +1,6 @@
 // =========================================================================
 
-// VOCAFLOW 03-AUTH.JS (v0.10.10-35 Build 336)
+// VOCAFLOW 03-AUTH.JS (v0.10.10-36 Build 337)
 
 // Firebase Auth, Realtime Sync, Public Profiles, Social Graph, Monetization & Billing
 
@@ -6380,6 +6380,14 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
         clearCommunityCenterPostBadge();
 
         communityPosts.unshift(postObj);
+
+        // Track Community Post for Inspiring Voice achievement (v0.10.10-36)
+        let postCount = parseInt(localStorage.getItem('vocaflow_community_posts_count') || '0', 10) + 1;
+        localStorage.setItem('vocaflow_community_posts_count', postCount.toString());
+        if (typeof updateAchievementProgress === 'function') {
+          updateAchievementProgress('community_inspiring_voice', postCount);
+        }
+
         renderCommunityCenterFeed();
         if (typeof renderCommunityFeed === 'function') renderCommunityFeed();
         showToast('🎉 Đã đăng bài viết lên Trung Tâm Cộng Đồng thành công!');
@@ -6470,6 +6478,14 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
         clearCommunityPostBadge();
 
         communityPosts.unshift(postObj);
+
+        // Track Community Post for Inspiring Voice achievement (v0.10.10-36)
+        let postCount = parseInt(localStorage.getItem('vocaflow_community_posts_count') || '0', 10) + 1;
+        localStorage.setItem('vocaflow_community_posts_count', postCount.toString());
+        if (typeof updateAchievementProgress === 'function') {
+          updateAchievementProgress('community_inspiring_voice', postCount);
+        }
+
         renderCommunityFeed();
         if (typeof renderCommunityCenterFeed === 'function') renderCommunityCenterFeed();
         showToast('🎉 Đã đăng bài viết lên Cộng Đồng thành công!');
@@ -6584,6 +6600,13 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
     // AUTO-SEED OFFICIAL UPDATE POST, HOLIDAY/SALE EVENTS & GLOWING NOTIFICATIONS (v0.10.10-33 / Build 334)
     // =========================================================================
     const VOCAFLOW_OFFICIAL_RELEASES_REGISTRY = {
+      'v0.10.10-36': {
+        postId: 'official_update_v0_10_10_36',
+        releaseTime: '2026-09-19T14:00:00.000Z',
+        title: '🏆 Kỷ Nguyên 50 Danh Hiệu & Huy Hiệu Thông Báo Nhận Thưởng Tức Thì (v0.10.10-36 Build 337)!',
+        summary: 'Mở rộng kho danh hiệu lên 50 huy hiệu độc quyền với 10 thành tựu mới thuộc 4 nhóm (Extended Labs β, Ý Chí & Kỷ Luật, VocaCommunity, Trứng Phục Sinh); tích hợp huy hiệu số chỉ chấm đỏ thông báo thành tựu chưa nhận thưởng.',
+        content: `🎉 Chào mừng bạn đến với bản cập nhật VocaFlow v0.10.10-36 (Build 337)!\n\n✨ Những điểm mới nổi bật:\n🏆 Kỷ Nguyên 50 Danh Hiệu Độc Quyền: Bổ sung 10 thành tựu mới đầy thử thách và vinh quang:\n  • ✍️ Cây Bút Học Thuật: Đạt ≥90đ Viết Câu cấp Siêu Khó (Expert x4.0, ẩn nghĩa TV).\n  • 📖 Bậc Thầy Ngữ Cảnh: Đúng 100% Cloze Test ≥10 ô trống không dùng VocaSkip.\n  • 🎧 Đôi Tai Vàng: Hoàn thành câu phức Nghe Gõ Siêu Khó chỉ trong đúng 1 lần nghe.\n  • 🌐 Cầu Nối Song Ngữ: Đạt ≥90đ cả 2 chiều Anh-Việt & Việt-Anh khi Dịch Ngẫu Nhiên.\n  • ⚡ Bộ Não Nguyên Tử: Chạm mốc hiệu suất não bộ η ≤ 10% trong ngày.\n  • 📕 Xóa Sổ Ký Ức: Dọn sạch từ vựng trong Sổ Tay Lỗi Sai khi danh sách đạt đỉnh ≥15 từ.\n  • 🌊 Dòng Chảy Thép: Duy trì Flow Streak 30 ngày liên tục không dùng FlowFreeze.\n  • 💬 Tiếng Nói Cộng Đồng: Đăng 1 bài viết chia sẻ trên VocaCommunity.\n  • 👥 Bạn Của CEO: Được @iamjulies (CEO) follow.\n  • 🐾 Đại Ca Nuôi Mèo: Kích hoạt đủ 50 lần phản ứng biểu cảm Meme Mèo VIP.\n🔴 Huy Hiệu Thông Báo Phần Thưởng Chưa Nhận: Tự động gắn chấm đỏ kèm số đếm trên nút 3 chấm Header, Menu mở rộng, Nút Kho Huy Hiệu và Tab Thành Tựu.\n⚡ Trải Nghiệm Mượt Mà & Đồng Bộ Đám Mây: Đảm bảo độ tin cậy và hiệu năng cao nhất trên toàn hệ thống.\n\nChúc bạn có những giờ phút học tập đầy hứng khởi và sớm thu thập trọn bộ 50 huy hiệu cùng VocaFlow! 🚀🏆`
+      },
       'v0.10.10-35': {
         postId: 'official_update_v0_10_10_35',
         releaseTime: '2026-09-19T00:00:00.000Z',

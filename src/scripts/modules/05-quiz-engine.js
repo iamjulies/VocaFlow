@@ -1,5 +1,5 @@
 // =========================================================================
-// VOCAFLOW 05-QUIZ-ENGINE.JS (v0.10.10-35 Build 336)
+// VOCAFLOW 05-QUIZ-ENGINE.JS (v0.10.10-36 Build 337)
 // Quiz study mode, scoring, question generation, AI explanation & Mistake Notebook
 // =========================================================================
 
@@ -721,6 +721,20 @@ Yêu cầu nghiêm ngặt:
     function saveMistakeWordsList(list, triggerCloudPush = true) {
       try {
         const cleanList = Array.isArray(list) ? list : [];
+        const currentPeak = parseInt(localStorage.getItem('vocaflow_peak_mistake_count') || '0', 10);
+        if (cleanList.length > currentPeak) {
+          localStorage.setItem('vocaflow_peak_mistake_count', cleanList.length.toString());
+        }
+
+        // Check Clean Slate (Xóa Sổ Ký Ức) when list is cleared from peak >= 15 (v0.10.10-36)
+        if (cleanList.length === 0 && currentPeak >= 15) {
+          if (typeof checkAndUnlockAchievement === 'function') {
+            checkAndUnlockAchievement('discipline_clean_slate');
+          } else if (typeof updateAchievementProgress === 'function') {
+            updateAchievementProgress('discipline_clean_slate', 1);
+          }
+        }
+
         localStorage.setItem(STORAGE_KEY_MISTAKE_NOTEBOOK, JSON.stringify(cleanList));
         updateMistakeBadgeUI();
         if (triggerCloudPush !== false && typeof pushCurrentDatabaseToCloud === 'function' && typeof currentUser !== 'undefined' && currentUser) {

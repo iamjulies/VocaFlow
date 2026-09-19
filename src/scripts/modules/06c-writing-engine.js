@@ -1,5 +1,5 @@
 // =========================================================================
-// VOCAFLOW 06C-WRITING-ENGINE.JS (v0.10.10-35 Build 336 - SENTENCE WRITING LAB VIP)
+// VOCAFLOW 06C-WRITING-ENGINE.JS (v0.10.10-36 Build 337 - SENTENCE WRITING LAB VIP)
 // AI-Powered Writing Lab with Thematic Word Linking & Target Band Aim Polish
 // =========================================================================
 
@@ -983,6 +983,15 @@ function renderWritingEvaluationResult(evalData, question) {
 
     if (typeof playVocaSfx === 'function') playVocaSfx('correct');
     if (typeof triggerVipMemeReaction === 'function') triggerVipMemeReaction('right');
+
+    // Check Academic Scribe (Cây Bút Học Thuật) - v0.10.10-36
+    if (question.difficulty === 'expert' && score >= 90) {
+      if (typeof checkAndUnlockAchievement === 'function') {
+        checkAndUnlockAchievement('extended_writing_expert_90');
+      } else if (typeof updateAchievementProgress === 'function') {
+        updateAchievementProgress('extended_writing_expert_90', 1);
+      }
+    }
 
   } else {
     question.status = 'failed';

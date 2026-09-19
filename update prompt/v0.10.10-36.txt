@@ -15,3 +15,4 @@ v0.10.10-36 (NÂNG CẤP HỆ THỐNG THÀNH TỰU)
 + Nhóm 4: Trải Nghiệm Độc Đáo (Easter Egg & VIP):
 🐾 Đại Ca Nuôi Mèo (Meme Connoisseur) – Bậc Đồng: Điều kiện: Kích hoạt đủ $50\text{ lần}$ phản ứng biểu cảm Meme Mèo VIP (cả đúng lẫn sai) trong các phòng Lab.
 - Vấn đề 13: Khi có thành tựu đã hoàn thành mà chưa nhận xu thưởng thì hiện dấu chấm đỏ kèm số chỉ ở nút nhấn vào xem thành tựu
+đọc và thực hiện các file markdown có trong "C:\Users\DELL\Documents\Modding\browser" (nếu quên)

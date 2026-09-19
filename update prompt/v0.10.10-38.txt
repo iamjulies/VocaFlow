@@ -1,2 +1,3 @@
 v0.10.10-38 (RÀ SOÁT)
 Dọn dẹp code rác: Rà soát lại xem còn console.log thừa hoặc biến debug nào không.
+đọc và thực hiện các file markdown có trong "C:\Users\DELL\Documents\Modding\browser" (nếu quên)

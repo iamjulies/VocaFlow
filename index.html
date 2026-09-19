@@ -5121,8 +5121,9 @@
 
       <!-- 3-Dots Dropdown Menu (Visible on Desktop & Mobile) -->
       <div class="mobile-more-wrapper">
-        <button class="btn btn-outline btn-sm mobile-more-btn" id="btn-header-more" onclick="toggleHeaderMoreMenu(event)" title="Menu mở rộng" style="display: inline-flex; align-items: center; justify-content: center; padding: 4px 8px; font-size: 15px; font-weight: 800; border-radius: 8px; color: var(--text); height: 32px;">
+        <button class="btn btn-outline btn-sm mobile-more-btn" id="btn-header-more" onclick="toggleHeaderMoreMenu(event)" title="Menu mở rộng" style="position: relative; display: inline-flex; align-items: center; justify-content: center; padding: 4px 8px; font-size: 15px; font-weight: 800; border-radius: 8px; color: var(--text); height: 32px;">
           ⋮
+          <span id="header-more-dot-badge" style="display: none; position: absolute; top: -3px; right: -3px; width: 9px; height: 9px; border-radius: 50%; background: #ef4444; border: 1.5px solid var(--surface); box-shadow: 0 0 6px rgba(239,68,68,0.8);"></span>
         </button>
 
         <!-- Dropdown Menu -->
@@ -5168,9 +5169,12 @@
           </div>
           <div class="dropdown-item" onclick="openAchievementsModal(); closeHeaderMoreMenu();" style="background: linear-gradient(135deg, rgba(245, 158, 11, 0.12), rgba(236, 72, 153, 0.12)); border: 1px solid rgba(245, 158, 11, 0.35);">
             <span style="font-size: 16px;">🏆</span>
-            <div>
-              <div style="font-weight: 700; font-size: 13px; color: #fbbf24;">Bảng Thành Tựu & Danh Hiệu</div>
-              <small style="color: var(--text-muted); font-size: 10.5px;">40 Huy hiệu độc quyền & Nhận VoCoin</small>
+            <div style="flex: 1; display: flex; justify-content: space-between; align-items: center;">
+              <div>
+                <div style="font-weight: 700; font-size: 13px; color: #fbbf24;">Bảng Thành Tựu & Danh Hiệu</div>
+                <small style="color: var(--text-muted); font-size: 10.5px;">50 Huy hiệu độc quyền & Nhận VoCoin</small>
+              </div>
+              <span id="header-more-achieve-badge" class="badge" style="display: none; background: #ef4444; color: white; font-size: 10px; font-weight: 800; padding: 1px 6px; border-radius: 10px; box-shadow: 0 2px 6px rgba(239,68,68,0.5);">0</span>
             </div>
           </div>
           <div class="dropdown-item" onclick="openNotificationsModal(); closeHeaderMoreMenu();" style="background: rgba(56, 189, 248, 0.12); border: 1px solid rgba(56, 189, 248, 0.3);">
@@ -5323,7 +5327,7 @@
           <div class="mini-footer-left">
             <span>© 2026 <strong>VocaFlow</strong> by <strong>iamjulies</strong></span>
             <span class="mini-footer-divider">•</span>
-            <span class="mini-footer-version">v0.10.10-35 (Build 336)</span>
+            <span class="mini-footer-version">v0.10.10-36 (Build 337)</span>
           </div>
           <div class="mini-footer-right">
             <a href="https://iamjulies.github.io/VocaFlow/me/?user=@iamjulies" target="_blank" class="mini-footer-link" onclick="if (typeof openPublicProfileByAuthor === 'function') { event.preventDefault(); openPublicProfileByAuthor('@iamjulies'); }" title="Trang cá nhân tác giả @iamjulies" style="color: #c084fc; font-weight: 700;">
@@ -5547,7 +5551,7 @@
           <div class="mini-footer-left">
             <span>© 2026 <strong>VocaFlow</strong> by <strong>iamjulies</strong></span>
             <span class="mini-footer-divider">•</span>
-            <span class="mini-footer-version">v0.10.10-35 (Build 336)</span>
+            <span class="mini-footer-version">v0.10.10-36 (Build 337)</span>
           </div>
           <div class="mini-footer-right">
             <a href="https://iamjulies.github.io/VocaFlow/me/?user=@iamjulies" target="_blank" class="mini-footer-link" onclick="if (typeof openPublicProfileByAuthor === 'function') { event.preventDefault(); openPublicProfileByAuthor('@iamjulies'); }" title="Trang cá nhân tác giả @iamjulies" style="color: #c084fc; font-weight: 700;">
@@ -10516,7 +10520,7 @@
           <span style="font-size: 26px; filter: drop-shadow(0 0 8px rgba(245,158,11,0.8));">🏆</span>
           <div>
             <h2 style="font-size: 18px; font-weight: 800; margin: 0; background: linear-gradient(90deg, #f59e0b, #ffd700, #ec4899); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Bảng Thành Tựu & Huy Hiệu</h2>
-            <p style="font-size: 11.5px; color: var(--text-muted); margin: 2px 0 0 0;">Chinh phục 40 thử thách, khám phá trứng phục sinh bí ẩn và ghim tối đa 3 huy hiệu lên Hồ Sơ Cá Nhân!</p>
+            <p style="font-size: 11.5px; color: var(--text-muted); margin: 2px 0 0 0;">Chinh phục 50 thử thách, khám phá trứng phục sinh bí ẩn và ghim tối đa 3 huy hiệu lên Hồ Sơ Cá Nhân!</p>
           </div>
         </div>
         <button class="btn btn-outline btn-icon" onclick="closeModal('modal-achievements')"><svg class="icon"><use href="#i-close"/></svg></button>
@@ -10530,7 +10534,7 @@
         </div>
         <h3 style="font-size: 20px; font-weight: 800; color: #fff; margin: 0 0 12px 0;">Tính Năng Độc Quyền Cho Flower</h3>
         <p style="font-size: 13.5px; color: var(--text-muted); line-height: 1.6; max-width: 480px; margin: 0 0 24px 0;">
-          Bạn đang sử dụng ở chế độ <strong>Khách (Guest)</strong>. Hãy đăng ký hoặc đăng nhập tài khoản để mở khóa <strong>Kho 40 Danh Hiệu Độc Quyền, Nhận Thưởng VoCoin & Ghim Huy Hiệu Lên Hồ Sơ!</strong>
+          Bạn đang sử dụng ở chế độ <strong>Khách (Guest)</strong>. Hãy đăng ký hoặc đăng nhập tài khoản để mở khóa <strong>Kho 50 Danh Hiệu Độc Quyền, Nhận Thưởng VoCoin & Ghim Huy Hiệu Lên Hồ Sơ!</strong>
         </p>
         <div style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;">
           <button type="button" class="btn btn-primary" onclick="closeModal('modal-achievements'); openAuthModal('login');" style="background: linear-gradient(135deg, #6366f1, #8b5cf6); border: none; font-weight: 700; padding: 10px 22px; border-radius: 10px; font-size: 13.5px; box-shadow: 0 4px 14px rgba(99,102,241,0.4); cursor: pointer;">
@@ -10548,7 +10552,7 @@
         <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 12px;">
           <div style="background: rgba(0,0,0,0.25); border: 1px solid var(--border); border-radius: 10px; padding: 8px 10px; text-align: center;">
             <div style="font-size: 10.5px; color: var(--text-muted);">🏆 Đã Mở Khóa</div>
-            <div id="achieve-stat-unlocked" style="font-size: 16px; font-weight: 800; color: #ffd700; margin-top: 2px;">0 / 40</div>
+            <div id="achieve-stat-unlocked" style="font-size: 16px; font-weight: 800; color: #ffd700; margin-top: 2px;">0 / 50</div>
           </div>
           <div style="background: rgba(0,0,0,0.25); border: 1px solid var(--border); border-radius: 10px; padding: 8px 10px; text-align: center;">
             <div style="font-size: 10.5px; color: var(--text-muted);">🪙 VoCoin Thưởng Nhận</div>
@@ -10564,7 +10568,7 @@
         <div style="background: rgba(0, 0, 0, 0.22); border: 1px solid var(--border); border-radius: 12px; padding: 10px 12px; margin-bottom: 12px; display: flex; flex-direction: column; gap: 8px;">
           <!-- ROW 1: CATEGORY TABS -->
           <div style="display: flex; gap: 6px; overflow-x: auto; padding-bottom: 2px; align-items: center;">
-            <button type="button" class="btn btn-sm" id="btn-achieve-tab-all" onclick="filterAchievementsTab('all')" style="font-size: 12px; padding: 5px 12px; border-radius: 8px; font-weight: 700; background: linear-gradient(135deg, #6366f1, #8b5cf6); border: none; color: #fff; box-shadow: 0 3px 10px rgba(99,102,241,0.4); white-space: nowrap; flex-shrink: 0;">Tất Cả (40)</button>
+            <button type="button" class="btn btn-sm" id="btn-achieve-tab-all" onclick="filterAchievementsTab('all')" style="font-size: 12px; padding: 5px 12px; border-radius: 8px; font-weight: 700; background: linear-gradient(135deg, #6366f1, #8b5cf6); border: none; color: #fff; box-shadow: 0 3px 10px rgba(99,102,241,0.4); white-space: nowrap; flex-shrink: 0;">Tất Cả (50)</button>
             <button type="button" class="btn btn-sm btn-outline" id="btn-achieve-tab-starter" onclick="filterAchievementsTab('starter')" style="font-size: 12px; padding: 5px 12px; border-radius: 8px; font-weight: 600; background: rgba(255,255,255,0.04); border: 1px solid var(--border); color: var(--text-muted); white-space: nowrap; flex-shrink: 0;">🌱 Tân Thủ</button>
             <button type="button" class="btn btn-sm btn-outline" id="btn-achieve-tab-mastery" onclick="filterAchievementsTab('mastery')" style="font-size: 12px; padding: 5px 12px; border-radius: 8px; font-weight: 600; background: rgba(255,255,255,0.04); border: 1px solid var(--border); color: var(--text-muted); white-space: nowrap; flex-shrink: 0;">🧠 Trí Nhớ & SRS</button>
             <button type="button" class="btn btn-sm btn-outline" id="btn-achieve-tab-skill" onclick="filterAchievementsTab('skill')" style="font-size: 12px; padding: 5px 12px; border-radius: 8px; font-weight: 600; background: rgba(255,255,255,0.04); border: 1px solid var(--border); color: var(--text-muted); white-space: nowrap; flex-shrink: 0;">⚡ Kỹ Năng</button>
@@ -10841,8 +10845,9 @@
         <div style="margin-bottom: 14px;">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
             <span style="font-size: 11.5px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">🎖️ Danh Hiệu Nổi Bật (Highlights)</span>
-            <button type="button" class="btn btn-outline btn-sm" onclick="openAchievementsModal()" style="font-size: 11px; padding: 2px 8px; color: #ffd700; border-color: rgba(245,158,11,0.4); font-weight: 700; background: rgba(245,158,11,0.08);">
-              🏆 Kho Huy Hiệu
+            <button type="button" class="btn btn-outline btn-sm" onclick="openAchievementsModal()" style="font-size: 11px; padding: 2px 8px; color: #ffd700; border-color: rgba(245,158,11,0.4); font-weight: 700; background: rgba(245,158,11,0.08); position: relative; display: inline-flex; align-items: center; gap: 4px;">
+              <span>🏆 Kho Huy Hiệu</span>
+              <span id="profile-unclaimed-achieve-badge" class="badge" style="display: none; background: #ef4444; color: white; font-size: 9.5px; font-weight: 800; padding: 1px 5px; border-radius: 8px; box-shadow: 0 1px 4px rgba(239,68,68,0.5);">0</span>
             </button>
           </div>
           <div id="profile-pinned-badges-showcase" class="ig-highlights-container">
@@ -10858,8 +10863,9 @@
           <button type="button" class="ig-tab-btn" id="profile-tab-btn-stats" onclick="switchProfileTab('stats')">
             <span>📊</span> <span>Chỉ Số</span>
           </button>
-          <button type="button" class="ig-tab-btn" id="profile-tab-btn-achievements" onclick="switchProfileTab('achievements')">
+          <button type="button" class="ig-tab-btn" id="profile-tab-btn-achievements" onclick="switchProfileTab('achievements')" style="position: relative;">
             <span>🏆</span> <span>Thành Tựu</span>
+            <span id="profile-tab-btn-achieve-badge" class="badge" style="display: none; background: #ef4444; color: white; font-size: 9px; font-weight: 800; padding: 0 4px; border-radius: 8px; margin-left: 2px;">0</span>
           </button>
           <button type="button" class="ig-tab-btn" id="profile-tab-btn-community" onclick="switchProfileTab('community')">
             <span>💬</span> <span>Cộng Đồng</span>
@@ -11043,8 +11049,9 @@
             <div style="font-size: 32px; margin-bottom: 6px;">🏆✨</div>
             <div style="font-size: 14px; font-weight: 800; color: #fbbf24; margin-bottom: 4px;">Hệ Thống Danh Hiệu & Thành Tựu</div>
             <p style="font-size: 12px; color: var(--text-muted); margin: 0 0 12px 0;">Thu thập huy hiệu qua việc học từ, giữ FlowStreak, và tham gia cộng đồng.</p>
-            <button type="button" class="btn btn-primary btn-sm" onclick="openAchievementsModal()" style="font-weight: 700; background: linear-gradient(135deg, #f59e0b, #d97706); border: none; padding: 6px 16px;">
-              🏅 Mở Toàn Bộ Bảng Danh Hiệu
+            <button type="button" class="btn btn-primary btn-sm" onclick="openAchievementsModal()" style="font-weight: 700; background: linear-gradient(135deg, #f59e0b, #d97706); border: none; padding: 6px 16px; display: inline-flex; align-items: center; gap: 6px;">
+              <span>🏅 Mở Toàn Bộ Bảng Danh Hiệu</span>
+              <span id="profile-tab-unclaimed-achieve-badge" class="badge" style="display: none; background: #ef4444; color: white; font-size: 10px; font-weight: 800; padding: 1px 6px; border-radius: 10px;">0</span>
             </button>
           </div>
         </div>
@@ -11829,7 +11836,7 @@
       <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 16px;">
         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">📦 Thông Tin Ứng Dụng</label>
         <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
-          <div>Phiên bản: <strong style="color: var(--text); user-select: text;" id="settings-app-version-label">VocaFlow v0.10.10-35 (Build 336)</strong></div>
+          <div>Phiên bản: <strong style="color: var(--text); user-select: text;" id="settings-app-version-label">VocaFlow v0.10.10-36 (Build 337)</strong></div>
           <div>Môi trường: <span style="color: var(--text);">Offline-First Web PWA & Windows EXE</span></div>
           <div>Lưu trữ: <span style="color: var(--text);">Cục bộ + Đồng bộ Cloud Realtime</span></div>
         </div>
@@ -13367,7 +13374,7 @@
 
   <script>
 // =========================================================================
-// VOCAFLOW SPA ROUTER & URL HISTORY ENGINE (v0.10.10-35 Build 336)
+// VOCAFLOW SPA ROUTER & URL HISTORY ENGINE (v0.10.10-36 Build 337)
 // Enables direct clean URLs, deep sub-links & browser history navigation (pushState/popstate)
 // =========================================================================
 
@@ -13832,16 +13839,16 @@ function initSpaRouter() {
 window.initSpaRouter = initSpaRouter;
 
 
-// VOCAFLOW 02-STATE-CORE.JS (v0.10.10-35 Build 336)
+// VOCAFLOW 02-STATE-CORE.JS (v0.10.10-36 Build 337)
 // Global constants, core database state, storage keys, recovery & audio engine
 // =========================================================================
 
     // =========================================================================
-    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.10-35 Build 336)
+    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.10-36 Build 337)
     // =========================================================================
-    const VOCAFLOW_APP_VERSION = 'v0.10.10-35';
-    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.10-35 (Build 336)';
-    const VOCAFLOW_APP_BUILD = 336;
+    const VOCAFLOW_APP_VERSION = 'v0.10.10-36';
+    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.10-36 (Build 337)';
+    const VOCAFLOW_APP_BUILD = 337;
     window.VOCAFLOW_APP_VERSION = VOCAFLOW_APP_VERSION;
     window.VOCAFLOW_APP_FULL_TITLE = VOCAFLOW_APP_FULL_TITLE;
     window.VOCAFLOW_APP_BUILD = VOCAFLOW_APP_BUILD;
@@ -14529,6 +14536,18 @@ window.initSpaRouter = initSpaRouter;
       const current = getTodayEarnedCoins();
       const updated = current + Math.round(num);
       localStorage.setItem(key, updated.toString());
+
+      // Check Atomic Focus (Hiệu suất não bộ η ≤ 10%) - v0.10.10-36
+      const isVip = (typeof isUserVip === 'function') ? isUserVip() : false;
+      const eta = getDailyFatigueEfficiency(updated, isVip);
+      if (eta <= 0.10 || (isVip && updated >= 1200) || (!isVip && updated >= 600)) {
+        if (typeof checkAndUnlockAchievement === 'function') {
+          checkAndUnlockAchievement('discipline_atomic_focus');
+        } else if (typeof updateAchievementProgress === 'function') {
+          updateAchievementProgress('discipline_atomic_focus', 1);
+        }
+      }
+
       return updated;
     }
     window.recordTodayEarnedCoins = recordTodayEarnedCoins;
@@ -18210,7 +18229,7 @@ window.initSpaRouter = initSpaRouter;
 
 // =========================================================================
 
-// VOCAFLOW 03-AUTH.JS (v0.10.10-35 Build 336)
+// VOCAFLOW 03-AUTH.JS (v0.10.10-36 Build 337)
 
 // Firebase Auth, Realtime Sync, Public Profiles, Social Graph, Monetization & Billing
 
@@ -24590,6 +24609,14 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
         clearCommunityCenterPostBadge();
 
         communityPosts.unshift(postObj);
+
+        // Track Community Post for Inspiring Voice achievement (v0.10.10-36)
+        let postCount = parseInt(localStorage.getItem('vocaflow_community_posts_count') || '0', 10) + 1;
+        localStorage.setItem('vocaflow_community_posts_count', postCount.toString());
+        if (typeof updateAchievementProgress === 'function') {
+          updateAchievementProgress('community_inspiring_voice', postCount);
+        }
+
         renderCommunityCenterFeed();
         if (typeof renderCommunityFeed === 'function') renderCommunityFeed();
         showToast('🎉 Đã đăng bài viết lên Trung Tâm Cộng Đồng thành công!');
@@ -24680,6 +24707,14 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
         clearCommunityPostBadge();
 
         communityPosts.unshift(postObj);
+
+        // Track Community Post for Inspiring Voice achievement (v0.10.10-36)
+        let postCount = parseInt(localStorage.getItem('vocaflow_community_posts_count') || '0', 10) + 1;
+        localStorage.setItem('vocaflow_community_posts_count', postCount.toString());
+        if (typeof updateAchievementProgress === 'function') {
+          updateAchievementProgress('community_inspiring_voice', postCount);
+        }
+
         renderCommunityFeed();
         if (typeof renderCommunityCenterFeed === 'function') renderCommunityCenterFeed();
         showToast('🎉 Đã đăng bài viết lên Cộng Đồng thành công!');
@@ -24794,6 +24829,13 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
     // AUTO-SEED OFFICIAL UPDATE POST, HOLIDAY/SALE EVENTS & GLOWING NOTIFICATIONS (v0.10.10-33 / Build 334)
     // =========================================================================
     const VOCAFLOW_OFFICIAL_RELEASES_REGISTRY = {
+      'v0.10.10-36': {
+        postId: 'official_update_v0_10_10_36',
+        releaseTime: '2026-09-19T14:00:00.000Z',
+        title: '🏆 Kỷ Nguyên 50 Danh Hiệu & Huy Hiệu Thông Báo Nhận Thưởng Tức Thì (v0.10.10-36 Build 337)!',
+        summary: 'Mở rộng kho danh hiệu lên 50 huy hiệu độc quyền với 10 thành tựu mới thuộc 4 nhóm (Extended Labs β, Ý Chí & Kỷ Luật, VocaCommunity, Trứng Phục Sinh); tích hợp huy hiệu số chỉ chấm đỏ thông báo thành tựu chưa nhận thưởng.',
+        content: `🎉 Chào mừng bạn đến với bản cập nhật VocaFlow v0.10.10-36 (Build 337)!\n\n✨ Những điểm mới nổi bật:\n🏆 Kỷ Nguyên 50 Danh Hiệu Độc Quyền: Bổ sung 10 thành tựu mới đầy thử thách và vinh quang:\n  • ✍️ Cây Bút Học Thuật: Đạt ≥90đ Viết Câu cấp Siêu Khó (Expert x4.0, ẩn nghĩa TV).\n  • 📖 Bậc Thầy Ngữ Cảnh: Đúng 100% Cloze Test ≥10 ô trống không dùng VocaSkip.\n  • 🎧 Đôi Tai Vàng: Hoàn thành câu phức Nghe Gõ Siêu Khó chỉ trong đúng 1 lần nghe.\n  • 🌐 Cầu Nối Song Ngữ: Đạt ≥90đ cả 2 chiều Anh-Việt & Việt-Anh khi Dịch Ngẫu Nhiên.\n  • ⚡ Bộ Não Nguyên Tử: Chạm mốc hiệu suất não bộ η ≤ 10% trong ngày.\n  • 📕 Xóa Sổ Ký Ức: Dọn sạch từ vựng trong Sổ Tay Lỗi Sai khi danh sách đạt đỉnh ≥15 từ.\n  • 🌊 Dòng Chảy Thép: Duy trì Flow Streak 30 ngày liên tục không dùng FlowFreeze.\n  • 💬 Tiếng Nói Cộng Đồng: Đăng 1 bài viết chia sẻ trên VocaCommunity.\n  • 👥 Bạn Của CEO: Được @iamjulies (CEO) follow.\n  • 🐾 Đại Ca Nuôi Mèo: Kích hoạt đủ 50 lần phản ứng biểu cảm Meme Mèo VIP.\n🔴 Huy Hiệu Thông Báo Phần Thưởng Chưa Nhận: Tự động gắn chấm đỏ kèm số đếm trên nút 3 chấm Header, Menu mở rộng, Nút Kho Huy Hiệu và Tab Thành Tựu.\n⚡ Trải Nghiệm Mượt Mà & Đồng Bộ Đám Mây: Đảm bảo độ tin cậy và hiệu năng cao nhất trên toàn hệ thống.\n\nChúc bạn có những giờ phút học tập đầy hứng khởi và sớm thu thập trọn bộ 50 huy hiệu cùng VocaFlow! 🚀🏆`
+      },
       'v0.10.10-35': {
         postId: 'official_update_v0_10_10_35',
         releaseTime: '2026-09-19T00:00:00.000Z',
@@ -32655,7 +32697,7 @@ Return ONLY a valid raw JSON 2D array with NO markdown fences:
     window.checkWordTermDuplicate = checkWordTermDuplicate;
 
 // =========================================================================
-// VOCAFLOW 05-QUIZ-ENGINE.JS (v0.10.10-35 Build 336)
+// VOCAFLOW 05-QUIZ-ENGINE.JS (v0.10.10-36 Build 337)
 // Quiz study mode, scoring, question generation, AI explanation & Mistake Notebook
 // =========================================================================
 
@@ -33377,6 +33419,20 @@ Yêu cầu nghiêm ngặt:
     function saveMistakeWordsList(list, triggerCloudPush = true) {
       try {
         const cleanList = Array.isArray(list) ? list : [];
+        const currentPeak = parseInt(localStorage.getItem('vocaflow_peak_mistake_count') || '0', 10);
+        if (cleanList.length > currentPeak) {
+          localStorage.setItem('vocaflow_peak_mistake_count', cleanList.length.toString());
+        }
+
+        // Check Clean Slate (Xóa Sổ Ký Ức) when list is cleared from peak >= 15 (v0.10.10-36)
+        if (cleanList.length === 0 && currentPeak >= 15) {
+          if (typeof checkAndUnlockAchievement === 'function') {
+            checkAndUnlockAchievement('discipline_clean_slate');
+          } else if (typeof updateAchievementProgress === 'function') {
+            updateAchievementProgress('discipline_clean_slate', 1);
+          }
+        }
+
         localStorage.setItem(STORAGE_KEY_MISTAKE_NOTEBOOK, JSON.stringify(cleanList));
         updateMistakeBadgeUI();
         if (triggerCloudPush !== false && typeof pushCurrentDatabaseToCloud === 'function' && typeof currentUser !== 'undefined' && currentUser) {
@@ -34942,7 +34998,7 @@ Yêu cầu nghiêm ngặt:
 
 
 // =========================================================================
-// VOCAFLOW 06C-WRITING-ENGINE.JS (v0.10.10-35 Build 336 - SENTENCE WRITING LAB VIP)
+// VOCAFLOW 06C-WRITING-ENGINE.JS (v0.10.10-36 Build 337 - SENTENCE WRITING LAB VIP)
 // AI-Powered Writing Lab with Thematic Word Linking & Target Band Aim Polish
 // =========================================================================
 
@@ -35927,6 +35983,15 @@ function renderWritingEvaluationResult(evalData, question) {
     if (typeof playVocaSfx === 'function') playVocaSfx('correct');
     if (typeof triggerVipMemeReaction === 'function') triggerVipMemeReaction('right');
 
+    // Check Academic Scribe (Cây Bút Học Thuật) - v0.10.10-36
+    if (question.difficulty === 'expert' && score >= 90) {
+      if (typeof checkAndUnlockAchievement === 'function') {
+        checkAndUnlockAchievement('extended_writing_expert_90');
+      } else if (typeof updateAchievementProgress === 'function') {
+        updateAchievementProgress('extended_writing_expert_90', 1);
+      }
+    }
+
   } else {
     question.status = 'failed';
     const penalty = -Math.round(10 * cfg.diffMult);
@@ -36352,7 +36417,7 @@ window.closeWritingResultModal = closeWritingResultModal;
 window.retryWritingWrongWordsOnly = retryWritingWrongWordsOnly;
 
 // =========================================================================
-// VOCAFLOW 06D-CLOZE-ENGINE.JS (v0.10.10-35 Build 336 - EXTENDED LEARNING MODE BETA)
+// VOCAFLOW 06D-CLOZE-ENGINE.JS (v0.10.10-36 Build 337 - EXTENDED LEARNING MODE BETA)
 // Contextual Reading & Cloze Test Passage Generator with Strict JSON Schema
 // =========================================================================
 
@@ -37800,6 +37865,15 @@ function evaluateClozeResults() {
   const accuracyPct = Math.round((correctCount / blanks.length) * 100);
   const isFloorPassed = accuracyPct >= diffCfg.floorScore;
 
+  // Check Context Detective (Bậc Thầy Ngữ Cảnh) - v0.10.10-36
+  if (blanks.length >= 10 && accuracyPct === 100 && (typeof clozeSkipsUsed === 'undefined' || clozeSkipsUsed === 0)) {
+    if (typeof checkAndUnlockAchievement === 'function') {
+      checkAndUnlockAchievement('extended_context_detective');
+    } else if (typeof updateAchievementProgress === 'function') {
+      updateAchievementProgress('extended_context_detective', 1);
+    }
+  }
+
   // Calculate Xu Reward
   const minXu = diffCfg.baseXuRange[0];
   const maxXu = diffCfg.baseXuRange[1];
@@ -38244,7 +38318,7 @@ window.retryClozeWrongWordsOnly = retryClozeWrongWordsOnly;
 
 
 // =========================================================================
-// VOCAFLOW 06E-DICTATION-ENGINE.JS (v0.10.10-35 Build 336 - SENTENCE DICTATION VIP β)
+// VOCAFLOW 06E-DICTATION-ENGINE.JS (v0.10.10-36 Build 337 - SENTENCE DICTATION VIP β)
 // Full Sentence Dictation Engine with Natural Speech, Speed Slider, AI Scoring & Sequence Alignment
 // =========================================================================
 
@@ -39432,6 +39506,16 @@ async function submitDictationEvaluation() {
       scoreDisplay.textContent = `${accuracyScore} / 100đ`;
       if (typeof playVocaSfx === 'function') playVocaSfx('correct');
       if (typeof triggerVipMemeReaction === 'function') triggerVipMemeReaction('right');
+
+      // Check Golden Ears (Đôi Tai Vàng) - v0.10.10-36
+      const listensUsed = dictationMaxListens - dictationListensLeft;
+      if (currentDictationDifficulty === 'expert' && isPassed && listensUsed === 1) {
+        if (typeof checkAndUnlockAchievement === 'function') {
+          checkAndUnlockAchievement('extended_golden_ears');
+        } else if (typeof updateAchievementProgress === 'function') {
+          updateAchievementProgress('extended_golden_ears', 1);
+        }
+      }
     } else {
       verdictBanner.style.background = 'rgba(239, 68, 68, 0.15)';
       verdictBanner.style.border = '1px solid #ef4444';
@@ -39759,7 +39843,7 @@ function doExecuteExitDictation(done, total) {
 window.exitDictationMode = exitDictationMode;
 
 // =========================================================================
-// VOCAFLOW 06F-TRANSLATION-ENGINE.JS (v0.10.10-35 Build 336 - TRANSLATION LAB VIP β)
+// VOCAFLOW 06F-TRANSLATION-ENGINE.JS (v0.10.10-36 Build 337 - TRANSLATION LAB VIP β)
 // Bidirectional Translation Engine (EN ↔ VI) with Direct Gemini AI Generation, Multi-Tier VocaHint & Balance v3
 // =========================================================================
 
@@ -40958,6 +41042,12 @@ function renderTranslationEvaluationResult(evalResult, userTranslation) {
   translationGradedIndices.add(currentTranslationIndex);
   translationSessionScores.push(score);
 
+  const curQ = translationQuestionsList[currentTranslationIndex];
+  if (curQ) {
+    curQ.score = score;
+    curQ.direction = curQ.task?.direction || translationActiveDirection;
+  }
+
   // Verdict banner styling
   const verdictBanner = document.getElementById('translation-verdict-banner');
   const verdictText = document.getElementById('translation-verdict-text');
@@ -41089,6 +41179,20 @@ function finishTranslationSession() {
   const durationStr = `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
   if (done > 0 && typeof addDailyStudySeconds === 'function') {
     addDailyStudySeconds(durationSec, 'translation');
+  }
+
+  // Check Bilingual Master (Cầu Nối Song Ngữ) - v0.10.10-36
+  const enToViQuestions = translationQuestionsList.filter(q => (q.direction === 'en_to_vi' || (q.task && q.task.direction === 'en_to_vi')) && typeof q.score === 'number');
+  const viToEnQuestions = translationQuestionsList.filter(q => (q.direction === 'vi_to_en' || (q.task && q.task.direction === 'vi_to_en')) && typeof q.score === 'number');
+  const hasValidEnToVi = enToViQuestions.length > 0 && enToViQuestions.some(q => q.score >= 90);
+  const hasValidViToEn = viToEnQuestions.length > 0 && viToEnQuestions.some(q => q.score >= 90);
+
+  if ((translationActiveDirection === 'random' || (enToViQuestions.length > 0 && viToEnQuestions.length > 0)) && hasValidEnToVi && hasValidViToEn) {
+    if (typeof checkAndUnlockAchievement === 'function') {
+      checkAndUnlockAchievement('extended_bilingual_master');
+    } else if (typeof updateAchievementProgress === 'function') {
+      updateAchievementProgress('extended_bilingual_master', 1);
+    }
   }
 
   // Calculate Average Accuracy Score & Pass Rate
@@ -41280,7 +41384,7 @@ function exitTranslationMode(force = false) {
 window.exitTranslationMode = exitTranslationMode;
 
 // =========================================================================
-// VOCAFLOW 06-SPELLING-ENGINE.JS (v0.10.10-35 Build 336)
+// VOCAFLOW 06-SPELLING-ENGINE.JS (v0.10.10-36 Build 337)
 // Spelling mode, virtual keyboard, syllable clues, phonetics & score calculation
 // =========================================================================
 
@@ -43345,7 +43449,7 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ không có markdown block:
     window.fetchWordFromGemini = fetchWordFromGemini;
 
 // =========================================================================
-// VOCAFLOW 07-SPEAKING-ENGINE.JS (v0.10.10-35 Build 336)
+// VOCAFLOW 07-SPEAKING-ENGINE.JS (v0.10.10-36 Build 337)
 // AI Speaking Lab, MediaRecorder, VAD, Gemini audio analysis, multi-take economy & IndexedDB Best Take
 // =========================================================================
 
@@ -46894,6 +46998,19 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
           checkAndUnlockAchievement(t.id);
         }
       });
+
+      // Clean Slate (Xóa Sổ Ký Ức) - v0.10.10-36
+      const currentMistakes = (typeof getMistakeWordsList === 'function') ? getMistakeWordsList() : [];
+      const peakMistakes = parseInt(localStorage.getItem('vocaflow_peak_mistake_count') || '0', 10);
+      if (currentMistakes.length === 0 && peakMistakes >= 15) {
+        checkAndUnlockAchievement('discipline_clean_slate');
+      }
+
+      // Unstoppable Flow (Dòng Chảy Thép) - v0.10.10-36
+      const flowData = (typeof calculateCurrentFlow === 'function') ? calculateCurrentFlow() : { pureFlow: 0 };
+      const pureDays = flowData.pureFlow || parseInt(localStorage.getItem('vocaflow_pure_streak_days') || '0', 10);
+      updateAchievementProgress('discipline_unstoppable_flow', pureDays);
+
       saveAchievementsState();
     }
 
@@ -46959,6 +47076,20 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
         localStorage.setItem('vocaflow_vip_jackpot_streak', '0');
       }
 
+      let spinHistory = [];
+      try {
+        spinHistory = JSON.parse(localStorage.getItem('vocaflow_spin_history') || '[]');
+      } catch (e) { spinHistory = []; }
+
+      const isConsecutiveThreePrizes = (spinHistory.length >= 2 && spinHistory[0] === prize.label && spinHistory[1] === prize.label);
+      if (isConsecutiveThreePrizes) {
+        checkAndUnlockAchievement('luck_same_prize_3');
+      }
+
+      spinHistory.unshift(prize.label);
+      if (spinHistory.length > 10) spinHistory = spinHistory.slice(0, 10);
+      localStorage.setItem('vocaflow_spin_history', JSON.stringify(spinHistory));
+
       const isLowest = prize && ((prize.type === 'POINTS' && prize.val <= 50) || (prize.type === 'SKIPS' && prize.val <= 1));
       if (isLowest) {
         let unluckyStreak = parseInt(localStorage.getItem('vocaflow_lowest_prize_streak') || '0', 10) + 1;
@@ -47007,6 +47138,31 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
       }
       updateAchievementProgress('community_followers_20', followerCount);
       updateAchievementProgress('community_followers_50', followerCount);
+
+      // Community CEO's Buddy (@iamjulies / UID: MjfiTs6bthWAjB6Me200uHKlGFc2) - v0.10.10-36
+      if (typeof myFollowersMap !== 'undefined' && myFollowersMap && typeof myFollowersMap === 'object') {
+        const isFollowedByCeo = !!myFollowersMap['MjfiTs6bthWAjB6Me200uHKlGFc2'] ||
+          Object.values(myFollowersMap).some(f => f && (f.uid === 'MjfiTs6bthWAjB6Me200uHKlGFc2' || f.handle === 'iamjulies' || f.username === 'iamjulies'));
+        if (isFollowedByCeo) {
+          checkAndUnlockAchievement('community_ceos_buddy');
+        }
+      }
+
+      // Inspiring Voice (Đăng bài VocaCommunity) - v0.10.10-36
+      let postCount = parseInt(localStorage.getItem('vocaflow_community_posts_count') || '0', 10);
+      updateAchievementProgress('community_inspiring_voice', postCount);
+
+      // Atomic Focus (Hiệu suất não bộ η ≤ 10%) - v0.10.10-36
+      const earnedToday = (typeof getTodayEarnedCoins === 'function') ? getTodayEarnedCoins() : 0;
+      const isVip = (typeof isUserVip === 'function') ? isUserVip() : false;
+      const etaToday = (typeof getDailyFatigueEfficiency === 'function') ? getDailyFatigueEfficiency(earnedToday, isVip) : 1.0;
+      if (etaToday <= 0.10 || (isVip && earnedToday >= 1200) || (!isVip && earnedToday >= 600)) {
+        checkAndUnlockAchievement('discipline_atomic_focus');
+      }
+
+      // Meme Connoisseur (VIP Cat Meme Reaction 50 times) - v0.10.10-36
+      let memeCount = parseInt(localStorage.getItem('vocaflow_vip_cat_memes_count') || '0', 10);
+      updateAchievementProgress('easter_meme_connoisseur', memeCount);
 
       let refCount = 0;
       try {
@@ -47089,6 +47245,7 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
       filterAchievementsTab(currentAchievementsTab || 'all');
       filterAchievementsTier(currentAchievementsTier || 'all');
       renderAchievementsList();
+      if (typeof updateAchievementsBadgeUI === 'function') updateAchievementsBadgeUI();
       openModal('modal-achievements');
     }
 
@@ -47435,6 +47592,13 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
       }
 
       vipMemeTriggerTimestamp = Date.now();
+
+      // Track VIP Cat Meme Reaction for Easter Egg achievement (v0.10.10-36)
+      let memeCount = parseInt(localStorage.getItem('vocaflow_vip_cat_memes_count') || '0', 10) + 1;
+      localStorage.setItem('vocaflow_vip_cat_memes_count', memeCount.toString());
+      if (typeof updateAchievementProgress === 'function') {
+        updateAchievementProgress('easter_meme_connoisseur', memeCount);
+      }
 
       // Pure vanilla GIF centered on screen (no frames/boxes)
       overlay.innerHTML = `
@@ -66078,6 +66242,136 @@ Quy tắc phản hồi quan trọng:
         maxProgress: 10,
         unit: 'từ cẩn thận',
         pointsReward: 200
+      },
+
+      // GROUP 8: BỘ TỨ KỸ NĂNG MỞ RỘNG (Extended Labs beta - v0.10.10-36)
+      'extended_writing_expert_90': {
+        id: 'extended_writing_expert_90',
+        group: 'skill',
+        groupName: '⚡ Chiến Thần Kỹ Năng & Thao Tác',
+        icon: '✍️',
+        name: 'Cây Bút Học Thuật',
+        desc: 'Đạt từ 90 điểm trở lên ở chế độ Viết Câu (Sentence Writing) cấp độ Siêu Khó (Expert ×4.0, ẩn nghĩa tiếng Việt).',
+        tier: 'gold',
+        maxProgress: 1,
+        unit: 'lần',
+        pointsReward: 200
+      },
+      'extended_context_detective': {
+        id: 'extended_context_detective',
+        group: 'skill',
+        groupName: '⚡ Chiến Thần Kỹ Năng & Thao Tác',
+        icon: '📖',
+        name: 'Bậc Thầy Ngữ Cảnh',
+        desc: 'Điền đúng 100% toàn bộ ô trống trong một bài đọc Cloze Test có độ dài từ 10 ô trống trở lên mà không dùng VocaSkip.',
+        tier: 'gold',
+        maxProgress: 1,
+        unit: 'bài đọc',
+        pointsReward: 200
+      },
+      'extended_golden_ears': {
+        id: 'extended_golden_ears',
+        group: 'skill',
+        groupName: '⚡ Chiến Thần Kỹ Năng & Thao Tác',
+        icon: '🎧',
+        name: 'Đôi Tai Vàng',
+        desc: 'Hoàn thành chính xác một câu phức ở chế độ Nghe Gõ (Dictation) cấp độ Siêu Khó chỉ trong đúng 1 lần nghe duy nhất.',
+        tier: 'diamond',
+        maxProgress: 1,
+        unit: 'câu',
+        pointsReward: 500
+      },
+      'extended_bilingual_master': {
+        id: 'extended_bilingual_master',
+        group: 'skill',
+        groupName: '⚡ Chiến Thần Kỹ Năng & Thao Tác',
+        icon: '🌐',
+        name: 'Cầu Nối Song Ngữ',
+        desc: 'Đạt điểm ≥90 ở cả 2 chiều dịch (Anh → Việt và Việt → Anh) trong cùng một phiên học Dịch Thuật Song Phương (chọn chiều dịch Ngẫu nhiên).',
+        tier: 'silver',
+        maxProgress: 1,
+        unit: 'phiên',
+        pointsReward: 100
+      },
+
+      // GROUP 9: Ý CHÍ & KỶ LUẬT HỌC TẬP (Balance v4, SRS & Lỗi Sai - v0.10.10-36)
+      'discipline_atomic_focus': {
+        id: 'discipline_atomic_focus',
+        group: 'mastery',
+        groupName: '🧠 Bậc Thầy Trí Nhớ & Khổ Luyện',
+        icon: '⚡',
+        name: 'Bộ Não Nguyên Tử',
+        desc: 'Chạm mốc hiệu suất Năng lượng não bộ η ≤ 10% trong ngày (tích lũy ≥ 600 VoCoin với Free hoặc ≥ 1.200 VoCoin với VIP trong 1 ngày).',
+        tier: 'diamond',
+        maxProgress: 1,
+        unit: 'lần',
+        pointsReward: 500
+      },
+      'discipline_clean_slate': {
+        id: 'discipline_clean_slate',
+        group: 'mastery',
+        groupName: '🧠 Bậc Thầy Trí Nhớ & Khổ Luyện',
+        icon: '📕',
+        name: 'Xóa Sổ Ký Ức',
+        desc: 'Giải quyết sạch sẽ toàn bộ từ vựng trong Sổ Tay Lỗi Sai khi danh sách đang có từ 15 từ trở lên.',
+        tier: 'silver',
+        maxProgress: 1,
+        unit: 'lần dọn sạch',
+        pointsReward: 100
+      },
+      'discipline_unstoppable_flow': {
+        id: 'discipline_unstoppable_flow',
+        group: 'mastery',
+        groupName: '🧠 Bậc Thầy Trí Nhớ & Khổ Luyện',
+        icon: '🌊',
+        name: 'Dòng Chảy Thép',
+        desc: 'Duy trì chuỗi Flow Streak 30 ngày liên tục mà tuyệt đối không tiêu thụ bất kỳ lượt FlowFreeze nào.',
+        tier: 'mythic',
+        maxProgress: 30,
+        unit: 'ngày liên tiếp',
+        pointsReward: 1000
+      },
+
+      // GROUP 10: ĐỜI SỐNG CỘNG ĐỒNG & MẠNG XÃ HỘI (VocaCommunity - v0.10.10-36)
+      'community_inspiring_voice': {
+        id: 'community_inspiring_voice',
+        group: 'creator',
+        groupName: '🧙 Pháp Sư Sáng Tạo & Xã Hội',
+        icon: '💬',
+        name: 'Tiếng Nói Cộng Đồng',
+        desc: 'Đăng một bài viết trên VocaCommunity.',
+        tier: 'bronze',
+        maxProgress: 1,
+        unit: 'bài viết',
+        pointsReward: 50
+      },
+      'community_ceos_buddy': {
+        id: 'community_ceos_buddy',
+        group: 'creator',
+        groupName: '🧙 Pháp Sư Sáng Tạo & Xã Hội',
+        icon: '👥',
+        name: 'Bạn Của CEO',
+        desc: 'Được @iamjulies (UID: MjfiTs6bthWAjB6Me200uHKlGFc2) follow.',
+        tier: 'silver',
+        maxProgress: 1,
+        unit: 'lượt follow',
+        pointsReward: 100
+      },
+
+      // GROUP 11: TRẢI NGHIỆM ĐỘC ĐÁO (Easter Egg & VIP - v0.10.10-36)
+      'easter_meme_connoisseur': {
+        id: 'easter_meme_connoisseur',
+        group: 'easter_egg',
+        groupName: '🥚 Trứng Phục Sinh & Ẩn Số',
+        icon: '🐾',
+        name: 'Đại Ca Nuôi Mèo',
+        desc: 'Kích hoạt đủ 50 lần phản ứng biểu cảm Meme Mèo VIP (cả đúng lẫn sai) trong các phòng Lab.',
+        isSecret: true,
+        secretHint: 'Thành tựu bí ẩn. Hãy khám phá bằng cách trải nghiệm ứng dụng!',
+        tier: 'bronze',
+        maxProgress: 50,
+        unit: 'lần meme',
+        pointsReward: 50
       }
     };
 
@@ -66123,11 +66417,80 @@ Quy tắc phản hồi quan trọng:
       return uniqueSet.size;
     }
 
+    function getUnclaimedAchievementsCount() {
+      if (!currentUser || !currentUser.email) return 0;
+      if (typeof userAchievements !== 'object' || !userAchievements) return 0;
+      let count = 0;
+      Object.keys(ACHIEVEMENTS_REGISTRY).forEach(id => {
+        const ach = userAchievements[id];
+        if (ach && ach.unlocked && !ach.claimedReward) {
+          count++;
+        }
+      });
+      return count;
+    }
+    window.getUnclaimedAchievementsCount = getUnclaimedAchievementsCount;
+
+    function updateAchievementsBadgeUI() {
+      const count = getUnclaimedAchievementsCount();
+
+      // 1. Header More Menu Item Badge
+      const headerMoreItemBadge = document.getElementById('header-more-achieve-badge');
+      if (headerMoreItemBadge) {
+        if (count > 0) {
+          headerMoreItemBadge.style.display = 'inline-flex';
+          headerMoreItemBadge.textContent = count > 99 ? '99+' : count.toString();
+        } else {
+          headerMoreItemBadge.style.display = 'none';
+        }
+      }
+
+      // 2. Header More Button Red Dot
+      const headerMoreDot = document.getElementById('header-more-dot-badge');
+      if (headerMoreDot) {
+        headerMoreDot.style.display = count > 0 ? 'block' : 'none';
+      }
+
+      // 3. Profile Highlights Action Button Badge
+      const profileUnclaimedBadge = document.getElementById('profile-unclaimed-achieve-badge');
+      if (profileUnclaimedBadge) {
+        if (count > 0) {
+          profileUnclaimedBadge.style.display = 'inline-flex';
+          profileUnclaimedBadge.textContent = count > 99 ? '99+' : count.toString();
+        } else {
+          profileUnclaimedBadge.style.display = 'none';
+        }
+      }
+
+      // 4. Profile Modal Badges Tab Badge
+      const profileTabBadge = document.getElementById('profile-tab-unclaimed-achieve-badge') || document.getElementById('profile-tab-btn-achieve-badge');
+      if (profileTabBadge) {
+        if (count > 0) {
+          profileTabBadge.style.display = 'inline-flex';
+          profileTabBadge.textContent = count > 99 ? '99+' : count.toString();
+        } else {
+          profileTabBadge.style.display = 'none';
+        }
+      }
+
+      const profileTabBtnBadge = document.getElementById('profile-tab-btn-achieve-badge');
+      if (profileTabBtnBadge) {
+        if (count > 0) {
+          profileTabBtnBadge.style.display = 'inline-flex';
+          profileTabBtnBadge.textContent = count > 99 ? '99+' : count.toString();
+        } else {
+          profileTabBtnBadge.style.display = 'none';
+        }
+      }
+    }
+    window.updateAchievementsBadgeUI = updateAchievementsBadgeUI;
+
     function saveAchievementsState() {
       if (!currentUser || !currentUser.email) return; // Guest cannot save achievements
 
       localStorage.setItem('vocaflow_user_achievements', JSON.stringify(userAchievements));
       localStorage.setItem('vocaflow_pinned_badges', JSON.stringify(userPinnedBadges));
+      updateAchievementsBadgeUI();
 
       if (currentUser && currentUser.uid && firebaseConfig.databaseURL) {
         const authParam = currentUser.idToken ? `?auth=${currentUser.idToken}` : '';
@@ -66220,6 +66583,7 @@ Quy tắc phản hồi quan trọng:
       saveAchievementsState();
       renderAchievementsList();
       renderProfilePinnedBadges();
+      updateAchievementsBadgeUI();
       return true;
     }
 
@@ -66266,6 +66630,7 @@ Quy tắc phản hồi quan trọng:
               userAch.claimedReward = true;
               saveAchievementsState();
               renderAchievementsList();
+              updateAchievementsBadgeUI();
               showToast('⚠️ Phần thưởng thành tựu này đã được nhận trước đó!');
               isClaimingAchievement[id] = false;
               return;
@@ -66286,6 +66651,7 @@ Quy tắc phản hồi quan trọng:
       saveAchievementsState();
       renderAchievementsList();
       updateEconomyUI();
+      updateAchievementsBadgeUI();
       playVocaSfx('success');
       showToast(`🎁 Đã nhận thành công +${rewardPts} VoCoin từ "${badgeDef.name}"!`);
 

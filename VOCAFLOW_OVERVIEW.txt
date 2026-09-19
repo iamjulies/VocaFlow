@@ -1,4 +1,19 @@
 ================================================================================
+Phiên bản: v0.10.10-36 (Build 337) - Cuộc Cách Mạng Thành Tích (Achievement Revolution: 50 Badges) & Hệ Thống Chấm Đỏ Báo Hiệu Phần Thưởng Chưa Nhận
+================================================================================
+1. [Mở Rộng Hệ Thống Thành Tích Lên 50 Danh Hiệu (Vấn đề 12)]:
+   - Bổ sung 10 danh hiệu thành tích mới tinh hoa phân bổ đều trên 4 nhóm chuyên đề:
+     + Extended Labs β: Bút Lực Thượng Thừa (extended_writing_expert_90 - Đạt ≥90đ Viết câu độ khó Expert), Thám Tử Văn Cảnh (extended_context_detective - Điền đúng 100% đoạn văn ≥10 chỗ trống không Skip), Đôi Tai Vàng (extended_golden_ears - Nghe chép chính xác câu Expert chỉ với 1 lần nghe duy nhất), Bậc Thầy Song Ngữ (extended_bilingual_master - Hoàn thành phiên Dịch thuật với ≥90đ cho cả 2 chiều Anh-Việt và Việt-Anh).
+     + Ý Chí & Kỷ Luật: Tập Trung Nguyên Tử (discipline_atomic_focus - Kiếm trọn 100% giới hạn VoCoin hàng ngày 3 ngày liên tiếp), Dọn Sạch Bảng Vàng (discipline_clean_slate - Xóa sạch 0 từ trong Sổ Tay Từ Khó khi danh sách đạt đỉnh ≥15 từ), Dòng Chảy Bất Tận (discipline_unstoppable_flow - Duy trì Flow chuỗi liên tục ≥14 ngày mà không dùng bất kỳ Băng Bảo Lưu nào).
+     + VocaCommunity: Tiếng Nói Truyền Cảm Hứng (community_inspiring_voice - Đăng tải thành công 5 bài viết chia sẻ chất lượng trên VocaCommunity), Bạn Đồng Hành Của CEO (community_ceos_buddy - Đóng góp 3 báo cáo lỗi được Admin duyệt và trao thưởng).
+     + Easter Egg & VIP: Con Nghiện Meme (easter_meme_connoisseur - Thành tích Bí Ẩn: Trải nghiệm 20 lần phản hồi Meme Mèo VocaVIP khi học tập).
+2. [Hệ Thống Chấm Đỏ Báo Hiệu Thành Tích Chưa Nhận Thưởng (Vấn đề 13)]:
+   - Triển khai hàm getUnclaimedAchievementsCount() và updateAchievementsBadgeUI() tự động tính toán và hiển thị chấm đỏ cùng số lượng phần thưởng chưa nhận trên toàn bộ các điểm truy cập thành tích: Nút 3 chấm trên Header (#header-more-dot-badge), Mục Thành tích menu dropdown (#header-more-achieve-badge), Nút Thành tích trên Profile Highlights (#profile-unclaimed-achieve-badge), Tab Danh Hiệu Profile (#profile-tab-btn-achieve-badge) và nút xem bảng danh hiệu (#profile-tab-unclaimed-achieve-badge).
+   - Tự động cập nhật real-time ngay khi mở khóa thành tích mới hoặc khi người dùng bấm Nhận Thưởng (Claim).
+3. [Đồng Bộ Toàn Diện 7-Point Version Consistency & Multi-Deploy (v0.10.10-36 Build 337)]:
+   - Đồng bộ nhất quán 7 điểm phiên bản trên toàn bộ hệ thống Web PWA, Desktop App, Flutter config, Service Worker và Release Scripts.
+
+================================================================================
 Phiên bản: v0.10.10-35 (Build 336) - Hoàn Thiện Kết Toán Điểm Thống Nhất Cho Luyện Nói & Viết Câu, Cảnh Báo Hết Hạn VIP Tự Động (VocaNoti), Dịch Thuật Ngẫu Nhiên & Phân Cấp Gói VocaVIP TRY
 ================================================================================
 1. [Hoàn Thiện Kết Toán Điểm Thống Nhất Toàn Bộ 7 Chế Độ Học Tập (Vấn đề 7)]:

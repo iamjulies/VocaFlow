@@ -1,13 +1,13 @@
-// VOCAFLOW 02-STATE-CORE.JS (v0.10.10-35 Build 336)
+// VOCAFLOW 02-STATE-CORE.JS (v0.10.10-36 Build 337)
 // Global constants, core database state, storage keys, recovery & audio engine
 // =========================================================================
 
     // =========================================================================
-    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.10-35 Build 336)
+    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.10-36 Build 337)
     // =========================================================================
-    const VOCAFLOW_APP_VERSION = 'v0.10.10-35';
-    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.10-35 (Build 336)';
-    const VOCAFLOW_APP_BUILD = 336;
+    const VOCAFLOW_APP_VERSION = 'v0.10.10-36';
+    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.10-36 (Build 337)';
+    const VOCAFLOW_APP_BUILD = 337;
     window.VOCAFLOW_APP_VERSION = VOCAFLOW_APP_VERSION;
     window.VOCAFLOW_APP_FULL_TITLE = VOCAFLOW_APP_FULL_TITLE;
     window.VOCAFLOW_APP_BUILD = VOCAFLOW_APP_BUILD;
@@ -695,6 +695,18 @@
       const current = getTodayEarnedCoins();
       const updated = current + Math.round(num);
       localStorage.setItem(key, updated.toString());
+
+      // Check Atomic Focus (Hiệu suất não bộ η ≤ 10%) - v0.10.10-36
+      const isVip = (typeof isUserVip === 'function') ? isUserVip() : false;
+      const eta = getDailyFatigueEfficiency(updated, isVip);
+      if (eta <= 0.10 || (isVip && updated >= 1200) || (!isVip && updated >= 600)) {
+        if (typeof checkAndUnlockAchievement === 'function') {
+          checkAndUnlockAchievement('discipline_atomic_focus');
+        } else if (typeof updateAchievementProgress === 'function') {
+          updateAchievementProgress('discipline_atomic_focus', 1);
+        }
+      }
+
       return updated;
     }
     window.recordTodayEarnedCoins = recordTodayEarnedCoins;

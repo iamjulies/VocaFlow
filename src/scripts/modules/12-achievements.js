@@ -2431,6 +2431,136 @@
         maxProgress: 10,
         unit: 'từ cẩn thận',
         pointsReward: 200
+      },
+
+      // GROUP 8: BỘ TỨ KỸ NĂNG MỞ RỘNG (Extended Labs beta - v0.10.10-36)
+      'extended_writing_expert_90': {
+        id: 'extended_writing_expert_90',
+        group: 'skill',
+        groupName: '⚡ Chiến Thần Kỹ Năng & Thao Tác',
+        icon: '✍️',
+        name: 'Cây Bút Học Thuật',
+        desc: 'Đạt từ 90 điểm trở lên ở chế độ Viết Câu (Sentence Writing) cấp độ Siêu Khó (Expert ×4.0, ẩn nghĩa tiếng Việt).',
+        tier: 'gold',
+        maxProgress: 1,
+        unit: 'lần',
+        pointsReward: 200
+      },
+      'extended_context_detective': {
+        id: 'extended_context_detective',
+        group: 'skill',
+        groupName: '⚡ Chiến Thần Kỹ Năng & Thao Tác',
+        icon: '📖',
+        name: 'Bậc Thầy Ngữ Cảnh',
+        desc: 'Điền đúng 100% toàn bộ ô trống trong một bài đọc Cloze Test có độ dài từ 10 ô trống trở lên mà không dùng VocaSkip.',
+        tier: 'gold',
+        maxProgress: 1,
+        unit: 'bài đọc',
+        pointsReward: 200
+      },
+      'extended_golden_ears': {
+        id: 'extended_golden_ears',
+        group: 'skill',
+        groupName: '⚡ Chiến Thần Kỹ Năng & Thao Tác',
+        icon: '🎧',
+        name: 'Đôi Tai Vàng',
+        desc: 'Hoàn thành chính xác một câu phức ở chế độ Nghe Gõ (Dictation) cấp độ Siêu Khó chỉ trong đúng 1 lần nghe duy nhất.',
+        tier: 'diamond',
+        maxProgress: 1,
+        unit: 'câu',
+        pointsReward: 500
+      },
+      'extended_bilingual_master': {
+        id: 'extended_bilingual_master',
+        group: 'skill',
+        groupName: '⚡ Chiến Thần Kỹ Năng & Thao Tác',
+        icon: '🌐',
+        name: 'Cầu Nối Song Ngữ',
+        desc: 'Đạt điểm ≥90 ở cả 2 chiều dịch (Anh → Việt và Việt → Anh) trong cùng một phiên học Dịch Thuật Song Phương (chọn chiều dịch Ngẫu nhiên).',
+        tier: 'silver',
+        maxProgress: 1,
+        unit: 'phiên',
+        pointsReward: 100
+      },
+
+      // GROUP 9: Ý CHÍ & KỶ LUẬT HỌC TẬP (Balance v4, SRS & Lỗi Sai - v0.10.10-36)
+      'discipline_atomic_focus': {
+        id: 'discipline_atomic_focus',
+        group: 'mastery',
+        groupName: '🧠 Bậc Thầy Trí Nhớ & Khổ Luyện',
+        icon: '⚡',
+        name: 'Bộ Não Nguyên Tử',
+        desc: 'Chạm mốc hiệu suất Năng lượng não bộ η ≤ 10% trong ngày (tích lũy ≥ 600 VoCoin với Free hoặc ≥ 1.200 VoCoin với VIP trong 1 ngày).',
+        tier: 'diamond',
+        maxProgress: 1,
+        unit: 'lần',
+        pointsReward: 500
+      },
+      'discipline_clean_slate': {
+        id: 'discipline_clean_slate',
+        group: 'mastery',
+        groupName: '🧠 Bậc Thầy Trí Nhớ & Khổ Luyện',
+        icon: '📕',
+        name: 'Xóa Sổ Ký Ức',
+        desc: 'Giải quyết sạch sẽ toàn bộ từ vựng trong Sổ Tay Lỗi Sai khi danh sách đang có từ 15 từ trở lên.',
+        tier: 'silver',
+        maxProgress: 1,
+        unit: 'lần dọn sạch',
+        pointsReward: 100
+      },
+      'discipline_unstoppable_flow': {
+        id: 'discipline_unstoppable_flow',
+        group: 'mastery',
+        groupName: '🧠 Bậc Thầy Trí Nhớ & Khổ Luyện',
+        icon: '🌊',
+        name: 'Dòng Chảy Thép',
+        desc: 'Duy trì chuỗi Flow Streak 30 ngày liên tục mà tuyệt đối không tiêu thụ bất kỳ lượt FlowFreeze nào.',
+        tier: 'mythic',
+        maxProgress: 30,
+        unit: 'ngày liên tiếp',
+        pointsReward: 1000
+      },
+
+      // GROUP 10: ĐỜI SỐNG CỘNG ĐỒNG & MẠNG XÃ HỘI (VocaCommunity - v0.10.10-36)
+      'community_inspiring_voice': {
+        id: 'community_inspiring_voice',
+        group: 'creator',
+        groupName: '🧙 Pháp Sư Sáng Tạo & Xã Hội',
+        icon: '💬',
+        name: 'Tiếng Nói Cộng Đồng',
+        desc: 'Đăng một bài viết trên VocaCommunity.',
+        tier: 'bronze',
+        maxProgress: 1,
+        unit: 'bài viết',
+        pointsReward: 50
+      },
+      'community_ceos_buddy': {
+        id: 'community_ceos_buddy',
+        group: 'creator',
+        groupName: '🧙 Pháp Sư Sáng Tạo & Xã Hội',
+        icon: '👥',
+        name: 'Bạn Của CEO',
+        desc: 'Được @iamjulies (UID: MjfiTs6bthWAjB6Me200uHKlGFc2) follow.',
+        tier: 'silver',
+        maxProgress: 1,
+        unit: 'lượt follow',
+        pointsReward: 100
+      },
+
+      // GROUP 11: TRẢI NGHIỆM ĐỘC ĐÁO (Easter Egg & VIP - v0.10.10-36)
+      'easter_meme_connoisseur': {
+        id: 'easter_meme_connoisseur',
+        group: 'easter_egg',
+        groupName: '🥚 Trứng Phục Sinh & Ẩn Số',
+        icon: '🐾',
+        name: 'Đại Ca Nuôi Mèo',
+        desc: 'Kích hoạt đủ 50 lần phản ứng biểu cảm Meme Mèo VIP (cả đúng lẫn sai) trong các phòng Lab.',
+        isSecret: true,
+        secretHint: 'Thành tựu bí ẩn. Hãy khám phá bằng cách trải nghiệm ứng dụng!',
+        tier: 'bronze',
+        maxProgress: 50,
+        unit: 'lần meme',
+        pointsReward: 50
       }
     };
 
@@ -2476,11 +2606,80 @@
       return uniqueSet.size;
     }
 
+    function getUnclaimedAchievementsCount() {
+      if (!currentUser || !currentUser.email) return 0;
+      if (typeof userAchievements !== 'object' || !userAchievements) return 0;
+      let count = 0;
+      Object.keys(ACHIEVEMENTS_REGISTRY).forEach(id => {
+        const ach = userAchievements[id];
+        if (ach && ach.unlocked && !ach.claimedReward) {
+          count++;
+        }
+      });
+      return count;
+    }
+    window.getUnclaimedAchievementsCount = getUnclaimedAchievementsCount;
+
+    function updateAchievementsBadgeUI() {
+      const count = getUnclaimedAchievementsCount();
+
+      // 1. Header More Menu Item Badge
+      const headerMoreItemBadge = document.getElementById('header-more-achieve-badge');
+      if (headerMoreItemBadge) {
+        if (count > 0) {
+          headerMoreItemBadge.style.display = 'inline-flex';
+          headerMoreItemBadge.textContent = count > 99 ? '99+' : count.toString();
+        } else {
+          headerMoreItemBadge.style.display = 'none';
+        }
+      }
+
+      // 2. Header More Button Red Dot
+      const headerMoreDot = document.getElementById('header-more-dot-badge');
+      if (headerMoreDot) {
+        headerMoreDot.style.display = count > 0 ? 'block' : 'none';
+      }
+
+      // 3. Profile Highlights Action Button Badge
+      const profileUnclaimedBadge = document.getElementById('profile-unclaimed-achieve-badge');
+      if (profileUnclaimedBadge) {
+        if (count > 0) {
+          profileUnclaimedBadge.style.display = 'inline-flex';
+          profileUnclaimedBadge.textContent = count > 99 ? '99+' : count.toString();
+        } else {
+          profileUnclaimedBadge.style.display = 'none';
+        }
+      }
+
+      // 4. Profile Modal Badges Tab Badge
+      const profileTabBadge = document.getElementById('profile-tab-unclaimed-achieve-badge') || document.getElementById('profile-tab-btn-achieve-badge');
+      if (profileTabBadge) {
+        if (count > 0) {
+          profileTabBadge.style.display = 'inline-flex';
+          profileTabBadge.textContent = count > 99 ? '99+' : count.toString();
+        } else {
+          profileTabBadge.style.display = 'none';
+        }
+      }
+
+      const profileTabBtnBadge = document.getElementById('profile-tab-btn-achieve-badge');
+      if (profileTabBtnBadge) {
+        if (count > 0) {
+          profileTabBtnBadge.style.display = 'inline-flex';
+          profileTabBtnBadge.textContent = count > 99 ? '99+' : count.toString();
+        } else {
+          profileTabBtnBadge.style.display = 'none';
+        }
+      }
+    }
+    window.updateAchievementsBadgeUI = updateAchievementsBadgeUI;
+
     function saveAchievementsState() {
       if (!currentUser || !currentUser.email) return; // Guest cannot save achievements
 
       localStorage.setItem('vocaflow_user_achievements', JSON.stringify(userAchievements));
       localStorage.setItem('vocaflow_pinned_badges', JSON.stringify(userPinnedBadges));
+      updateAchievementsBadgeUI();
 
       if (currentUser && currentUser.uid && firebaseConfig.databaseURL) {
         const authParam = currentUser.idToken ? `?auth=${currentUser.idToken}` : '';
@@ -2573,6 +2772,7 @@
       saveAchievementsState();
       renderAchievementsList();
       renderProfilePinnedBadges();
+      updateAchievementsBadgeUI();
       return true;
     }
 
@@ -2619,6 +2819,7 @@
               userAch.claimedReward = true;
               saveAchievementsState();
               renderAchievementsList();
+              updateAchievementsBadgeUI();
               showToast('⚠️ Phần thưởng thành tựu này đã được nhận trước đó!');
               isClaimingAchievement[id] = false;
               return;
@@ -2639,6 +2840,7 @@
       saveAchievementsState();
       renderAchievementsList();
       updateEconomyUI();
+      updateAchievementsBadgeUI();
       playVocaSfx('success');
       showToast(`🎁 Đã nhận thành công +${rewardPts} VoCoin từ "${badgeDef.name}"!`);
 

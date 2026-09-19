@@ -1,12 +1,43 @@
 # CURRENT TASK & TRẠNG THÁI CÔNG VIỆC HIỆN TẠI (VOCAFLOW)
 
-> **Phiên bản mục tiêu:** `v0.10.10-35 (Build 336)`  
+> **Phiên bản mục tiêu:** `v0.10.10-36 (Build 337)`  
 > **Cập nhật lần cuối:** 2026-09-19  
 > **Trạng thái:** 🚀 **ĐANG TIẾN HÀNH BUILD, KIỂM THỬ CDP & MULTI-DEPLOY GITHUB**
 
 ---
 
-## 🎯 1. DANH SÁCH NHIỆM VỤ ĐÃ GIẢI QUYẾT (v0.10.10-35 Build 336)
+## 🎯 1. DANH SÁCH NHIỆM VỤ ĐÃ GIẢI QUYẾT (v0.10.10-36 Build 337)
+
+- [x] **Vấn đề 12: Mở Rộng Hệ Thống Thành Tích Lên 50 Danh Hiệu (`12-achievements.js`, `08-wallet-economy.js`, `02-state-core.js`, `03-auth.js`, `05-quiz-engine.js`, `06c-writing-engine.js`, `06d-cloze-engine.js`, `06e-dictation-engine.js`, `06f-translation-engine.js`)**:
+  - Bổ sung 10 danh hiệu mới phân bổ vào 4 nhóm:
+    - *Extended Labs β*: `extended_writing_expert_90` (Bút Lực Thượng Thừa), `extended_context_detective` (Thám Tử Văn Cảnh), `extended_golden_ears` (Đôi Tai Vàng), `extended_bilingual_master` (Bậc Thầy Song Ngữ).
+    - *Ý Chí & Kỷ Luật*: `discipline_atomic_focus` (Tập Trung Nguyên Tử), `discipline_clean_slate` (Dọn Sạch Bảng Vàng), `discipline_unstoppable_flow` (Dòng Chảy Bất Tận).
+    - *VocaCommunity*: `community_inspiring_voice` (Tiếng Nói Truyền Cảm Hứng), `community_ceos_buddy` (Bạn Đồng Hành Của CEO).
+    - *Easter Egg & VIP*: `easter_meme_connoisseur` (Con Nghiện Meme - Secret).
+  - Tích hợp logic kích hoạt và theo dõi tiến độ đầy đủ trên toàn bộ các engine liên quan.
+
+- [x] **Vấn đề 13: Hệ Thống Chấm Đỏ Báo Hiệu Phần Thưởng Chưa Nhận (`12-achievements.js`, `header.html`, `modal-profile.html`, `modal-achievements.html`)**:
+  - Triển khai `getUnclaimedAchievementsCount()` và `updateAchievementsBadgeUI()`.
+  - Cập nhật chấm đỏ và số lượng trên 5 điểm truy cập: Nút 3 chấm Header (`#header-more-dot-badge`), Mục menu Header (`#header-more-achieve-badge`), Nút Highlights Profile (`#profile-unclaimed-achieve-badge`), Nút Tab Danh Hiệu Profile (`#profile-tab-btn-achieve-badge`), Nút Panel Profile (`#profile-tab-unclaimed-achieve-badge`).
+  - Cập nhật số đếm 50 danh hiệu đồng bộ trên modal thành tích và header.
+
+- [x] **Đồng Bộ Toàn Diện 7-Point Version Consistency & Multi-Deploy (`v0.10.10-36 Build 337`)**:
+  - `src/components/modals/modal-settings.html` (`VocaFlow v0.10.10-36 (Build 337)`)
+  - `src/components/screens/screen-decks.html` (`v0.10.10-36 (Build 337)`)
+  - `src/components/screens/screen-deck-detail.html` (`v0.10.10-36 (Build 337)`)
+  - `src/scripts/modules/01-router.js` (`v0.10.10-36 Build 337`)
+  - `src/scripts/modules/02-state-core.js` (`const VOCAFLOW_APP_VERSION = 'v0.10.10-36'`, `const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.10-36 (Build 337)'`, `VOCAFLOW_APP_BUILD = 337`)
+  - `src/scripts/modules/03-auth.js` (`v0.10.10-36 Build 337` & registry)
+  - `src/scripts/modules/05-quiz-engine.js` - `07-speaking-engine.js` (`v0.10.10-36 Build 337`)
+  - `sw.js` & `Release_App/sw.js` (`vocaflow-pwa-v0.10.10-36`)
+  - `pubspec.yaml` (`version: 0.10.10+337`)
+  - `VocaFlow_Desktop/Program.cs` (`VocaFlow v0.10.10-36`)
+  - `GITHUB_RELEASE/push_github.ps1` (`v0.10.10-36 (Build 337)`)
+  - `VOCAFLOW_OVERVIEW.txt` & `GITHUB_RELEASE/VOCAFLOW_OVERVIEW.txt`
+
+---
+
+## 🎯 2. DANH SÁCH NHIỆM VỤ CÁC PHIÊN BẢN TRƯỚC (v0.10.10-35 Build 336)
 
 - [x] **Vấn đề 7: Hoàn Thiện Kết Toán Điểm Thống Nhất Toàn Diện Cho Luyện Nói & Viết Câu (`07-speaking-engine.js`, `06c-writing-engine.js`)**:
   - Khắc phục triệt để lỗi thiếu kết toán số dư ví VoCoin (`setUserPoints`, `addLedgerEntry`) và Điểm Rèn Luyện (`addStudyExp`) trong `finishSpeakingSession()` và `finishWritingSession()`.
@@ -24,29 +55,11 @@
   - Cập nhật huy hiệu thanh tiêu đề, nhãn yêu cầu câu hỏi và modal kết quả hiển thị linh hoạt theo từng chiều câu hỏi.
 
 - [x] **Vấn đề 10: Tự Động Thu Hồi Hiệu Ứng VIP Hết Hạn (`03-auth.js`)**:
-  - Rà soát và loại bỏ triệt để hiệu ứng hào quang vàng, vương miện hoàng gia 👑 và huy hiệu VIP khi tài khoản hết hạn trên Publisher Portal (`fetchAdminStudentsList`, `renderAdminStudentsTable`), Bảng xếp hạng và Hồ sơ công khai (`openPublicProfileByAuthor`).
+  - Rà soát và loại bỏ triệt để hiệu ứng hào quang vàng, vương miện hoàng gia 👑 và huy hiệu VIP khi tài khoản hết hạn trên Publisher Portal (`fetchAdminStudentsList`, `renderAdminStudentsTable`), Bảng xếphp và Hồ sơ công khai (`openPublicProfileByAuthor`).
 
 - [x] **Vấn đề 11: Phân Cấp Gói Trải Nghiệm "✨ VocaVIP TRY" (`02-state-core.js`, `03-auth.js`, `10-lucky-wheel.js`, `08-wallet-economy.js`)**:
   - Thiết lập cấp độ tier `'try'` riêng biệt cho các trường hợp nhận VIP miễn phí qua Vòng quay may mắn (`grantVipDaysBonus`) và Mã giới thiệu tân thủ.
   - Hiển thị nhãn huy hiệu "✨ VocaVIP TRY" phân biệt với các gói trả phí chính thức (Monthly, Yearly, Lifetime). Tự động thu hồi và gỡ bỏ khi hết hạn.
-
-- [x] **Đồng Bộ Toàn Diện 7-Point Version Consistency & Multi-Deploy (`v0.10.10-35 Build 336`)**:
-  - `src/components/modals/modal-settings.html` (`VocaFlow v0.10.10-35 (Build 336)`)
-  - `src/components/screens/screen-decks.html` (`v0.10.10-35 (Build 336)`)
-  - `src/components/screens/screen-deck-detail.html` (`v0.10.10-35 (Build 336)`)
-  - `src/scripts/modules/01-router.js` (`v0.10.10-35 Build 336`)
-  - `src/scripts/modules/02-state-core.js` (`const VOCAFLOW_APP_VERSION = 'v0.10.10-35'`, `const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.10-35 (Build 336)'`, `VOCAFLOW_APP_BUILD = 336`)
-  - `src/scripts/modules/03-auth.js` (`v0.10.10-35 Build 336` & registry)
-  - `src/scripts/modules/05-quiz-engine.js` - `07-speaking-engine.js` (`v0.10.10-35 Build 336`)
-  - `sw.js` & `Release_App/sw.js` (`vocaflow-pwa-v0.10.10-35`)
-  - `pubspec.yaml` (`version: 0.10.10+336`)
-  - `VocaFlow_Desktop/Program.cs` (`VocaFlow v0.10.10-35`)
-  - `GITHUB_RELEASE/push_github.ps1` (`v0.10.10-35 (Build 336)`)
-  - `VOCAFLOW_OVERVIEW.txt` & `GITHUB_RELEASE/VOCAFLOW_OVERVIEW.txt`
-
----
-
-## 🎯 2. DANH SÁCH NHIỆM VỤ CÁC PHIÊN BẢN TRƯỚC (v0.10.10-34 Build 335)
 
 - [x] **Động Cơ Tính Điểm Rèn Luyện Thống Nhất (Unified Study EXP Engine - `02-state-core.js`)**:
   - Xây dựng hàm lõi `calculateUnifiedStudyExp(mode, sessionItems, totalExpectedCount, difficultyMultOrOptions)` áp dụng công thức toán học chuẩn xác cho cả 8 chế độ học:
