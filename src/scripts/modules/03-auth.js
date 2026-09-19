@@ -1,6 +1,6 @@
 // =========================================================================
 
-// VOCAFLOW 03-AUTH.JS (v0.10.10-37 Build 338)
+// VOCAFLOW 03-AUTH.JS (v0.10.10-38 Build 339)
 
 // Firebase Auth, Realtime Sync, Public Profiles, Social Graph, Monetization & Billing
 
@@ -7148,6 +7148,13 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
     // AUTO-SEED OFFICIAL UPDATE POST, HOLIDAY/SALE EVENTS & GLOWING NOTIFICATIONS (v0.10.10-33 / Build 334)
     // =========================================================================
     const VOCAFLOW_OFFICIAL_RELEASES_REGISTRY = {
+      'v0.10.10-38': {
+        postId: 'official_update_v0_10_10_38',
+        releaseTime: '2026-09-19T23:30:00.000Z',
+        title: '🧹 Rà Soát Toàn Diện, Dọn Dẹp Mã Nguồn & Tối Ưu Hiệu Năng Hệ Thống (v0.10.10-38 Build 339)!',
+        summary: 'Rà soát và dọn dẹp sạch sẽ các câu lệnh console.log dư thừa, chuẩn hóa cơ chế ghi nhật ký hệ thống, hoàn thiện định tuyến URL và củng cố hàng rào bảo mật phòng thi trên toàn bộ các chế độ học tập.',
+        content: `🎉 Chào mừng bạn đến với bản cập nhật VocaFlow v0.10.10-38 (Build 339)!\n\n✨ Những điểm cải tiến nổi bật:\n🧹 Dọn Dẹp Mã Nguồn & Tinh Gọn Console: Loại bỏ triệt để các câu lệnh debug và log dư thừa, giúp giảm tải bộ nhớ và tăng tốc độ phản hồi trên cả trình duyệt Web và Desktop App.\n🛡️ Chuẩn Hóa Cơ Chế Ghi Nhật Ký Hệ Thống: Phân định rõ ràng giữa thông tin kiểm định và cảnh báo ngoại lệ, đảm bảo console luôn sạch đẹp và dễ theo dõi.\n🌐 Hoàn Thiện Định Tuyến URL 8 Chế Độ Học: Bổ sung định tuyến SPA chuẩn xác cho toàn bộ các bài học mở rộng (Viết câu, Cloze test, Nghe gõ chính tả, Dịch thuật).\n🔒 Tăng Cường Bảo Mật Phòng Thi: Cách ly toàn diện AI Mentor và Sổ Tay Lỗi Sai trong tất cả các bài tập thi cử để bảo toàn tính trung thực trong học tập.\n\nChúc bạn có những giờ phút học tập thật mượt mà, tập trung và đạt kết quả cao nhất cùng VocaFlow! 🚀✨`
+      },
       'v0.10.10-37': {
         postId: 'official_update_v0_10_10_37',
         releaseTime: '2026-09-19T22:00:00.000Z',
@@ -9491,7 +9498,7 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
           }
           localStorage.setItem(STORAGE_KEY_AUTH, JSON.stringify(currentUser));
         } catch (err) {
-          console.log('Firebase Auth error fallback:', err);
+          console.warn('Firebase Auth error fallback:', err);
           currentUser = { uid: 'u_' + Date.now(), email: email, displayName: email.split('@')[0] };
           localStorage.setItem(STORAGE_KEY_AUTH, JSON.stringify(currentUser));
         }
@@ -9543,7 +9550,7 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
               body: JSON.stringify({ idToken: data.idToken, displayName: finalName, returnSecureToken: true })
             });
           } catch (uErr) {
-            console.log('Update displayName note:', uErr);
+            console.warn('Update displayName note:', uErr);
           }
 
           currentUser = {
@@ -9663,7 +9670,7 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
               const remoteSyncTime = remoteLastSync ? new Date(remoteLastSync).getTime() : 0;
 
               if (remoteSyncTime > lastLocalSyncTime + 1000) {
-                console.log('[CloudSync] Newer remote data detected from another device. Reconciling before push...');
+                console.info('[CloudSync] Newer remote data detected from another device. Reconciling before push...');
                 const pullCtrl = new AbortController();
                 const pullTimeout = setTimeout(() => pullCtrl.abort(), 4000);
                 const fullPullRes = await fetch(`${rtdbUrl}/users/${userId}.json${authParam}`, { signal: pullCtrl.signal });
@@ -10173,7 +10180,7 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
     window.updateSyncStatusUI = updateSyncStatusUI;
 
     window.addEventListener('online', () => {
-      console.log('🌐 [Network] Trình duyệt báo: Trực tuyến (Online)');
+      console.info('🌐 [Network] Trình duyệt báo: Trực tuyến (Online)');
       updateSyncStatusUI('online');
       showToast('🌐 Đã kết nối mạng trở lại (Trực tuyến)');
       if (currentUser && currentUser.email && !isSyncing) {
@@ -10182,7 +10189,7 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
     });
 
     window.addEventListener('offline', () => {
-      console.log('🔌 [Network] Trình duyệt báo: Mất kết nối mạng (Offline)');
+      console.info('🔌 [Network] Trình duyệt báo: Mất kết nối mạng (Offline)');
       updateSyncStatusUI('offline');
       showToast('⚠️ Mất kết nối Internet (Ngoại tuyến)');
     });

@@ -1,4 +1,20 @@
 ================================================================================
+Phiên bản: v0.10.10-38 (Build 339) - Rà Soát Toàn Diện, Dọn Dẹp Mã Nguồn & Chuẩn Hóa Ghi Nhật Ký Hệ Thống (Clean Debug Logs, Standardize Logging Levels, Complete Extended Study Mode URL Routing, Isolate Exam Screen Security)
+================================================================================
+1. [Rà Soát Toàn Diện & Dọn Dẹp Mã Nguồn Rác (Console Cleanup)]:
+   - Rà soát toàn bộ các module JavaScript trong `src/scripts/`, loại bỏ triệt để các câu lệnh `console.log` debug thử nghiệm và chuỗi log bị lỗi encoding thừa thãi.
+   - Giữ lại các lệnh log quan trọng mang tính chất cứu hộ dữ liệu (AutoHeal/Dedupe) và chuyển đổi các log ngoại lệ sang `console.warn` / `console.info` có cấu trúc rõ ràng.
+2. [Hoàn Thiện Định Tuyến URL Cho 4 Chế Độ Học Mở Rộng]:
+   - Bổ sung URL routing cho 4 chế độ học tập mở rộng: `/study/writing`, `/study/cloze`, `/study/dictation`, `/study/translation` trong `showScreen()` và `closeModal()` tại `app.js`.
+   - Giúp người dùng có thể điều hướng trực tiếp bằng URL hoặc lưu bookmark phiên học tập.
+3. [Bảo Mật Phòng Thi Toàn Diện Cho Chế Độ Dịch Thuật]:
+   - Bổ sung `screen-translation` vào danh sách màn hình thi cử `isExamScreen` trong `app.js`.
+   - Cách ly tuyệt đối tính năng AI Mentor và Sổ Tay Lỗi Sai trong toàn bộ 8 chế độ học tập và kiểm tra để đảm bảo tính trung thực trong học tập.
+4. [Đồng Bộ Toàn Diện 7-Point Version Consistency & Multi-Deploy (v0.10.10-38 Build 339)]:
+   - Cập nhật phiên bản nhất quán trên toàn bộ 7 điểm hệ thống: `modal-settings.html`, `screen-decks.html`, `screen-deck-detail.html`, `sw.js` & `Release_App/sw.js`, `pubspec.yaml`, `Program.cs`, `push_github.ps1`.
+   - Biên dịch `VocaFlow.exe`, đóng gói `VocaFlow_v0.10.10-38_Windows_Portable.zip` và sẵn sàng multi-deploy lên 3 kho GitHub.
+
+================================================================================
 Phiên bản: v0.10.10-37 (Build 338) - Cổng Quản Trị Upgrade & Phát Hành Coupon / Sale Day (Coupon Codes, Sale Day Campaigns, Custom VIP TRY Days, Student Quick Pill Filters, Direct VIP Expiration Display)
 ================================================================================
 1. [Tùy Chỉnh Số Ngày VocaVIP TRY Trong Sửa Ví (Vấn đề 14)]:

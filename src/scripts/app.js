@@ -1,6 +1,6 @@
 // =========================================================================
 
-// VOCAFLOW APP.JS - CORE LIFECYCLE & GLOBAL BRIDGE ENTRY POINT (v0.10.9-48)
+// VOCAFLOW APP.JS - CORE LIFECYCLE & GLOBAL BRIDGE ENTRY POINT (v0.10.10-38 Build 339)
 
 // Screen Switcher, Universal Modal Manager, Keyboard Shortcuts & Bootstrap
 
@@ -33,12 +33,20 @@
           updateAppUrlRoute('/study/speaking');
         } else if (screenId === 'screen-autofc') {
           updateAppUrlRoute('/study/autofc');
+        } else if (screenId === 'screen-writing') {
+          updateAppUrlRoute('/study/writing');
+        } else if (screenId === 'screen-cloze') {
+          updateAppUrlRoute('/study/cloze');
+        } else if (screenId === 'screen-dictation') {
+          updateAppUrlRoute('/study/dictation');
+        } else if (screenId === 'screen-translation') {
+          updateAppUrlRoute('/study/translation');
         }
       }
 
       // v0.10.10-9: Anti-Cheat Isolation for AI Study Mentor FAB & Study Screens
       const fab = document.getElementById('btn-ai-mentor-fab');
-      const isExamScreen = ['screen-quiz', 'screen-spelling', 'screen-speaking', 'screen-autofc', 'screen-writing', 'screen-cloze', 'screen-dictation'].includes(screenId);
+      const isExamScreen = ['screen-quiz', 'screen-spelling', 'screen-speaking', 'screen-autofc', 'screen-writing', 'screen-cloze', 'screen-dictation', 'screen-translation'].includes(screenId);
       if (fab) {
         fab.style.display = isExamScreen ? 'none' : 'flex';
       }
@@ -63,7 +71,7 @@
     function openModal(id) {
       if (id === 'modal-mistake-notebook' || id === 'modal-ai-mentor') {
         const activeStudyScreen = document.querySelector('.screen.active');
-        if (activeStudyScreen && ['screen-quiz', 'screen-spelling', 'screen-speaking', 'screen-autofc', 'screen-writing', 'screen-cloze', 'screen-dictation'].includes(activeStudyScreen.id)) {
+        if (activeStudyScreen && ['screen-quiz', 'screen-spelling', 'screen-speaking', 'screen-autofc', 'screen-writing', 'screen-cloze', 'screen-dictation', 'screen-translation'].includes(activeStudyScreen.id)) {
           if (typeof showToast === 'function') {
             showToast(`⚠️ Bạn đang trong phiên làm bài tập, không thể mở ${id === 'modal-ai-mentor' ? 'VocaMentor AI' : 'Sổ Tay Lỗi Sai'}!`);
           }
@@ -150,6 +158,14 @@
             updateAppUrlRoute('/study/speaking');
           } else if (activeScreen && activeScreen.id === 'screen-autofc') {
             updateAppUrlRoute('/study/autofc');
+          } else if (activeScreen && activeScreen.id === 'screen-writing') {
+            updateAppUrlRoute('/study/writing');
+          } else if (activeScreen && activeScreen.id === 'screen-cloze') {
+            updateAppUrlRoute('/study/cloze');
+          } else if (activeScreen && activeScreen.id === 'screen-dictation') {
+            updateAppUrlRoute('/study/dictation');
+          } else if (activeScreen && activeScreen.id === 'screen-translation') {
+            updateAppUrlRoute('/study/translation');
           } else {
             updateAppUrlRoute('/', 'VocaFlow - Học Từ Vựng Thông Minh', true);
           }

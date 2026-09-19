@@ -5327,7 +5327,7 @@
           <div class="mini-footer-left">
             <span>© 2026 <strong>VocaFlow</strong> by <strong>iamjulies</strong></span>
             <span class="mini-footer-divider">•</span>
-            <span class="mini-footer-version">v0.10.10-37 (Build 338)</span>
+            <span class="mini-footer-version">v0.10.10-38 (Build 339)</span>
           </div>
           <div class="mini-footer-right">
             <a href="https://iamjulies.github.io/VocaFlow/me/?user=@iamjulies" target="_blank" class="mini-footer-link" onclick="if (typeof openPublicProfileByAuthor === 'function') { event.preventDefault(); openPublicProfileByAuthor('@iamjulies'); }" title="Trang cá nhân tác giả @iamjulies" style="color: #c084fc; font-weight: 700;">
@@ -5551,7 +5551,7 @@
           <div class="mini-footer-left">
             <span>© 2026 <strong>VocaFlow</strong> by <strong>iamjulies</strong></span>
             <span class="mini-footer-divider">•</span>
-            <span class="mini-footer-version">v0.10.10-37 (Build 338)</span>
+            <span class="mini-footer-version">v0.10.10-38 (Build 339)</span>
           </div>
           <div class="mini-footer-right">
             <a href="https://iamjulies.github.io/VocaFlow/me/?user=@iamjulies" target="_blank" class="mini-footer-link" onclick="if (typeof openPublicProfileByAuthor === 'function') { event.preventDefault(); openPublicProfileByAuthor('@iamjulies'); }" title="Trang cá nhân tác giả @iamjulies" style="color: #c084fc; font-weight: 700;">
@@ -11867,7 +11867,7 @@
       <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 16px;">
         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">📦 Thông Tin Ứng Dụng</label>
         <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
-          <div>Phiên bản: <strong style="color: var(--text); user-select: text;" id="settings-app-version-label">VocaFlow v0.10.10-37 (Build 338)</strong></div>
+          <div>Phiên bản: <strong style="color: var(--text); user-select: text;" id="settings-app-version-label">VocaFlow v0.10.10-38 (Build 339)</strong></div>
           <div>Môi trường: <span style="color: var(--text);">Offline-First Web PWA & Windows EXE</span></div>
           <div>Lưu trữ: <span style="color: var(--text);">Cục bộ + Đồng bộ Cloud Realtime</span></div>
         </div>
@@ -13574,7 +13574,7 @@
 
   <script>
 // =========================================================================
-// VOCAFLOW SPA ROUTER & URL HISTORY ENGINE (v0.10.10-37 Build 338)
+// VOCAFLOW SPA ROUTER & URL HISTORY ENGINE (v0.10.10-38 Build 339)
 // Enables direct clean URLs, deep sub-links & browser history navigation (pushState/popstate)
 // =========================================================================
 
@@ -14039,16 +14039,16 @@ function initSpaRouter() {
 window.initSpaRouter = initSpaRouter;
 
 
-// VOCAFLOW 02-STATE-CORE.JS (v0.10.10-37 Build 338)
+// VOCAFLOW 02-STATE-CORE.JS (v0.10.10-38 Build 339)
 // Global constants, core database state, storage keys, recovery & audio engine
 // =========================================================================
 
     // =========================================================================
-    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.10-37 Build 338)
+    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.10-38 Build 339)
     // =========================================================================
-    const VOCAFLOW_APP_VERSION = 'v0.10.10-37';
-    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.10-37 (Build 338)';
-    const VOCAFLOW_APP_BUILD = 338;
+    const VOCAFLOW_APP_VERSION = 'v0.10.10-38';
+    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.10-38 (Build 339)';
+    const VOCAFLOW_APP_BUILD = 339;
     window.VOCAFLOW_APP_VERSION = VOCAFLOW_APP_VERSION;
     window.VOCAFLOW_APP_FULL_TITLE = VOCAFLOW_APP_FULL_TITLE;
     window.VOCAFLOW_APP_BUILD = VOCAFLOW_APP_BUILD;
@@ -14420,7 +14420,6 @@ window.initSpaRouter = initSpaRouter;
         // If user is yearly VIP expiring between Aug 25, 2027 and Sept 05, 2027:
         // Automatically restore their full extended date to at least Sept 03, 2027!
         if (storedTier === 'yearly' && storedExp >= aug25_2027 && storedExp < sept03_2027) {
-          console.log('ðŸ‘‘ [VocaFlow VIP Engine] Auto-healing VIP expiration to 2027-09-03 (+3 days recovered from lucky wheel)');
           applyVipState(true, 'yearly', sept03_2027, 'auto_heal_lucky_wheel', false);
           if (currentUser && currentUser.uid && !currentUser.uid.startsWith('guest_')) {
             if (typeof pushCurrentDatabaseToCloud === 'function') {
@@ -15698,7 +15697,6 @@ window.initSpaRouter = initSpaRouter;
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
         navigator.serviceWorker.register('./sw.js').then((reg) => {
-          console.log('SW Registered successfully:', reg.scope);
           reg.update().catch(() => {});
           reg.onupdatefound = () => {
             const installingWorker = reg.installing;
@@ -15716,14 +15714,13 @@ window.initSpaRouter = initSpaRouter;
               };
             }
           };
-        }).catch(err => console.log('SW Note:', err));
+        }).catch(err => console.warn('SW Note:', err));
 
         let refreshing = false;
         navigator.serviceWorker.addEventListener('controllerchange', () => {
           if (!refreshing) {
             if (isUserInActiveStudySession()) {
               hasPendingAppUpdate = true;
-              console.log('Service Worker updated in background. Postponing reload until session exit.');
             } else {
               refreshing = true;
               window.location.reload();
@@ -18446,7 +18443,7 @@ window.initSpaRouter = initSpaRouter;
 
 // =========================================================================
 
-// VOCAFLOW 03-AUTH.JS (v0.10.10-37 Build 338)
+// VOCAFLOW 03-AUTH.JS (v0.10.10-38 Build 339)
 
 // Firebase Auth, Realtime Sync, Public Profiles, Social Graph, Monetization & Billing
 
@@ -25594,6 +25591,13 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
     // AUTO-SEED OFFICIAL UPDATE POST, HOLIDAY/SALE EVENTS & GLOWING NOTIFICATIONS (v0.10.10-33 / Build 334)
     // =========================================================================
     const VOCAFLOW_OFFICIAL_RELEASES_REGISTRY = {
+      'v0.10.10-38': {
+        postId: 'official_update_v0_10_10_38',
+        releaseTime: '2026-09-19T23:30:00.000Z',
+        title: '🧹 Rà Soát Toàn Diện, Dọn Dẹp Mã Nguồn & Tối Ưu Hiệu Năng Hệ Thống (v0.10.10-38 Build 339)!',
+        summary: 'Rà soát và dọn dẹp sạch sẽ các câu lệnh console.log dư thừa, chuẩn hóa cơ chế ghi nhật ký hệ thống, hoàn thiện định tuyến URL và củng cố hàng rào bảo mật phòng thi trên toàn bộ các chế độ học tập.',
+        content: `🎉 Chào mừng bạn đến với bản cập nhật VocaFlow v0.10.10-38 (Build 339)!\n\n✨ Những điểm cải tiến nổi bật:\n🧹 Dọn Dẹp Mã Nguồn & Tinh Gọn Console: Loại bỏ triệt để các câu lệnh debug và log dư thừa, giúp giảm tải bộ nhớ và tăng tốc độ phản hồi trên cả trình duyệt Web và Desktop App.\n🛡️ Chuẩn Hóa Cơ Chế Ghi Nhật Ký Hệ Thống: Phân định rõ ràng giữa thông tin kiểm định và cảnh báo ngoại lệ, đảm bảo console luôn sạch đẹp và dễ theo dõi.\n🌐 Hoàn Thiện Định Tuyến URL 8 Chế Độ Học: Bổ sung định tuyến SPA chuẩn xác cho toàn bộ các bài học mở rộng (Viết câu, Cloze test, Nghe gõ chính tả, Dịch thuật).\n🔒 Tăng Cường Bảo Mật Phòng Thi: Cách ly toàn diện AI Mentor và Sổ Tay Lỗi Sai trong tất cả các bài tập thi cử để bảo toàn tính trung thực trong học tập.\n\nChúc bạn có những giờ phút học tập thật mượt mà, tập trung và đạt kết quả cao nhất cùng VocaFlow! 🚀✨`
+      },
       'v0.10.10-37': {
         postId: 'official_update_v0_10_10_37',
         releaseTime: '2026-09-19T22:00:00.000Z',
@@ -27937,7 +27941,7 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
           }
           localStorage.setItem(STORAGE_KEY_AUTH, JSON.stringify(currentUser));
         } catch (err) {
-          console.log('Firebase Auth error fallback:', err);
+          console.warn('Firebase Auth error fallback:', err);
           currentUser = { uid: 'u_' + Date.now(), email: email, displayName: email.split('@')[0] };
           localStorage.setItem(STORAGE_KEY_AUTH, JSON.stringify(currentUser));
         }
@@ -27989,7 +27993,7 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
               body: JSON.stringify({ idToken: data.idToken, displayName: finalName, returnSecureToken: true })
             });
           } catch (uErr) {
-            console.log('Update displayName note:', uErr);
+            console.warn('Update displayName note:', uErr);
           }
 
           currentUser = {
@@ -28109,7 +28113,7 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
               const remoteSyncTime = remoteLastSync ? new Date(remoteLastSync).getTime() : 0;
 
               if (remoteSyncTime > lastLocalSyncTime + 1000) {
-                console.log('[CloudSync] Newer remote data detected from another device. Reconciling before push...');
+                console.info('[CloudSync] Newer remote data detected from another device. Reconciling before push...');
                 const pullCtrl = new AbortController();
                 const pullTimeout = setTimeout(() => pullCtrl.abort(), 4000);
                 const fullPullRes = await fetch(`${rtdbUrl}/users/${userId}.json${authParam}`, { signal: pullCtrl.signal });
@@ -28619,7 +28623,7 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
     window.updateSyncStatusUI = updateSyncStatusUI;
 
     window.addEventListener('online', () => {
-      console.log('🌐 [Network] Trình duyệt báo: Trực tuyến (Online)');
+      console.info('🌐 [Network] Trình duyệt báo: Trực tuyến (Online)');
       updateSyncStatusUI('online');
       showToast('🌐 Đã kết nối mạng trở lại (Trực tuyến)');
       if (currentUser && currentUser.email && !isSyncing) {
@@ -28628,7 +28632,7 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
     });
 
     window.addEventListener('offline', () => {
-      console.log('🔌 [Network] Trình duyệt báo: Mất kết nối mạng (Offline)');
+      console.info('🔌 [Network] Trình duyệt báo: Mất kết nối mạng (Offline)');
       updateSyncStatusUI('offline');
       showToast('⚠️ Mất kết nối Internet (Ngoại tuyến)');
     });
@@ -29467,7 +29471,7 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
 
 // =========================================================================
 
-// VOCAFLOW 04-DECKS-MANAGER.JS (v0.10.9-48)
+// VOCAFLOW 04-DECKS-MANAGER.JS (v0.10.10-38 Build 339)
 
 // CRUD VocaDeck, Word Card Modal, Excel/JSON Import/Export, SRS & Auto-Flashcards
 
@@ -33469,7 +33473,7 @@ Return ONLY a valid raw JSON 2D array with NO markdown fences:
     window.checkWordTermDuplicate = checkWordTermDuplicate;
 
 // =========================================================================
-// VOCAFLOW 05-QUIZ-ENGINE.JS (v0.10.10-37 Build 338)
+// VOCAFLOW 05-QUIZ-ENGINE.JS (v0.10.10-38 Build 339)
 // Quiz study mode, scoring, question generation, AI explanation & Mistake Notebook
 // =========================================================================
 
@@ -35770,7 +35774,7 @@ Yêu cầu nghiêm ngặt:
 
 
 // =========================================================================
-// VOCAFLOW 06C-WRITING-ENGINE.JS (v0.10.10-37 Build 338 - SENTENCE WRITING LAB VIP)
+// VOCAFLOW 06C-WRITING-ENGINE.JS (v0.10.10-38 Build 339 - SENTENCE WRITING LAB VIP)
 // AI-Powered Writing Lab with Thematic Word Linking & Target Band Aim Polish
 // =========================================================================
 
@@ -37189,7 +37193,7 @@ window.closeWritingResultModal = closeWritingResultModal;
 window.retryWritingWrongWordsOnly = retryWritingWrongWordsOnly;
 
 // =========================================================================
-// VOCAFLOW 06D-CLOZE-ENGINE.JS (v0.10.10-37 Build 338 - EXTENDED LEARNING MODE BETA)
+// VOCAFLOW 06D-CLOZE-ENGINE.JS (v0.10.10-38 Build 339 - EXTENDED LEARNING MODE BETA)
 // Contextual Reading & Cloze Test Passage Generator with Strict JSON Schema
 // =========================================================================
 
@@ -39090,7 +39094,7 @@ window.retryClozeWrongWordsOnly = retryClozeWrongWordsOnly;
 
 
 // =========================================================================
-// VOCAFLOW 06E-DICTATION-ENGINE.JS (v0.10.10-37 Build 338 - SENTENCE DICTATION VIP β)
+// VOCAFLOW 06E-DICTATION-ENGINE.JS (v0.10.10-38 Build 339 - SENTENCE DICTATION VIP β)
 // Full Sentence Dictation Engine with Natural Speech, Speed Slider, AI Scoring & Sequence Alignment
 // =========================================================================
 
@@ -40615,7 +40619,7 @@ function doExecuteExitDictation(done, total) {
 window.exitDictationMode = exitDictationMode;
 
 // =========================================================================
-// VOCAFLOW 06F-TRANSLATION-ENGINE.JS (v0.10.10-37 Build 338 - TRANSLATION LAB VIP β)
+// VOCAFLOW 06F-TRANSLATION-ENGINE.JS (v0.10.10-38 Build 339 - TRANSLATION LAB VIP β)
 // Bidirectional Translation Engine (EN ↔ VI) with Direct Gemini AI Generation, Multi-Tier VocaHint & Balance v3
 // =========================================================================
 
@@ -42156,7 +42160,7 @@ function exitTranslationMode(force = false) {
 window.exitTranslationMode = exitTranslationMode;
 
 // =========================================================================
-// VOCAFLOW 06-SPELLING-ENGINE.JS (v0.10.10-37 Build 338)
+// VOCAFLOW 06-SPELLING-ENGINE.JS (v0.10.10-38 Build 339)
 // Spelling mode, virtual keyboard, syllable clues, phonetics & score calculation
 // =========================================================================
 
@@ -44221,7 +44225,7 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ không có markdown block:
     window.fetchWordFromGemini = fetchWordFromGemini;
 
 // =========================================================================
-// VOCAFLOW 07-SPEAKING-ENGINE.JS (v0.10.10-37 Build 338)
+// VOCAFLOW 07-SPEAKING-ENGINE.JS (v0.10.10-38 Build 339)
 // AI Speaking Lab, MediaRecorder, VAD, Gemini audio analysis, multi-take economy & IndexedDB Best Take
 // =========================================================================
 
@@ -46926,7 +46930,7 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
 
 
 // =========================================================================
-// VOCAFLOW 08-WALLET-ECONOMY.JS (v0.10.10-37 Build 338)
+// VOCAFLOW 08-WALLET-ECONOMY.JS (v0.10.10-38 Build 339)
 // Economy, Wallet, Ledger, Lucky Spin, Cat Meme Reactions, Brain Energy & Study Settlements
 // =========================================================================
 
@@ -49564,7 +49568,7 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
 
 // =========================================================================
 
-// VOCAFLOW 09-AI-MENTOR.JS (v0.10.9-48)
+// VOCAFLOW 09-AI-MENTOR.JS (v0.10.10-38 Build 339)
 
 // Gemini AI chatbot, quick chips, quota management, multi-key pool
 
@@ -51170,11 +51174,8 @@ Quy tắc phản hồi quan trọng:
     }
 
 // =========================================================================
-
-// VOCAFLOW 10-LUCKY-WHEEL.JS (v0.10.9-48)
-
+// VOCAFLOW 10-LUCKY-WHEEL.JS (v0.10.10-38 Build 339)
 // Lucky wheel canvas, spin purchase, rewarded video ads, monetization
-
 // =========================================================================
 
     // =========================================================================
@@ -52226,11 +52227,8 @@ Quy tắc phản hồi quan trọng:
     }, 1000);
 
 // =========================================================================
-
-// VOCAFLOW 11-PUBLISHER-STUDIO.JS (v0.10.9-48)
-
+// VOCAFLOW 11-PUBLISHER-STUDIO.JS (v0.10.10-38 Build 339)
 // VocaLib Community Library, VocaStudio publisher portal, deck sharing
-
 // =========================================================================
 
     // =========================================================================
@@ -64765,7 +64763,7 @@ Quy tắc phản hồi quan trọng:
     }
 // =========================================================================
 
-// VOCAFLOW 12-ACHIEVEMENTS.JS (v0.10.9-48)
+// VOCAFLOW 12-ACHIEVEMENTS.JS (v0.10.10-38 Build 339)
 
 // Badges, daily tasks, highlights showcase, notifications, VocaMail, User Guide
 
@@ -64866,7 +64864,7 @@ Quy tắc phản hồi quan trọng:
           }
         })
         .catch(err => {
-          console.log('VIP index fetch note:', err);
+          console.warn('VIP index fetch note:', err);
         });
     }
     window.initGlobalVipRegistry = initGlobalVipRegistry;
@@ -67822,7 +67820,7 @@ Quy tắc phản hồi quan trọng:
 
 // =========================================================================
 
-// VOCAFLOW APP.JS - CORE LIFECYCLE & GLOBAL BRIDGE ENTRY POINT (v0.10.9-48)
+// VOCAFLOW APP.JS - CORE LIFECYCLE & GLOBAL BRIDGE ENTRY POINT (v0.10.10-38 Build 339)
 
 // Screen Switcher, Universal Modal Manager, Keyboard Shortcuts & Bootstrap
 
@@ -67855,12 +67853,20 @@ Quy tắc phản hồi quan trọng:
           updateAppUrlRoute('/study/speaking');
         } else if (screenId === 'screen-autofc') {
           updateAppUrlRoute('/study/autofc');
+        } else if (screenId === 'screen-writing') {
+          updateAppUrlRoute('/study/writing');
+        } else if (screenId === 'screen-cloze') {
+          updateAppUrlRoute('/study/cloze');
+        } else if (screenId === 'screen-dictation') {
+          updateAppUrlRoute('/study/dictation');
+        } else if (screenId === 'screen-translation') {
+          updateAppUrlRoute('/study/translation');
         }
       }
 
       // v0.10.10-9: Anti-Cheat Isolation for AI Study Mentor FAB & Study Screens
       const fab = document.getElementById('btn-ai-mentor-fab');
-      const isExamScreen = ['screen-quiz', 'screen-spelling', 'screen-speaking', 'screen-autofc', 'screen-writing', 'screen-cloze', 'screen-dictation'].includes(screenId);
+      const isExamScreen = ['screen-quiz', 'screen-spelling', 'screen-speaking', 'screen-autofc', 'screen-writing', 'screen-cloze', 'screen-dictation', 'screen-translation'].includes(screenId);
       if (fab) {
         fab.style.display = isExamScreen ? 'none' : 'flex';
       }
@@ -67885,7 +67891,7 @@ Quy tắc phản hồi quan trọng:
     function openModal(id) {
       if (id === 'modal-mistake-notebook' || id === 'modal-ai-mentor') {
         const activeStudyScreen = document.querySelector('.screen.active');
-        if (activeStudyScreen && ['screen-quiz', 'screen-spelling', 'screen-speaking', 'screen-autofc', 'screen-writing', 'screen-cloze', 'screen-dictation'].includes(activeStudyScreen.id)) {
+        if (activeStudyScreen && ['screen-quiz', 'screen-spelling', 'screen-speaking', 'screen-autofc', 'screen-writing', 'screen-cloze', 'screen-dictation', 'screen-translation'].includes(activeStudyScreen.id)) {
           if (typeof showToast === 'function') {
             showToast(`⚠️ Bạn đang trong phiên làm bài tập, không thể mở ${id === 'modal-ai-mentor' ? 'VocaMentor AI' : 'Sổ Tay Lỗi Sai'}!`);
           }
@@ -67972,6 +67978,14 @@ Quy tắc phản hồi quan trọng:
             updateAppUrlRoute('/study/speaking');
           } else if (activeScreen && activeScreen.id === 'screen-autofc') {
             updateAppUrlRoute('/study/autofc');
+          } else if (activeScreen && activeScreen.id === 'screen-writing') {
+            updateAppUrlRoute('/study/writing');
+          } else if (activeScreen && activeScreen.id === 'screen-cloze') {
+            updateAppUrlRoute('/study/cloze');
+          } else if (activeScreen && activeScreen.id === 'screen-dictation') {
+            updateAppUrlRoute('/study/dictation');
+          } else if (activeScreen && activeScreen.id === 'screen-translation') {
+            updateAppUrlRoute('/study/translation');
           } else {
             updateAppUrlRoute('/', 'VocaFlow - Học Từ Vựng Thông Minh', true);
           }

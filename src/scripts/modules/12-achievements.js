@@ -1,6 +1,6 @@
 // =========================================================================
 
-// VOCAFLOW 12-ACHIEVEMENTS.JS (v0.10.9-48)
+// VOCAFLOW 12-ACHIEVEMENTS.JS (v0.10.10-38 Build 339)
 
 // Badges, daily tasks, highlights showcase, notifications, VocaMail, User Guide
 
@@ -101,7 +101,7 @@
           }
         })
         .catch(err => {
-          console.log('VIP index fetch note:', err);
+          console.warn('VIP index fetch note:', err);
         });
     }
     window.initGlobalVipRegistry = initGlobalVipRegistry;

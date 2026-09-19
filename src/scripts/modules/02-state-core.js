@@ -1,13 +1,13 @@
-// VOCAFLOW 02-STATE-CORE.JS (v0.10.10-37 Build 338)
+// VOCAFLOW 02-STATE-CORE.JS (v0.10.10-38 Build 339)
 // Global constants, core database state, storage keys, recovery & audio engine
 // =========================================================================
 
     // =========================================================================
-    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.10-37 Build 338)
+    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.10-38 Build 339)
     // =========================================================================
-    const VOCAFLOW_APP_VERSION = 'v0.10.10-37';
-    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.10-37 (Build 338)';
-    const VOCAFLOW_APP_BUILD = 338;
+    const VOCAFLOW_APP_VERSION = 'v0.10.10-38';
+    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.10-38 (Build 339)';
+    const VOCAFLOW_APP_BUILD = 339;
     window.VOCAFLOW_APP_VERSION = VOCAFLOW_APP_VERSION;
     window.VOCAFLOW_APP_FULL_TITLE = VOCAFLOW_APP_FULL_TITLE;
     window.VOCAFLOW_APP_BUILD = VOCAFLOW_APP_BUILD;
@@ -379,7 +379,6 @@
         // If user is yearly VIP expiring between Aug 25, 2027 and Sept 05, 2027:
         // Automatically restore their full extended date to at least Sept 03, 2027!
         if (storedTier === 'yearly' && storedExp >= aug25_2027 && storedExp < sept03_2027) {
-          console.log('ðŸ‘‘ [VocaFlow VIP Engine] Auto-healing VIP expiration to 2027-09-03 (+3 days recovered from lucky wheel)');
           applyVipState(true, 'yearly', sept03_2027, 'auto_heal_lucky_wheel', false);
           if (currentUser && currentUser.uid && !currentUser.uid.startsWith('guest_')) {
             if (typeof pushCurrentDatabaseToCloud === 'function') {
@@ -1657,7 +1656,6 @@
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
         navigator.serviceWorker.register('./sw.js').then((reg) => {
-          console.log('SW Registered successfully:', reg.scope);
           reg.update().catch(() => {});
           reg.onupdatefound = () => {
             const installingWorker = reg.installing;
@@ -1675,14 +1673,13 @@
               };
             }
           };
-        }).catch(err => console.log('SW Note:', err));
+        }).catch(err => console.warn('SW Note:', err));
 
         let refreshing = false;
         navigator.serviceWorker.addEventListener('controllerchange', () => {
           if (!refreshing) {
             if (isUserInActiveStudySession()) {
               hasPendingAppUpdate = true;
-              console.log('Service Worker updated in background. Postponing reload until session exit.');
             } else {
               refreshing = true;
               window.location.reload();
