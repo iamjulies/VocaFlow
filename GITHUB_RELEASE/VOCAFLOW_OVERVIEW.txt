@@ -1,4 +1,30 @@
 ================================================================================
+Phiên bản: v0.10.10-47 (Build 348) - Sửa Lỗi Tách Rời Tọa Độ Khung VIP Khi Rê Chuột, Tối Ưu Thẻ Huy Hiệu Nổi Bật Tĩnh & Rê Chuột, Mở Rộng Modal Tủ Đồ, Tái Thiết Kế 3 Khung VIP Huyền Thoại, Khắc Phục Giật Lag Bảng Giá VIP & Đồng Bộ Hiệu Ứng Tên Toàn Ứng Dụng (VIP Frames Hover SVG Coordinate Isolation, Pinned Badges Idle Glow Removal & Solid Gold/Diamond Hover State, Spacious Wardrobe Modal Layout, 3-Tier VIP Vector Frame Redesign with Magical Sparkle, VIP Pricing GPU Containment & Universal Name Effect Sync)
+================================================================================
+1. [Sửa Lỗi Tách Rời Tọa Độ Khung VIP Khi Rê Chuột (VIP Monthly & Yearly Hover Coordinate Reset Fix - Issue 21)]:
+   - Khắc phục triệt để lỗi khi rê chuột vào Khung VIP Tháng và VIP Năm, các chi tiết vương miện, cánh thiên thần bị bay lệch góc hoặc biến dạng tọa độ do CSS animation ghi đè transform của SVG.
+   - Bọc các chi tiết động vào nhóm <g> con bên trong, cấu hình transform-box: fill-box; transform-origin: center center; giữ nguyên tọa độ định vị gốc <g transform="..."> bên ngoài.
+2. [Sửa Lỗi Thẻ Huy Hiệu Nổi Bật Vàng & Kim Cương (Pinned Badges Visual Polish & Hover Fix - Issue 22)]:
+   - Triệt tiêu hoàn toàn quầng sáng xanh/cyan rực rỡ phía sau thẻ Kim Cương, đưa về viền sáng bạc/bạch kim tinh tế và nền mờ sang trọng.
+   - Sửa lỗi hover thẻ Vàng bị biến thành mảng đen/trống; thay thế bằng lớp phủ ánh vàng kim chuyển màu êm dịu, giữ nguyên chữ và biểu tượng.
+   - Khắc phục lỗi biểu tượng huy hiệu Vàng bị biến thành bóng đơn sắc vàng bằng cách phân lập phạm vi áp dụng gradient text của .tier-gold chỉ trong .vf-name-wrapper.
+3. [Mở Rộng Không Gian Giao Diện Tủ Đồ Cá Nhân (Spacious Wardrobe Modal Layout - Issue 23)]:
+   - Mở rộng chiều rộng modal Tủ Đồ lên max-width: 960px; width: 95vw; kết hợp lưới hiển thị đa cột minmax(280px, 1fr).
+   - Giúp việc duyệt tìm, xem thử và quản lý hàng chục khung viền, hiệu ứng tên trở nên trực quan, thoáng đãng và tiện lợi.
+4. [Tái Thiết Kế Đỉnh Cao 3 Cấp Độ Khung VIP (3-Tier VIP Frame Vector Redesign - Issue 24)]:
+   - VIP Tháng (vip_monthly): Vòng kim loại hoàng kim thanh lịch với vương miện nhỏ ở góc 12h; khi rê chuột kích hoạt hiệu ứng nhấp nháy ánh vàng tinh xảo (vipMonthlyBlink).
+   - VIP Năm (vip_yearly): Vương miện hoàng gia 3D khảm ngọc ruby và đôi cánh thiên thần uốn lượn; hoạt họa đập cánh mượt mà không lệch tọa độ (royalWingPulse).
+   - VIP Trọn Đời (vip / vip_lifetime): Vòng năng lượng Tinh Vân Tím Huyền Bí với vương miện pha lê vũ trụ, cổ ngữ phát sáng và các hạt bụi sao lấp lánh; khi rê chuột tỏa ánh sáng quang phổ ma thuật lung linh (vipMagicalGlisten).
+5. [Tối Ưu Hiệu Năng Modal Bảng Giá VIP Chống Giật Lag (VIP Pricing Modal GPU Acceleration - Issue 25)]:
+   - Bổ sung transform: translateZ(0); will-change: transform; và contain: paint layout; cho .vip-pricing-modal và các thẻ gói VIP.
+   - Đảm bảo mở modal mượt mà 60 FPS, không còn hiện tượng tụt khung hình khi render hoạt họa gradient và hiệu ứng viền.
+6. [Chuẩn Hóa Kích Thước Avatar Hồ Sơ & Bỏ Quầng Sáng Vàng Ngoài Cùng (Profile Avatar 100px Scale & Glow Removal - Issue 26)]:
+   - Xóa bỏ hoàn toàn quầng sáng vàng tròn bao quanh khung avatar trong Modal Hồ Sơ Cá Nhân (/me) và Hồ Sơ Công Khai (/u/:uid).
+   - Tăng tỷ lệ hiển thị khung viền và avatar lên chuẩn 100px (khung chứa 104px), cho hình ảnh avatar sắc nét, nổi bật và cân đối hoàn hảo.
+7. [Đồng Bộ Toàn Diện Hiệu Ứng Tên Trên Mọi Vị Trí Của Ứng Dụng (Universal Name Effect Audit & Sync - Issue 27)]:
+   - Rà soát và áp dụng hàm renderUsernameWithEffectHtml() trên toàn bộ các thành phần: Header máy tính/điện thoại, Hồ sơ cá nhân, Hồ sơ công khai, Danh sách tác giả VocaLib, Danh sách lớp học Admin, Thẻ VocaDeck, Tiêu đề chi tiết VocaDeck, Bình luận & Thảo luận Cộng đồng, Danh sách Bug Bounty.
+
+================================================================================
 Phiên bản: v0.10.10-46 (Build 347) - Sửa Lỗi Tách Rời Khối Pha Lê Khung Kim Cương Khi Rê Chuột, Tách Biệt Emoji Khỏi Gradient Hiệu Ứng Tên, Chuẩn Hóa Hiệu Ứng Tên Mặc Định Trắng Sáng & Đồng Bộ Toàn Diện Tủ Đồ Trên Toàn Ứng Dụng (Diamond Frame Hover Crystal Displacement Fix, Emoji Separation from Text Gradient, Default Plain Text Name Restoration, Universal Subscribers List & Community Wardrobe Sync)
 ================================================================================
 1. [Sửa Lỗi Tách Rời Khối Pha Lê Khung Kim Cương Khi Rê Chuột (Diamond Frame Hover Crystal Displacement Fix - Issue 16)]:

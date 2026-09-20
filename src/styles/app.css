@@ -90,11 +90,7 @@
       font-style: normal !important;
     }
 
-    .vip-avatar-glow {
-      border-radius: 50% !important;
-      box-shadow: 0 0 0 2.5px #fbbf24, 0 0 12px rgba(251, 191, 36, 0.6) !important;
-      transform: translateZ(0) !important;
-    }
+
 
     /* =========================================================================
        VIP ROTATING LIGHT BORDER EFFECT (SMART HOVER-ACTIVATED ONLY)
@@ -399,6 +395,9 @@
       padding: 22px;
       width: 95vw;
       box-sizing: border-box;
+      transform: translateZ(0);
+      will-change: transform;
+      contain: paint layout;
     }
 
     .vip-plan-segmented-bar {
@@ -1550,11 +1549,12 @@
       border-radius: 50% !important;
       display: block !important;
     }
-    #profile-avatar {
-      width: 96px;
-      height: 96px;
-      min-width: 96px;
-      min-height: 96px;
+    #profile-avatar,
+    #pub-view-avatar {
+      width: 104px;
+      height: 104px;
+      min-width: 104px;
+      min-height: 104px;
       border-radius: 0;
       overflow: visible;
       background: transparent;
@@ -1759,60 +1759,33 @@
       align-items: center;
       box-sizing: border-box;
       cursor: pointer;
-      transition: transform 0.15s, box-shadow 0.2s, border-color 0.2s, background 0.2s;
+      transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s ease, border-color 0.2s ease, background 0.2s ease;
       min-width: 0;
       width: 100%;
       border: 1.5px solid rgba(255, 255, 255, 0.12);
       min-height: 58px;
       background: var(--surface-card, #1e293b);
+      -webkit-text-fill-color: initial !important;
+      color: var(--text, #ffffff) !important;
+      text-shadow: none !important;
     }
-    .pinned-badge-card.tier-bronze { border-color: rgba(205, 127, 50, 0.6); background: rgba(205, 127, 50, 0.08); }
-    .pinned-badge-card.tier-silver { border-color: rgba(203, 213, 225, 0.6); background: rgba(203, 213, 225, 0.08); }
-    .pinned-badge-card.tier-gold { border-color: rgba(255, 215, 0, 0.65); background: rgba(245, 158, 11, 0.08); }
-    .pinned-badge-card.tier-diamond { border-color: rgba(56, 189, 248, 0.65); background: rgba(56, 189, 248, 0.08); }
-    .pinned-badge-card.tier-mythic { border-color: rgba(236, 72, 153, 0.65); background: rgba(236, 72, 153, 0.08); }
-    .pinned-badge-card.tier-vip { border-color: rgba(245, 158, 11, 0.8); background: rgba(245, 158, 11, 0.08); }
+    .pinned-badge-card.tier-bronze { border-color: rgba(205, 127, 50, 0.6); background: rgba(205, 127, 50, 0.12); }
+    .pinned-badge-card.tier-silver { border-color: rgba(203, 213, 225, 0.6); background: rgba(203, 213, 225, 0.12); }
+    .pinned-badge-card.tier-gold { border-color: rgba(255, 215, 0, 0.7); background: rgba(245, 158, 11, 0.12); }
+    .pinned-badge-card.tier-diamond { border-color: rgba(56, 189, 248, 0.7); background: rgba(56, 189, 248, 0.12); }
+    .pinned-badge-card.tier-mythic { border-color: rgba(236, 72, 153, 0.7); background: rgba(236, 72, 153, 0.12); }
+    .pinned-badge-card.tier-vip { border-color: rgba(245, 158, 11, 0.85); background: rgba(245, 158, 11, 0.14); }
 
     .pinned-badge-card:hover {
       transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
     }
-
-    .pinned-badge-card:hover::before {
-      content: '';
-      position: absolute;
-      width: 150%;
-      height: 350%;
-      animation: rotateLight 3s linear infinite;
-      z-index: 0;
-    }
-
-    .pinned-badge-card.tier-bronze:hover::before {
-      background: conic-gradient(transparent, #cd7f32, #d97706, transparent 40%);
-    }
-    .pinned-badge-card.tier-silver:hover::before {
-      background: conic-gradient(transparent, #cbd5e1, #94a3b8, transparent 40%);
-    }
-    .pinned-badge-card.tier-gold:hover::before {
-      background: conic-gradient(transparent, #ffd700, #ff8c00, transparent 40%);
-    }
-    .pinned-badge-card.tier-diamond:hover::before {
-      background: conic-gradient(transparent, #38bdf8, #00f2fe, transparent 40%);
-    }
-    .pinned-badge-card.tier-mythic:hover::before {
-      background: conic-gradient(transparent, #f472b6, #ec4899, #f59e0b, transparent 45%);
-    }
-    .pinned-badge-card.tier-vip:hover::before {
-      background: conic-gradient(transparent, #fef08a, #eab308, #f59e0b, transparent 45%);
-    }
-
-    .pinned-badge-card:hover::after {
-      content: '';
-      position: absolute;
-      inset: 2px;
-      background: var(--surface-card, #1e293b);
-      border-radius: 8px;
-      z-index: 1;
-    }
+    .pinned-badge-card.tier-bronze:hover { border-color: #cd7f32; box-shadow: 0 6px 18px rgba(205, 127, 50, 0.35); background: rgba(205, 127, 50, 0.18); }
+    .pinned-badge-card.tier-silver:hover { border-color: #e2e8f0; box-shadow: 0 6px 18px rgba(226, 232, 240, 0.3); background: rgba(203, 213, 225, 0.18); }
+    .pinned-badge-card.tier-gold:hover { border-color: #ffd700; box-shadow: 0 6px 20px rgba(255, 215, 0, 0.4); background: rgba(245, 158, 11, 0.2); }
+    .pinned-badge-card.tier-diamond:hover { border-color: #38bdf8; box-shadow: 0 6px 20px rgba(56, 189, 248, 0.4); background: rgba(56, 189, 248, 0.2); }
+    .pinned-badge-card.tier-mythic:hover { border-color: #f472b6; box-shadow: 0 6px 20px rgba(244, 114, 182, 0.4); background: rgba(236, 72, 153, 0.2); }
+    .pinned-badge-card.tier-vip:hover { border-color: #fbbf24; box-shadow: 0 6px 20px rgba(251, 191, 36, 0.45); background: rgba(245, 158, 11, 0.22); }
 
     .pinned-badge-card .pinned-badge-content,
     .pinned-badge-card > * {
@@ -1825,6 +1798,9 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
+      -webkit-text-fill-color: initial !important;
+      color: inherit;
+      pointer-events: none;
     }
 
     .pinned-badge-empty-slot {
@@ -5203,28 +5179,31 @@
     }
 
     /* Bronze Name */
-    .tier-bronze {
+    .vf-name-wrapper .tier-bronze,
+    strong.tier-bronze {
       color: #cd7f32 !important;
       text-shadow: 0 0 6px rgba(205, 127, 50, 0.55);
       font-weight: 800;
     }
 
     /* Silver Name */
-    .tier-silver {
+    .vf-name-wrapper .tier-silver,
+    strong.tier-silver {
       color: #e0e0e0 !important;
       text-shadow: 0 0 8px rgba(255, 255, 255, 0.35), 0 0 15px rgba(224, 224, 224, 0.25);
       font-weight: 800;
       transition: all 0.3s ease;
     }
     .vf-name-wrapper:hover .tier-silver,
-    .tier-silver:hover {
+    .vf-name-wrapper strong.tier-silver:hover {
       color: #ffffff !important;
       text-shadow: 0 0 15px rgba(255, 255, 255, 0.95), 0 0 25px rgba(200, 220, 255, 0.6);
       transform: scale(1.03);
     }
 
     /* Gold Name */
-    .tier-gold {
+    .vf-name-wrapper .tier-gold,
+    strong.tier-gold {
       background: linear-gradient(90deg, #ffd700 0%, #fff8dc 50%, #ffd700 100%) !important;
       background-size: 200% auto !important;
       -webkit-background-clip: text !important;
@@ -5235,7 +5214,7 @@
       display: inline-block;
     }
     .vf-name-wrapper:hover .tier-gold,
-    .tier-gold:hover {
+    .vf-name-wrapper strong.tier-gold:hover {
       filter: drop-shadow(0 0 14px rgba(255, 215, 0, 0.95));
       transform: scale(1.03);
     }
@@ -5270,7 +5249,8 @@
     .gold-sparkle-4 { animation-delay: 1.8s; }
 
     /* Diamond Name */
-    .tier-diamond {
+    .vf-name-wrapper .tier-diamond,
+    strong.tier-diamond {
       color: #b9f2ff !important;
       text-shadow: 0 0 6px #00d2ff, 0 0 16px rgba(0, 210, 255, 0.6);
       animation: vfDiamondPulse 2s ease-in-out infinite alternate;
@@ -5282,7 +5262,7 @@
       to { text-shadow: 0 0 12px #00e5ff, 0 0 28px #00d2ff, 0 0 35px rgba(0, 210, 255, 0.9); }
     }
     .vf-name-wrapper:hover .tier-diamond,
-    .tier-diamond:hover {
+    .vf-name-wrapper strong.tier-diamond:hover {
       color: #ffffff !important;
       text-shadow: 0 0 10px #ffffff, 0 0 20px #00e5ff, 0 0 35px #00bfff;
       transform: scale(1.04);
@@ -5327,7 +5307,8 @@
     .vf-name-wrapper:hover .diamond-sweep-beam { animation: vfDiamondLightSweep 1.5s cubic-bezier(0.4, 0, 0.2, 1) infinite; }
 
     /* Mythic / Legendary Name */
-    .tier-legendary {
+    .vf-name-wrapper .tier-legendary,
+    strong.tier-legendary {
       position: relative;
       background: linear-gradient(45deg, #ff007f, #ff66b2, #ff007f) !important;
       background-size: 200% auto !important;
@@ -5339,8 +5320,10 @@
       display: inline-block;
       z-index: 2;
     }
-    .tier-legendary::before,
-    .tier-legendary::after {
+    .vf-name-wrapper .tier-legendary::before,
+    .vf-name-wrapper .tier-legendary::after,
+    strong.tier-legendary::before,
+    strong.tier-legendary::after {
       content: attr(data-text);
       position: absolute;
       top: 0;
@@ -5416,8 +5399,8 @@
     /* 3. WARDROBE CARDS GRID */
     .vf-wardrobe-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-      gap: 12px;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 14px;
     }
     @media (max-width: 500px) {
       .vf-wardrobe-grid {
@@ -5637,19 +5620,22 @@
     }
 
     /* 6. PET & EVENT NAME EFFECTS (v0.10.10-42) */
-    .tier-cat {
+    .vf-name-wrapper .tier-cat,
+    strong.tier-cat {
       background: linear-gradient(135deg, #ff758f 0%, #ff9fb2 50%, #ffe0e6 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       filter: drop-shadow(0 0 6px rgba(255, 117, 143, 0.6));
     }
-    .tier-dog {
+    .vf-name-wrapper .tier-dog,
+    strong.tier-dog {
       background: linear-gradient(135deg, #d35400 0%, #f5b041 50%, #fdebd0 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       filter: drop-shadow(0 0 6px rgba(245, 176, 65, 0.6));
     }
-    .tier-birthday {
+    .vf-name-wrapper .tier-birthday,
+    strong.tier-birthday {
       background: linear-gradient(90deg, #ff007f, #a855f7, #06b6d4, #facc15, #ff007f);
       background-size: 200% auto;
       -webkit-background-clip: text;
@@ -5657,7 +5643,8 @@
       animation: vfGradFlow 3s linear infinite;
       filter: drop-shadow(0 0 8px rgba(236, 72, 153, 0.6));
     }
-    .tier-christmas {
+    .vf-name-wrapper .tier-christmas,
+    strong.tier-christmas {
       background: linear-gradient(90deg, #dc2626 0%, #ffffff 35%, #22c55e 70%, #dc2626 100%);
       background-size: 200% auto;
       -webkit-background-clip: text;
@@ -5665,19 +5652,22 @@
       animation: vfGradFlow 3.5s linear infinite;
       filter: drop-shadow(0 0 8px rgba(34, 197, 94, 0.6));
     }
-    .tier-halloween {
+    .vf-name-wrapper .tier-halloween,
+    strong.tier-halloween {
       background: linear-gradient(135deg, #f97316 0%, #c084fc 50%, #ea580c 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       filter: drop-shadow(0 0 8px rgba(249, 115, 22, 0.7));
     }
-    .tier-vietnam {
+    .vf-name-wrapper .tier-vietnam,
+    strong.tier-vietnam {
       background: linear-gradient(135deg, #ef4444 0%, #fde047 50%, #dc2626 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       filter: drop-shadow(0 0 8px rgba(239, 68, 68, 0.8));
     }
-    .tier-tet {
+    .vf-name-wrapper .tier-tet,
+    strong.tier-tet {
       background: linear-gradient(90deg, #e11d48, #f59e0b, #facc15, #e11d48);
       background-size: 200% auto;
       -webkit-background-clip: text;
@@ -5685,7 +5675,8 @@
       animation: vfGradFlow 3s linear infinite;
       filter: drop-shadow(0 0 8px rgba(245, 158, 11, 0.7));
     }
-    .tier-easter {
+    .vf-name-wrapper .tier-easter,
+    strong.tier-easter {
       background: linear-gradient(135deg, #c084fc 0%, #f472b6 40%, #38bdf8 70%, #4ade80 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
@@ -5693,7 +5684,8 @@
     }
 
     /* 7. VOCAVIP NAME EFFECTS (v0.10.10-43 - Model 03-tenvip.txt) */
-    .tier-vip,
+    .vf-name-wrapper .tier-vip,
+    strong.tier-vip,
     .animated-name-vip {
       font-weight: 800;
       letter-spacing: 0.5px;
@@ -5842,33 +5834,59 @@
       100% { transform: scale(1.15); opacity: 1; filter: drop-shadow(0 0 8px #ffffff); }
     }
 
-    /* VIP Royal Frames (Monthly, Yearly, Lifetime - v0.10.10-45) */
-    .vf-avatar-frame-box:hover .royal-lifetime-crown,
-    .vf-avatar-frame-box.frame-vip:hover .royal-lifetime-crown,
-    .vf-avatar-frame-box.hoverable:hover .royal-lifetime-crown {
-      animation: crownBounceSubtle 2.2s ease-in-out infinite;
-      transform-origin: bottom center;
-    }
-    .vf-avatar-frame-box:hover .vip-monthly-crown,
-    .vf-avatar-frame-box.frame-vip_monthly:hover .vip-monthly-crown,
-    .vf-avatar-frame-box.hoverable:hover .vip-monthly-crown {
-      animation: crownBounceSubtle 2.8s ease-in-out infinite;
-      transform-origin: bottom center;
-    }
-    .vf-avatar-frame-box:hover .vip-yearly-wings,
-    .vf-avatar-frame-box.frame-vip_yearly:hover .vip-yearly-wings,
-    .vf-avatar-frame-box.hoverable:hover .vip-yearly-wings {
-      animation: royalWingPulse 2s ease-in-out infinite alternate;
+    /* VIP Royal Frames (Monthly, Yearly, Lifetime - v0.10.10-47) */
+    .vf-avatar-frame-box:hover .vip-monthly-blink,
+    .vf-avatar-frame-box.frame-vip_monthly:hover .vip-monthly-blink,
+    .vf-avatar-frame-box.hoverable:hover .vip-monthly-blink {
+      animation: vipMonthlyBlink 0.65s ease-in-out 1;
+      transform-box: fill-box;
       transform-origin: center center;
+    }
+
+    .vf-avatar-frame-box:hover .vip-yearly-wings-inner,
+    .vf-avatar-frame-box.frame-vip_yearly:hover .vip-yearly-wings-inner,
+    .vf-avatar-frame-box.hoverable:hover .vip-yearly-wings-inner {
+      animation: royalWingPulse 2s ease-in-out infinite alternate;
+      transform-box: fill-box;
+      transform-origin: center center;
+    }
+    .vf-avatar-frame-box:hover .vip-yearly-crown-inner,
+    .vf-avatar-frame-box.frame-vip_yearly:hover .vip-yearly-crown-inner,
+    .vf-avatar-frame-box.hoverable:hover .vip-yearly-crown-inner {
+      animation: crownBounceSubtle 2.2s ease-in-out infinite;
+      transform-box: fill-box;
+      transform-origin: bottom center;
     }
     .vf-avatar-frame-box:hover .vip-ruby-glint,
     .vf-avatar-frame-box.frame-vip_yearly:hover .vip-ruby-glint,
     .vf-avatar-frame-box.hoverable:hover .vip-ruby-glint {
       animation: rubyGlint 1.4s ease-in-out infinite alternate;
+      transform-box: fill-box;
+      transform-origin: center center;
+    }
+
+    .vf-avatar-frame-box:hover .vip-lifetime-magical-glisten,
+    .vf-avatar-frame-box.frame-vip:hover .vip-lifetime-magical-glisten,
+    .vf-avatar-frame-box.hoverable:hover .vip-lifetime-magical-glisten {
+      animation: vipMagicalGlisten 1.8s ease-in-out infinite alternate;
+      transform-box: fill-box;
+      transform-origin: center center;
+    }
+    .vf-avatar-frame-box:hover .vip-lifetime-starlight,
+    .vf-avatar-frame-box.frame-vip:hover .vip-lifetime-starlight,
+    .vf-avatar-frame-box.hoverable:hover .vip-lifetime-starlight {
+      animation: vipStarlightSparkle 1.4s ease-in-out infinite alternate;
+      transform-box: fill-box;
+      transform-origin: center center;
+    }
+
+    @keyframes vipMonthlyBlink {
+      0%, 100% { opacity: 1; filter: drop-shadow(0 0 6px rgba(254, 240, 138, 0.4)); transform: scale(1); }
+      50% { opacity: 0.85; filter: drop-shadow(0 0 16px rgba(254, 240, 138, 0.95)) drop-shadow(0 0 26px #fde047); transform: scale(1.02); }
     }
     @keyframes crownBounceSubtle {
       0%, 100% { transform: translateY(0) scale(1); }
-      50% { transform: translateY(-4px) scale(1.04) rotate(2deg); }
+      50% { transform: translateY(-3px) scale(1.04) rotate(2deg); }
     }
     @keyframes royalWingPulse {
       0% { transform: scale(0.97) rotate(-1.5deg); }
@@ -5877,4 +5895,13 @@
     @keyframes rubyGlint {
       0% { filter: drop-shadow(0 0 3px #dc2626); }
       100% { filter: drop-shadow(0 0 10px #ff0055) drop-shadow(0 0 16px #ffffff); }
+    }
+    @keyframes vipMagicalGlisten {
+      0% { filter: drop-shadow(0 0 8px #a855f7) drop-shadow(0 0 14px #7c3aed); opacity: 0.92; }
+      100% { filter: drop-shadow(0 0 18px #c084fc) drop-shadow(0 0 26px #f43f5e) drop-shadow(0 0 32px #ffffff); opacity: 1; transform: scale(1.02); }
+    }
+    @keyframes vipStarlightSparkle {
+      0% { transform: scale(0.6) rotate(0deg); opacity: 0.35; }
+      50% { transform: scale(1.25) rotate(45deg); opacity: 1; filter: drop-shadow(0 0 8px #ffffff) drop-shadow(0 0 14px #c084fc); }
+      100% { transform: scale(0.75) rotate(90deg); opacity: 0.5; }
     }

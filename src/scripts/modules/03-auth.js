@@ -1,5 +1,5 @@
 // =========================================================================
-// VOCAFLOW 03-AUTH.JS (v0.10.10-46 Build 347)
+// VOCAFLOW 03-AUTH.JS (v0.10.10-47 Build 348)
 // Authentication, Cloud Sync, Community, Profiles & Social Network
 // =========================================================================
 
@@ -1644,7 +1644,7 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
                 </div>
                 <div>
                   <div style="font-weight: 800; font-size: 14px; color: var(--text); display: flex; align-items: center; gap: 6px;">
-                    <span>${escapeHtml(s.displayName)}</span>
+                    <span>${(typeof renderUsernameWithEffectHtml === 'function') ? renderUsernameWithEffectHtml(s.displayName, s.equippedWardrobe?.nameEffect || (isVip ? 'vip' : 'default')) : escapeHtml(s.displayName)}</span>
                     ${isVip ? `<span class="badge" style="background: rgba(245,158,11,0.25); color: #fbbf24; font-size: 10px; font-weight: 700;">👑 VIP (${tier.toUpperCase()})</span>` : `<span class="badge" style="background: rgba(100,116,139,0.2); color: #94a3b8; font-size: 10px;">Thường</span>`}
                   </div>
                   <div style="font-size: 11px; color: var(--text-muted);">✉️ ${escapeHtml(s.email)} • Hạn VIP: <strong style="color:${isVip ? '#ffd700' : 'var(--text-muted)'};">${expStr}</strong></div>
@@ -2325,11 +2325,10 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
                 </div>
                 <div>
                   <div style="font-weight: 700; font-size: 14px; color: var(--text); display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
+                    <div style="display: inline-flex; align-items: center;">
+                      ${(typeof renderUsernameWithEffectHtml === 'function') ? renderUsernameWithEffectHtml(s.displayName, s.equippedWardrobe?.nameEffect || (s.isVip ? 'vip' : 'default')) : escapeHtml(s.displayName)}
+                    </div>
                     ${s.isVip ? `
-                      <span class="vip-name-wrapper" style="gap: 4px;" title="Hội viên VocaVIP">
-                        <span class="vip-crown-icon" style="font-size: 13px; margin: 0;">👑</span>
-                        <span class="vip-glowing-name" style="text-decoration: underline; text-decoration-color: rgba(245,158,11,0.6);">${escapeHtml(s.displayName)}</span>
-                      </span>
                       ${s.vipTier === 'try' ? `
                         <span class="badge" style="font-size: 9.5px; background: rgba(139,92,246,0.18); color: #c084fc; border: 1px solid rgba(139,92,246,0.45); font-weight: 800; padding: 1px 6px;">✨ VocaVIP TRY</span>
                       ` : `
@@ -2337,7 +2336,6 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
                       `}
                       ${vipExpiryBadgeHtml}
                     ` : `
-                      <span style="color: #a5b4fc; text-decoration: underline; text-decoration-color: rgba(99,102,241,0.4);" title="Bấm để xem hồ sơ Flower">${escapeHtml(s.displayName)}</span>
                       <span class="badge" style="font-size: 9.5px; background: rgba(255,255,255,0.06); color: var(--text-muted); border: 1px solid rgba(255,255,255,0.12); padding: 1px 6px;">Thường (Free)</span>
                     `}
                     <span class="badge" onclick="event.stopPropagation(); copyTextToClipboard('${escapeHtml(s.uid)}', 'Đã sao chép UID: ${escapeHtml(s.uid)}')" style="font-size: 10.5px; background: rgba(99, 102, 241, 0.18); color: #a5b4fc; padding: 2px 8px; border-radius: 6px; font-family: monospace; cursor: pointer; border: 1px solid rgba(99, 102, 241, 0.35); user-select: all;" title="Bấm để sao chép toàn bộ UID">UID: ${escapeHtml(s.uid)} 📋</span>
@@ -3807,28 +3805,23 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
         const displayName = userVipActive ? rawDisplayName : stripVipAffixes(rawDisplayName);
         const userHandle = currentUser.username || currentUser.email.split('@')[0].toLowerCase().replace(/[^a-z0-9_]/g, '_');
 
+        const equipped = (typeof getEquippedWardrobe === 'function') ? getEquippedWardrobe() : { nameEffect: null, frame: null, title: null };
+        const nameEffectId = equipped?.nameEffect || (userVipActive ? 'vip' : 'default');
+
         if (nameEl) {
-          if (userVipActive) {
-            nameEl.innerHTML = `<span class="vip-name-wrapper"><span class="vip-glowing-name">${escapeHtml(displayName)}</span><span class="vip-crown-icon" title="Hội viên VocaVIP (${userVipTierName.toUpperCase()})" style="font-size: 13px;">👑</span></span>`;
-          } else {
-            nameEl.textContent = displayName;
-          }
+          nameEl.innerHTML = (typeof renderUsernameWithEffectHtml === 'function')
+            ? renderUsernameWithEffectHtml(displayName, nameEffectId)
+            : escapeHtml(displayName);
         }
 
         if (nameMobileEl) {
-          if (userVipActive) {
-            nameMobileEl.innerHTML = `Tài khoản: <strong style="display: inline-flex; align-items: center;"><span class="vip-crown-icon" style="margin-right: 4px; margin-left: 0;">👑</span><span class="vip-glowing-name">${escapeHtml(displayName)} (VocaVIP)</span></strong>`;
-          } else {
-            nameMobileEl.textContent = `Tài khoản (${displayName})`;
-          }
+          nameMobileEl.innerHTML = `Tài khoản: ${(typeof renderUsernameWithEffectHtml === 'function') ? renderUsernameWithEffectHtml(displayName, nameEffectId) : escapeHtml(displayName)}`;
         }
 
         if (profileNameEl) {
-          if (userVipActive) {
-            profileNameEl.innerHTML = `<span class="vip-name-wrapper"><span class="vip-glowing-name" style="font-size: 1.15em;">${escapeHtml(displayName)}</span><span class="vip-crown-icon" style="font-size: 1.25em;" title="Hội viên VocaVIP (${userVipTierName.toUpperCase()})">👑</span></span>`;
-          } else {
-            profileNameEl.textContent = displayName;
-          }
+          profileNameEl.innerHTML = (typeof renderUsernameWithEffectHtml === 'function')
+            ? renderUsernameWithEffectHtml(displayName, nameEffectId)
+            : escapeHtml(displayName);
         }
 
         if (profileEmailEl) profileEmailEl.textContent = currentUser.email;
@@ -3922,23 +3915,17 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
         }
         const userAvatar = getUserAvatar(currentUser);
         if (profileAvatarEl) {
-          const equipped = (typeof getEquippedWardrobe === 'function') ? getEquippedWardrobe() : { frame: null };
           if (typeof renderAvatarWithFrameHtml === 'function') {
-            profileAvatarEl.innerHTML = renderAvatarWithFrameHtml(userAvatar, 88, equipped.frame, 'hoverable');
+            profileAvatarEl.innerHTML = renderAvatarWithFrameHtml(userAvatar, 100, equipped.frame, 'hoverable');
           } else {
             profileAvatarEl.innerHTML = renderAvatarHtml(userAvatar, 58, 26);
           }
-          if (userVipActive) {
-            profileAvatarEl.classList.add('vip-avatar-glow');
-          } else {
-            profileAvatarEl.classList.remove('vip-avatar-glow');
-            profileAvatarEl.style.boxShadow = 'none';
-          }
+          profileAvatarEl.style.boxShadow = 'none';
         }
         const headerAvatarIcon = document.getElementById('user-avatar-icon');
-        if (headerAvatarIcon) headerAvatarIcon.innerHTML = renderAvatarHtml(userAvatar, 22, 14);
+        if (headerAvatarIcon) headerAvatarIcon.innerHTML = (typeof renderAvatarWithFrameHtml === 'function') ? renderAvatarWithFrameHtml(userAvatar, 26, equipped.frame) : renderAvatarHtml(userAvatar, 22, 14);
         const mobileAvatarIcon = document.getElementById('user-avatar-icon-mobile');
-        if (mobileAvatarIcon) mobileAvatarIcon.innerHTML = renderAvatarHtml(userAvatar, 22, 14);
+        if (mobileAvatarIcon) mobileAvatarIcon.innerHTML = (typeof renderAvatarWithFrameHtml === 'function') ? renderAvatarWithFrameHtml(userAvatar, 26, equipped.frame) : renderAvatarHtml(userAvatar, 22, 14);
         if (authActionBtn) {
           authActionBtn.textContent = '🚪 Đăng xuất tài khoản';
           authActionBtn.style.color = '#ef4444';
@@ -3948,20 +3935,28 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
         if (guestBanner) guestBanner.style.display = 'block';
         if (nameEl) nameEl.textContent = 'Khách';
         if (nameMobileEl) nameMobileEl.textContent = 'Tài khoản (Khách)';
-        if (profileNameEl) profileNameEl.textContent = 'Khách (Offline)';
-        if (profileEmailEl) profileEmailEl.textContent = 'Dữ liệu lưu trữ nội bộ trên máy này.';
+        if (profileNameEl) profileNameEl.textContent = 'Người dùng Khách';
+        if (profileEmailEl) profileEmailEl.textContent = 'Chưa đăng nhập (Dữ liệu lưu Offline trên máy)';
         if (profileBadgeEl) {
-          profileBadgeEl.textContent = 'Chưa liên kết';
-          profileBadgeEl.style.background = 'rgba(245,158,11,0.2)';
-          profileBadgeEl.style.color = '#fbbf24';
+          profileBadgeEl.textContent = 'Khách (Offline)';
+          profileBadgeEl.style.background = 'rgba(255,255,255,0.06)';
+          profileBadgeEl.style.color = 'var(--text-muted)';
+          profileBadgeEl.style.fontWeight = 'normal';
+          profileBadgeEl.style.border = 'none';
+          profileBadgeEl.style.boxShadow = 'none';
         }
-        const guestHandle = (currentUser && currentUser.username) ? currentUser.username : 'guest';
+        const btnProfileUpgrade = document.getElementById('btn-profile-upgrade-vip');
+        if (btnProfileUpgrade) {
+          btnProfileUpgrade.style.display = 'inline-flex';
+          btnProfileUpgrade.textContent = '👑 Nâng Cấp VocaVIP';
+        }
+        const guestHandle = localStorage.getItem('vocaflow_guest_handle') || 'guest';
         if (profileHandleEl) profileHandleEl.textContent = `@${guestHandle}`;
         if (profileHandleBadge) {
           profileHandleBadge.textContent = 'Khách';
-          profileHandleBadge.style.background = 'rgba(148,163,184,0.15)';
-          profileHandleBadge.style.color = '#94a3b8';
-          profileHandleBadge.style.borderColor = 'rgba(148,163,184,0.3)';
+          profileHandleBadge.style.background = 'rgba(56,189,248,0.15)';
+          profileHandleBadge.style.color = '#38bdf8';
+          profileHandleBadge.style.borderColor = 'rgba(56,189,248,0.3)';
         }
         if (profileHandleCooldownHint) {
           profileHandleCooldownHint.textContent = '🔒 Đăng nhập để đặt Handle duy nhất';
@@ -3973,11 +3968,10 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
         if (profileAvatarEl) {
           const equipped = (typeof getEquippedWardrobe === 'function') ? getEquippedWardrobe() : { frame: null };
           if (typeof renderAvatarWithFrameHtml === 'function') {
-            profileAvatarEl.innerHTML = renderAvatarWithFrameHtml(getUserAvatar(), 88, equipped.frame, 'hoverable');
+            profileAvatarEl.innerHTML = renderAvatarWithFrameHtml(getUserAvatar(), 100, equipped.frame, 'hoverable');
           } else {
             profileAvatarEl.innerHTML = renderAvatarHtml(getUserAvatar(), 58, 26);
           }
-          profileAvatarEl.classList.remove('vip-avatar-glow');
           profileAvatarEl.style.boxShadow = 'none';
           profileAvatarEl.style.borderColor = 'transparent';
         }
@@ -4882,14 +4876,16 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
               </div>
               <div style="font-size: 11.5px; color: var(--text-muted); display: flex; align-items: center; gap: 4px; flex-wrap: wrap; margin-top: 2px;">
                 <span>Tác giả:</span>
-                ${isAuthorVipUser(deck.authorUid, deck.author) ? `
-                  <span class="vip-name-wrapper" style="gap: 3px; cursor: pointer;" onclick="openPublicProfileModal('${escapeHtml(deck.author)}', '${escapeHtml(deck.authorUid || '')}', '${deck.id}')">
-                    <span class="vip-crown-icon" style="font-size: 12px; margin: 0;">👑</span>
-                    <strong class="vip-glowing-name" style="text-decoration: underline; text-decoration-color: rgba(245,158,11,0.6); font-size: 12px;">${escapeHtml(deck.author)}</strong>
-                  </span>
-                ` : `
-                  <strong style="color: #818cf8; cursor: pointer; text-decoration: underline; text-decoration-color: rgba(99,102,241,0.4);" onclick="openPublicProfileModal('${escapeHtml(deck.author)}', '${escapeHtml(deck.authorUid || '')}', '${deck.id}')">${escapeHtml(deck.author || 'VocaCommunity')}</strong>
-                `}
+                ${(() => {
+                  const isVipAuth = !!(typeof isAuthorVipUser === 'function' && isAuthorVipUser(deck.authorUid, deck.author));
+                  const authorNameEffect = (currentUser && deck.authorUid === currentUser.uid)
+                    ? (typeof getEquippedWardrobe === 'function' ? getEquippedWardrobe()?.nameEffect : null)
+                    : (isVipAuth ? 'vip' : 'default');
+                  const authorFormattedName = (typeof renderUsernameWithEffectHtml === 'function')
+                    ? renderUsernameWithEffectHtml(deck.author || 'VocaCommunity', authorNameEffect)
+                    : escapeHtml(deck.author || 'VocaCommunity');
+                  return `<span style="cursor: pointer; display: inline-flex; align-items: center; gap: 4px;" onclick="openPublicProfileModal('${escapeHtml(deck.author || '')}', '${escapeHtml(deck.authorUid || '')}', '${deck.id}')" title="Xem hồ sơ tác giả">${authorFormattedName}</span>`;
+                })()}
                 <span>• ${(deck.words || []).length} từ</span>
               </div>
             </div>
@@ -5655,21 +5651,13 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
         if (avEl) {
           const pubFrameId = targetWardrobe?.frame || (isAuthorVip ? (authorVipTier === 'monthly' ? 'vip_monthly' : (authorVipTier === 'yearly' ? 'vip_yearly' : 'vip')) : 'default');
           if (pubFrameId && pubFrameId !== 'default' && typeof renderAvatarWithFrameHtml === 'function') {
-            avEl.innerHTML = renderAvatarWithFrameHtml(resolvedAvatar, 96, pubFrameId, 'hoverable');
+            avEl.innerHTML = renderAvatarWithFrameHtml(resolvedAvatar, 100, pubFrameId, 'hoverable');
             avEl.style.boxShadow = 'none';
             avEl.style.borderColor = 'transparent';
           } else {
-            avEl.innerHTML = renderAvatarHtml(resolvedAvatar, 96, 36);
-            if (isVocaFlowOfficial || isIamJulies) {
-              avEl.style.boxShadow = '0 0 0 2px #8b5cf6, 0 0 24px rgba(139, 92, 246, 0.6)';
-              avEl.style.borderColor = '#c084fc';
-            } else if (isAuthorVip) {
-              avEl.style.boxShadow = '0 0 0 2px #fbbf24, 0 0 20px rgba(251, 191, 36, 0.5)';
-              avEl.style.borderColor = '#fbbf24';
-            } else {
-              avEl.style.boxShadow = '0 4px 16px rgba(0, 0, 0, 0.35)';
-              avEl.style.borderColor = 'rgba(255, 255, 255, 0.15)';
-            }
+            avEl.innerHTML = renderAvatarHtml(resolvedAvatar, 100, 38);
+            avEl.style.boxShadow = 'none';
+            avEl.style.borderColor = 'transparent';
           }
         }
         if (pubSubBadgeEl) {
@@ -7306,6 +7294,13 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
     // AUTO-SEED OFFICIAL UPDATE POST, HOLIDAY/SALE EVENTS & GLOWING NOTIFICATIONS (v0.10.10-33 / Build 334)
     // =========================================================================
     const VOCAFLOW_OFFICIAL_RELEASES_REGISTRY = {
+      'v0.10.10-47': {
+        postId: 'official_update_v0_10_10_47',
+        releaseTime: '2026-09-20T16:30:00.000Z',
+        title: '👑 Nâng Cấp Bộ Khung VIP Hoàng Gia, Mở Rộng Tủ Đồ & Đồng Bộ Hiệu Ứng Tên Toàn Diện (v0.10.10-47 Build 348)!',
+        summary: 'Khắc phục triệt để lỗi hover tách rời khung VIP; thiết kế lại 3 cấp độ khung VIP (Tháng blink nhẹ, Năm hổ phách ruby, Trọn Đời tím thần bí starlight); mở rộng không gian Tủ Đồ Thẩm Mỹ; xóa viền vàng cũ và phóng to avatar hồ sơ lên 100px; đồng bộ hiệu ứng tên người dùng xuyên suốt toàn bộ ứng dụng.',
+        content: `🎉 Chào mừng bạn đến với bản cập nhật VocaFlow v0.10.10-47 (Build 348)!\n\n✨ Những điểm mới nổi bật:\n👑 Thiết Kế Lại 3 Khung VIP Hoàng Gia: Khung VIP Tháng vàng nhạt thanh thoát (blink nhẹ khi hover); Khung VIP Năm vàng đậm hổ phách với cánh vương miện ruby; Khung VIP Trọn Đời tím thần bí magical lấp lánh với vương miện pha lê starlight vũ trụ.\n🔧 Sửa Lỗi Tách Rời Khung Khi Hover: Cô lập hoàn toàn tọa độ SVG transform của cánh hoàng gia và vương miện, loại bỏ triệt để hiện tượng văng góc khi rê chuột.\n💎 Hoàn Thiện Danh Hiệu Ghim (Pinned Badges): Xóa sạch bóng sáng xanh và lỗi mất màu/đen thẻ danh hiệu Vàng & Kim Cương trên mục Nổi Bật Hồ Sơ.\n🚪 Mở Rộng Tủ Đồ Thẩm Mỹ (Wardrobe): Tối ưu độ rộng modal lên 960px với lưới thẻ đa cột thoáng đãng, hiện đại và trực quan.\n⚡ Tối Ưu Tốc Độ Bảng Giá VocaVIP: Tăng tốc phần cứng GPU, loại bỏ giật lag khi cuộn trang nâng cấp gói VIP.\n👤 Phóng To Avatar Hồ Sơ & Xóa Viền Vàng Cũ: Mở rộng kích thước khung avatar hồ sơ lên 100px sắc nét, loại bỏ vòng sáng vàng rườm rà.\n✨ Đồng Bộ Hiệu Ứng Tên Toàn Diện: Áp dụng hiệu ứng tên đang trang bị xuyên suốt Header, Hồ Sơ, Thư Viện VocaLib, Danh Sách Người Theo Dõi, Bình Luận Cộng Đồng và Quản Trị Học Viên.\n\nChúc bạn có những giờ phút học tập hiệu quả và tỏa sáng cùng VocaFlow! 🚀👑✨`
+      },
       'v0.10.10-40': {
         postId: 'official_update_v0_10_10_40',
         releaseTime: '2026-09-20T01:30:00.000Z',
@@ -8225,16 +8220,24 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
           ? renderAvatarWithFrameHtml(cAuthorAvatar, 22, cFrameId)
           : `<div style="width: 20px; height: 20px; border-radius: 50%; overflow: hidden; display: flex; align-items: center; justify-content: center; background: var(--surface-elevated); font-size: 11px;">${renderAvatarHtml(cAuthorAvatar, 20, 10)}</div>`;
 
+        const cNameEffectId = commentAuthorWardrobe?.nameEffect || (cIsVip ? 'vip' : 'default');
+        const cNameHtml = (typeof renderUsernameWithEffectHtml === 'function')
+          ? renderUsernameWithEffectHtml(cAuthorName, cNameEffectId)
+          : escapeHtml(cAuthorName);
+
         return `
           <div class="community-comment-item ${isReply ? 'community-comment-reply' : ''}" id="comment-item-${c.id}" style="${isReply ? 'margin-left: 26px; border-left: 2px solid rgba(99,102,241,0.3); padding-left: 10px; margin-top: 6px;' : 'margin-bottom: 8px;'}">
             <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 8px 10px; font-size: 12.5px; position: relative;">
               <!-- COMMENT HEADER -->
               <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 3px;">
-                <div style="display: flex; align-items: center; gap: 6px; cursor: pointer;" onclick="openPublicProfileByAuthor('${escapeHtml(cAuthorName)}', '${c.authorUid || ''}', '${escapeHtml(cAuthorHandle)}')">
+                <div style="display: flex; align-items: center; gap: 6px; cursor: pointer; flex-wrap: wrap;" onclick="openPublicProfileByAuthor('${escapeHtml(cAuthorName)}', '${c.authorUid || ''}', '${escapeHtml(cAuthorHandle)}')">
                   <div style="flex-shrink: 0; display: flex; align-items: center; justify-content: center;">
                     ${cAvatarHtml}
                   </div>
-                  <strong style="color: #38bdf8; font-size: 12px;">@${escapeHtml(cAuthorHandle.replace(/^@/, ''))}</strong>
+                  <div style="font-weight: 700; font-size: 12px; display: inline-flex; align-items: center;">
+                    ${cNameHtml}
+                  </div>
+                  <span style="color: #38bdf8; font-size: 11px;">@${escapeHtml(cAuthorHandle.replace(/^@/, ''))}</span>
                   <span style="font-size: 10px; color: var(--text-muted); cursor: help; text-decoration: underline dotted; text-underline-offset: 2px;" title="${escapeHtml(formatFullExactDateTime(commentDate))}">${formatTimeAgo(commentDate)}</span>
                   ${c.isEdited ? '<span style="font-size: 9.5px; color: var(--text-muted); font-style: italic;">(đã chỉnh sửa)</span>' : ''}
                 </div>

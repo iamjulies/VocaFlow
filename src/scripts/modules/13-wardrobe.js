@@ -1,5 +1,5 @@
 // =========================================================================
-// VOCAFLOW 13-WARDROBE.JS (v0.10.10-46 Build 347)
+// VOCAFLOW 13-WARDROBE.JS (v0.10.10-47 Build 348)
 // Hệ Thống Tủ Đồ & Cửa Hàng Thẩm Mỹ: Khung Viền Avatar, Hiệu Ứng Tên & Danh Xưng
 // =========================================================================
 
@@ -100,32 +100,32 @@
       // --- C. ĐẶC QUYỀN VIP (VOCAVIP) ---
       {
         id: 'vip_monthly',
-        name: 'Khung VocaVIP Khởi Nguyên',
+        name: 'Khung VIP Khởi Nguyên (Monthly)',
         type: 'vip',
         vipTierReq: 'monthly',
-        desc: 'Đặc quyền VocaVIP Tháng: Vương miện mini tinh xảo 12h, viền hoàng kim thanh lịch & huy hiệu VIP MONTHLY.',
+        desc: 'Đặc quyền VIP Tháng: Vành tròn hoàng kim vàng nhạt thanh thoát, vương miện mini 12h và hiệu ứng blink nhẹ khi hover.',
         badge: '👑 VIP Tháng',
-        badgeColor: '#fbbf24',
+        badgeColor: '#fde047',
         icon: '👑'
       },
       {
         id: 'vip_yearly',
-        name: 'Khung VocaVIP Thịnh Vượng',
+        name: 'Khung VIP Thịnh Vượng (Yearly)',
         type: 'vip',
         vipTierReq: 'yearly',
-        desc: 'Đặc quyền VocaVIP Năm: Đôi cánh hoàng gia vươn cao, ngọc ruby đính góc & huy hiệu VIP YEARLY sang trọng.',
+        desc: 'Đặc quyền VIP Năm: Đôi cánh hoàng gia vàng đậm hổ phách, vương miện 3D đính ngọc ruby rực rỡ và dải lụa VIP YEARLY.',
         badge: '👑 VIP Năm',
         badgeColor: '#f59e0b',
         icon: '👑'
       },
       {
         id: 'vip',
-        name: 'Khung VocaVIP Hoàng Triều',
+        name: 'Khung VIP Hoàng Triều Vĩnh Cửu (Lifetime)',
         type: 'vip',
         vipTierReq: 'lifetime',
-        desc: 'Đặc quyền VocaVIP Hoàng Triều Vĩnh Cửu: Vương miện 3D nảy nhẹ, dải lụa hoàng gia chuyển màu và huy hiệu VIP Lifetime sang trọng.',
-        badge: '👑 VIP Vĩnh Viễn',
-        badgeColor: '#ffd700',
+        desc: 'Đặc quyền VIP Trọn Đời: Tinh thể ma thuật tím huyền bí, vương miện pha lê starlight vũ trụ và hiệu ứng lấp lánh lung linh kỳ ảo.',
+        badge: '👑 VIP Trọn Đời',
+        badgeColor: '#c084fc',
         icon: '👑'
       },
 
@@ -1036,36 +1036,36 @@
       `;
     } else if (fId === 'vip_monthly') {
       overlaySvg = `
-        <svg class="vf-avatar-frame-svg" viewBox="0 0 170 170" fill="none" style="filter: drop-shadow(0 0 8px rgba(251, 191, 36, 0.45));">
+        <svg class="vf-avatar-frame-svg vip-monthly-blink" viewBox="0 0 170 170" fill="none" style="filter: drop-shadow(0 0 8px rgba(254, 240, 138, 0.5));">
           <defs>
             <linearGradient id="vfVipMonthlyGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stop-color="#fff5c0" />
-              <stop offset="40%" stop-color="#fbbf24" />
-              <stop offset="80%" stop-color="#d97706" />
-              <stop offset="100%" stop-color="#f59e0b" />
+              <stop offset="0%" stop-color="#ffffff" />
+              <stop offset="30%" stop-color="#fef08a" />
+              <stop offset="70%" stop-color="#fde047" />
+              <stop offset="100%" stop-color="#eab308" />
             </linearGradient>
             <linearGradient id="vfVipMonthlyRibbon" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stop-color="#fef08a" />
-              <stop offset="50%" stop-color="#fbbf24" />
-              <stop offset="100%" stop-color="#b45309" />
+              <stop offset="0%" stop-color="#fef9c3" />
+              <stop offset="50%" stop-color="#fde047" />
+              <stop offset="100%" stop-color="#ca8a04" />
             </linearGradient>
           </defs>
-          <!-- Vành tròn chính VIP Monthly -->
-          <circle cx="85" cy="85" r="58" stroke="url(#vfVipMonthlyGrad)" stroke-width="5" />
-          <circle cx="85" cy="85" r="54" stroke="#fef08a" stroke-width="1.2" opacity="0.7" />
-          <circle cx="85" cy="85" r="62" stroke="#fbbf24" stroke-width="1" opacity="0.6" stroke-dasharray="6 8" />
-          <!-- Vương miện mini tinh xảo ở 12h -->
-          <g class="vip-monthly-crown" transform="translate(85, 23)">
-            <path d="M -16,10 L -12,-6 L -4,3 L 0,-10 L 4,3 L 12,-6 L 16,10 Z" fill="url(#vfVipMonthlyGrad)" stroke="#78350f" stroke-width="1.2" style="filter: drop-shadow(0 2px 4px rgba(217,119,6,0.5));" />
-            <circle cx="0" cy="1" r="2.2" fill="#ef4444" />
-            <circle cx="-12" cy="-6" r="1.5" fill="#ffffff" />
-            <circle cx="0" cy="-10" r="1.8" fill="#ffffff" />
-            <circle cx="12" cy="-6" r="1.5" fill="#ffffff" />
+          <!-- Vành tròn chính VIP Monthly - Vàng nhạt thanh thoát -->
+          <circle cx="85" cy="85" r="58" stroke="url(#vfVipMonthlyGrad)" stroke-width="4.5" />
+          <circle cx="85" cy="85" r="54" stroke="#ffffff" stroke-width="1.2" opacity="0.8" />
+          <circle cx="85" cy="85" r="62" stroke="#fef08a" stroke-width="1" opacity="0.6" stroke-dasharray="6 8" />
+          <!-- Vương miện mini tinh tế ở 12h -->
+          <g transform="translate(85, 23)">
+            <path d="M -14,10 L -10,-5 L -3,2 L 0,-8 L 3,2 L 10,-5 L 14,10 Z" fill="url(#vfVipMonthlyGrad)" stroke="#a16207" stroke-width="1" style="filter: drop-shadow(0 2px 4px rgba(234,179,8,0.45));" />
+            <circle cx="0" cy="1" r="1.8" fill="#f59e0b" />
+            <circle cx="-10" cy="-5" r="1.2" fill="#ffffff" />
+            <circle cx="0" cy="-8" r="1.5" fill="#ffffff" />
+            <circle cx="10" cy="-5" r="1.2" fill="#ffffff" />
           </g>
           <!-- Huy hiệu VIP Monthly ở 6h -->
           <g transform="translate(85, 149)">
-            <rect x="-42" y="-9" width="84" height="18" rx="9" fill="url(#vfVipMonthlyRibbon)" stroke="#ffffff" stroke-width="1.2" style="filter: drop-shadow(0 2px 5px rgba(0,0,0,0.35));" />
-            <text x="0" y="1" text-anchor="middle" dominant-baseline="central" font-size="7.5" font-weight="900" fill="#451a03" letter-spacing="0.8">VIP MONTHLY</text>
+            <rect x="-42" y="-9" width="84" height="18" rx="9" fill="url(#vfVipMonthlyRibbon)" stroke="#ffffff" stroke-width="1.2" style="filter: drop-shadow(0 2px 5px rgba(0,0,0,0.3));" />
+            <text x="0" y="1" text-anchor="middle" dominant-baseline="central" font-size="7.5" font-weight="900" fill="#713f12" letter-spacing="0.8">VIP MONTHLY</text>
           </g>
         </svg>
       `;
@@ -1091,33 +1091,41 @@
               <stop offset="100%" stop-color="#7f1d1d" />
             </linearGradient>
           </defs>
-          <!-- Cánh hoàng gia vươn cao ở 10h và 2h -->
-          <g class="vip-yearly-wings" transform="translate(85, 85)">
-            <!-- Cánh trái -->
-            <path d="M -54,-20 C -72,-42 -86,-25 -82,0 C -72,-6 -62,-8 -54,-20 Z" fill="url(#vfVipYearlyGrad)" stroke="#78350f" stroke-width="1" />
-            <path d="M -50,-35 C -66,-55 -76,-40 -70,-20 C -62,-25 -55,-28 -50,-35 Z" fill="#ffd700" opacity="0.8" />
-            <!-- Cánh phải -->
-            <path d="M 54,-20 C 72,-42 86,-25 82,0 C 72,-6 62,-8 54,-20 Z" fill="url(#vfVipYearlyGrad)" stroke="#78350f" stroke-width="1" />
-            <path d="M 50,-35 C 66,-55 76,-40 70,-20 C 62,-25 55,-28 50,-35 Z" fill="#ffd700" opacity="0.8" />
+          <!-- Cánh hoàng gia vươn cao ở 10h và 2h (Isolated Coordinate Transform) -->
+          <g transform="translate(85, 85)">
+            <g class="vip-yearly-wings-inner" style="transform-box: fill-box; transform-origin: center center;">
+              <!-- Cánh trái -->
+              <path d="M -54,-20 C -72,-42 -86,-25 -82,0 C -72,-6 -62,-8 -54,-20 Z" fill="url(#vfVipYearlyGrad)" stroke="#78350f" stroke-width="1" />
+              <path d="M -50,-35 C -66,-55 -76,-40 -70,-20 C -62,-25 -55,-28 -50,-35 Z" fill="#ffd700" opacity="0.8" />
+              <!-- Cánh phải -->
+              <path d="M 54,-20 C 72,-42 86,-25 82,0 C 72,-6 62,-8 54,-20 Z" fill="url(#vfVipYearlyGrad)" stroke="#78350f" stroke-width="1" />
+              <path d="M 50,-35 C 66,-55 76,-40 70,-20 C 62,-25 55,-28 50,-35 Z" fill="#ffd700" opacity="0.8" />
+            </g>
           </g>
           <!-- Vành tròn kép VIP Yearly -->
           <circle cx="85" cy="85" r="58" stroke="url(#vfVipYearlyGrad)" stroke-width="6" />
           <circle cx="85" cy="85" r="53" stroke="#ffd700" stroke-width="1.5" />
           <circle cx="85" cy="85" r="63" stroke="#fffbeb" stroke-width="1.2" opacity="0.8" stroke-dasharray="8 10" />
           <!-- Ngọc Ruby đính ở 4h và 8h -->
-          <g transform="translate(36, 126)" class="vip-ruby-glint">
-            <polygon points="0,-5 5,0 0,5 -5,0" fill="url(#vfRubyGrad)" stroke="#ffffff" stroke-width="1" />
+          <g transform="translate(36, 126)">
+            <g class="vip-ruby-glint" style="transform-box: fill-box; transform-origin: center center;">
+              <polygon points="0,-5 5,0 0,5 -5,0" fill="url(#vfRubyGrad)" stroke="#ffffff" stroke-width="1" />
+            </g>
           </g>
-          <g transform="translate(134, 126)" class="vip-ruby-glint">
-            <polygon points="0,-5 5,0 0,5 -5,0" fill="url(#vfRubyGrad)" stroke="#ffffff" stroke-width="1" />
+          <g transform="translate(134, 126)">
+            <g class="vip-ruby-glint" style="transform-box: fill-box; transform-origin: center center;">
+              <polygon points="0,-5 5,0 0,5 -5,0" fill="url(#vfRubyGrad)" stroke="#ffffff" stroke-width="1" />
+            </g>
           </g>
-          <!-- Vương miện 3D ở 12h -->
-          <g class="vip-yearly-wings" transform="translate(85, 20)">
-            <path d="M -22,12 L -18,-8 L -8,4 L 0,-14 L 8,4 L 18,-8 L 22,12 Z" fill="url(#vfVipYearlyGrad)" stroke="#78350f" stroke-width="1.4" style="filter: drop-shadow(0 2px 6px rgba(245,158,11,0.6));" />
-            <circle cx="0" cy="0" r="3" fill="url(#vfRubyGrad)" stroke="#ffffff" stroke-width="0.8" />
-            <circle cx="-18" cy="-8" r="2" fill="#ffd700" stroke="#ffffff" stroke-width="0.5" />
-            <circle cx="0" cy="-14" r="2.5" fill="#ffd700" stroke="#ffffff" stroke-width="0.6" />
-            <circle cx="18" cy="-8" r="2" fill="#ffd700" stroke="#ffffff" stroke-width="0.5" />
+          <!-- Vương miện 3D ở 12h (Isolated Coordinate Transform) -->
+          <g transform="translate(85, 20)">
+            <g class="vip-yearly-crown-inner" style="transform-box: fill-box; transform-origin: bottom center;">
+              <path d="M -22,12 L -18,-8 L -8,4 L 0,-14 L 8,4 L 18,-8 L 22,12 Z" fill="url(#vfVipYearlyGrad)" stroke="#78350f" stroke-width="1.4" style="filter: drop-shadow(0 2px 6px rgba(245,158,11,0.6));" />
+              <circle cx="0" cy="0" r="3" fill="url(#vfRubyGrad)" stroke="#ffffff" stroke-width="0.8" />
+              <circle cx="-18" cy="-8" r="2" fill="#ffd700" stroke="#ffffff" stroke-width="0.5" />
+              <circle cx="0" cy="-14" r="2.5" fill="#ffd700" stroke="#ffffff" stroke-width="0.6" />
+              <circle cx="18" cy="-8" r="2" fill="#ffd700" stroke="#ffffff" stroke-width="0.5" />
+            </g>
           </g>
           <!-- Huy hiệu VIP Yearly ở 6h -->
           <g transform="translate(85, 149)">
@@ -1128,34 +1136,74 @@
       `;
     } else if (fId === 'vip') {
       overlaySvg = `
-        <svg class="vf-avatar-frame-svg" viewBox="0 0 170 170" fill="none" style="filter: drop-shadow(0 0 10px rgba(255, 182, 193, 0.45)) drop-shadow(0 0 18px rgba(212, 175, 55, 0.35));">
+        <svg class="vf-avatar-frame-svg vip-lifetime-magical-glisten" viewBox="0 0 170 170" fill="none" style="filter: drop-shadow(0 0 12px rgba(168, 85, 247, 0.6)) drop-shadow(0 0 20px rgba(124, 58, 237, 0.45));">
           <defs>
-            <linearGradient id="vfVipRoyalGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stop-color="#ffd700" />
-              <stop offset="20%" stop-color="#ffb6c1" />
-              <stop offset="40%" stop-color="#fff5c0" />
-              <stop offset="60%" stop-color="#ffffff" />
-              <stop offset="80%" stop-color="#ffb6c1" />
-              <stop offset="100%" stop-color="#bf953f" />
+            <linearGradient id="vfVipMagicalGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#ffffff" />
+              <stop offset="25%" stop-color="#c084fc" />
+              <stop offset="50%" stop-color="#a855f7" />
+              <stop offset="75%" stop-color="#7c3aed" />
+              <stop offset="100%" stop-color="#f43f5e" />
             </linearGradient>
-            <linearGradient id="vfVipRibbonGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stop-color="#fff5c0" />
-              <stop offset="50%" stop-color="#ffd700" />
-              <stop offset="100%" stop-color="#bf953f" />
+            <linearGradient id="vfVipMagicalRibbon" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#f5d0fe" />
+              <stop offset="40%" stop-color="#a855f7" />
+              <stop offset="75%" stop-color="#7c3aed" />
+              <stop offset="100%" stop-color="#4c1d95" />
             </linearGradient>
+            <radialGradient id="vfStarlightCore" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stop-color="#ffffff" />
+              <stop offset="50%" stop-color="#e879f9" />
+              <stop offset="100%" stop-color="#7c3aed" stop-opacity="0" />
+            </radialGradient>
           </defs>
-          <!-- Vành tròn chính Hoàng Triều Vĩnh Cửu -->
-          <circle cx="85" cy="85" r="58" stroke="url(#vfVipRoyalGrad)" stroke-width="7" />
-          <circle cx="85" cy="85" r="54" stroke="#ffb6c1" stroke-width="1.8" />
-          <circle cx="85" cy="85" r="62" stroke="#fff5c0" stroke-width="1.2" opacity="0.8" stroke-dasharray="8 12" />
-          <!-- Vương miện 3D nảy nhẹ ở 12h -->
-          <g class="royal-lifetime-crown" transform="translate(85, 20)">
-            <text x="0" y="0" text-anchor="middle" dominant-baseline="central" font-size="26" style="filter: drop-shadow(0 2px 6px rgba(212,175,55,0.6));">👑</text>
+          <!-- Vành tròn ma thuật chính Hoàng Triều Vĩnh Cửu -->
+          <circle cx="85" cy="85" r="58" stroke="url(#vfVipMagicalGrad)" stroke-width="6.5" />
+          <circle cx="85" cy="85" r="53" stroke="#f5d0fe" stroke-width="1.6" opacity="0.9" />
+          <circle cx="85" cy="85" r="63" stroke="#c084fc" stroke-width="1.2" opacity="0.8" stroke-dasharray="5 7 12 7" />
+
+          <!-- Các cổ tự ma thuật Starlight Runes / Tinh Thể Vũ Trụ ở 3h, 9h, 10h, 2h -->
+          <g transform="translate(23, 85)">
+            <g class="vip-lifetime-starlight" style="transform-box: fill-box; transform-origin: center center;">
+              <polygon points="0,-7 5,0 0,7 -5,0" fill="#ffffff" stroke="#a855f7" stroke-width="1" />
+              <circle cx="0" cy="0" r="2" fill="#38bdf8" />
+            </g>
           </g>
+          <g transform="translate(147, 85)">
+            <g class="vip-lifetime-starlight" style="transform-box: fill-box; transform-origin: center center;">
+              <polygon points="0,-7 5,0 0,7 -5,0" fill="#ffffff" stroke="#a855f7" stroke-width="1" />
+              <circle cx="0" cy="0" r="2" fill="#38bdf8" />
+            </g>
+          </g>
+          <g transform="translate(38, 42)">
+            <g class="vip-lifetime-starlight" style="transform-box: fill-box; transform-origin: center center;">
+              <polygon points="0,-5 4,0 0,5 -4,0" fill="#f5d0fe" />
+            </g>
+          </g>
+          <g transform="translate(132, 42)">
+            <g class="vip-lifetime-starlight" style="transform-box: fill-box; transform-origin: center center;">
+              <polygon points="0,-5 4,0 0,5 -4,0" fill="#f5d0fe" />
+            </g>
+          </g>
+
+          <!-- Vương miện Pha Lê Tím Thần Kỳ ở 12h -->
+          <g transform="translate(85, 20)">
+            <g class="vip-lifetime-starlight" style="transform-box: fill-box; transform-origin: bottom center;">
+              <!-- Đế vương miện -->
+              <path d="M -24,14 L -20,-8 L -8,5 L 0,-16 L 8,5 L 20,-8 L 24,14 Z" fill="url(#vfVipMagicalGrad)" stroke="#ffffff" stroke-width="1.2" style="filter: drop-shadow(0 2px 8px rgba(168,85,247,0.7));" />
+              <!-- Tinh thể pha lê tím trung tâm -->
+              <polygon points="0,-6 5,2 0,10 -5,2" fill="#ffffff" stroke="#c084fc" stroke-width="0.8" />
+              <!-- Các viên đá starlight phát sáng ở đỉnh chóp -->
+              <circle cx="-20" cy="-8" r="2.2" fill="#ffffff" stroke="#e879f9" stroke-width="0.8" />
+              <circle cx="0" cy="-16" r="3" fill="#ffffff" stroke="#38bdf8" stroke-width="1" />
+              <circle cx="20" cy="-8" r="2.2" fill="#ffffff" stroke="#e879f9" stroke-width="0.8" />
+            </g>
+          </g>
+
           <!-- Huy hiệu VIP Lifetime ở 6h -->
           <g transform="translate(85, 149)">
-            <rect x="-42" y="-9" width="84" height="18" rx="9" fill="url(#vfVipRibbonGrad)" stroke="#ffffff" stroke-width="1.5" style="filter: drop-shadow(0 2px 6px rgba(0,0,0,0.4));" />
-            <text x="0" y="1" text-anchor="middle" dominant-baseline="central" font-size="8" font-weight="900" fill="#4a3200" letter-spacing="1">VIP LIFETIME</text>
+            <rect x="-44" y="-9" width="88" height="18" rx="9" fill="url(#vfVipMagicalRibbon)" stroke="#ffffff" stroke-width="1.4" style="filter: drop-shadow(0 2px 8px rgba(0,0,0,0.5));" />
+            <text x="0" y="1" text-anchor="middle" dominant-baseline="central" font-size="7.5" font-weight="900" fill="#ffffff" letter-spacing="1">VIP LIFETIME</text>
           </g>
         </svg>
       `;
@@ -1455,7 +1503,7 @@
     // 1. Profile Modal
     const profAv = document.getElementById('profile-avatar');
     if (profAv) {
-      profAv.innerHTML = renderAvatarWithFrameHtml(userAvatar, 88, equipped.frame, 'hoverable');
+      profAv.innerHTML = renderAvatarWithFrameHtml(userAvatar, 100, equipped.frame, 'hoverable');
       profAv.style.border = 'none';
       profAv.style.background = 'transparent';
       profAv.style.boxShadow = 'none';
@@ -1485,6 +1533,10 @@
     const mobileAv = document.getElementById('user-avatar-icon-mobile');
     if (mobileAv) {
       mobileAv.innerHTML = renderAvatarWithFrameHtml(userAvatar, 26, equipped.frame);
+    }
+    const mobileName = document.getElementById('user-display-name-mobile');
+    if (mobileName) {
+      mobileName.innerHTML = `Tài khoản: ${renderUsernameWithEffectHtml(userName, equipped.nameEffect)}`;
     }
   }
   window.applyWardrobeToActiveUI = applyWardrobeToActiveUI;

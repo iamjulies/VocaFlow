@@ -1,5 +1,5 @@
 // =========================================================================
-// VOCAFLOW 11-PUBLISHER-STUDIO.JS (v0.10.10-46 Build 347)
+// VOCAFLOW 11-PUBLISHER-STUDIO.JS (v0.10.10-47 Build 348)
 // VocaLib Community Library, VocaStudio publisher portal, deck sharing
 // =========================================================================
 
@@ -158,21 +158,19 @@
         const authorName = b.user?.displayName || b.user?.email || 'Ẩn danh';
         const authorUid = b.user?.uid || '';
         const isVip = !!(b.user?.isVip || (authorUid && typeof isAuthorVipUser === 'function' && isAuthorVipUser(authorUid, authorName)));
+        const reporterNameEffect = (currentUser && authorUid === currentUser.uid)
+          ? (typeof getEquippedWardrobe === 'function' ? getEquippedWardrobe()?.nameEffect : null)
+          : (isVip ? 'vip' : 'default');
+        const reporterFormattedName = (typeof renderUsernameWithEffectHtml === 'function')
+          ? renderUsernameWithEffectHtml(authorName, reporterNameEffect)
+          : escapeHtml(authorName);
 
-        const reporterHtml = isVip ? `
+        const reporterHtml = `
           <div style="display: flex; align-items: center; gap: 5px; flex-wrap: wrap;">
-            <span class="vip-name-wrapper" style="gap: 3px; cursor: pointer; text-decoration: underline; font-weight: 700;" onclick="openPublicProfileModal('${escapeJsString(authorName)}', '${escapeJsString(authorUid)}')" title="Xem hồ sơ Flower VocaVIP">
-              <span class="vip-crown-icon" style="font-size: 13px; margin: 0;">👑</span>
-              <strong class="vip-glowing-name" style="font-size: 12px;">${escapeHtml(authorName)}</strong>
+            <span style="cursor: pointer; display: inline-flex; align-items: center; gap: 4px;" onclick="openPublicProfileModal('${escapeJsString(authorName)}', '${escapeJsString(authorUid)}')" title="Xem hồ sơ">
+              👤 ${reporterFormattedName}
             </span>
-            <span class="badge" style="background: rgba(245,158,11,0.2); color: #fbbf24; font-size: 9.5px; font-weight: 700; border: 1px solid rgba(245,158,11,0.4); padding: 1px 6px;">👑 VocaVIP</span>
-            <span style="color: var(--text-muted); font-size: 10.5px; font-family: monospace;">(${escapeHtml(authorUid || 'GUEST')})</span>
-          </div>
-        ` : `
-          <div style="display: flex; align-items: center; gap: 5px; flex-wrap: wrap;">
-            <span style="color: #a5b4fc; font-weight: 600; cursor: pointer; text-decoration: underline; font-size: 12px;" onclick="openPublicProfileModal('${escapeJsString(authorName)}', '${escapeJsString(authorUid)}')" title="Xem hồ sơ Flower">
-              👤 <strong>${escapeHtml(authorName)}</strong>
-            </span>
+            ${isVip ? '<span class="badge" style="background: rgba(245,158,11,0.2); color: #fbbf24; font-size: 9.5px; font-weight: 700; border: 1px solid rgba(245,158,11,0.4); padding: 1px 6px;">👑 VocaVIP</span>' : ''}
             <span style="color: var(--text-muted); font-size: 10.5px; font-family: monospace;">(${escapeHtml(authorUid || 'GUEST')})</span>
           </div>
         `;
@@ -11706,7 +11704,16 @@
                 ${escapeHtml(deck.description || 'VocaDeck trọng tâm chuẩn GDPT & Quốc tế')}
               </p>
               <div style="font-size: 11px; color: var(--text-muted); display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
-                <span>👤</span> <span>Đóng góp:</span> ${ (deck.isAnonymous || authorName === 'Ẩn danh') ? '<span style="color: var(--text-muted); font-style: italic;">Ẩn danh</span>' : ((isVipDeck || isAuthorVipUser(deck.authorUid, authorName)) ? `<span class="vip-name-wrapper" style="gap: 3px; cursor: pointer;" onclick="openPublicProfileModal('${escapeHtml(authorName)}', '${escapeHtml(deck.authorUid || '')}', '${deck.id}')"><span class="vip-crown-icon" style="font-size: 12px; margin: 0;">👑</span><strong class="vip-glowing-name" style="text-decoration: underline; text-decoration-color: rgba(245,158,11,0.6); font-size: 12px;">${escapeHtml(authorName)}</strong></span>` : `<strong style="color: #818cf8; cursor: pointer; text-decoration: underline; text-decoration-color: rgba(99,102,241,0.4);" onclick="openPublicProfileModal('${escapeHtml(authorName)}', '${escapeHtml(deck.authorUid || '')}', '${deck.id}')">${escapeHtml(authorName)}</strong>`) }
+                <span>👤</span> <span>Đóng góp:</span> ${ (deck.isAnonymous || authorName === 'Ẩn danh') ? '<span style="color: var(--text-muted); font-style: italic;">Ẩn danh</span>' : (() => {
+                  const isVipAuth = !!(isVipDeck || (typeof isAuthorVipUser === 'function' && isAuthorVipUser(deck.authorUid, authorName)));
+                  const authorNameEffect = (currentUser && deck.authorUid === currentUser.uid)
+                    ? (typeof getEquippedWardrobe === 'function' ? getEquippedWardrobe()?.nameEffect : null)
+                    : (isVipAuth ? 'vip' : 'default');
+                  const authorFormattedName = (typeof renderUsernameWithEffectHtml === 'function')
+                    ? renderUsernameWithEffectHtml(authorName, authorNameEffect)
+                    : escapeHtml(authorName);
+                  return `<span style="cursor: pointer; display: inline-flex; align-items: center; gap: 4px;" onclick="openPublicProfileModal('${escapeHtml(authorName)}', '${escapeHtml(deck.authorUid || '')}', '${deck.id}')" title="Xem hồ sơ tác giả">${authorFormattedName}</span>`;
+                })() }
                 ${ (deck.authorUid && (!currentUser || deck.authorUid !== currentUser.uid) && !deck.id.startsWith('lib_deck_') && !deck.isAnonymous && authorName !== 'Ẩn danh') ? `
                   <button type="button" class="btn btn-xs" onclick="event.stopPropagation(); toggleFollowCreator('${deck.authorUid}', '${escapeHtml(authorName)}', '${deck.authorUsername || ''}'); renderLibraryDecks();" style="font-size: 10px; padding: 1px 7px; border-radius: 6px; font-weight: 700; cursor: pointer; ${myFollowingMap[deck.authorUid] ? 'background: rgba(16,185,129,0.15); color: #34d399; border: 1px solid rgba(16,185,129,0.35);' : 'background: rgba(99,102,241,0.1); color: #a5b4fc; border: 1px solid rgba(99,102,241,0.35);'}" title="${myFollowingMap[deck.authorUid] ? 'Đang theo dõi tác giả này • Bấm để hủy' : 'Theo dõi tác giả để nhận VocaDeck mới'}">
                     ${myFollowingMap[deck.authorUid] ? '✓ Đang theo dõi' : '➕ Theo dõi'}
@@ -11859,15 +11866,20 @@
               </div>
               <div>
                 <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
-                  ${isCreatorVip ? `
-                    <span class="vip-name-wrapper" style="gap: 4px; cursor: pointer;" onclick="openPublicProfileByAuthor('${escapeHtml(c.name)}')">
-                      <span class="vip-crown-icon" style="font-size: 13px; margin: 0;">👑</span>
-                      <strong class="vip-glowing-name" style="font-size: 14px; text-decoration: underline; text-decoration-color: rgba(245,158,11,0.6);">${escapeHtml(c.name)}</strong>
-                    </span>
-                    <span class="badge" style="font-size: 9.5px; background: linear-gradient(135deg, #f59e0b, #d97706); color: white; font-weight: 800; border: 1px solid rgba(251,191,36,0.6); padding: 1px 6px;">VocaVIP ${creatorVipTier ? creatorVipTier.toUpperCase() : ''}</span>
-                  ` : `
-                    <strong style="font-size: 13.5px; color: var(--text); cursor: pointer; text-decoration: underline; text-decoration-color: rgba(99,102,241,0.4);" onclick="openPublicProfileByAuthor('${escapeHtml(c.name)}')">${escapeHtml(c.name)}</strong>
-                  `}
+                  ${(() => {
+                    const cNameEffect = (currentUser && c.uid === currentUser.uid)
+                      ? (typeof getEquippedWardrobe === 'function' ? getEquippedWardrobe()?.nameEffect : null)
+                      : (isCreatorVip ? 'vip' : 'default');
+                    const cFormattedName = (typeof renderUsernameWithEffectHtml === 'function')
+                      ? renderUsernameWithEffectHtml(c.name, cNameEffect)
+                      : escapeHtml(c.name);
+                    return `
+                      <span style="cursor: pointer; display: inline-flex; align-items: center; gap: 4px;" onclick="openPublicProfileByAuthor('${escapeHtml(c.name)}')" title="Xem hồ sơ">
+                        ${cFormattedName}
+                      </span>
+                      ${isCreatorVip ? `<span class="badge" style="font-size: 9.5px; background: linear-gradient(135deg, #f59e0b, #d97706); color: white; font-weight: 800; border: 1px solid rgba(251,191,36,0.6); padding: 1px 6px;">VocaVIP ${creatorVipTier ? creatorVipTier.toUpperCase() : ''}</span>` : ''}
+                    `;
+                  })()}
                   <span class="badge" style="font-size: 9.5px; background: rgba(99,102,241,0.2); color: #a5b4fc;">${creatorTitle}</span>
                 </div>
                 <div style="font-size: 11px; color: var(--text-muted); margin-top: 2px;">

@@ -1,13 +1,13 @@
-// VOCAFLOW 02-STATE-CORE.JS (v0.10.10-46 Build 347)
+// VOCAFLOW 02-STATE-CORE.JS (v0.10.10-47 Build 348)
 // Global constants, core database state, storage keys, recovery & audio engine
 // =========================================================================
 
     // =========================================================================
-    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.10-46 Build 347)
+    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.10-47 Build 348)
     // =========================================================================
-    const VOCAFLOW_APP_VERSION = 'v0.10.10-46';
-    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.10-46 (Build 347)';
-    const VOCAFLOW_APP_BUILD = 347;
+    const VOCAFLOW_APP_VERSION = 'v0.10.10-47';
+    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.10-47 (Build 348)';
+    const VOCAFLOW_APP_BUILD = 348;
     window.VOCAFLOW_APP_VERSION = VOCAFLOW_APP_VERSION;
     window.VOCAFLOW_APP_FULL_TITLE = VOCAFLOW_APP_FULL_TITLE;
     window.VOCAFLOW_APP_BUILD = VOCAFLOW_APP_BUILD;

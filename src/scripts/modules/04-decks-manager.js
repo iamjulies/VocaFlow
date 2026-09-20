@@ -1,5 +1,5 @@
 // =========================================================================
-// VOCAFLOW 04-DECKS-MANAGER.JS (v0.10.10-46 Build 347)
+// VOCAFLOW 04-DECKS-MANAGER.JS (v0.10.10-47 Build 348)
 // Quản lý VocaDecks, Vocabulary Lists, Import/Export & CRUD Operations
 // =========================================================================
 
@@ -1095,10 +1095,16 @@
           ` : ''}
           ${(() => {
             const { author: liveAuthor, authorUid: liveAuthorUid, isVip: isVipAuth } = getLiveDeckAuthor(deck);
+            const authorNameEffect = (currentUser && liveAuthorUid === currentUser.uid)
+              ? (typeof getEquippedWardrobe === 'function' ? getEquippedWardrobe()?.nameEffect : null)
+              : (isVipAuth ? 'vip' : 'default');
+            const authorFormattedName = (typeof renderUsernameWithEffectHtml === 'function')
+              ? renderUsernameWithEffectHtml(liveAuthor, authorNameEffect)
+              : escapeHtml(liveAuthor);
             return `
               <div class="deck-meta-footer" style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 4px; margin-top: 8px;">
                 <span class="deck-timestamp" style="margin-top: 0;">🕒 Cập nhật: ${formatDateTime(deck.updatedAt || deck.createdAt)}</span>
-                ${liveAuthor ? `<div class="deck-author-line">${isVipAuth ? `<span class="vip-name-wrapper" style="gap: 3px; cursor: pointer; text-decoration: underline; font-weight: 700;" onclick="event.stopPropagation(); openPublicProfileModal('${escapeHtml(liveAuthor)}', '${escapeHtml(liveAuthorUid)}', '${escapeHtml(deck.libSourceId || deck.id)}')" title="Xem hồ sơ tác giả VIP"><span class="vip-crown-icon" style="font-size: 12px; margin: 0;">👑</span><strong class="vip-glowing-name" style="font-size: 11.5px;">${escapeHtml(liveAuthor)}</strong></span>` : `<span style="color: #a5b4fc; font-weight: 600; cursor: pointer; text-decoration: underline;" onclick="event.stopPropagation(); openPublicProfileModal('${escapeHtml(liveAuthor)}', '${escapeHtml(liveAuthorUid)}', '${escapeHtml(deck.libSourceId || deck.id)}')" title="Xem hồ sơ người đóng góp">👤 ${escapeHtml(liveAuthor)}</span>`}</div>` : ''}
+                ${liveAuthor ? `<div class="deck-author-line"><span style="cursor: pointer; display: inline-flex; align-items: center; gap: 4px;" onclick="event.stopPropagation(); openPublicProfileModal('${escapeHtml(liveAuthor)}', '${escapeHtml(liveAuthorUid)}', '${escapeHtml(deck.libSourceId || deck.id)}')" title="Xem hồ sơ tác giả">👤 ${authorFormattedName}</span></div>` : ''}
               </div>
             `;
           })()}
@@ -1225,10 +1231,14 @@
         const { author: liveAuthor, authorUid: liveAuthorUid, isVip: isVipAuth } = getLiveDeckAuthor(deck);
 
         if (liveAuthor) {
-          const authorHtml = isVipAuth
-            ? `<span class="vip-name-wrapper" style="gap: 3px; cursor: pointer; font-weight: 700; display: inline-flex; vertical-align: middle;" onclick="openPublicProfileModal('${escapeHtml(liveAuthor)}', '${escapeHtml(liveAuthorUid)}', '${escapeHtml(deck.libSourceId || deck.id)}')" title="Xem hồ sơ tác giả VIP"><span class="vip-crown-icon" style="font-size: 13px; margin: 0;">👑</span><strong class="vip-glowing-name" style="text-decoration: underline; font-size: 12.5px;">${escapeHtml(liveAuthor)}</strong></span>`
-            : `<span style="color: #a5b4fc; cursor: pointer; text-decoration: underline; font-weight: 600;" onclick="openPublicProfileModal('${escapeHtml(liveAuthor)}', '${escapeHtml(liveAuthorUid)}', '${escapeHtml(deck.libSourceId || deck.id)}')" title="Xem hồ sơ người đóng góp">${escapeHtml(liveAuthor)}</span>`;
-          timeEl.innerHTML = `${timeText} • 👤 Đóng góp: ${authorHtml}`;
+          const authorNameEffect = (currentUser && liveAuthorUid === currentUser.uid)
+            ? (typeof getEquippedWardrobe === 'function' ? getEquippedWardrobe()?.nameEffect : null)
+            : (isVipAuth ? 'vip' : 'default');
+          const authorFormattedName = (typeof renderUsernameWithEffectHtml === 'function')
+            ? renderUsernameWithEffectHtml(liveAuthor, authorNameEffect)
+            : escapeHtml(liveAuthor);
+          const authorHtml = `<span style="cursor: pointer; display: inline-flex; align-items: center; gap: 4px;" onclick="openPublicProfileModal('${escapeHtml(liveAuthor)}', '${escapeHtml(liveAuthorUid)}', '${escapeHtml(deck.libSourceId || deck.id)}')" title="Xem hồ sơ tác giả">👤 ${authorFormattedName}</span>`;
+          timeEl.innerHTML = `${timeText} • ${authorHtml}`;
         } else {
           timeEl.textContent = timeText;
         }

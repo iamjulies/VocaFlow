@@ -1,3 +1,12 @@
 v0.10.10-47
 - vấn đề 21: lỗi hover của khung vip tháng và vip năm. với cả 
-- vấn đề 22: "C:\Users\DELL\Pictures\Screenshots\Ảnh chụp màn hình 2026-09-20 141655.png", xóa hiệu ứng ánh sáng xanh đằng sau của badge kim cương, sửa lỗi hover badge vàng
+- vấn đề 22: "C:\Users\DELL\Pictures\Screenshots\Ảnh chụp màn hình 2026-09-20 141655.png", xóa hiệu ứng ánh sáng xanh đằng sau của badge kim cương, sửa lỗi hover badge vàng và "C:\Users\DELL\Pictures\Screenshots\Ảnh chụp màn hình 2026-09-20 141815.png" lỗi màu
+- vấn đề 23: mở rộng trang tủ đồ sang hai bên, rộng hơn nữa
+- vấn đề 24: sửa lại khung viền của 3 cấp độ vip: 
+vip tháng - màu vàng nhạt đơn giản, khi hover thì blink nhẹ 1 cái
+vip năm - màu vàng đậm vàng hồng (như hiện tại)
+vip trọn đời - màu tím đậm nhạt lung linh, họa tiết kiểu thần kì magical, có hình svg nữa, khi hover thì lấp lánh lung linh
+- vấn đề 25: fix lag ở trang Bảng Giá Nâng Cấp VocaVIP
+- vấn đề 26: "C:\Users\DELL\Pictures\Screenshots\Ảnh chụp màn hình 2026-09-20 143958.png" bỏ vòng viền vàng bên ngoài + phóng to khung và avt lên
+- vấn đề 27: bằng cách nào đó tra tìm và xác định được tất cả mọi nơi có tên người dùng xuất hiện -> đồng bộ hiệu ứng tên người dùng đang dùng sang nhưng nơi đó (một số nơi mà t thấy: 👥 Danh Sách Người Theo Dõi, ✨ Danh Sách Đang Theo Dõi, trang chủ, trong deck, Thư Viện VocaLib, public profile, cộng đồng,...)
+đọc và thực hiện các file markdown có trong "C:\Users\DELL\Documents\Modding\browser" (nếu quên)

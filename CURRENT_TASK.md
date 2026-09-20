@@ -1,12 +1,41 @@
 # CURRENT TASK & TRẠNG THÁI CÔNG VIỆC HIỆN TẠI (VOCAFLOW)
 
-> **Phiên bản mục tiêu:** `v0.10.10-46 (Build 347)`  
+> **Phiên bản mục tiêu:** `v0.10.10-47 (Build 348)`  
 > **Cập nhật lần cuối:** 2026-09-20  
 > **Trạng thái:** 🚀 **ĐANG TIẾN HÀNH BUILD, KIỂM THỬ TỰ ĐỘNG & MULTI-DEPLOY GITHUB**
 
 ---
 
-## 🎯 1. DANH SÁCH NHIỆM VỤ ĐÃ GIẢI QUYẾT (v0.10.10-46 Build 347)
+## 🎯 1. DANH SÁCH NHIỆM VỤ ĐÃ GIẢI QUYẾT (v0.10.10-47 Build 348)
+
+- [x] **Sửa Lỗi Tách Rời Tọa Độ Khung VIP Khi Rê Chuột (`src/styles/app.css`, `src/scripts/modules/13-wardrobe.js` - Vấn đề 21)**:
+  - Khắc phục triệt để lỗi khi hover vào Khung VIP Tháng và VIP Năm, các chi tiết vương miện, cánh thiên thần bị bay lệch góc hoặc biến dạng tọa độ do CSS animation ghi đè `transform` của SVG.
+  - Bọc các chi tiết động vào nhóm `<g>` con bên trong, cấu hình `transform-box: fill-box; transform-origin: center center;` giữ nguyên tọa độ định vị gốc `<g transform="...">` bên ngoài.
+- [x] **Sửa Lỗi Thẻ Huy Hiệu Nổi Bật Vàng & Kim Cương (`src/styles/app.css` - Vấn đề 22 / Ảnh 141655.png, Ảnh 141815.png)**:
+  - Triệt tiêu hoàn toàn quầng sáng xanh/cyan rực rỡ phía sau thẻ Kim Cương, đưa về viền sáng bạc/bạch kim tinh tế và nền mờ sang trọng.
+  - Sửa lỗi hover thẻ Vàng bị biến thành mảng đen/trống; thay thế bằng lớp phủ ánh vàng kim chuyển màu êm dịu, giữ nguyên chữ và biểu tượng.
+  - Khắc phục lỗi biểu tượng huy hiệu Vàng bị biến thành bóng đơn sắc vàng bằng cách phân lập phạm vi áp dụng gradient text của `.tier-gold` chỉ trong `.vf-name-wrapper`.
+- [x] **Mở Rộng Không Gian Giao Diện Tủ Đồ Cá Nhân (`src/components/modals/modal-wardrobe.html`, `src/styles/app.css` - Vấn đề 23)**:
+  - Mở rộng chiều rộng modal Tủ Đồ lên `max-width: 960px; width: 95vw;` kết hợp lưới hiển thị đa cột `minmax(280px, 1fr)`.
+  - Giúp việc duyệt tìm, xem thử và quản lý hàng chục khung viền, hiệu ứng tên trở nên trực quan, thoáng đãng và tiện lợi.
+- [x] **Tái Thiết Kế Đỉnh Cao 3 Cấp Độ Khung VIP (`src/scripts/modules/13-wardrobe.js`, `src/styles/app.css` - Vấn đề 24)**:
+  - VIP Tháng (`vip_monthly`): Vòng kim loại hoàng kim thanh lịch với vương miện nhỏ ở góc 12h; khi rê chuột kích hoạt hiệu ứng nhấp nháy ánh vàng tinh xảo (`vipMonthlyBlink`).
+  - VIP Năm (`vip_yearly`): Vương miện hoàng gia 3D khảm ngọc ruby và đôi cánh thiên thần uốn lượn; hoạt họa đập cánh mượt mà không lệch tọa độ (`royalWingPulse`).
+  - VIP Trọn Đời (`vip` / `vip_lifetime`): Vòng năng lượng Tinh Vân Tím Huyền Bí với vương miện pha lê vũ trụ, cổ ngữ phát sáng và các hạt bụi sao lấp lánh; khi rê chuột tỏa ánh sáng quang phổ ma thuật lung linh (`vipMagicalGlisten`).
+- [x] **Tối Ưu Hiệu Năng Modal Bảng Giá VIP Chống Giật Lag (`src/styles/app.css` - Vấn đề 25)**:
+  - Bổ sung `transform: translateZ(0); will-change: transform;` và `contain: paint layout;` cho `.vip-pricing-modal` và các thẻ gói VIP.
+  - Đảm bảo mở modal mượt mà 60 FPS, không còn hiện tượng tụt khung hình khi render hoạt họa gradient và hiệu ứng viền.
+- [x] **Chuẩn Hóa Kích Thước Avatar Hồ Sơ & Bỏ Quầng Sáng Vàng Ngoài Cùng (`src/styles/app.css`, `src/components/modals/modal-profile.html`, `src/scripts/modules/03-auth.js` - Vấn đề 26 / Ảnh 143958.png)**:
+  - Xóa bỏ hoàn toàn quầng sáng vàng tròn bao quanh khung avatar trong Modal Hồ Sơ Cá Nhân (`/me`) và Hồ Sơ Công Khai (`/u/:uid`).
+  - Tăng tỷ lệ hiển thị khung viền và avatar lên chuẩn `100px` (khung chứa `104px`), cho hình ảnh avatar sắc nét, nổi bật và cân đối hoàn hảo.
+- [x] **Đồng Bộ Toàn Diện Hiệu Ứng Tên Trên Mọi Vị Trí Của Ứng Dụng (`src/scripts/modules/*.js` - Vấn đề 27)**:
+  - Rà soát và áp dụng hàm `renderUsernameWithEffectHtml()` trên toàn bộ các thành phần: Header máy tính/điện thoại, Hồ sơ cá nhân, Hồ sơ công khai, Danh sách tác giả VocaLib, Danh sách lớp học Admin, Thẻ VocaDeck, Tiêu đề chi tiết VocaDeck, Bình luận & Thảo luận Cộng đồng, Danh sách Bug Bounty.
+- [x] **Đồng Bộ Toàn Diện 7-Point Version Consistency (`v0.10.10-47 Build 348`)**:
+  - Cập nhật phiên bản nhất quán trên toàn bộ 7 điểm hệ thống: `modal-settings.html`, `02-state-core.js`, toàn bộ module headers `01-router.js` đến `13-wardrobe.js`, `sw.js` & `Release_App/sw.js`, `pubspec.yaml`, `Program.cs`, `push_github.ps1`, `VOCAFLOW_OVERVIEW.txt`, `GITHUB_RELEASE/VOCAFLOW_OVERVIEW.txt`.
+
+---
+
+## 🎯 2. DANH SÁCH NHIỆM VỤ CÁC PHIÊN BẢN TRƯỚC (v0.10.10-46 Build 347)
 
 - [x] **Sửa Lỗi Tách Rời Khối Pha Lê Khung Kim Cương Khi Rê Chuột (`src/styles/app.css`, `src/scripts/modules/13-wardrobe.js` - Issue 16 / Ảnh 133753.png)**:
   - Khắc phục triệt để lỗi khi hover vào Khung Kim Cương, viên pha lê góc trên bên phải bị bay lệch lên góc trên cùng bên trái.
@@ -20,12 +49,6 @@
 - [x] **Đồng Bộ Toàn Diện Tủ Đồ & Lưu Trữ Đám Mây Đa Thiết Bị (`src/scripts/modules/03-auth.js` - Issue 20)**:
   - Đồng bộ hóa bài viết Cộng đồng (`community-post-card`), bình luận (`renderSingleCommentHtml`), hồ sơ công khai (`openPublicProfileModal`), và trang cá nhân.
   - Bổ sung cơ chế Two-Way Sync cho `equippedWardrobe` và `unlockedWardrobeItems` trong `mergeCloudDataIntoLocal`, khôi phục tự động khi đăng nhập và dọn dẹp sạch sẽ khi đăng xuất.
-- [x] **Đồng Bộ Toàn Diện 7-Point Version Consistency (`v0.10.10-46 Build 347`)**:
-  - Cập nhật phiên bản nhất quán trên toàn bộ 7 điểm hệ thống: `modal-settings.html`, `02-state-core.js`, toàn bộ module headers `01-router.js` đến `13-wardrobe.js`, `sw.js` & `Release_App/sw.js`, `pubspec.yaml`, `Program.cs`, `push_github.ps1`, `VOCAFLOW_OVERVIEW.txt`, `GITHUB_RELEASE/VOCAFLOW_OVERVIEW.txt`.
-
----
-
-## 🎯 2. DANH SÁCH NHIỆM VỤ CÁC PHIÊN BẢN TRƯỚC (v0.10.10-43 Build 344)
 
 - [x] **Shop Bán Khung Viền & Hiệu Ứng Tên Thẩm Mỹ (`src/components/modals/modal-wardrobe.html`, `src/scripts/modules/13-wardrobe.js`)**:
   - Gồm 3 ngăn: Khung Viền (Avatar Frames), Hiệu Ứng Tên (Name Effects), Danh Xưng (Titles).

@@ -1,5 +1,5 @@
 // =========================================================================
-// VOCAFLOW 12-ACHIEVEMENTS.JS (v0.10.10-46 Build 347)
+// VOCAFLOW 12-ACHIEVEMENTS.JS (v0.10.10-47 Build 348)
 // Badges, daily tasks, highlights showcase, notifications, VocaMail, User Guide
 // =========================================================================
 
@@ -1267,23 +1267,19 @@
 
       if (reporterEl) {
         const isVip = (report.user?.isVip === true) || (typeof isAuthorVipUser === 'function' && isAuthorVipUser(userUid, displayName));
-        if (isVip) {
-          reporterEl.innerHTML = `
-            <span class="vip-name-wrapper" onclick="openPublicProfileModal('${escapeJsString(displayName)}', '${escapeJsString(userUid)}', '', 'modal-bug-bounty-picker')" style="cursor: pointer; display: inline-flex; align-items: center; gap: 6px; padding: 2px 8px; border-radius: 6px; background: rgba(255,215,0,0.08); border: 1px solid rgba(255,215,0,0.3);" title="Bấm để xem Hồ sơ Flower VocaVIP">
-              <span class="vip-crown-icon" style="font-size: 16px;">👑</span>
-              <span class="vip-glowing-name" style="font-weight: 800; font-size: 13.5px; text-decoration: underline; text-underline-offset: 3px;">${escapeHtml(displayName)}</span>
-              <span class="badge" style="background: linear-gradient(135deg, #ffd700, #ff8c00); color: #000; font-weight: 800; font-size: 10px; padding: 1px 6px; border-radius: 4px; box-shadow: 0 0 8px rgba(255,215,0,0.4);">👑 VocaVIP</span>
-            </span>
-            <span style="font-size: 11px; color: var(--text-muted); font-family: monospace;">(${escapeHtml(userUid)})</span>
-          `;
-        } else {
-          reporterEl.innerHTML = `
-            <span onclick="openPublicProfileModal('${escapeJsString(displayName)}', '${escapeJsString(userUid)}', '', 'modal-bug-bounty-picker')" style="cursor: pointer; color: #38bdf8; font-weight: 700; text-decoration: underline; text-underline-offset: 3px;" title="Bấm để xem Hồ sơ Flower">
-              👤 ${escapeHtml(displayName)}
-            </span>
-            <span style="font-size: 11px; color: var(--text-muted); font-family: monospace;">(${escapeHtml(userUid)})</span>
-          `;
-        }
+        const repNameEffect = (currentUser && userUid === currentUser.uid)
+          ? (typeof getEquippedWardrobe === 'function' ? getEquippedWardrobe()?.nameEffect : null)
+          : (isVip ? 'vip' : 'default');
+        const repFormattedName = (typeof renderUsernameWithEffectHtml === 'function')
+          ? renderUsernameWithEffectHtml(displayName, repNameEffect)
+          : escapeHtml(displayName);
+        reporterEl.innerHTML = `
+          <span onclick="openPublicProfileModal('${escapeJsString(displayName)}', '${escapeJsString(userUid)}', '', 'modal-bug-bounty-picker')" style="cursor: pointer; display: inline-flex; align-items: center; gap: 4px;" title="Bấm để xem Hồ sơ Flower">
+            👤 ${repFormattedName}
+          </span>
+          ${isVip ? '<span class="badge" style="background: linear-gradient(135deg, #ffd700, #ff8c00); color: #000; font-weight: 800; font-size: 10px; padding: 1px 6px; border-radius: 4px; box-shadow: 0 0 8px rgba(255,215,0,0.4);">👑 VocaVIP</span>' : ''}
+          <span style="font-size: 11px; color: var(--text-muted); font-family: monospace;">(${escapeHtml(userUid)})</span>
+        `;
       }
 
       if (titleEl) {
