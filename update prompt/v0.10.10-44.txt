@@ -1,0 +1,15 @@
+v0.10.10-44
+-vấn đề 5: "C:\Users\DELL\Pictures\Screenshots\Ảnh chụp màn hình 2026-09-20 020709.png" lỗi hiển thị cho các thành tựu được trưng bày ở trang /me -> sửa theo "C:\Users\DELL\Documents\Modding\browser\model code\01-anhsang.html", chỉ khi hover mới có hiệu ứng xoay, còn kh thì thôi, kh có ánh sáng nhấp nháy liên tục nữa vì lag -> vấn đề chính gây lag phải được sửa đúng và ngay lập tức
+-vấn đề 6: lỗi:
++ khung vip "C:\Users\DELL\Pictures\Screenshots\Ảnh chụp màn hình 2026-09-20 124622.png"
++ khung sinh nhật "C:\Users\DELL\Pictures\Screenshots\Ảnh chụp màn hình 2026-09-20 124812.png" có cái mũ lắc xấu, lắc lên xuống là được
++ khung giáng sinh có cái chuông lắc mạnh quá, cho có lắc qua lại tại chỗ thôi
++ khung quốc khánh có cái cờ bị zoom xấu, zoom từ tâm hình tròn chứ? "C:\Users\DELL\Pictures\Screenshots\Ảnh chụp màn hình 2026-09-20 124949.png"
++ khung tết có cái hoa với lồng đèn bị lắc xấu và lắc rộng quá
++ khung bạc và vàng bị thiếu ngôi sao, bạc 2 sao, vàng 3 sao mà "C:\Users\DELL\Pictures\Screenshots\Ảnh chụp màn hình 2026-09-20 125232.png"
++ khung lam ngọc bị xấu và khác với mẫu, khi hover kh có hiệu ứng blink blink
+- vấn đề 7: lỗi khung viền lấn áp, lấn chiếm và che khuất mất hình avatar: khung mèo, khung chó, 6 khung sự kiện, khung huyền thoại
+- vấn đề 8: khung viền ở /me chưa được đồng bộ với khung đang dùng
+- vấn đề 9: "C:\Users\DELL\Pictures\Screenshots\Ảnh chụp màn hình 2026-09-20 125835.png" có một cái giới hạn nào đó ngăn cản mấy cái khung được phát huy hết hiệu ứng -> xóa đi
+- vấn đề 10: khung viền sự kiện kh mua được bằng xu mà chỉ nhận ở sự kiện thôi
+đọc và thực hiện các file markdown có trong "C:\Users\DELL\Documents\Modding\browser" (nếu quên)

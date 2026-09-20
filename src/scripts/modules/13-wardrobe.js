@@ -1,5 +1,5 @@
 // =========================================================================
-// VOCAFLOW 13-WARDROBE.JS (v0.10.10-43 Build 344)
+// VOCAFLOW 13-WARDROBE.JS (v0.10.10-44 Build 345)
 // Hệ Thống Tủ Đồ & Cửa Hàng Thẩm Mỹ: Khung Viền Avatar, Hiệu Ứng Tên & Danh Xưng
 // =========================================================================
 
@@ -35,14 +35,14 @@
         icon: '🐶'
       },
 
-      // --- B. SỰ KIỆN ĐẶC BIỆT (EVENT) ---
+      // --- B. SỰ KIỆN ĐẶC BIỆT (EVENT - CHỈ NHẬN Ở SỰ KIỆN, KHÔNG BÁN BẰNG XU) ---
       {
         id: 'birthday',
         name: 'Sinh Nhật Rực Rỡ',
         type: 'event',
-        price: 800,
-        desc: 'Nón tiệc 12h, bánh cupcake thắp nến 6h và pháo giấy cầu vồng.',
-        badge: 'Sự Kiện: 800🪙',
+        price: null,
+        desc: 'Phần thưởng độc quyền Sự Kiện Sinh Nhật: Nón tiệc nhún nhảy, bánh cupcake thắp nến và pháo giấy cầu vồng.',
+        badge: '🎁 Sự Kiện',
         badgeColor: '#ff007f',
         icon: '🎂'
       },
@@ -50,9 +50,9 @@
         id: 'christmas',
         name: 'Giáng Sinh An Lành',
         type: 'event',
-        price: 800,
-        desc: 'Mũ Noel đỏ ấm áp, chuông vàng nơ đỏ và vòng lá thông mùa đông.',
-        badge: 'Sự Kiện: 800🪙',
+        price: null,
+        desc: 'Phần thưởng độc quyền Lễ Giáng Sinh: Mũ Noel đỏ ấm áp, chuông vàng đung đưa và vòng thông tuyết.',
+        badge: '🎁 Sự Kiện',
         badgeColor: '#22c55e',
         icon: '🎄'
       },
@@ -60,9 +60,9 @@
         id: 'halloween',
         name: 'Halloween Ma Mị',
         type: 'event',
-        price: 800,
-        desc: 'Mũ phù thủy huyền bí, bí ngô phát sáng răng cưa và cánh dơi ma mị.',
-        badge: 'Sự Kiện: 800🪙',
+        price: null,
+        desc: 'Phần thưởng độc quyền Lễ Halloween: Mũ phù thủy huyền bí, bí ngô phát sáng và cánh dơi đêm.',
+        badge: '🎁 Sự Kiện',
         badgeColor: '#f97316',
         icon: '🎃'
       },
@@ -70,9 +70,9 @@
         id: 'vietnam',
         name: 'Quốc Khánh Việt Nam',
         type: 'event',
-        price: 800,
-        desc: 'Ngôi sao vàng 12h, hai bông lúa trĩu hạt ôm trọn viền và hoa sen 2/9.',
-        badge: 'Sự Kiện: 800🪙',
+        price: null,
+        desc: 'Phần thưởng độc quyền Quốc Khánh 2/9: Ngôi sao vàng tỏa rạng trung tâm, hai bông lúa trĩu hạt và hoa sen hồng.',
+        badge: '🎁 Sự Kiện',
         badgeColor: '#ef4444',
         icon: '⭐'
       },
@@ -80,9 +80,9 @@
         id: 'tet',
         name: 'Tết Nguyên Đán',
         type: 'event',
-        price: 800,
-        desc: 'Lồng đèn đỏ may mắn, cành mai vàng khoe sắc, bánh chưng & bao lì xì.',
-        badge: 'Sự Kiện: 800🪙',
+        price: null,
+        desc: 'Phần thưởng độc quyền Tết Cổ Truyền: Lồng đèn đỏ may mắn, cành mai vàng khoe sắc, bánh chưng & bao lì xì.',
+        badge: '🎁 Sự Kiện',
         badgeColor: '#eab308',
         icon: '🧧'
       },
@@ -90,9 +90,9 @@
         id: 'easter',
         name: 'Lễ Phục Sinh (Easter)',
         type: 'event',
-        price: 800,
-        desc: 'Đôi tai thỏ trắng xinh xắn, hoa cúc nhỏ và giỏ trứng phục sinh pastel.',
-        badge: 'Sự Kiện: 800🪙',
+        price: null,
+        desc: 'Phần thưởng độc quyền Lễ Phục Sinh: Đôi tai thỏ trắng muốt xinh xắn và giỏ trứng phục sinh sắc màu.',
+        badge: '🎁 Sự Kiện',
         badgeColor: '#38bdf8',
         icon: '🐰'
       },
@@ -100,9 +100,9 @@
       // --- C. ĐẶC QUYỀN VIP (VOCAVIP) ---
       {
         id: 'vip',
-        name: 'Khung VocaVIP Hoàng Kim',
+        name: 'Khung VocaVIP Hoàng Triều',
         type: 'vip',
-        desc: 'Đặc quyền VocaVIP: Vương miện hoàng gia 12h, ngọc Ruby đỏ và viền vàng kim loại lấp lánh.',
+        desc: 'Đặc quyền VocaVIP Hoàng Triều Vĩnh Cửu: Vương miện 3D nảy nhẹ, dải lụa hoàng gia chuyển màu và huy hiệu VIP Lifetime sang trọng.',
         badge: '👑 VocaVIP',
         badgeColor: '#ffd700',
         icon: '👑'
@@ -134,7 +134,7 @@
         name: 'Khung Bạc Tinh Xảo',
         type: 'level',
         minLevel: 20,
-        desc: 'Cánh chim bạch kim & hoa văn hiệp sĩ thanh lịch.',
+        desc: 'Cánh chim bạch kim & huy hiệu 2 Ngôi sao xếp hạng (★ ★).',
         badge: 'Cấp 20+',
         badgeColor: '#e0e0e0',
         icon: '🥈'
@@ -144,7 +144,7 @@
         name: 'Khung Vàng Hoàng Gia',
         type: 'level',
         minLevel: 30,
-        desc: 'Vương miện hoàng kim 12h & nạm ngọc ruby đáy khiên.',
+        desc: 'Vương miện hoàng kim 12h & huy hiệu 3 Ngôi sao tinh tú (★ ★ ★).',
         badge: 'Cấp 30+',
         badgeColor: '#ffd700',
         icon: '🥇'
@@ -154,7 +154,7 @@
         name: 'Khung Lam Ngọc',
         type: 'level',
         minLevel: 40,
-        desc: 'Giác cắt kim cương 3D bất đối xứng & hào quang lam ngọc.',
+        desc: 'Giác cắt kim cương 3D, huy hiệu Kim Cương 4 Sao (💎 ★ ★ ★ ★) & ánh sáng Lam Ngọc lấp lánh.',
         badge: 'Cấp 40+',
         badgeColor: '#00e5ff',
         icon: '💎'
@@ -526,6 +526,18 @@
     const item = list.find(i => i.id === itemId);
     if (!item) return { success: false, reason: 'ITEM_NOT_FOUND' };
 
+    if (item.type === 'event') {
+      if (typeof showToast === 'function') {
+        showToast('🎁 Vật phẩm này là phần thưởng độc quyền chỉ nhận được khi tham gia Sự Kiện & Lễ Hội!');
+      }
+      return { success: false, reason: 'EVENT_EXCLUSIVE' };
+    }
+
+    if (item.type === 'vip') {
+      if (typeof openModal === 'function') openModal('modal-vip-upgrade');
+      return { success: false, reason: 'VIP_EXCLUSIVE' };
+    }
+
     if (isWardrobeItemUnlocked(category, itemId)) {
       equipWardrobeItem(category, itemId);
       return { success: true, alreadyUnlocked: true };
@@ -574,6 +586,16 @@
   function equipWardrobeItem(category, itemId) {
     if (!isWardrobeItemUnlocked(category, itemId)) {
       const item = (VOCAFLOW_WARDROBE_REGISTRY[category] || []).find(i => i.id === itemId);
+      if (item && item.type === 'vip') {
+        if (typeof openModal === 'function') openModal('modal-vip-upgrade');
+        return;
+      }
+      if (item && item.type === 'event') {
+        if (typeof showToast === 'function') {
+          showToast('🎁 Vật phẩm này là phần thưởng độc quyền chỉ nhận được khi tham gia Sự Kiện & Lễ Hội!');
+        }
+        return;
+      }
       if (item && item.price) {
         buyWardrobeItem(category, itemId);
       } else {
@@ -623,7 +645,7 @@
   // 3. UNIVERSAL SVG & DOM RENDERING HELPERS
   function renderAvatarWithFrameHtml(avatarVal, size = 64, frameId = null, extraClasses = '') {
     const fId = frameId || getEquippedWardrobe().frame || 'default';
-    const innerSize = Math.round(size * 0.76);
+    const innerSize = Math.round(size * 0.68);
     const avHtml = (typeof renderAvatarHtml === 'function')
       ? renderAvatarHtml(avatarVal, innerSize, Math.round(innerSize * 0.45))
       : `<span style="font-size:${Math.round(innerSize*0.45)}px;">👤</span>`;
@@ -691,7 +713,7 @@
           </defs>
           <circle cx="80" cy="80" r="54" stroke="url(#bdayGrad)" stroke-width="4.8" stroke-linecap="round" />
           <circle cx="80" cy="80" r="50" stroke="#ffffff" stroke-width="1.2" opacity="0.4" stroke-dasharray="4 8" />
-          <!-- Nón sinh nhật chóp nhọn 12h -->
+          <!-- Nón sinh nhật chóp nhọn 12h (nhún nhảy lên xuống nhẹ nhàng) -->
           <g transform="translate(80, 24)">
             <g class="bday-hat">
               <path d="M 0,-18 L -18,14 Q 0,20 18,14 Z" fill="#ff007f" stroke="#ffffff" stroke-width="1.5" stroke-linejoin="round" />
@@ -735,7 +757,7 @@
               <rect x="-30" y="-2" width="56" height="10" rx="5" fill="#ffffff" stroke="#e2e8f0" stroke-width="1" />
             </g>
           </g>
-          <!-- Chuông vàng & nơ đỏ Noel ở 6h -->
+          <!-- Chuông vàng & nơ đỏ Noel ở 6h (lắc nhẹ tại chỗ) -->
           <g transform="translate(80, 134)">
             <g class="xmas-bell">
               <ellipse cx="-7" cy="-7" rx="6" ry="3" fill="#dc2626" transform="rotate(-25, -7, -7)" />
@@ -813,7 +835,7 @@
             <g transform="translate(139, 77) rotate(78)"><path d="M 0,-4.2 C 2.4,-2.8 2.4,2.8 0,4.2 C -2.4,2.8 -2.4,-2.8 0,-4.2 Z" fill="url(#riceGoldGrad)" /></g>
             <g transform="translate(141, 53) rotate(115)"><path d="M 0,-4 C 2.3,-2.7 2.3,2.7 0,4 C -2.3,2.7 -2.3,-2.7 0,-4 Z" fill="url(#riceGoldGrad)" /></g>
           </g>
-          <!-- Ngôi sao vàng ở 12h -->
+          <!-- Ngôi sao vàng ở 12h (phóng to tỏa rạng từ đúng tâm tròn) -->
           <g transform="translate(80, 24)">
             <g class="vn-star">
               <circle cx="0" cy="0" r="14" fill="#b91c1c" stroke="#facc15" stroke-width="1.8" />
@@ -837,7 +859,7 @@
           </defs>
           <circle cx="80" cy="80" r="54" stroke="url(#tetGoldRed)" stroke-width="4.8" />
           <circle cx="80" cy="80" r="50" stroke="#fef08a" stroke-width="1.2" opacity="0.6" stroke-dasharray="3 7" />
-          <!-- Lồng đèn đỏ ở 10h -->
+          <!-- Lồng đèn đỏ ở 10h (đung đưa nhẹ nhàng) -->
           <g transform="translate(32, 26)">
             <g class="tet-lantern">
               <line x1="0" y1="0" x2="0" y2="10" stroke="#facc15" stroke-width="1.2" />
@@ -845,7 +867,7 @@
               <line x1="0" y1="27" x2="0" y2="38" stroke="#f59e0b" stroke-width="1.2" />
             </g>
           </g>
-          <!-- Cành mai vàng ở 2h -->
+          <!-- Cành mai vàng ở 2h (xoay nhẹ nhàng) -->
           <g transform="translate(126, 42)">
             <g class="tet-blossom">
               <circle cx="-5" cy="-4" r="3.5" fill="#facc15" /><circle cx="5" cy="-4" r="3.5" fill="#facc15" />
@@ -923,6 +945,9 @@
             <linearGradient id="vfSilverGem" x1="0%" y1="0%" x2="100%" y2="100%">
               <stop offset="0%" stop-color="#e0f7fa" /><stop offset="50%" stop-color="#00e5ff" /><stop offset="100%" stop-color="#006064" />
             </linearGradient>
+            <linearGradient id="vfSilverBadgeGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#ffffff" /><stop offset="100%" stop-color="#78909c" />
+            </linearGradient>
           </defs>
           <circle cx="300" cy="300" r="236" fill="none" stroke="url(#vfSilverGrad)" stroke-width="24" />
           <circle cx="300" cy="300" r="252" fill="none" stroke="#ffffff" stroke-width="3" stroke-dasharray="16 16" opacity="0.8" />
@@ -937,6 +962,12 @@
           <g transform="translate(300, 60)">
             <polygon points="0,-24 16,0 0,24 -16,0" fill="url(#vfSilverGem)" stroke="#ffffff" stroke-width="2" />
           </g>
+          <!-- Huy hiệu Bạc Tinh Xảo (2 Sao - Model 05-khungbac.txt) -->
+          <g transform="translate(300, 544)">
+            <rect x="-60" y="-16" width="120" height="32" rx="16" fill="url(#vfSilverBadgeGrad)" stroke="#eceff1" stroke-width="2.5" style="filter: drop-shadow(0 4px 10px rgba(0,0,0,0.6));" />
+            <text x="-16" y="2" text-anchor="middle" dominant-baseline="central" font-size="18" fill="#ffffff" style="text-shadow: 0 0 5px #b0bec5;">★</text>
+            <text x="16" y="2" text-anchor="middle" dominant-baseline="central" font-size="18" fill="#ffffff" style="text-shadow: 0 0 5px #b0bec5;">★</text>
+          </g>
         </svg>
       `;
     } else if (fId === 'gold') {
@@ -946,8 +977,8 @@
             <linearGradient id="vfGoldRingGrad" x1="0%" y1="0%" x2="100%" y2="100%">
               <stop offset="0%" stop-color="#ffffff" /><stop offset="20%" stop-color="#ffd700" /><stop offset="45%" stop-color="#ff9900" /><stop offset="70%" stop-color="#fff099" /><stop offset="90%" stop-color="#d4af37" /><stop offset="100%" stop-color="#8a6d1c" />
             </linearGradient>
-            <linearGradient id="vfGoldStarGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stop-color="#ffffff" /><stop offset="40%" stop-color="#ffd700" /><stop offset="100%" stop-color="#ff8c00" />
+            <linearGradient id="vfGoldBadgeGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#fcf6ba" /><stop offset="100%" stop-color="#bf953f" />
             </linearGradient>
           </defs>
           <circle cx="300" cy="300" r="236" fill="none" stroke="url(#vfGoldRingGrad)" stroke-width="26" />
@@ -957,62 +988,81 @@
             <path d="M -45,18 L -36,-16 L -16,4 L 0,-26 L 16,4 L 36,-16 L 45,18 Z" fill="url(#vfGoldRingGrad)" stroke="#5e3c04" stroke-width="3" />
             <circle cx="0" cy="6" r="4.5" fill="#e74c3c" stroke="none" />
           </g>
-          <!-- Base Shield at Bottom 6h -->
-          <g transform="translate(300, 560)">
-            <path d="M -120,-30 L 120,-30 L 138,-2 L 0,40 L -138,-2 Z" fill="#1b1202" stroke="url(#vfGoldRingGrad)" stroke-width="5" />
-            <circle cx="0" cy="26" r="5" fill="#e74c3c" stroke="#ffffff" stroke-width="1.2" />
+          <!-- Huy hiệu Danh Hiệu Hoàng Gia (3 Sao - Model 06-khungvang.txt) -->
+          <g transform="translate(300, 544)">
+            <rect x="-80" y="-17" width="160" height="34" rx="17" fill="url(#vfGoldBadgeGrad)" stroke="#ffffff" stroke-width="2.5" style="filter: drop-shadow(0 4px 12px rgba(255,215,0,0.4));" />
+            <text x="-32" y="2" text-anchor="middle" dominant-baseline="central" font-size="18" fill="#ffffff" style="text-shadow: 0 0 5px #ffd700;">★</text>
+            <text x="0" y="2" text-anchor="middle" dominant-baseline="central" font-size="22" fill="#ffffff" style="text-shadow: 0 0 6px #ffd700;">★</text>
+            <text x="32" y="2" text-anchor="middle" dominant-baseline="central" font-size="18" fill="#ffffff" style="text-shadow: 0 0 5px #ffd700;">★</text>
           </g>
         </svg>
       `;
     } else if (fId === 'vip') {
       overlaySvg = `
-        <svg class="vf-avatar-frame-svg" viewBox="0 0 600 600" style="filter: drop-shadow(0 0 14px rgba(255, 215, 0, 0.65));">
+        <svg class="vf-avatar-frame-svg" viewBox="0 0 170 170" fill="none" style="filter: drop-shadow(0 0 10px rgba(255, 182, 193, 0.45)) drop-shadow(0 0 18px rgba(212, 175, 55, 0.35));">
           <defs>
-            <linearGradient id="vfVipRingGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stop-color="#ffffff" /><stop offset="20%" stop-color="#ffd700" /><stop offset="45%" stop-color="#ff9900" /><stop offset="70%" stop-color="#fff099" /><stop offset="90%" stop-color="#d4af37" /><stop offset="100%" stop-color="#8a6d1c" />
+            <linearGradient id="vfVipRoyalGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#ffd700" />
+              <stop offset="20%" stop-color="#ffb6c1" />
+              <stop offset="40%" stop-color="#fff5c0" />
+              <stop offset="60%" stop-color="#ffffff" />
+              <stop offset="80%" stop-color="#ffb6c1" />
+              <stop offset="100%" stop-color="#bf953f" />
             </linearGradient>
-            <linearGradient id="vfVipRubyGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stop-color="#ff6b81" /><stop offset="50%" stop-color="#e74c3c" /><stop offset="100%" stop-color="#990000" />
+            <linearGradient id="vfVipRibbonGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#fff5c0" />
+              <stop offset="50%" stop-color="#ffd700" />
+              <stop offset="100%" stop-color="#bf953f" />
             </linearGradient>
           </defs>
-          <circle cx="300" cy="300" r="236" fill="none" stroke="url(#vfVipRingGrad)" stroke-width="26" />
-          <circle cx="300" cy="300" r="254" fill="none" stroke="#ffffff" stroke-width="3.5" opacity="0.9" stroke-dasharray="16 12 32 12" />
-          <!-- Vương Miện Hoàng Gia VIP ở 12h -->
-          <g transform="translate(300, 48)" class="vip-crown-top">
-            <path d="M -48,20 L -38,-18 L -16,4 L 0,-28 L 16,4 L 38,-18 L 48,20 Z" fill="url(#vfVipRingGrad)" stroke="#5e3c04" stroke-width="3" />
-            <circle cx="0" cy="4" r="5.5" fill="url(#vfVipRubyGrad)" stroke="#ffffff" stroke-width="1.2" />
-            <circle cx="-38" cy="-18" r="3.5" fill="#ffffff" />
-            <circle cx="0" cy="-28" r="4.5" fill="#ffffff" />
-            <circle cx="38" cy="-18" r="3.5" fill="#ffffff" />
+          <!-- Vành tròn chính Hoàng Triều Vĩnh Cửu -->
+          <circle cx="85" cy="85" r="58" stroke="url(#vfVipRoyalGrad)" stroke-width="7" />
+          <circle cx="85" cy="85" r="54" stroke="#ffb6c1" stroke-width="1.8" />
+          <circle cx="85" cy="85" r="62" stroke="#fff5c0" stroke-width="1.2" opacity="0.8" stroke-dasharray="8 12" />
+          <!-- Vương miện 3D nảy nhẹ ở 12h -->
+          <g class="royal-lifetime-crown" transform="translate(85, 20)">
+            <text x="0" y="0" text-anchor="middle" dominant-baseline="central" font-size="26" style="filter: drop-shadow(0 2px 6px rgba(212,175,55,0.6));">👑</text>
           </g>
-          <!-- Khiên Hoàng Gia & Ngọc Ruby ở 6h -->
-          <g transform="translate(300, 560)">
-            <path d="M -130,-30 L 130,-30 L 148,-2 L 0,42 L -148,-2 Z" fill="#1b1202" stroke="url(#vfVipRingGrad)" stroke-width="5" />
-            <circle cx="0" cy="24" r="6.5" fill="url(#vfVipRubyGrad)" stroke="#ffffff" stroke-width="1.5" />
+          <!-- Huy hiệu VIP Lifetime ở 6h -->
+          <g transform="translate(85, 149)">
+            <rect x="-42" y="-9" width="84" height="18" rx="9" fill="url(#vfVipRibbonGrad)" stroke="#ffffff" stroke-width="1.5" style="filter: drop-shadow(0 2px 6px rgba(0,0,0,0.4));" />
+            <text x="0" y="1" text-anchor="middle" dominant-baseline="central" font-size="8" font-weight="900" fill="#4a3200" letter-spacing="1">VIP LIFETIME</text>
           </g>
         </svg>
       `;
     } else if (fId === 'diamond') {
       overlaySvg = `
-        <svg class="vf-avatar-frame-svg" viewBox="0 0 600 600" style="filter: drop-shadow(0 0 14px rgba(0, 229, 255, 0.6));">
+        <svg class="vf-avatar-frame-svg" viewBox="0 0 600 600" style="filter: drop-shadow(0 0 16px rgba(0, 242, 254, 0.65));">
           <defs>
             <linearGradient id="vfDiaRingGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stop-color="#ffffff" /><stop offset="25%" stop-color="#00e5ff" /><stop offset="50%" stop-color="#e0f7fa" /><stop offset="75%" stop-color="#0091ea" /><stop offset="100%" stop-color="#00b0ff" />
+              <stop offset="0%" stop-color="#ffffff" /><stop offset="25%" stop-color="#00f2fe" /><stop offset="50%" stop-color="#e0f7fa" /><stop offset="75%" stop-color="#4facfe" /><stop offset="100%" stop-color="#00f2fe" />
             </linearGradient>
             <linearGradient id="vfGemLight" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stop-color="#ffffff" /><stop offset="60%" stop-color="#80deea" /><stop offset="100%" stop-color="#00acc1" />
+              <stop offset="0%" stop-color="#ffffff" /><stop offset="50%" stop-color="#00f2fe" /><stop offset="100%" stop-color="#4facfe" />
+            </linearGradient>
+            <linearGradient id="vfDiaBadgeGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#ffffff" /><stop offset="50%" stop-color="#00f2fe" /><stop offset="100%" stop-color="#4facfe" />
             </linearGradient>
           </defs>
-          <circle cx="300" cy="300" r="238" fill="none" stroke="url(#vfDiaRingGrad)" stroke-width="22" />
-          <circle cx="300" cy="300" r="256" fill="none" stroke="#ffffff" stroke-width="3" stroke-dasharray="14 26 50 26" opacity="0.85" />
+          <circle cx="300" cy="300" r="236" fill="none" stroke="url(#vfDiaRingGrad)" stroke-width="24" class="diamond-blink-sweep" />
+          <circle cx="300" cy="300" r="254" fill="none" stroke="#ffffff" stroke-width="3" stroke-dasharray="14 26 50 26" opacity="0.9" />
           <!-- Top Right Asymmetrical Gems -->
-          <g transform="translate(425, 145) rotate(22)" filter="drop-shadow(0 0 8px #00e5ff)">
+          <g transform="translate(425, 145) rotate(22)" class="diamond-star-glint" style="filter: drop-shadow(0 0 8px #00f2fe);">
             <polygon points="0,-36 30,-15 30,22 0,42 -30,22 -30,-15" fill="#ffffff" stroke="#e0f7fa" stroke-width="1.8" />
             <polygon points="0,-36 30,-15 46,-38 0,-52" fill="url(#vfGemLight)" stroke="#ffffff" stroke-width="1.2" />
           </g>
           <!-- Bottom Left Crystals -->
-          <g transform="translate(145, 445) rotate(-38)" filter="drop-shadow(0 0 8px #00e5ff)">
+          <g transform="translate(145, 445) rotate(-38)" class="diamond-star-glint" style="filter: drop-shadow(0 0 8px #00f2fe);">
             <polygon points="0,-42 18,0 0,42 -18,0" fill="url(#vfGemLight)" stroke="#ffffff" stroke-width="1.8" />
+          </g>
+          <!-- Huy hiệu Kim Cương & 4 Sao Lam Ngọc ở 6h (Model 07-khungkimcuong.txt) -->
+          <g transform="translate(300, 544)">
+            <rect x="-95" y="-17" width="190" height="34" rx="17" fill="url(#vfDiaBadgeGrad)" stroke="#ffffff" stroke-width="2.5" style="filter: drop-shadow(0 4px 15px rgba(0, 242, 254, 0.5));" />
+            <text x="-60" y="2" text-anchor="middle" dominant-baseline="central" font-size="16">💎</text>
+            <text x="-25" y="2" text-anchor="middle" dominant-baseline="central" font-size="18" fill="#ffffff" style="text-shadow: 0 0 5px #00f2fe;">★</text>
+            <text x="0" y="2" text-anchor="middle" dominant-baseline="central" font-size="18" fill="#ffffff" style="text-shadow: 0 0 5px #00f2fe;">★</text>
+            <text x="25" y="2" text-anchor="middle" dominant-baseline="central" font-size="18" fill="#ffffff" style="text-shadow: 0 0 5px #00f2fe;">★</text>
+            <text x="50" y="2" text-anchor="middle" dominant-baseline="central" font-size="18" fill="#ffffff" style="text-shadow: 0 0 5px #00f2fe;">★</text>
           </g>
         </svg>
       `;
@@ -1066,7 +1116,7 @@
 
           <!-- 4. MÓNG VUỐT BÁM VÀNH KHUNG (9h) -->
           <g id="dragonClaw" filter="url(#vfMythicGlow)">
-            <path d="M 98,280 C 108,275 126,285 138,295 C 145,288 152,298 140,305 C 148,302 153,312 138,318 C 145,318 145,328 132,328 C 120,325 105,310 94,300 Z" fill="url(#dragonScalesGrad)" />
+            <path d="M 98,280 C 108,275 126,285 138,295 C 145,288 152,298 140,305 C 148,302 153,312 138,318 C 145,318 145,328 132,328 C 120,325 105,310 94,300 Z" fill="url(#vfDragonScalesGrad)" />
             <path d="M 138,295 Q 155,296 150,304" stroke="#ffffff" stroke-width="3" fill="none" stroke-linecap="round" />
             <path d="M 140,305 Q 158,310 151,317" stroke="#ffffff" stroke-width="3" fill="none" stroke-linecap="round" />
             <path d="M 135,318 Q 152,325 142,332" stroke="#ffffff" stroke-width="3" fill="none" stroke-linecap="round" />

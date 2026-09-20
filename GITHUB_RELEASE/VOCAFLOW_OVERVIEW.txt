@@ -1,4 +1,30 @@
 ================================================================================
+Phiên bản: v0.10.10-44 (Build 345) - Tối Ưu Hiệu Ứng Huy Hiệu Hồ Sơ Chống Lag, Chuẩn Hóa Khung Viền Vector VIP & Sự Kiện Không Che Avatar, Đồng Bộ Khung /me & Giữ Vật Phẩm Sự Kiện Độc Quyền (Profile Badges Hover-Only Light Sweep, Non-Occluding Vector Frames, VIP & Event Animations, Dynamic /me Frame Sync, Exclusive Event Badging)
+================================================================================
+1. [Tối Ưu Hiệu Ứng Ánh Sáng Huy Hiệu Ghim Chống Giật Lag (Profile Badges Light Sweep Hover Fix)]:
+   - Khắc phục triệt để hiện tượng drop FPS và lỗi render ở mục Highlights hồ sơ (`/me`).
+   - Loại bỏ toàn bộ hoạt họa chạy ngầm liên tục khi idle, chỉ kích hoạt luồng sáng quét tròn quanh viền (`rotateLight 3s linear infinite`) khi người dùng rê chuột (`:hover`) theo chuẩn `model code/01-anhsang.html`.
+2. [Chuẩn Hóa Bộ Khung Viền Vector VIP & Sự Kiện (Refined Vector Frames & Animations)]:
+   - Khung VIP Hoàng Triều Vĩnh Cửu: Tích hợp theo chuẩn `model code/18-vip.txt` với vương miện 3D đỉnh đầu (`👑`), dải ruy băng VIP Lifetime chân khung và dải hào quang pastel hồng/vàng hoàng gia.
+   - Khung Sinh Nhật (Birthday): Mũ chóp chuyển động nhấp nhô mềm mại (`translateY(0)` -> `translateY(-4px)`).
+   - Khung Giáng Sinh (Christmas): Chuông vàng lắc lư êm dịu (`rotate(-5deg)` -> `rotate(5deg)`).
+   - Khung Việt Nam (Vietnam): Ngôi sao vàng chính giữa đập nhịp hào quang chuẩn tâm (`transform-box: fill-box; transform-origin: center center;`).
+   - Khung Tết (Tet): Lồng đèn và hoa mai đung đưa nhẹ nhàng, không rung lắc diện rộng.
+   - Khung Bạc (Silver): Bổ sung huy hiệu 2 sao lấp lánh (`★ ★`) ở đáy khung theo `model code/05-khungbac.txt`.
+   - Khung Vàng (Gold): Bổ sung huy hiệu 3 sao hoàng gia (`★ ★ ★`) ở đáy khung theo `model code/06-khungvang.txt`.
+   - Khung Kim Cương Lam Ngọc (Diamond): Bổ sung huy hiệu 4 sao kim cương (`💎 ★ ★ ★ ★`), viền neon cyan và hiệu ứng quét sáng nhấp nháy (`model code/07-khungkimcuong.txt`).
+3. [Loại Bỏ Che Khuất Avatar & Mở Rộng Vùng Hiển Thị (Zero Avatar Occlusion & Unclipped Borders)]:
+   - Tinh chỉnh bán kính vòng tròn ảnh đại diện (`innerSize = Math.round(size * 0.68)`) giúp hình ảnh nằm trọn bên trong lòng khung.
+   - Bỏ toàn bộ `overflow: hidden`, viền cứng và đổ bóng cố định ở `.ig-avatar-ring`, `#profile-avatar`, `#pub-view-avatar`, giúp các chi tiết ngoài vành khung hiển thị trọn vẹn, không bị cắt xén.
+4. [Đồng Bộ Tức Thì Khung Viền Trên Hồ Sơ Cá Nhân (Dynamic /me Frame Synchronization)]:
+   - Kết nối `#profile-avatar` với hàm `renderAvatarWithFrameHtml()` và `applyWardrobeToActiveUI()`, tự động cập nhật ngay lập tức khung viền đang trang bị khi mở modal `/me` hoặc sau khi thay đổi trang bị trong tủ đồ.
+5. [Phân Quyền Vật Phẩm Sự Kiện Độc Quyền (Exclusive Event Items Registry)]:
+   - Khóa tính năng mua bằng VoCoin đối với toàn bộ khung viền sự kiện/lễ hội (`birthday`, `christmas`, `halloween`, `vietnam`, `tet`, `easter`), thiết lập `price: null` và gắn nhãn `🎁 Sự Kiện` độc quyền.
+6. [Đồng Bộ Toàn Diện 7-Point Version Consistency & Multi-Deploy (v0.10.10-44 Build 345)]:
+   - Cập nhật phiên bản nhất quán trên toàn bộ 7 điểm hệ thống: `modal-settings.html`, `02-state-core.js`, toàn bộ module headers `01-router.js` đến `13-wardrobe.js`, `sw.js` & `Release_App/sw.js`, `pubspec.yaml`, `Program.cs`, `push_github.ps1`.
+   - Biên dịch `VocaFlow.exe`, đóng gói `VocaFlow_v0.10.10-44_Windows_Portable.zip` và sẵn sàng multi-deploy lên 3 kho GitHub.
+
+================================================================================
 Phiên bản: v0.10.10-43 (Build 344) - VIP Trong Tủ Đồ Thẩm Mỹ, Sửa Huy Hiệu Trưng Bày Hồ Sơ, Điều Hướng Hồ Sơ Công Khai Bền Bỉ, Đồng Bộ Hiệu Ứng Tên Toàn Diện & Khung Rồng Hồng Thần Thoại (Wardrobe VIP Set, Profile Pinned Badges Fix, Resilient Public Profile Navigation, Universal Active Name Effect Sync, Mythic Pink Dragon Vector Frame)
 ================================================================================
 1. [VIP Trong Tủ Đồ Thẩm Mỹ (Wardrobe VIP Set)]:

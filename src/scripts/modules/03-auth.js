@@ -1,5 +1,5 @@
 // =========================================================================
-// VOCAFLOW 03-AUTH.JS (v0.10.10-43 Build 344)
+// VOCAFLOW 03-AUTH.JS (v0.10.10-44 Build 345)
 // Authentication, Cloud Sync, Community, Profiles & Social Network
 // =========================================================================
 
@@ -3898,7 +3898,12 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
         }
         const userAvatar = getUserAvatar(currentUser);
         if (profileAvatarEl) {
-          profileAvatarEl.innerHTML = renderAvatarHtml(userAvatar, 58, 26);
+          const equipped = (typeof getEquippedWardrobe === 'function') ? getEquippedWardrobe() : { frame: null };
+          if (typeof renderAvatarWithFrameHtml === 'function') {
+            profileAvatarEl.innerHTML = renderAvatarWithFrameHtml(userAvatar, 88, equipped.frame, 'hoverable');
+          } else {
+            profileAvatarEl.innerHTML = renderAvatarHtml(userAvatar, 58, 26);
+          }
           if (userVipActive) {
             profileAvatarEl.classList.add('vip-avatar-glow');
           } else {
@@ -3942,10 +3947,15 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
           usernameInput.value = guestHandle;
         }
         if (profileAvatarEl) {
-          profileAvatarEl.innerHTML = renderAvatarHtml(getUserAvatar(), 58, 26);
+          const equipped = (typeof getEquippedWardrobe === 'function') ? getEquippedWardrobe() : { frame: null };
+          if (typeof renderAvatarWithFrameHtml === 'function') {
+            profileAvatarEl.innerHTML = renderAvatarWithFrameHtml(getUserAvatar(), 88, equipped.frame, 'hoverable');
+          } else {
+            profileAvatarEl.innerHTML = renderAvatarHtml(getUserAvatar(), 58, 26);
+          }
           profileAvatarEl.classList.remove('vip-avatar-glow');
-          profileAvatarEl.style.boxShadow = '0 4px 12px rgba(168,85,247,0.3)';
-          profileAvatarEl.style.borderColor = 'rgba(255,255,255,0.25)';
+          profileAvatarEl.style.boxShadow = 'none';
+          profileAvatarEl.style.borderColor = 'transparent';
         }
         if (authActionBtn) {
           authActionBtn.textContent = 'Đăng nhập / Đăng ký tài khoản';

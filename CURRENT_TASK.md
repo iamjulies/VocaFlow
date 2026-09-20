@@ -1,39 +1,39 @@
 # CURRENT TASK & TRẠNG THÁI CÔNG VIỆC HIỆN TẠI (VOCAFLOW)
 
-> **Phiên bản mục tiêu:** `v0.10.10-43 (Build 344)`  
+> **Phiên bản mục tiêu:** `v0.10.10-44 (Build 345)`  
 > **Cập nhật lần cuối:** 2026-09-20  
 > **Trạng thái:** 🚀 **ĐÃ HOÀN THÀNH BUILD, KIỂM THỬ TỰ ĐỘNG & MULTI-DEPLOY GITHUB**
 
 ---
 
-## 🎯 1. DANH SÁCH NHIỆM VỤ ĐÃ GIẢI QUYẾT (v0.10.10-43 Build 344)
+## 🎯 1. DANH SÁCH NHIỆM VỤ ĐÃ GIẢI QUYẾT (v0.10.10-44 Build 345)
 
-- [x] **VIP Trong Tủ Đồ Thẩm Mỹ (`src/scripts/modules/13-wardrobe.js`, `src/components/modals/modal-wardrobe.html`, `src/styles/app.css`)**:
-  - Tích hợp trọn bộ trang bị VIP vào `VOCAFLOW_WARDROBE_REGISTRY`: Khung viền VIP Hoàng Kim (`vip`), Hiệu ứng Tên Vàng Ánh Kim (`vip`), Danh xưng VIP (`👑 VocaVIP Flower`).
-  - Kiểm tra mở khóa động qua hàm `isUserVip()`. Người dùng non-VIP bấm vào mở modal gợi ý nâng cấp VIP (`modal-vip-upgrade`).
-  - Thêm nút lọc nhanh `👑 VocaVIP` trong Modal Tủ Đồ để lọc nhanh các vật phẩm VIP độc quyền.
-  - Hiệu ứng Tên VIP vàng ánh kim chuyển màu với vương miện hoàng gia lơ lửng (`.animated-name-vip`, `.floating-crown-vip`, keyframes `shimmerGold`, `crownFloat`, `crownGlow`).
-- [x] **Sửa Lỗi Hiển Thị Huy Hiệu Trưng Bày Hồ Sơ (`src/scripts/modules/08-wallet-economy.js`, `src/scripts/modules/12-achievements.js`, `src/styles/app.css`)**:
-  - Khắc phục triệt để lỗi thẻ thành tựu hiển thị mảng đen/trống trong Profile Highlights (`renderProfilePinnedBadges`).
-  - Hiển thị đầy đủ màu viền theo hạng (Tier: Bronze, Silver, Gold, Diamond, Mythic, VIP) và icon/title chuẩn từ `ACHIEVEMENTS_REGISTRY`.
-  - Các ô chưa trưng bày được hiển thị dạng thẻ tương tác `➕ Thêm danh hiệu` với viền nét đứt phát sáng (`.pinned-badge-empty-slot`), bấm vào mở ngay tab Thành tựu để ghim nhanh.
-- [x] **Điều Hướng Hồ Sơ Công Khai Bền Bỉ (`src/scripts/modules/03-auth.js`)**:
-  - Nâng cấp `openPublicProfileByAuthor` hỗ trợ mở hồ sơ công khai bằng UID, `@handle` hoặc tên tác giả với cơ chế tự động tìm kiếm và đối chiếu.
-  - Áp dụng timeout 1.5s và fallback an toàn khi Firebase `/users.json` trả về lỗi 401 hoặc offline, đảm bảo hồ sơ công khai luôn hiển thị mượt mà không bị treo.
-  - Hiển thị đầy đủ Avatar kèm Khung viền, Tên kèm Hiệu ứng, Danh xưng, Cấp độ, Thống kê và Showcase Thành tựu đã làm sạch dữ liệu.
-- [x] **Đồng Bộ Hiệu Ứng Tên Hiện Hành Toàn Diện (`src/scripts/modules/13-wardrobe.js`)**:
-  - Chuẩn hóa việc render Tên người dùng qua hàm `renderUsernameWithEffectHtml` trên toàn bộ hệ thống (Header, Trang chủ, Danh sách Deck, Chi tiết Deck, Thư viện, Studio, Dev Mode, Hồ sơ cá nhân và Hồ sơ công khai).
-  - Tự động áp dụng hiệu ứng hoạt họa và icon trang trí theo đúng hiệu ứng tên đang được trang bị trong tủ đồ.
-- [x] **Khung Viền Rồng Hồng Thần Thoại Vector SVG Master (`src/scripts/modules/13-wardrobe.js`, `src/styles/app.css`)**:
-  - Tích hợp khung viền Master Vector SVG Rồng Hồng Thần Thoại từ `model code/25-avatar_r_ng_h_ng_huy_n_tho_i.html` với cấu trúc chi tiết: Đuôi rồng (7h), Vuốt rồng (9h), Đôi cánh mở rộng (10h), Đầu và Hàm rồng há lớn phun lửa Plasma tím/hồng (12h), Mắt hồng ngọc rực sáng.
-  - Tương thích hoàn hảo mọi kích thước Avatar từ 22px đến 140px, hiển thị lộng lẫy và sắc nét.
-- [x] **Đồng Bộ Toàn Diện 7-Point Version Consistency & Multi-Deploy (`v0.10.10-43 Build 344`)**:
+- [x] **Tối Ưu Hiệu Ứng Ánh Sáng Huy Hiệu Ghim Chống Giật Lag (`src/styles/app.css`)**:
+  - Khắc phục triệt để hiện tượng drop FPS và lỗi render ở mục Highlights hồ sơ (`/me`).
+  - Loại bỏ toàn bộ hoạt họa chạy ngầm liên tục khi idle, chỉ kích hoạt luồng sáng quét tròn quanh viền (`rotateLight 3s linear infinite`) khi người dùng rê chuột (`:hover`) theo chuẩn `model code/01-anhsang.html`.
+- [x] **Chuẩn Hóa Bộ Khung Viền Vector VIP & Sự Kiện (`src/scripts/modules/13-wardrobe.js`, `src/styles/app.css`)**:
+  - **Khung VIP Hoàng Triều Vĩnh Cửu**: Tích hợp theo chuẩn `model code/18-vip.txt` với vương miện 3D đỉnh đầu (`👑`), dải ruy băng VIP Lifetime chân khung và dải hào quang pastel hồng/vàng hoàng gia.
+  - **Khung Sinh Nhật (Birthday)**: Mũ chóp chuyển động nhấp nhô mềm mại (`translateY(0)` -> `translateY(-4px)`).
+  - **Khung Giáng Sinh (Christmas)**: Chuông vàng lắc lư êm dịu (`rotate(-5deg)` -> `rotate(5deg)`).
+  - **Khung Việt Nam (Vietnam)**: Ngôi sao vàng chính giữa đập nhịp hào quang chuẩn tâm (`transform-box: fill-box; transform-origin: center center;`).
+  - **Khung Tết (Tet)**: Lồng đèn và hoa mai đung đưa nhẹ nhàng, không rung lắc diện rộng.
+  - **Khung Bạc (Silver)**: Bổ sung huy hiệu 2 sao lấp lánh (`★ ★`) ở đáy khung theo `model code/05-khungbac.txt`.
+  - **Khung Vàng (Gold)**: Bổ sung huy hiệu 3 sao hoàng gia (`★ ★ ★`) ở đáy khung theo `model code/06-khungvang.txt`.
+  - **Khung Kim Cương Lam Ngọc (Diamond)**: Bổ sung huy hiệu 4 sao kim cương (`💎 ★ ★ ★ ★`), viền neon cyan và hiệu ứng quét sáng nhấp nháy (`model code/07-khungkimcuong.txt`).
+- [x] **Loại Bỏ Che Khuất Avatar & Mở Rộng Vùng Hiển Thị (`src/styles/app.css`, `src/scripts/modules/13-wardrobe.js`, `src/components/modals/modal-public-profile.html`)**:
+  - Tinh chỉnh bán kính vòng tròn ảnh đại diện (`innerSize = Math.round(size * 0.68)`) giúp hình ảnh nằm trọn bên trong lòng khung.
+  - Bỏ toàn bộ `overflow: hidden`, viền cứng và đổ bóng cố định ở `.ig-avatar-ring`, `#profile-avatar`, `#pub-view-avatar`, giúp các chi tiết ngoài vành khung hiển thị trọn vẹn, không bị cắt xén.
+- [x] **Đồng Bộ Tức Thì Khung Viền Trên Hồ Sơ Cá Nhân (`src/scripts/modules/03-auth.js`, `src/scripts/modules/13-wardrobe.js`)**:
+  - Kết nối `#profile-avatar` với hàm `renderAvatarWithFrameHtml()` và `applyWardrobeToActiveUI()`, tự động cập nhật ngay lập tức khung viền đang trang bị khi mở modal `/me` hoặc sau khi thay đổi trang bị trong tủ đồ.
+- [x] **Phân Quyền Vật Phẩm Sự Kiện Độc Quyền (`src/scripts/modules/13-wardrobe.js`)**:
+  - Khóa tính năng mua bằng VoCoin đối với toàn bộ khung viền sự kiện/lễ hội (`birthday`, `christmas`, `halloween`, `vietnam`, `tet`, `easter`), thiết lập `price: null` và gắn nhãn `🎁 Sự Kiện` độc quyền.
+- [x] **Đồng Bộ Toàn Diện 7-Point Version Consistency & Multi-Deploy (`v0.10.10-44 Build 345`)**:
   - Cập nhật phiên bản nhất quán trên toàn bộ 7 điểm hệ thống: `modal-settings.html`, `02-state-core.js`, toàn bộ module headers `01-router.js` đến `13-wardrobe.js`, `sw.js` & `Release_App/sw.js`, `pubspec.yaml`, `Program.cs`, `push_github.ps1`.
-  - Biên dịch `VocaFlow.exe`, đóng gói `VocaFlow_v0.10.10-43_Windows_Portable.zip` và sẵn sàng multi-deploy lên 3 kho GitHub.
+  - Biên dịch `VocaFlow.exe`, đóng gói `VocaFlow_v0.10.10-44_Windows_Portable.zip` và sẵn sàng multi-deploy lên 3 kho GitHub.
 
 ---
 
-## 🎯 2. DANH SÁCH NHIỆM VỤ CÁC PHIÊN BẢN TRƯỚC (v0.10.10-42 Build 343)
+## 🎯 2. DANH SÁCH NHIỆM VỤ CÁC PHIÊN BẢN TRƯỚC (v0.10.10-43 Build 344)
 
 - [x] **Shop Bán Khung Viền & Hiệu Ứng Tên Thẩm Mỹ (`src/components/modals/modal-wardrobe.html`, `src/scripts/modules/13-wardrobe.js`)**:
   - Gồm 3 ngăn: Khung Viền (Avatar Frames), Hiệu Ứng Tên (Name Effects), Danh Xưng (Titles).
