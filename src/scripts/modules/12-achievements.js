@@ -1,7 +1,6 @@
 // =========================================================================
-// VOCAFLOW 12-ACHIEVEMENTS.JS (v0.10.10-42 Build 343)
+// VOCAFLOW 12-ACHIEVEMENTS.JS (v0.10.10-43 Build 344)
 // Badges, daily tasks, highlights showcase, notifications, VocaMail, User Guide
-
 // =========================================================================
 
     // =========================================================================
@@ -2619,6 +2618,8 @@
       diamond: { name: 'Kim Cương 💎', color: '#38bdf8', border: 'rgba(56,189,248,0.45)', bg: 'rgba(56,189,248,0.08)', glow: '0 0 14px rgba(56,189,248,0.35)' },
       mythic:  { name: 'Thần Thoại 👑', color: '#ec4899', border: 'rgba(236,72,153,0.5)', bg: 'linear-gradient(135deg, rgba(236,72,153,0.12), rgba(245,158,11,0.12))', glow: '0 0 16px rgba(236,72,153,0.4)' }
     };
+    window.ACHIEVEMENTS_REGISTRY = ACHIEVEMENTS_REGISTRY;
+    window.BADGE_TIER_CONFIG = BADGE_TIER_CONFIG;
 
     // Helper: Local Date Formatter YYYY-MM-DD
     function formatLocalDateString(d) {

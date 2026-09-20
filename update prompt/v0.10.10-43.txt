@@ -1,6 +1,7 @@
 v0.10.10-43
-- vấn đề 1: đối với user vip, thêm cả khung + hiệu ứng tên + danh xưng (VocaVIP Flower) vào tủ đồ, người ta muốn chọn gì thì chọn (mẫu vip: "C:\Users\DELL\Documents\Modding\browser\model code\03-tenvip.txt")
+- vấn đề 1: đối với user vip, thêm cả khung + hiệu ứng tên + danh xưng (VocaVIP Flower) vào tủ đồ, người ta muốn chọn gì thì chọn (mẫu vip: "C:\Users\DELL\Documents\Modding\browser\model code\03-tenvip.txt") -> khắc phục được lỗi: vip user mà hiện tên thường phèn
 - vấn đề 2: "C:\Users\DELL\Pictures\Screenshots\Ảnh chụp màn hình 2026-09-20 020709.png" lỗi hiển thị cho các thành tựu được trưng bày
 - vấn đề 3: không truy cập vào public profile của người khác để xem được.
 - vấn đề 4: hiệu ứng tên ở các nơi khác (trang chủ, deck, lib, studio, dev mode, public profile... mọi nơi) chưa được đồng bộ theo hiệu ứng tên hiện hành, yêu cầu xem lại.
 - vấn đề 5: tham khảo và học lỏm lại y hệt cái khung viền huyền thoại rồng này cho tao nhé "C:\Users\DELL\Documents\Modding\browser\model code\25-avatar_r_ng_h_ng_huy_n_tho_i.html"
+đọc và thực hiện các file markdown có trong "C:\Users\DELL\Documents\Modding\browser" (nếu quên)

@@ -1,4 +1,30 @@
 ================================================================================
+Phiên bản: v0.10.10-43 (Build 344) - VIP Trong Tủ Đồ Thẩm Mỹ, Sửa Huy Hiệu Trưng Bày Hồ Sơ, Điều Hướng Hồ Sơ Công Khai Bền Bỉ, Đồng Bộ Hiệu Ứng Tên Toàn Diện & Khung Rồng Hồng Thần Thoại (Wardrobe VIP Set, Profile Pinned Badges Fix, Resilient Public Profile Navigation, Universal Active Name Effect Sync, Mythic Pink Dragon Vector Frame)
+================================================================================
+1. [VIP Trong Tủ Đồ Thẩm Mỹ (Wardrobe VIP Set)]:
+   - Tích hợp trọn bộ trang bị VIP vào VOCAFLOW_WARDROBE_REGISTRY: Khung viền VIP Hoàng Kim (`vip`), Hiệu ứng Tên Vàng Ánh Kim (`vip`), Danh xưng VIP (`👑 VocaVIP Flower`).
+   - Kiểm tra mở khóa động qua hàm `isUserVip()`. Người dùng thường được hướng dẫn nâng cấp VIP qua modal gợi ý tiện lợi.
+   - Thêm nút lọc nhanh `👑 VocaVIP` trong Modal Tủ Đồ để lọc nhanh các vật phẩm VIP độc quyền.
+   - Thiết kế hiệu ứng Tên VIP với gradient vàng kim chuyển màu, hào quang nhẹ và vương miện hoàng gia chuyển động bay lượn trên chữ cái đầu.
+2. [Sửa Lỗi Hiển Thị Huy Hiệu Trưng Bày Hồ Sơ (Profile Pinned Badges Fix)]:
+   - Khắc phục triệt để lỗi thẻ thành tựu hiển thị mảng đen/trống trong Profile Highlights (`renderProfilePinnedBadges`).
+   - Hiển thị đầy đủ màu viền theo hạng (Tier: Bronze, Silver, Gold, Diamond, Mythic, VIP) và icon/title chuẩn từ `ACHIEVEMENTS_REGISTRY`.
+   - Các ô chưa trưng bày được hiển thị dạng thẻ tương tác `➕ Thêm danh hiệu` với viền nét đứt phát sáng, bấm vào mở ngay tab Thành tựu để ghim nhanh.
+3. [Điều Hướng Hồ Sơ Công Khai Bền Bỉ (Resilient Public Profile Navigation)]:
+   - Nâng cấp `openPublicProfileByAuthor` hỗ trợ mở hồ sơ công khai bằng UID, `@handle` hoặc tên tác giả với cơ chế tự động tìm kiếm và đối chiếu.
+   - Áp dụng timeout 1.5s và fallback an toàn khi Firebase `/users.json` trả về lỗi 401 hoặc offline, đảm bảo hồ sơ công khai luôn hiển thị mượt mà không bị treo.
+   - Hiển thị đầy đủ Avatar kèm Khung viền, Tên kèm Hiệu ứng, Danh xưng, Cấp độ, Thống kê và Showcase Thành tựu đã làm sạch dữ liệu.
+4. [Đồng Bộ Hiệu Ứng Tên Hiện Hành Toàn Diện (Universal Active Name Effect Sync)]:
+   - Chuẩn hóa việc render Tên người dùng qua hàm `renderUsernameWithEffectHtml` trên toàn bộ hệ thống (Header, Trang chủ, Danh sách Deck, Chi tiết Deck, Thư viện, Studio, Dev Mode, Hồ sơ cá nhân và Hồ sơ công khai).
+   - Tự động áp dụng hiệu ứng hoạt họa và icon trang trí theo đúng hiệu ứng tên đang được trang bị trong tủ đồ.
+5. [Khung Viền Rồng Hồng Thần Thoại Vector SVG (Mythic Pink Dragon Vector Frame)]:
+   - Tích hợp khung viền Master Vector SVG Rồng Hồng Thần Thoại từ mã nguồn mẫu với cấu trúc chi tiết: Đuôi rồng (7h), Vuốt rồng (9h), Đôi cánh mở rộng (10h), Đầu và Hàm rồng há lớn phun lửa Plasma tím/hồng (12h), Mắt hồng ngọc rực sáng.
+   - Tương thích hoàn hảo mọi kích thước Avatar từ 22px đến 140px, hiển thị lộng lẫy và sắc nét.
+6. [Đồng Bộ Toàn Diện 7-Point Version Consistency & Multi-Deploy (v0.10.10-43 Build 344)]:
+   - Cập nhật phiên bản nhất quán trên toàn bộ 7 điểm hệ thống: `modal-settings.html`, `02-state-core.js`, toàn bộ module headers `01-router.js` đến `13-wardrobe.js`, `sw.js` & `Release_App/sw.js`, `pubspec.yaml`, `Program.cs`, `push_github.ps1`.
+   - Biên dịch `VocaFlow.exe`, đóng gói `VocaFlow_v0.10.10-43_Windows_Portable.zip` và sẵn sàng multi-deploy lên 3 kho GitHub.
+
+================================================================================
 Phiên bản: v0.10.10-42 (Build 343) - Shop Bán Khung Viền & Hiệu Ứng Tên, Bộ Lọc Nhanh, Đồng Bộ Mua Sắm VoCoin Đám Mây (Wardrobe Aesthetic & Event Shop, Filter Pills, VoCoin Commerce & Cloud Sync)
 ================================================================================
 1. [Shop Bán Khung Viền Avatar Độc Quyền (Shop & Event Frames)]:

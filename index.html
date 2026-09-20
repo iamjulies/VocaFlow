@@ -1788,12 +1788,14 @@
       min-width: 0;
       width: 100%;
       border: 1.5px solid rgba(255, 255, 255, 0.12);
+      min-height: 58px;
     }
     .pinned-badge-card.tier-bronze { border-color: rgba(205, 127, 50, 0.5); }
     .pinned-badge-card.tier-silver { border-color: rgba(203, 213, 225, 0.5); }
     .pinned-badge-card.tier-gold { border-color: rgba(255, 215, 0, 0.6); box-shadow: 0 0 10px rgba(255, 215, 0, 0.18); }
     .pinned-badge-card.tier-diamond { border-color: rgba(0, 210, 255, 0.6); box-shadow: 0 0 10px rgba(0, 210, 255, 0.2); }
     .pinned-badge-card.tier-mythic { border-color: rgba(236, 72, 153, 0.6); box-shadow: 0 0 12px rgba(236, 72, 153, 0.25); }
+    .pinned-badge-card.tier-vip { border-color: rgba(245, 158, 11, 0.8); box-shadow: 0 0 12px rgba(245, 158, 11, 0.35); }
 
     .pinned-badge-card:hover {
       transform: translateY(-2px);
@@ -1823,6 +1825,9 @@
     .pinned-badge-card.tier-mythic:hover::before {
       background: conic-gradient(transparent, #f472b6, #ec4899, #f59e0b, transparent 45%);
     }
+    .pinned-badge-card.tier-vip:hover::before {
+      background: conic-gradient(transparent, #fef08a, #eab308, #f59e0b, transparent 45%);
+    }
 
     .pinned-badge-card::after {
       content: '';
@@ -1843,6 +1848,50 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
+    }
+
+    .pinned-badge-empty-slot {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1.5px dashed rgba(255, 255, 255, 0.2);
+      border-radius: 10px;
+      padding: 6px 4px;
+      text-align: center;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 58px;
+      min-width: 0;
+      box-sizing: border-box;
+      transition: all 0.2s ease;
+      width: 100%;
+    }
+    .pinned-badge-empty-slot:hover {
+      border-color: #ffd700;
+      background: rgba(245, 158, 11, 0.1);
+      transform: translateY(-2px);
+    }
+    .pinned-badge-empty-slot .empty-icon {
+      font-size: 16px;
+      color: rgba(255, 255, 255, 0.6);
+      line-height: 1;
+      margin-bottom: 2px;
+      transition: color 0.2s;
+    }
+    .pinned-badge-empty-slot .empty-text {
+      font-size: 9.5px;
+      font-weight: 700;
+      color: rgba(255, 255, 255, 0.7);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 100%;
+      transition: color 0.2s;
+    }
+    .pinned-badge-empty-slot:hover .empty-icon,
+    .pinned-badge-empty-slot:hover .empty-text {
+      color: #ffd700;
     }
 
 
@@ -5656,6 +5705,128 @@
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       filter: drop-shadow(0 0 6px rgba(192, 132, 252, 0.6));
+    }
+
+    /* 7. VOCAVIP NAME EFFECTS (v0.10.10-43 - Model 03-tenvip.txt) */
+    .tier-vip,
+    .animated-name-vip {
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      background: linear-gradient(
+        90deg, 
+        #fef08a 0%,
+        #fde047 20%,
+        #eab308 40%,
+        #f4a261 60%,
+        #b5838d 80%,
+        #fef08a 100%
+      );
+      background-size: 200% auto;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: 
+        shimmerGold 4s linear infinite,
+        goldGlow 1.8s ease-in-out infinite alternate;
+    }
+
+    .floating-crown-vip {
+      font-size: 0.95em;
+      display: inline-block;
+      margin-left: 3px;
+      animation: 
+        crownFloat 2s ease-in-out infinite,
+        crownGlow 1.8s ease-in-out infinite alternate;
+    }
+
+    @keyframes shimmerGold {
+      0% { background-position: 0% center; }
+      100% { background-position: 200% center; }
+    }
+
+    @keyframes goldGlow {
+      0% {
+        filter: drop-shadow(0 0 2px rgba(254, 240, 138, 0.3)) 
+                drop-shadow(0 0 6px rgba(234, 179, 8, 0.2));
+      }
+      100% {
+        filter: drop-shadow(0 0 8px rgba(254, 240, 138, 0.8)) 
+                drop-shadow(0 0 18px rgba(234, 179, 8, 0.5));
+      }
+    }
+
+    @keyframes crownFloat {
+      0% { transform: translateY(0) rotate(0deg); }
+      50% { transform: translateY(-3px) rotate(3deg); }
+      100% { transform: translateY(0) rotate(0deg); }
+    }
+
+    @keyframes crownGlow {
+      0% {
+        filter: drop-shadow(0 0 2px rgba(254, 240, 138, 0.4));
+      }
+      100% {
+        filter: drop-shadow(0 0 10px rgba(234, 179, 8, 0.9))
+                drop-shadow(0 0 20px rgba(244, 162, 97, 0.4));
+      }
+    }
+
+    /* 8. MYTHIC PINK DRAGON ASYMMETRICAL FRAME ANIMATIONS (v0.10.10-43) */
+    .vf-avatar-frame-box.frame-mythic .fire-layer {
+      opacity: 0.35;
+      transform-origin: 53% 22%;
+      transform: scale(0.85) rotate(-3deg);
+      transition: opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+                  transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+      pointer-events: none;
+    }
+    .vf-avatar-frame-box.frame-mythic:hover .fire-layer,
+    .vf-avatar-frame-box.frame-mythic.active .fire-layer,
+    .vf-avatar-frame-box.frame-mythic.hoverable:hover .fire-layer {
+      opacity: 1;
+      transform: scale(1) rotate(0deg);
+      animation: firePulse 1.8s infinite ease-in-out;
+    }
+
+    .vf-avatar-frame-box.frame-mythic .dragon-jaw {
+      transform-origin: 43% 22%;
+      transition: transform 0.3s ease-out;
+    }
+    .vf-avatar-frame-box.frame-mythic:hover .dragon-jaw,
+    .vf-avatar-frame-box.frame-mythic.active .dragon-jaw,
+    .vf-avatar-frame-box.frame-mythic.hoverable:hover .dragon-jaw {
+      transform: rotate(14deg) translateY(2px);
+    }
+
+    .vf-avatar-frame-box.frame-mythic .dragon-eye {
+      transition: filter 0.3s ease, fill 0.3s ease;
+    }
+    .vf-avatar-frame-box.frame-mythic:hover .dragon-eye,
+    .vf-avatar-frame-box.frame-mythic.active .dragon-eye,
+    .vf-avatar-frame-box.frame-mythic.hoverable:hover .dragon-eye {
+      filter: drop-shadow(0 0 6px #ffffff) drop-shadow(0 0 14px #ff007f);
+      fill: #ffffff;
+    }
+
+    .vf-avatar-frame-box.frame-mythic:hover .plasma-stream,
+    .vf-avatar-frame-box.frame-mythic.active .plasma-stream,
+    .vf-avatar-frame-box.frame-mythic.hoverable:hover .plasma-stream {
+      animation: flameFlow 2s linear infinite;
+    }
+
+    @keyframes firePulse {
+      0%, 100% { filter: drop-shadow(0 0 8px #ff007f) drop-shadow(0 0 20px #ff66b2); opacity: 0.95; }
+      50% { filter: drop-shadow(0 0 16px #ffffff) drop-shadow(0 0 35px #ff007f); opacity: 1; }
+    }
+
+    @keyframes flameFlow {
+      0% { stroke-dashoffset: 0; }
+      100% { stroke-dashoffset: -200; }
+    }
+
+    /* VIP AVATAR FRAME HOVER */
+    .vf-avatar-frame-box:hover .vip-crown-top {
+      transform-origin: 50% 12%;
+      animation: crownFloat 1.5s ease-in-out infinite, crownGlow 1.5s ease-in-out infinite alternate;
     }
 
   </style>
@@ -12568,7 +12739,7 @@
       <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 16px;">
         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">📦 Thông Tin Ứng Dụng</label>
         <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
-          <div>Phiên bản: <strong style="color: var(--text); user-select: text;" id="settings-app-version-label">VocaFlow v0.10.10-42 (Build 343)</strong></div>
+          <div>Phiên bản: <strong style="color: var(--text); user-select: text;" id="settings-app-version-label">VocaFlow v0.10.10-43 (Build 344)</strong></div>
           <div>Môi trường: <span style="color: var(--text);">Offline-First Web PWA & Windows EXE</span></div>
           <div>Lưu trữ: <span style="color: var(--text);">Cục bộ + Đồng bộ Cloud Realtime</span></div>
         </div>
@@ -13768,10 +13939,13 @@
         </button>
       </div>
 
-      <!-- WARDROBE QUICK FILTER PILLS BAR (v0.10.10-42) -->
+      <!-- WARDROBE QUICK FILTER PILLS BAR (v0.10.10-43) -->
       <div id="wardrobe-filter-bar" style="display: flex; gap: 6px; margin-bottom: 14px; overflow-x: auto; padding-bottom: 2px;">
         <button type="button" class="btn btn-xs wardrobe-filter-pill active" id="wardrobe-filter-all" onclick="filterWardrobeCategory('all')" style="border-radius: 20px; font-weight: 700; padding: 4px 12px; font-size: 11px;">
           🌟 Tất Cả (<span id="wardrobe-filter-count-all">0</span>)
+        </button>
+        <button type="button" class="btn btn-xs wardrobe-filter-pill btn-outline" id="wardrobe-filter-vip" onclick="filterWardrobeCategory('vip')" style="border-radius: 20px; font-weight: 700; padding: 4px 12px; font-size: 11px; border-color: rgba(245,158,11,0.5); color: #fbbf24;">
+          👑 VocaVIP (<span id="wardrobe-filter-count-vip">0</span>)
         </button>
         <button type="button" class="btn btn-xs wardrobe-filter-pill btn-outline" id="wardrobe-filter-shop" onclick="filterWardrobeCategory('shop')" style="border-radius: 20px; font-weight: 700; padding: 4px 12px; font-size: 11px;">
           🛍️ Có Thể Mua (<span id="wardrobe-filter-count-shop">0</span>)
@@ -14426,8 +14600,8 @@
 
   <script>
 // =========================================================================
-// VOCAFLOW 01-ROUTER.JS (v0.10.10-42 Build 343)
-// URL Routing & State Restoration Engine
+// VOCAFLOW 01-ROUTER.JS (v0.10.10-43 Build 344)
+// Route manager, screen switcher, browser history & URL management
 // =========================================================================
 
 let isRouterNavigating = false;
@@ -14901,16 +15075,16 @@ function initSpaRouter() {
 window.initSpaRouter = initSpaRouter;
 
 
-// VOCAFLOW 02-STATE-CORE.JS (v0.10.10-42 Build 343)
+// VOCAFLOW 02-STATE-CORE.JS (v0.10.10-43 Build 344)
 // Global constants, core database state, storage keys, recovery & audio engine
 // =========================================================================
 
     // =========================================================================
-    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.10-42 Build 343)
+    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.10-43 Build 344)
     // =========================================================================
-    const VOCAFLOW_APP_VERSION = 'v0.10.10-42';
-    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.10-42 (Build 343)';
-    const VOCAFLOW_APP_BUILD = 343;
+    const VOCAFLOW_APP_VERSION = 'v0.10.10-43';
+    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.10-43 (Build 344)';
+    const VOCAFLOW_APP_BUILD = 344;
     window.VOCAFLOW_APP_VERSION = VOCAFLOW_APP_VERSION;
     window.VOCAFLOW_APP_FULL_TITLE = VOCAFLOW_APP_FULL_TITLE;
     window.VOCAFLOW_APP_BUILD = VOCAFLOW_APP_BUILD;
@@ -19920,8 +20094,8 @@ window.initSpaRouter = initSpaRouter;
     const FREEZE_ICON_DATA_URI = 'data:image/png;base64,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';
 
 // =========================================================================
-// VOCAFLOW 03-AUTH.JS (v0.10.10-42 Build 343)
-// Firebase Auth, Realtime Sync, Public Profiles, Social Graph, Monetization & Billing
+// VOCAFLOW 03-AUTH.JS (v0.10.10-43 Build 344)
+// Authentication, Cloud Sync, Community, Profiles & Social Network
 // =========================================================================
 
     // =========================================================================
@@ -25116,7 +25290,10 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
       try {
         if (!cloudLibraryDecks || cloudLibraryDecks.length === 0) {
           try {
-            await fetchCloudLibraryDecks();
+            await Promise.race([
+              fetchCloudLibraryDecks(),
+              new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), 1500))
+            ]);
           } catch (e) {}
         }
         const allDecks = getAllLibraryDecks();
@@ -25177,6 +25354,7 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
         let targetLastActiveAt = null;
 
         let uDataFound = false;
+        let uData = null;
 
         if (isVocaFlowOfficial) {
           targetLastActiveAt = Date.now();
@@ -25188,7 +25366,7 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
           targetPoints = 999999;
           targetStudyExp = 2500000; // Max Level 50
           targetFlowDays = 365;
-          targetPinnedBadges = ['ach_deck_master', 'ach_speaking_pro', 'ach_grandmaster'];
+          targetPinnedBadges = ['first_lesson', 'first_quiz', 'first_spelling'];
           targetFollowerCount = 9999;
           targetFollowingCount = 1;
 
@@ -25278,7 +25456,7 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
             try {
               const rootUserRes = await fetch(`${rtdbUrl}/users/${targetUid}.json`);
               if (rootUserRes.ok) {
-                const uData = await rootUserRes.json();
+                uData = await rootUserRes.json();
                 if (uData && typeof uData === 'object' && Object.keys(uData).length > 0) {
                   uDataFound = true;
                   targetLastActiveAt = uData.lastActiveAt || uData.profile?.lastActiveAt || uData.profile?.lastSync || uData.lastSync || uData.economy?.updatedAt || uData.flow?.updatedAt || uData.lastSeen || uData.updatedAt || (Array.isArray(uData.flowDates) && uData.flowDates.length > 0 ? uData.flowDates[uData.flowDates.length - 1] : null);
@@ -25413,7 +25591,7 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
           const regEntry = (targetUid && typeof globalVipRegistry !== 'undefined') ? globalVipRegistry[targetUid] : null;
           const nameMapEntry = (typeof globalVipRegistryNameMap !== 'undefined') ? (globalVipRegistryNameMap[authorClean] || globalVipRegistryNameMap[(authorName || '').trim().toLowerCase()]) : null;
 
-          const isRealUser = isVocaFlowOfficial || isCurrentUser || uDataFound || !!matchedStudent || !!regEntry || !!nameMapEntry || (authorDecks.length > 0 && !!targetUid);
+          const isRealUser = isVocaFlowOfficial || isCurrentUser || uDataFound || !!matchedStudent || !!regEntry || !!nameMapEntry || (authorDecks.length > 0) || (authorName && authorName !== 'Khách' && authorClean.length > 0);
 
           if (!isRealUser) {
             hideAppLoading();
@@ -25756,19 +25934,23 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
           }
         }
 
-        // Render Author Pinned Badges (v0.10.9-42 / Card Format matching personal profile)
+        // Render Author Pinned Badges (v0.10.10-43 / Card Format matching personal profile)
         const pubBadgesContainer = document.getElementById('pub-view-badges-container');
         const pubBadgesShowcase = document.getElementById('pub-view-badges-showcase');
-        const authorPinnedBadges = (isCurrentUser ? (Array.isArray(userPinnedBadges) ? userPinnedBadges : []) : ((targetPinnedBadges && targetPinnedBadges.length > 0) ? targetPinnedBadges : (targetDeck?.authorPinnedBadges || [])));
+        const achReg = (typeof ACHIEVEMENTS_REGISTRY !== 'undefined' ? ACHIEVEMENTS_REGISTRY : (typeof window !== 'undefined' ? window.ACHIEVEMENTS_REGISTRY : null)) || {};
+        const tierCfg = (typeof BADGE_TIER_CONFIG !== 'undefined' ? BADGE_TIER_CONFIG : (typeof window !== 'undefined' ? window.BADGE_TIER_CONFIG : null)) || {};
+        const rawAuthorBadges = (isCurrentUser ? (Array.isArray(userPinnedBadges) ? userPinnedBadges : []) : ((targetPinnedBadges && targetPinnedBadges.length > 0) ? targetPinnedBadges : (targetDeck?.authorPinnedBadges || [])));
+        const authorPinnedBadges = (Array.isArray(rawAuthorBadges) ? rawAuthorBadges : []).filter(bId => bId && achReg[bId]);
 
         if (pubBadgesContainer && pubBadgesShowcase) {
-          if (Array.isArray(authorPinnedBadges) && authorPinnedBadges.length > 0) {
+          if (authorPinnedBadges.length > 0 || isCurrentUser) {
             pubBadgesContainer.style.display = 'block';
             let bHtml = '';
-            authorPinnedBadges.slice(0, 3).forEach(bId => {
-              const bDef = ACHIEVEMENTS_REGISTRY[bId];
+            for (let i = 0; i < 3; i++) {
+              const bId = authorPinnedBadges[i];
+              const bDef = bId ? achReg[bId] : null;
               if (bDef) {
-                const t = BADGE_TIER_CONFIG[bDef.tier] || BADGE_TIER_CONFIG.bronze;
+                const t = tierCfg[bDef.tier] || { name: 'Đồng 🥉', color: '#cd7f32' };
                 bHtml += `
                   <div class="pinned-badge-card tier-${bDef.tier || 'bronze'}" style="min-height: 58px;" title="${escapeHtml(bDef.name)}: ${escapeHtml(bDef.desc)}">
                     <div class="pinned-badge-content" style="padding: 6px 3px;">
@@ -25778,8 +25960,15 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
                     </div>
                   </div>
                 `;
+              } else if (isCurrentUser) {
+                bHtml += `
+                  <div class="pinned-badge-empty-slot" onclick="closeModal('modal-public-profile'); openAchievementsModal();" style="min-height: 58px;" title="Nhấn để chọn danh hiệu ghim lên hồ sơ">
+                    <span class="empty-icon">➕</span>
+                    <span class="empty-text">Thêm danh hiệu</span>
+                  </div>
+                `;
               }
-            });
+            }
             pubBadgesShowcase.innerHTML = bHtml;
           } else {
             pubBadgesContainer.style.display = 'none';
@@ -25793,6 +25982,7 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
           updateAppUrlRoute('/@' + resolvedHandle, `${resolvedName} (@${resolvedHandle}) - VocaFlow`);
         }
       } catch (err) {
+        window.__lastPubError = err ? (err.message + '\n' + err.stack) : 'unknown';
         console.warn('Error in openPublicProfileByAuthor:', err);
         showToast('⚠️ Không thể tải hồ sơ lúc này. Vui lòng thử lại sau!');
       } finally {
@@ -31144,9 +31334,8 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
     }
 
 // =========================================================================
-// VOCAFLOW 04-DECKS-MANAGER.JS (v0.10.10-42 Build 343)
-// CRUD VocaDeck, Word Card Modal, Excel/JSON Import/Export, SRS & Auto-Flashcards
-
+// VOCAFLOW 04-DECKS-MANAGER.JS (v0.10.10-43 Build 344)
+// Quản lý VocaDecks, Vocabulary Lists, Import/Export & CRUD Operations
 // =========================================================================
 
     // =========================================================================
@@ -35145,8 +35334,8 @@ Return ONLY a valid raw JSON 2D array with NO markdown fences:
     window.checkWordTermDuplicate = checkWordTermDuplicate;
 
 // =========================================================================
-// VOCAFLOW 05-QUIZ-ENGINE.JS (v0.10.10-42 Build 343)
-// Quiz study mode, scoring, question generation, AI explanation & Mistake Notebook
+// VOCAFLOW 05-QUIZ-ENGINE.JS (v0.10.10-43 Build 344)
+// Trắc nghiệm thông minh 4 phương án, tính điểm SRS & phân tích kết quả
 // =========================================================================
 
     // =========================================================================
@@ -37446,7 +37635,7 @@ Yêu cầu nghiêm ngặt:
 
 
 // =========================================================================
-// VOCAFLOW 06C-WRITING-ENGINE.JS (v0.10.10-42 Build 343 - SENTENCE WRITING LAB VIP)
+// VOCAFLOW 06C-WRITING-ENGINE.JS (v0.10.10-43 Build 344 - SENTENCE WRITING LAB VIP)
 // AI-Powered Writing Lab with Thematic Word Linking & Target Band Aim Polish
 // =========================================================================
 
@@ -38865,7 +39054,7 @@ window.closeWritingResultModal = closeWritingResultModal;
 window.retryWritingWrongWordsOnly = retryWritingWrongWordsOnly;
 
 // =========================================================================
-// VOCAFLOW 06D-CLOZE-ENGINE.JS (v0.10.10-42 Build 343 - EXTENDED LEARNING MODE BETA)
+// VOCAFLOW 06D-CLOZE-ENGINE.JS (v0.10.10-43 Build 344 - EXTENDED LEARNING MODE BETA)
 // Contextual Reading & Cloze Test Passage Generator with Strict JSON Schema
 // =========================================================================
 
@@ -40766,7 +40955,7 @@ window.retryClozeWrongWordsOnly = retryClozeWrongWordsOnly;
 
 
 // =========================================================================
-// VOCAFLOW 06E-DICTATION-ENGINE.JS (v0.10.10-42 Build 343 - SENTENCE DICTATION VIP β)
+// VOCAFLOW 06E-DICTATION-ENGINE.JS (v0.10.10-43 Build 344 - SENTENCE DICTATION VIP β)
 // Full Sentence Dictation Engine with Natural Speech, Speed Slider, AI Scoring & Sequence Alignment
 // =========================================================================
 
@@ -42291,7 +42480,7 @@ function doExecuteExitDictation(done, total) {
 window.exitDictationMode = exitDictationMode;
 
 // =========================================================================
-// VOCAFLOW 06F-TRANSLATION-ENGINE.JS (v0.10.10-42 Build 343 - TRANSLATION LAB VIP β)
+// VOCAFLOW 06F-TRANSLATION-ENGINE.JS (v0.10.10-43 Build 344 - TRANSLATION LAB VIP β)
 // Bidirectional Translation Engine (EN ↔ VI) with Direct Gemini AI Generation, Multi-Tier VocaHint & Balance v3
 // =========================================================================
 
@@ -43832,8 +44021,8 @@ function exitTranslationMode(force = false) {
 window.exitTranslationMode = exitTranslationMode;
 
 // =========================================================================
-// VOCAFLOW 06-SPELLING-ENGINE.JS (v0.10.10-42 Build 343)
-// Spelling mode, virtual keyboard, syllable clues, phonetics & score calculation
+// VOCAFLOW 06-SPELLING-ENGINE.JS (v0.10.10-43 Build 344)
+// Luyện viết chính tả từ vựng & AI gợi ý
 // =========================================================================
 
         // =========================================================================
@@ -45897,7 +46086,7 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ không có markdown block:
     window.fetchWordFromGemini = fetchWordFromGemini;
 
 // =========================================================================
-// VOCAFLOW 07-SPEAKING-ENGINE.JS (v0.10.10-42 Build 343)
+// VOCAFLOW 07-SPEAKING-ENGINE.JS (v0.10.10-43 Build 344)
 // AI Speaking Lab, MediaRecorder, VAD, Gemini audio analysis, multi-take economy & IndexedDB Best Take
 // =========================================================================
 
@@ -48602,7 +48791,7 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
 
 
 // =========================================================================
-// VOCAFLOW 08-WALLET-ECONOMY.JS (v0.10.10-42 Build 343)
+// VOCAFLOW 08-WALLET-ECONOMY.JS (v0.10.10-43 Build 344)
 // Economy, Wallet, Ledger, Lucky Spin, Cat Meme Reactions, Brain Energy & Study Settlements
 // =========================================================================
 
@@ -49945,37 +50134,43 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
       container.innerHTML = html;
     }
 
-    // PROFILE 3-BADGE SHOWCASE (v0.10.8-alpha-10.3: Big Lock for Guests - Hình 2)
+    // PROFILE 3-BADGE SHOWCASE (v0.10.10-43: Glass Highlight Badges & Styled Empty Slot)
     function renderProfilePinnedBadges() {
       const container = document.getElementById('profile-pinned-badges-showcase');
       if (!container) return;
 
       const isGuest = !currentUser || !currentUser.email;
 
-      container.style.cssText = 'display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; width: 100%; box-sizing: border-box;';
+      container.style.cssText = 'display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; width: 100%; box-sizing: border-box;';
+
+      // Sanitize userPinnedBadges array & filter out any non-existent / broken IDs
+      const rawPinned = (typeof userPinnedBadges !== 'undefined' && Array.isArray(userPinnedBadges))
+        ? userPinnedBadges
+        : (JSON.parse(localStorage.getItem('vocaflow_pinned_badges') || '[]'));
+      const sanitizedPinned = rawPinned.filter(id => id && typeof ACHIEVEMENTS_REGISTRY !== 'undefined' && ACHIEVEMENTS_REGISTRY[id]);
 
       let html = '';
       for (let i = 0; i < 3; i++) {
         if (isGuest) {
-          // Guest: Show big Lock icon (Hình 2)
+          // Guest: Show Lock icon
           html += `
-            <div onclick="openAchievementsModal()" style="background: rgba(255,255,255,0.02); border: 1.5px dashed rgba(239,68,68,0.35); border-radius: 8px; padding: 6px 3px; text-align: center; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 52px; min-width: 0; overflow: hidden; transition: all 0.2s;" onmouseover="this.style.borderColor='#ef4444';this.style.background='rgba(239,68,68,0.08)'" onmouseout="this.style.borderColor='rgba(239,68,68,0.35)';this.style.background='rgba(255,255,255,0.02)'" title="Đăng nhập để mở khóa kho danh hiệu">
+            <div onclick="openAchievementsModal()" style="background: rgba(255,255,255,0.02); border: 1.5px dashed rgba(239,68,68,0.35); border-radius: 10px; padding: 8px 4px; text-align: center; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 60px; min-width: 0; overflow: hidden; transition: all 0.2s;" onmouseover="this.style.borderColor='#ef4444';this.style.background='rgba(239,68,68,0.08)'" onmouseout="this.style.borderColor='rgba(239,68,68,0.35)';this.style.background='rgba(255,255,255,0.02)'" title="Đăng nhập để mở khóa kho danh hiệu">
               <span style="font-size: 18px; line-height: 1;">🔒</span>
-              <span style="font-size: 9px; color: #f87171; margin-top: 2px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%;">Khóa (#${i + 1})</span>
+              <span style="font-size: 9.5px; color: #f87171; margin-top: 3px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%;">Khóa (#${i + 1})</span>
             </div>
           `;
           continue;
         }
 
-        const badgeId = userPinnedBadges[i];
+        const badgeId = sanitizedPinned[i];
         const badgeDef = badgeId ? ACHIEVEMENTS_REGISTRY[badgeId] : null;
 
         if (badgeDef) {
-          const t = BADGE_TIER_CONFIG[badgeDef.tier] || BADGE_TIER_CONFIG.bronze;
+          const t = (typeof BADGE_TIER_CONFIG !== 'undefined' && BADGE_TIER_CONFIG[badgeDef.tier]) ? BADGE_TIER_CONFIG[badgeDef.tier] : { name: 'Đồng 🥉', color: '#cd7f32' };
           html += `
-            <div class="pinned-badge-card tier-${badgeDef.tier || 'bronze'}" onclick="openAchievementsModal()" style="min-height: 58px;" title="${escapeHtml(badgeDef.name)}: ${escapeHtml(badgeDef.desc)} (Bấm để mở kho huy hiệu)">
+            <div class="pinned-badge-card tier-${badgeDef.tier || 'bronze'}" onclick="openAchievementsModal()" style="min-height: 60px;" title="${escapeHtml(badgeDef.name)}: ${escapeHtml(badgeDef.desc)} (Bấm để mở kho danh hiệu)">
               <div class="pinned-badge-content" style="padding: 6px 3px;">
-                <div style="font-size: 18px; line-height: 1; margin-bottom: 2px;">${badgeDef.icon}</div>
+                <div style="font-size: 19px; line-height: 1; margin-bottom: 2px;">${badgeDef.icon}</div>
                 <div style="font-size: 10px; font-weight: 800; color: ${t.color}; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; max-width: 100%;">${escapeHtml(badgeDef.name)}</div>
                 <div style="font-size: 8px; color: var(--text-muted); text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; max-width: 100%; margin-top: 1px;">${t.name}</div>
               </div>
@@ -49983,9 +50178,9 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
           `;
         } else {
           html += `
-            <div onclick="openAchievementsModal()" style="background: rgba(255,255,255,0.02); border: 1.5px dashed var(--border); border-radius: 8px; padding: 6px 3px; text-align: center; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 52px; min-width: 0; overflow: hidden;" title="Nhấn để chọn huy hiệu ghim lên hồ sơ">
-              <span style="font-size: 14px; color: var(--text-muted); line-height: 1;">➕</span>
-              <span style="font-size: 9px; color: var(--text-muted); margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%;">Trống (#${i + 1})</span>
+            <div class="pinned-badge-empty-slot" onclick="openAchievementsModal()" style="min-height: 60px;" title="Nhấn để chọn danh hiệu ghim lên hồ sơ">
+              <span class="empty-icon">➕</span>
+              <span class="empty-text">Thêm danh hiệu</span>
             </div>
           `;
         }
@@ -51239,9 +51434,8 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
   }
 
 // =========================================================================
-// VOCAFLOW 09-AI-MENTOR.JS (v0.10.10-42 Build 343)
+// VOCAFLOW 09-AI-MENTOR.JS (v0.10.10-43 Build 344)
 // Gemini AI chatbot, quick chips, quota management, multi-key pool
-
 // =========================================================================
 
     // =========================================================================
@@ -52844,7 +53038,7 @@ Quy tắc phản hồi quan trọng:
     }
 
 // =========================================================================
-// VOCAFLOW 10-LUCKY-WHEEL.JS (v0.10.10-42 Build 343)
+// VOCAFLOW 10-LUCKY-WHEEL.JS (v0.10.10-43 Build 344)
 // Lucky wheel canvas, spin purchase, rewarded video ads, monetization
 // =========================================================================
 
@@ -53897,7 +54091,7 @@ Quy tắc phản hồi quan trọng:
     }, 1000);
 
 // =========================================================================
-// VOCAFLOW 11-PUBLISHER-STUDIO.JS (v0.10.10-42 Build 343)
+// VOCAFLOW 11-PUBLISHER-STUDIO.JS (v0.10.10-43 Build 344)
 // VocaLib Community Library, VocaStudio publisher portal, deck sharing
 // =========================================================================
 
@@ -66432,9 +66626,8 @@ Quy tắc phản hồi quan trọng:
       }
     }
 // =========================================================================
-// VOCAFLOW 12-ACHIEVEMENTS.JS (v0.10.10-42 Build 343)
+// VOCAFLOW 12-ACHIEVEMENTS.JS (v0.10.10-43 Build 344)
 // Badges, daily tasks, highlights showcase, notifications, VocaMail, User Guide
-
 // =========================================================================
 
     // =========================================================================
@@ -69052,6 +69245,8 @@ Quy tắc phản hồi quan trọng:
       diamond: { name: 'Kim Cương 💎', color: '#38bdf8', border: 'rgba(56,189,248,0.45)', bg: 'rgba(56,189,248,0.08)', glow: '0 0 14px rgba(56,189,248,0.35)' },
       mythic:  { name: 'Thần Thoại 👑', color: '#ec4899', border: 'rgba(236,72,153,0.5)', bg: 'linear-gradient(135deg, rgba(236,72,153,0.12), rgba(245,158,11,0.12))', glow: '0 0 16px rgba(236,72,153,0.4)' }
     };
+    window.ACHIEVEMENTS_REGISTRY = ACHIEVEMENTS_REGISTRY;
+    window.BADGE_TIER_CONFIG = BADGE_TIER_CONFIG;
 
     // Helper: Local Date Formatter YYYY-MM-DD
     function formatLocalDateString(d) {
@@ -69526,7 +69721,7 @@ Quy tắc phản hồi quan trọng:
   window.checkUrlProfileDeepLink = checkUrlProfileDeepLink;
 
 // =========================================================================
-// VOCAFLOW 13-WARDROBE.JS (v0.10.10-42 Build 343)
+// VOCAFLOW 13-WARDROBE.JS (v0.10.10-43 Build 344)
 // Hệ Thống Tủ Đồ & Cửa Hàng Thẩm Mỹ: Khung Viền Avatar, Hiệu Ứng Tên & Danh Xưng
 // =========================================================================
 
@@ -69537,7 +69732,7 @@ Quy tắc phản hồi quan trọng:
   const STORAGE_KEY_UNLOCKED_WARDROBE = 'vocaflow_unlocked_wardrobe_items';
 
   // 1. REGISTRY TỦ ĐỒ (REGISTRY OF ALL WARDROBE ITEMS)
-  // Phân loại: shop (Có thể mua), event (Sự kiện), level (Cấp bậc)
+  // Phân loại: shop (Có thể mua), event (Sự kiện), level (Cấp bậc), vip (Đặc quyền VocaVIP)
   const VOCAFLOW_WARDROBE_REGISTRY = {
     frames: [
       // --- A. CÓ THỂ MUA (SHOP / PETS) ---
@@ -69624,7 +69819,18 @@ Quy tắc phản hồi quan trọng:
         icon: '🐰'
       },
 
-      // --- C. CẤP BẬC RÈN LUYỆN (LEVEL - ĐẨY XUỐNG CUỐI) ---
+      // --- C. ĐẶC QUYỀN VIP (VOCAVIP) ---
+      {
+        id: 'vip',
+        name: 'Khung VocaVIP Hoàng Kim',
+        type: 'vip',
+        desc: 'Đặc quyền VocaVIP: Vương miện hoàng gia 12h, ngọc Ruby đỏ và viền vàng kim loại lấp lánh.',
+        badge: '👑 VocaVIP',
+        badgeColor: '#ffd700',
+        icon: '👑'
+      },
+
+      // --- D. CẤP BẬC RÈN LUYỆN (LEVEL - ĐẨY XUỐNG CUỐI) ---
       {
         id: 'default',
         name: 'Khung Mặc Định',
@@ -69772,7 +69978,18 @@ Quy tắc phản hồi quan trọng:
         icon: '🥚'
       },
 
-      // --- C. CẤP BẬC RÈN LUYỆN (LEVEL - ĐẨY XUỐNG CUỐI) ---
+      // --- C. ĐẶC QUYỀN VIP (VOCAVIP) ---
+      {
+        id: 'vip',
+        name: 'Tên VocaVIP Quý Tộc',
+        type: 'vip',
+        desc: 'Đặc quyền VocaVIP: Dải màu kim loại hoàng kim chuyển động, vương miện đung đưa & hào quang quý tộc.',
+        badge: '👑 VocaVIP',
+        badgeColor: '#ffd700',
+        icon: '👑'
+      },
+
+      // --- D. CẤP BẬC RÈN LUYỆN (LEVEL - ĐẨY XUỐNG CUỐI) ---
       {
         id: 'default',
         name: 'Tên Mặc Định',
@@ -69844,6 +70061,15 @@ Quy tắc phản hồi quan trọng:
         desc: 'Danh xưng khởi đầu của mọi Flower rèn luyện từ vựng.',
         badge: 'Mặc định',
         color: '#10b981'
+      },
+      {
+        id: 'vip',
+        name: 'VocaVIP Flower',
+        tag: '👑 VocaVIP Flower',
+        type: 'vip',
+        desc: 'Đặc quyền VocaVIP - Hội viên danh dự tối cao của VocaFlow.',
+        badge: '👑 VocaVIP',
+        color: '#ffd700'
       },
       {
         id: 'lv10',
@@ -70000,13 +70226,18 @@ Quy tắc phản hồi quan trọng:
     const item = list.find(i => i.id === itemId);
     if (!item) return false;
 
-    // 1. Level-based unlock
+    // 1. VIP-exclusive unlock
+    if (item.type === 'vip') {
+      return (typeof isUserVip === 'function' && isUserVip());
+    }
+
+    // 2. Level-based unlock
     if (item.type === 'level' || (item.minLevel && !item.price)) {
       const userLevel = (typeof getCurrentUserLevelInfo === 'function') ? getCurrentUserLevelInfo().level : 1;
       return userLevel >= (item.minLevel || 1);
     }
 
-    // 2. Shop / Event unlock (by purchase or event claim)
+    // 3. Shop / Event unlock (by purchase or event claim)
     const unlocked = getUnlockedWardrobeItems();
     return (unlocked[category] || []).includes(itemId);
   }
@@ -70455,6 +70686,34 @@ Quy tắc phản hồi quan trọng:
           </g>
         </svg>
       `;
+    } else if (fId === 'vip') {
+      overlaySvg = `
+        <svg class="vf-avatar-frame-svg" viewBox="0 0 600 600" style="filter: drop-shadow(0 0 14px rgba(255, 215, 0, 0.65));">
+          <defs>
+            <linearGradient id="vfVipRingGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#ffffff" /><stop offset="20%" stop-color="#ffd700" /><stop offset="45%" stop-color="#ff9900" /><stop offset="70%" stop-color="#fff099" /><stop offset="90%" stop-color="#d4af37" /><stop offset="100%" stop-color="#8a6d1c" />
+            </linearGradient>
+            <linearGradient id="vfVipRubyGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#ff6b81" /><stop offset="50%" stop-color="#e74c3c" /><stop offset="100%" stop-color="#990000" />
+            </linearGradient>
+          </defs>
+          <circle cx="300" cy="300" r="236" fill="none" stroke="url(#vfVipRingGrad)" stroke-width="26" />
+          <circle cx="300" cy="300" r="254" fill="none" stroke="#ffffff" stroke-width="3.5" opacity="0.9" stroke-dasharray="16 12 32 12" />
+          <!-- Vương Miện Hoàng Gia VIP ở 12h -->
+          <g transform="translate(300, 48)" class="vip-crown-top">
+            <path d="M -48,20 L -38,-18 L -16,4 L 0,-28 L 16,4 L 38,-18 L 48,20 Z" fill="url(#vfVipRingGrad)" stroke="#5e3c04" stroke-width="3" />
+            <circle cx="0" cy="4" r="5.5" fill="url(#vfVipRubyGrad)" stroke="#ffffff" stroke-width="1.2" />
+            <circle cx="-38" cy="-18" r="3.5" fill="#ffffff" />
+            <circle cx="0" cy="-28" r="4.5" fill="#ffffff" />
+            <circle cx="38" cy="-18" r="3.5" fill="#ffffff" />
+          </g>
+          <!-- Khiên Hoàng Gia & Ngọc Ruby ở 6h -->
+          <g transform="translate(300, 560)">
+            <path d="M -130,-30 L 130,-30 L 148,-2 L 0,42 L -148,-2 Z" fill="#1b1202" stroke="url(#vfVipRingGrad)" stroke-width="5" />
+            <circle cx="0" cy="24" r="6.5" fill="url(#vfVipRubyGrad)" stroke="#ffffff" stroke-width="1.5" />
+          </g>
+        </svg>
+      `;
     } else if (fId === 'diamond') {
       overlaySvg = `
         <svg class="vf-avatar-frame-svg" viewBox="0 0 600 600" style="filter: drop-shadow(0 0 14px rgba(0, 229, 255, 0.6));">
@@ -70484,29 +70743,105 @@ Quy tắc phản hồi quan trọng:
         <svg class="vf-avatar-frame-svg" viewBox="0 0 600 600" style="filter: drop-shadow(0 0 16px rgba(255, 0, 127, 0.65));">
           <defs>
             <filter id="vfMythicGlow" x="-30%" y="-30%" width="160%" height="160%">
-              <feGaussianBlur stdDeviation="6" result="b1" /><feGaussianBlur stdDeviation="16" result="b2" />
-              <feMerge><feMergeNode in="b2" /><feMergeNode in="b1" /><feMergeNode in="SourceGraphic" /></feMerge>
+              <feGaussianBlur stdDeviation="5" result="blur1" />
+              <feGaussianBlur stdDeviation="15" result="blur2" />
+              <feMerge><feMergeNode in="blur2" /><feMergeNode in="blur1" /><feMergeNode in="SourceGraphic" /></feMerge>
             </filter>
-            <linearGradient id="vfDragonScales" x1="0%" y1="0%" x2="100%" y2="100%">
+            <filter id="vfFireInfernoGlow" x="-50%" y="-50%" width="200%" height="200%">
+              <feGaussianBlur stdDeviation="3" result="core" />
+              <feGaussianBlur stdDeviation="10" result="mid" />
+              <feGaussianBlur stdDeviation="22" result="outer" />
+              <feMerge><feMergeNode in="outer" /><feMergeNode in="mid" /><feMergeNode in="core" /><feMergeNode in="SourceGraphic" /></feMerge>
+            </filter>
+            <linearGradient id="vfDragonScalesGrad" x1="0%" y1="0%" x2="100%" y2="100%">
               <stop offset="0%" stop-color="#fff0f8" /><stop offset="25%" stop-color="#ff3399" /><stop offset="65%" stop-color="#99004d" /><stop offset="100%" stop-color="#2b0016" />
             </linearGradient>
-            <linearGradient id="vfPlasmaFire" x1="0%" y1="0%" x2="100%" y2="100%">
+            <linearGradient id="vfDragonWingMembrane" x1="10%" y1="0%" x2="90%" y2="90%">
+              <stop offset="0%" stop-color="#ff66b2" stop-opacity="0.8" /><stop offset="50%" stop-color="#99004d" stop-opacity="0.5" /><stop offset="100%" stop-color="#24001c" stop-opacity="0.15" />
+            </linearGradient>
+            <linearGradient id="vfPlasmaFireGrad" x1="0%" y1="0%" x2="100%" y2="100%">
               <stop offset="0%" stop-color="#ffffff" /><stop offset="20%" stop-color="#ffb3da" /><stop offset="55%" stop-color="#ff007f" /><stop offset="85%" stop-color="#99004d" /><stop offset="100%" stop-color="#ff007f" stop-opacity="0" />
             </linearGradient>
+            <radialGradient id="vfMatrixRingGrad" cx="50%" cy="50%" r="50%">
+              <stop offset="85%" stop-color="#ff007f" /><stop offset="95%" stop-color="#ff99cc" /><stop offset="100%" stop-color="#ffffff" />
+            </radialGradient>
+            <linearGradient id="vfHornMetallicGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#ffffff" /><stop offset="40%" stop-color="#ffb8db" /><stop offset="85%" stop-color="#a60053" />
+            </linearGradient>
           </defs>
-          <g filter="url(#vfMythicGlow)">
-            <circle cx="300" cy="300" r="238" fill="none" stroke="#ff007f" stroke-width="8" stroke-linecap="round" />
-            <path d="M 80,300 A 220 220 0 0 1 520,300" fill="none" stroke="url(#vfDragonScales)" stroke-width="26" stroke-linecap="round" />
-            <path d="M 520,300 A 220 220 0 0 1 80,300" fill="none" stroke="url(#vfDragonScales)" stroke-width="22" stroke-linecap="round" />
+
+          <!-- 2. CÁC VÀNH ĐAI NĂNG LƯỢNG TRÒN -->
+          <g id="frameRingsGroup" filter="url(#vfMythicGlow)">
+            <circle cx="300" cy="300" r="186" fill="none" stroke="#ff007f" stroke-width="2" stroke-dasharray="8 14 3 14" opacity="0.6" />
+            <circle cx="300" cy="300" r="176" fill="none" stroke="url(#vfMatrixRingGrad)" stroke-width="6.5" stroke-linecap="round" />
+            <circle cx="300" cy="300" r="171" fill="none" stroke="#ffe6f3" stroke-width="1.6" stroke-dasharray="3 15 35 15" opacity="0.85" />
+            <circle cx="300" cy="477" r="3.5" fill="#ffffff" /><circle cx="123" cy="300" r="3.5" fill="#ffffff" /><circle cx="477" cy="300" r="3.5" fill="#ffffff" />
           </g>
-          <!-- Dragon Head at Left Top -->
-          <g transform="translate(130, 150) rotate(-35)">
-            <path d="M -20,20 Q 0,-30 40,-35 Q 20,10 25,35 Z" fill="url(#vfDragonScales)" stroke="#ff007f" stroke-width="2" />
-            <circle cx="12" cy="-5" r="4.5" fill="#00ffff" />
+
+          <!-- 3. ĐUÔI RỒNG QUẤN GÓC DƯỚI BÊN TRÁI (7h - 9h) -->
+          <g id="dragonTail" filter="url(#vfMythicGlow)">
+            <path d="M 165,415 C 120,465 155,530 220,535 C 275,540 280,488 240,480 C 185,465 155,395 133,325 C 124,295 125,265 128,240" fill="none" stroke="url(#vfDragonScalesGrad)" stroke-width="22" stroke-linecap="round" />
+            <polygon points="142,440 120,470 155,455" fill="#ffe6f2" /><polygon points="172,480 156,515 190,495" fill="#ffe6f2" />
+            <polygon points="215,510 210,548 236,520" fill="#ffe6f2" /><polygon points="248,495 278,525 255,478" fill="#ffe6f2" />
+            <path d="M 245,480 Q 305,505 325,488 Q 285,465 245,480 Z" fill="url(#vfHornMetallicGrad)" stroke="#ffffff" stroke-width="1.5" />
           </g>
-          <!-- Plasma Breath at 6h -->
-          <g transform="translate(300, 550)">
-            <path d="M -60,0 Q 0,-40 60,0 Q 0,50 -60,0 Z" fill="url(#vfPlasmaFire)" />
+
+          <!-- 4. MÓNG VUỐT BÁM VÀNH KHUNG (9h) -->
+          <g id="dragonClaw" filter="url(#vfMythicGlow)">
+            <path d="M 98,280 C 108,275 126,285 138,295 C 145,288 152,298 140,305 C 148,302 153,312 138,318 C 145,318 145,328 132,328 C 120,325 105,310 94,300 Z" fill="url(#dragonScalesGrad)" />
+            <path d="M 138,295 Q 155,296 150,304" stroke="#ffffff" stroke-width="3" fill="none" stroke-linecap="round" />
+            <path d="M 140,305 Q 158,310 151,317" stroke="#ffffff" stroke-width="3" fill="none" stroke-linecap="round" />
+            <path d="M 135,318 Q 152,325 142,332" stroke="#ffffff" stroke-width="3" fill="none" stroke-linecap="round" />
+          </g>
+
+          <!-- 5. ĐÔI CÁNH DƠI PHƯƠNG TÂY (9h - 11h) -->
+          <g id="dragonWings" filter="url(#vfMythicGlow)">
+            <path d="M 175,135 Q 145,65 105,30 Q 130,50 150,90 Q 168,120 175,135 Z" fill="#660033" opacity="0.85" />
+            <path d="M 105,30 Q 100,10 90,5 Q 95,20 102,33 Z" fill="#ffffff" />
+            <path d="M 105,30 Q 85,75 75,120 Q 110,95 150,90 Z" fill="url(#vfDragonWingMembrane)" opacity="0.6" />
+            <path d="M 165,190 Q 110,120 45,85 Q 25,75 5,90 Q 30,105 75,135 Q 115,175 140,225 Z" fill="url(#vfDragonScalesGrad)" />
+            <path d="M 45,85 Q 35,60 20,55 Q 30,75 42,88 Z" fill="#ffffff" />
+            <path d="M 45,85 Q 40,150 25,215" stroke="#ff80bf" stroke-width="4.5" fill="none" stroke-linecap="round" />
+            <path d="M 75,135 Q 70,205 60,265" stroke="#ff3385" stroke-width="4" fill="none" stroke-linecap="round" />
+            <path d="M 115,175 Q 105,230 95,290" stroke="#99004d" stroke-width="3.5" fill="none" stroke-linecap="round" />
+            <path d="M 45,85 Q 40,160 25,215 Q 45,190 60,265 Q 85,225 95,290 Q 120,240 140,225 C 115,175 75,135 45,85 Z" fill="url(#vfDragonWingMembrane)" />
+          </g>
+
+          <!-- 6. ĐẦU, CỔ VÀ SỪNG RỒNG (11h - 12h) -->
+          <g id="dragonHeadAndNeck" filter="url(#vfMythicGlow)">
+            <path d="M 128,245 C 120,175 155,128 200,95 C 215,85 232,85 245,95 C 230,115 205,140 185,185 C 170,220 160,250 155,270 Z" fill="url(#vfDragonScalesGrad)" />
+            <polygon points="152,145 125,120 162,130" fill="#ffffff" /><polygon points="172,120 148,88 185,108" fill="#ffb3da" /><polygon points="198,98 185,62 212,88" fill="#ffe6f2" />
+            <path d="M 218,80 C 205,48 170,38 145,42 C 170,55 195,68 210,83 Z" fill="#800040" />
+            <path d="M 228,75 C 220,28 175,-8 118,0 C 160,18 200,48 215,82 Z" fill="url(#vfHornMetallicGrad)" stroke="#ffffff" stroke-width="1.5" />
+            <path d="M 235,78 C 240,38 215,8 180,3 C 210,23 225,48 228,82 Z" fill="#ff1a8c" opacity="0.85" />
+            <path d="M 215,75 C 240,75 272,90 295,110 C 265,115 245,120 225,105 Z" fill="url(#vfDragonScalesGrad)" />
+            <path d="M 255,85 C 285,92 320,110 340,125 C 305,125 275,110 245,95 Z" fill="url(#vfDragonScalesGrad)" />
+            <polygon points="315,122 323,138 328,125" fill="#ffffff" /><polygon points="295,116 300,130 306,120" fill="#ffffff" /><polygon points="275,110 278,122 284,113" fill="#ffffff" />
+            <g class="dragon-jaw">
+              <path d="M 260,133 C 285,148 310,156 325,158 C 305,146 290,138 270,133 Z" fill="#99004d" />
+              <polygon points="300,148 308,136 314,151" fill="#ffffff" /><polygon points="282,140 288,130 293,142" fill="#ffffff" />
+            </g>
+            <ellipse cx="262" cy="94" rx="7.5" ry="4.5" transform="rotate(-15, 262, 94)" class="dragon-eye" fill="#ffccd9" />
+            <polygon points="258,94 266,92 263,96" fill="#24001c" />
+          </g>
+
+          <!-- 7. LUỒNG LỬA MA THUẬT HUYỀN THOẠI (12h - 5h) -->
+          <g id="dragonFlameLayer" class="fire-layer" filter="url(#vfFireInfernoGlow)">
+            <path d="M 320,130 C 375,100 455,105 515,160 C 575,215 590,305 560,395 C 530,470 465,530 385,555 C 440,512 470,470 480,405 C 495,310 465,225 400,175 C 368,150 332,138 320,130 Z" fill="url(#vfPlasmaFireGrad)" />
+            <path d="M 495,145 Q 565,125 595,175 Q 545,198 525,208 Z" fill="url(#vfPlasmaFireGrad)" />
+            <path d="M 550,245 Q 620,255 605,315 Q 565,305 545,295 Z" fill="url(#vfPlasmaFireGrad)" />
+            <path d="M 555,365 Q 605,410 575,465 Q 535,425 525,395 Z" fill="url(#vfPlasmaFireGrad)" />
+            <path d="M 475,470 Q 495,545 430,575 Q 430,520 415,492 Z" fill="url(#vfPlasmaFireGrad)" />
+            <path d="M 330,133 C 380,120 440,135 480,180 C 525,230 535,300 510,370 C 488,425 442,475 378,505 C 418,465 440,420 445,365 C 455,295 435,230 382,185 C 358,165 338,146 330,133 Z" fill="#ffffff" opacity="0.95" />
+            <path class="plasma-stream" d="M 335,135 C 420,140 510,210 510,320 C 510,420 430,480 370,510" fill="none" stroke="#ffffff" stroke-width="4.5" stroke-dasharray="25 15 45 15" stroke-linecap="round" />
+            <path class="plasma-stream" d="M 345,145 C 440,165 480,240 470,350 C 460,420 400,470 360,490" fill="none" stroke="#ffb3da" stroke-width="3" stroke-dasharray="15 25" stroke-linecap="round" opacity="0.8" />
+            <g fill="#ffffff">
+              <circle cx="545" cy="155" r="5" /><circle cx="598" cy="230" r="3.5" /><circle cx="585" cy="355" r="5.5" /><circle cx="505" cy="495" r="4" /><circle cx="445" cy="555" r="3.5" />
+              <path d="M 535,190 Q 535,205 535,220 Q 535,205 550,205 Q 535,205 535,190 Z" />
+              <path d="M 570,305 Q 570,318 570,331 Q 570,318 583,318 Q 570,318 570,305 Z" />
+              <path d="M 480,455 Q 480,470 480,485 Q 480,470 495,470 Q 480,470 480,455 Z" />
+            </g>
+            <circle cx="335" cy="133" r="18" fill="#ffffff" /><circle cx="335" cy="133" r="10" fill="#ffb8db" />
           </g>
         </svg>
       `;
@@ -70534,6 +70869,11 @@ Quy tắc phản hồi quan trọng:
     const eId = effectId || getEquippedWardrobe().nameEffect || 'default';
     const cleanName = (typeof rawName === 'string' && rawName.trim()) ? rawName.trim() : 'Flower';
     const safeEscaped = (typeof escapeHtml === 'function') ? escapeHtml(cleanName) : cleanName;
+
+    // VIP effect
+    if (eId === 'vip') {
+      return `<span class="vf-name-wrapper ${extraClasses}"><strong class="tier-vip animated-name-vip">${safeEscaped}</strong><span class="floating-crown-vip">👑</span></span>`;
+    }
 
     // Pet effects
     if (eId === 'cat') {
@@ -70624,6 +70964,11 @@ Quy tắc phản hồi quan trọng:
           </div>
         </span>
       `;
+    }
+
+    // Default fallback for VIP users who have not explicitly chosen another style
+    if (eId === 'default' && typeof isUserVip === 'function' && isUserVip()) {
+      return `<span class="vf-name-wrapper ${extraClasses}"><strong class="tier-vip animated-name-vip">${safeEscaped}</strong><span class="floating-crown-vip">👑</span></span>`;
     }
 
     return `<span class="vf-name-wrapper ${extraClasses}"><strong style="color: var(--text);">${safeEscaped}</strong></span>`;
@@ -70742,7 +71087,7 @@ Quy tắc phản hồi quan trọng:
 
   function filterWardrobeCategory(filterType) {
     activeWardrobeFilter = filterType || 'all';
-    const pills = ['all', 'shop', 'event', 'level'];
+    const pills = ['all', 'shop', 'event', 'vip', 'level'];
     pills.forEach(p => {
       const btn = document.getElementById(`wardrobe-filter-${p}`);
       if (btn) {
@@ -70763,6 +71108,7 @@ Quy tắc phản hồi quan trọng:
     const countAll = items.length;
     const countShop = items.filter(i => i.type === 'shop').length;
     const countEvent = items.filter(i => i.type === 'event').length;
+    const countVip = items.filter(i => i.type === 'vip').length;
     const countLevel = items.filter(i => i.type === 'level' || (!i.type && i.minLevel)).length;
 
     const elAll = document.getElementById('wardrobe-filter-count-all');
@@ -70771,6 +71117,8 @@ Quy tắc phản hồi quan trọng:
     if (elShop) elShop.textContent = countShop;
     const elEvent = document.getElementById('wardrobe-filter-count-event');
     if (elEvent) elEvent.textContent = countEvent;
+    const elVip = document.getElementById('wardrobe-filter-count-vip');
+    if (elVip) elVip.textContent = countVip;
     const elLevel = document.getElementById('wardrobe-filter-count-level');
     if (elLevel) elLevel.textContent = countLevel;
   }
@@ -70827,6 +71175,8 @@ Quy tắc phản hồi quan trọng:
         filteredItems = allItems.filter(i => i.type === 'shop');
       } else if (activeWardrobeFilter === 'event') {
         filteredItems = allItems.filter(i => i.type === 'event');
+      } else if (activeWardrobeFilter === 'vip') {
+        filteredItems = allItems.filter(i => i.type === 'vip');
       } else if (activeWardrobeFilter === 'level') {
         filteredItems = allItems.filter(i => i.type === 'level' || (!i.type && i.minLevel));
       }
@@ -70874,6 +71224,8 @@ Quy tắc phản hồi quan trọng:
         statusBadge = `<span class="badge" style="background: rgba(16,185,129,0.2); color: #34d399; font-size: 10px; font-weight: 800; border: 1px solid rgba(16,185,129,0.5);">✅ Đang Dùng</span>`;
       } else if (isUnlocked) {
         statusBadge = `<span class="badge" style="background: rgba(56,189,248,0.15); color: #38bdf8; font-size: 10px; font-weight: 700; border: 1px solid rgba(56,189,248,0.35);">🔓 Đã Sở Hữu</span>`;
+      } else if (item.type === 'vip') {
+        statusBadge = `<span class="badge" style="background: rgba(245,158,11,0.2); color: #ffd700; font-size: 10px; font-weight: 800; border: 1px solid rgba(255,215,0,0.5);">👑 Đặc quyền VIP</span>`;
       } else if (item.price) {
         const typeIcon = item.type === 'event' ? '🎪' : '🛍️';
         statusBadge = `<span class="badge" style="background: rgba(245,158,11,0.15); color: #fbbf24; font-size: 10px; font-weight: 800; border: 1px solid rgba(245,158,11,0.4);">${typeIcon} ${item.price}🪙</span>`;
@@ -70893,6 +71245,15 @@ Quy tắc phản hồi quan trọng:
           <div style="display: flex; gap: 6px; width: 100%;">
             <button type="button" class="btn btn-outline btn-sm" onclick="previewWardrobeItem('${tabName}', '${item.id}')" style="flex: 1; font-size: 11px; padding: 4px 6px;" title="Xem thử trên người">👁️ Thử</button>
             <button type="button" class="btn btn-primary btn-sm" onclick="equipWardrobeItem('${tabName}', '${item.id}')" style="flex: 1.5; font-size: 11.5px; font-weight: 800; background: linear-gradient(135deg, #4f46e5, #7c3aed); border: none;">Trang Bị</button>
+          </div>
+        `;
+      } else if (item.type === 'vip') {
+        actionBtn = `
+          <div style="display: flex; gap: 6px; width: 100%;">
+            <button type="button" class="btn btn-outline btn-sm" onclick="previewWardrobeItem('${tabName}', '${item.id}')" style="flex: 1; font-size: 11px; padding: 4px 6px;" title="Xem thử trên người">👁️ Thử</button>
+            <button type="button" class="btn btn-primary btn-sm" onclick="if (typeof openVipPricingModal === 'function') openVipPricingModal(); else if (typeof openVipModal === 'function') openVipModal();" style="flex: 1.8; font-size: 11.5px; font-weight: 800; background: linear-gradient(135deg, #f59e0b, #d97706); border: none; color: #000;">
+              👑 Nâng Cấp VIP
+            </button>
           </div>
         `;
       } else if (item.price) {

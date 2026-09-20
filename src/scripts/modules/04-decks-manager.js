@@ -1,7 +1,6 @@
 // =========================================================================
-// VOCAFLOW 04-DECKS-MANAGER.JS (v0.10.10-42 Build 343)
-// CRUD VocaDeck, Word Card Modal, Excel/JSON Import/Export, SRS & Auto-Flashcards
-
+// VOCAFLOW 04-DECKS-MANAGER.JS (v0.10.10-43 Build 344)
+// Quản lý VocaDecks, Vocabulary Lists, Import/Export & CRUD Operations
 // =========================================================================
 
     // =========================================================================

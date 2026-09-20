@@ -1,6 +1,6 @@
 // =========================================================================
-// VOCAFLOW 06-SPELLING-ENGINE.JS (v0.10.10-42 Build 343)
-// Spelling mode, virtual keyboard, syllable clues, phonetics & score calculation
+// VOCAFLOW 06-SPELLING-ENGINE.JS (v0.10.10-43 Build 344)
+// Luyện viết chính tả từ vựng & AI gợi ý
 // =========================================================================
 
         // =========================================================================

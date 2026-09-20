@@ -1,6 +1,6 @@
 // =========================================================================
-// VOCAFLOW 03-AUTH.JS (v0.10.10-42 Build 343)
-// Firebase Auth, Realtime Sync, Public Profiles, Social Graph, Monetization & Billing
+// VOCAFLOW 03-AUTH.JS (v0.10.10-43 Build 344)
+// Authentication, Cloud Sync, Community, Profiles & Social Network
 // =========================================================================
 
     // =========================================================================
@@ -5195,7 +5195,10 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
       try {
         if (!cloudLibraryDecks || cloudLibraryDecks.length === 0) {
           try {
-            await fetchCloudLibraryDecks();
+            await Promise.race([
+              fetchCloudLibraryDecks(),
+              new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), 1500))
+            ]);
           } catch (e) {}
         }
         const allDecks = getAllLibraryDecks();
@@ -5256,6 +5259,7 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
         let targetLastActiveAt = null;
 
         let uDataFound = false;
+        let uData = null;
 
         if (isVocaFlowOfficial) {
           targetLastActiveAt = Date.now();
@@ -5267,7 +5271,7 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
           targetPoints = 999999;
           targetStudyExp = 2500000; // Max Level 50
           targetFlowDays = 365;
-          targetPinnedBadges = ['ach_deck_master', 'ach_speaking_pro', 'ach_grandmaster'];
+          targetPinnedBadges = ['first_lesson', 'first_quiz', 'first_spelling'];
           targetFollowerCount = 9999;
           targetFollowingCount = 1;
 
@@ -5357,7 +5361,7 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
             try {
               const rootUserRes = await fetch(`${rtdbUrl}/users/${targetUid}.json`);
               if (rootUserRes.ok) {
-                const uData = await rootUserRes.json();
+                uData = await rootUserRes.json();
                 if (uData && typeof uData === 'object' && Object.keys(uData).length > 0) {
                   uDataFound = true;
                   targetLastActiveAt = uData.lastActiveAt || uData.profile?.lastActiveAt || uData.profile?.lastSync || uData.lastSync || uData.economy?.updatedAt || uData.flow?.updatedAt || uData.lastSeen || uData.updatedAt || (Array.isArray(uData.flowDates) && uData.flowDates.length > 0 ? uData.flowDates[uData.flowDates.length - 1] : null);
@@ -5492,7 +5496,7 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
           const regEntry = (targetUid && typeof globalVipRegistry !== 'undefined') ? globalVipRegistry[targetUid] : null;
           const nameMapEntry = (typeof globalVipRegistryNameMap !== 'undefined') ? (globalVipRegistryNameMap[authorClean] || globalVipRegistryNameMap[(authorName || '').trim().toLowerCase()]) : null;
 
-          const isRealUser = isVocaFlowOfficial || isCurrentUser || uDataFound || !!matchedStudent || !!regEntry || !!nameMapEntry || (authorDecks.length > 0 && !!targetUid);
+          const isRealUser = isVocaFlowOfficial || isCurrentUser || uDataFound || !!matchedStudent || !!regEntry || !!nameMapEntry || (authorDecks.length > 0) || (authorName && authorName !== 'Khách' && authorClean.length > 0);
 
           if (!isRealUser) {
             hideAppLoading();
@@ -5835,19 +5839,23 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
           }
         }
 
-        // Render Author Pinned Badges (v0.10.9-42 / Card Format matching personal profile)
+        // Render Author Pinned Badges (v0.10.10-43 / Card Format matching personal profile)
         const pubBadgesContainer = document.getElementById('pub-view-badges-container');
         const pubBadgesShowcase = document.getElementById('pub-view-badges-showcase');
-        const authorPinnedBadges = (isCurrentUser ? (Array.isArray(userPinnedBadges) ? userPinnedBadges : []) : ((targetPinnedBadges && targetPinnedBadges.length > 0) ? targetPinnedBadges : (targetDeck?.authorPinnedBadges || [])));
+        const achReg = (typeof ACHIEVEMENTS_REGISTRY !== 'undefined' ? ACHIEVEMENTS_REGISTRY : (typeof window !== 'undefined' ? window.ACHIEVEMENTS_REGISTRY : null)) || {};
+        const tierCfg = (typeof BADGE_TIER_CONFIG !== 'undefined' ? BADGE_TIER_CONFIG : (typeof window !== 'undefined' ? window.BADGE_TIER_CONFIG : null)) || {};
+        const rawAuthorBadges = (isCurrentUser ? (Array.isArray(userPinnedBadges) ? userPinnedBadges : []) : ((targetPinnedBadges && targetPinnedBadges.length > 0) ? targetPinnedBadges : (targetDeck?.authorPinnedBadges || [])));
+        const authorPinnedBadges = (Array.isArray(rawAuthorBadges) ? rawAuthorBadges : []).filter(bId => bId && achReg[bId]);
 
         if (pubBadgesContainer && pubBadgesShowcase) {
-          if (Array.isArray(authorPinnedBadges) && authorPinnedBadges.length > 0) {
+          if (authorPinnedBadges.length > 0 || isCurrentUser) {
             pubBadgesContainer.style.display = 'block';
             let bHtml = '';
-            authorPinnedBadges.slice(0, 3).forEach(bId => {
-              const bDef = ACHIEVEMENTS_REGISTRY[bId];
+            for (let i = 0; i < 3; i++) {
+              const bId = authorPinnedBadges[i];
+              const bDef = bId ? achReg[bId] : null;
               if (bDef) {
-                const t = BADGE_TIER_CONFIG[bDef.tier] || BADGE_TIER_CONFIG.bronze;
+                const t = tierCfg[bDef.tier] || { name: 'Đồng 🥉', color: '#cd7f32' };
                 bHtml += `
                   <div class="pinned-badge-card tier-${bDef.tier || 'bronze'}" style="min-height: 58px;" title="${escapeHtml(bDef.name)}: ${escapeHtml(bDef.desc)}">
                     <div class="pinned-badge-content" style="padding: 6px 3px;">
@@ -5857,8 +5865,15 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
                     </div>
                   </div>
                 `;
+              } else if (isCurrentUser) {
+                bHtml += `
+                  <div class="pinned-badge-empty-slot" onclick="closeModal('modal-public-profile'); openAchievementsModal();" style="min-height: 58px;" title="Nhấn để chọn danh hiệu ghim lên hồ sơ">
+                    <span class="empty-icon">➕</span>
+                    <span class="empty-text">Thêm danh hiệu</span>
+                  </div>
+                `;
               }
-            });
+            }
             pubBadgesShowcase.innerHTML = bHtml;
           } else {
             pubBadgesContainer.style.display = 'none';
@@ -5872,6 +5887,7 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
           updateAppUrlRoute('/@' + resolvedHandle, `${resolvedName} (@${resolvedHandle}) - VocaFlow`);
         }
       } catch (err) {
+        window.__lastPubError = err ? (err.message + '\n' + err.stack) : 'unknown';
         console.warn('Error in openPublicProfileByAuthor:', err);
         showToast('⚠️ Không thể tải hồ sơ lúc này. Vui lòng thử lại sau!');
       } finally {

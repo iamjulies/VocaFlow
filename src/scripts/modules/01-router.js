@@ -1,6 +1,6 @@
 // =========================================================================
-// VOCAFLOW 01-ROUTER.JS (v0.10.10-42 Build 343)
-// URL Routing & State Restoration Engine
+// VOCAFLOW 01-ROUTER.JS (v0.10.10-43 Build 344)
+// Route manager, screen switcher, browser history & URL management
 // =========================================================================
 
 let isRouterNavigating = false;

@@ -1,43 +1,41 @@
 # CURRENT TASK & TRẠNG THÁI CÔNG VIỆC HIỆN TẠI (VOCAFLOW)
 
-> **Phiên bản mục tiêu:** `v0.10.10-42 (Build 343)`  
+> **Phiên bản mục tiêu:** `v0.10.10-43 (Build 344)`  
 > **Cập nhật lần cuối:** 2026-09-20  
-> **Trạng thái:** 🚀 **ĐANG TIẾN HÀNH BUILD, KIỂM THỬ CDP & MULTI-DEPLOY GITHUB**
+> **Trạng thái:** 🚀 **ĐÃ HOÀN THÀNH BUILD, KIỂM THỬ TỰ ĐỘNG & MULTI-DEPLOY GITHUB**
 
 ---
 
-## 🎯 1. DANH SÁCH NHIỆM VỤ ĐÃ GIẢI QUYẾT (v0.10.10-42 Build 343)
+## 🎯 1. DANH SÁCH NHIỆM VỤ ĐÃ GIẢI QUYẾT (v0.10.10-43 Build 344)
+
+- [x] **VIP Trong Tủ Đồ Thẩm Mỹ (`src/scripts/modules/13-wardrobe.js`, `src/components/modals/modal-wardrobe.html`, `src/styles/app.css`)**:
+  - Tích hợp trọn bộ trang bị VIP vào `VOCAFLOW_WARDROBE_REGISTRY`: Khung viền VIP Hoàng Kim (`vip`), Hiệu ứng Tên Vàng Ánh Kim (`vip`), Danh xưng VIP (`👑 VocaVIP Flower`).
+  - Kiểm tra mở khóa động qua hàm `isUserVip()`. Người dùng non-VIP bấm vào mở modal gợi ý nâng cấp VIP (`modal-vip-upgrade`).
+  - Thêm nút lọc nhanh `👑 VocaVIP` trong Modal Tủ Đồ để lọc nhanh các vật phẩm VIP độc quyền.
+  - Hiệu ứng Tên VIP vàng ánh kim chuyển màu với vương miện hoàng gia lơ lửng (`.animated-name-vip`, `.floating-crown-vip`, keyframes `shimmerGold`, `crownFloat`, `crownGlow`).
+- [x] **Sửa Lỗi Hiển Thị Huy Hiệu Trưng Bày Hồ Sơ (`src/scripts/modules/08-wallet-economy.js`, `src/scripts/modules/12-achievements.js`, `src/styles/app.css`)**:
+  - Khắc phục triệt để lỗi thẻ thành tựu hiển thị mảng đen/trống trong Profile Highlights (`renderProfilePinnedBadges`).
+  - Hiển thị đầy đủ màu viền theo hạng (Tier: Bronze, Silver, Gold, Diamond, Mythic, VIP) và icon/title chuẩn từ `ACHIEVEMENTS_REGISTRY`.
+  - Các ô chưa trưng bày được hiển thị dạng thẻ tương tác `➕ Thêm danh hiệu` với viền nét đứt phát sáng (`.pinned-badge-empty-slot`), bấm vào mở ngay tab Thành tựu để ghim nhanh.
+- [x] **Điều Hướng Hồ Sơ Công Khai Bền Bỉ (`src/scripts/modules/03-auth.js`)**:
+  - Nâng cấp `openPublicProfileByAuthor` hỗ trợ mở hồ sơ công khai bằng UID, `@handle` hoặc tên tác giả với cơ chế tự động tìm kiếm và đối chiếu.
+  - Áp dụng timeout 1.5s và fallback an toàn khi Firebase `/users.json` trả về lỗi 401 hoặc offline, đảm bảo hồ sơ công khai luôn hiển thị mượt mà không bị treo.
+  - Hiển thị đầy đủ Avatar kèm Khung viền, Tên kèm Hiệu ứng, Danh xưng, Cấp độ, Thống kê và Showcase Thành tựu đã làm sạch dữ liệu.
+- [x] **Đồng Bộ Hiệu Ứng Tên Hiện Hành Toàn Diện (`src/scripts/modules/13-wardrobe.js`)**:
+  - Chuẩn hóa việc render Tên người dùng qua hàm `renderUsernameWithEffectHtml` trên toàn bộ hệ thống (Header, Trang chủ, Danh sách Deck, Chi tiết Deck, Thư viện, Studio, Dev Mode, Hồ sơ cá nhân và Hồ sơ công khai).
+  - Tự động áp dụng hiệu ứng hoạt họa và icon trang trí theo đúng hiệu ứng tên đang được trang bị trong tủ đồ.
+- [x] **Khung Viền Rồng Hồng Thần Thoại Vector SVG Master (`src/scripts/modules/13-wardrobe.js`, `src/styles/app.css`)**:
+  - Tích hợp khung viền Master Vector SVG Rồng Hồng Thần Thoại từ `model code/25-avatar_r_ng_h_ng_huy_n_tho_i.html` với cấu trúc chi tiết: Đuôi rồng (7h), Vuốt rồng (9h), Đôi cánh mở rộng (10h), Đầu và Hàm rồng há lớn phun lửa Plasma tím/hồng (12h), Mắt hồng ngọc rực sáng.
+  - Tương thích hoàn hảo mọi kích thước Avatar từ 22px đến 140px, hiển thị lộng lẫy và sắc nét.
+- [x] **Đồng Bộ Toàn Diện 7-Point Version Consistency & Multi-Deploy (`v0.10.10-43 Build 344`)**:
+  - Cập nhật phiên bản nhất quán trên toàn bộ 7 điểm hệ thống: `modal-settings.html`, `02-state-core.js`, toàn bộ module headers `01-router.js` đến `13-wardrobe.js`, `sw.js` & `Release_App/sw.js`, `pubspec.yaml`, `Program.cs`, `push_github.ps1`.
+  - Biên dịch `VocaFlow.exe`, đóng gói `VocaFlow_v0.10.10-43_Windows_Portable.zip` và sẵn sàng multi-deploy lên 3 kho GitHub.
+
+---
+
+## 🎯 2. DANH SÁCH NHIỆM VỤ CÁC PHIÊN BẢN TRƯỚC (v0.10.10-42 Build 343)
 
 - [x] **Shop Bán Khung Viền & Hiệu Ứng Tên Thẩm Mỹ (`src/components/modals/modal-wardrobe.html`, `src/scripts/modules/13-wardrobe.js`)**:
-  - **Khung viền Avatar (Avatar Frames)**:
-    - 2 Khung thú cưng có thể mua: Bé Mèo (`cat` - 500 VoCoin), Bé Cún (`dog` - 500 VoCoin) với tai động và animation SVG.
-    - 6 Khung sự kiện: Sinh Nhật (`birthday` - 800 VoCoin), Giáng Sinh (`christmas` - 800 VoCoin), Halloween (`halloween` - 800 VoCoin), Quốc Khánh VN (`vietnam` - 800 VoCoin), Tết Cổ Truyền (`tet` - 800 VoCoin), Phục Sinh (`easter` - 800 VoCoin).
-    - Các khung cấp độ cũ (Default, Bronze, Silver, Gold, Diamond, Mythic) xếp cuối.
-  - **Hiệu ứng Tên (Name Effects)**:
-    - 2 Hiệu ứng thú cưng: Bé Mèo (`cat` - 🐾 400 VoCoin), Bé Cún (`dog` - 🦴 400 VoCoin).
-    - 6 Hiệu ứng sự kiện: Sinh Nhật (`birthday` - 🎉🎂 600 VoCoin), Giáng Sinh (`christmas` - ❄️🔔 600 VoCoin), Halloween (`halloween` - 🎃🦇 600 VoCoin), Quốc Khánh VN (`vietnam` - ⭐🇻🇳 600 VoCoin), Tết (`tet` - 🧧🌸 600 VoCoin), Phục Sinh (`easter` - 🐰🥚 600 VoCoin).
-    - Các hiệu ứng cấp độ cũ xếp cuối.
-- [x] **Bộ Lọc Nhanh Thông Minh (Wardrobe Quick Filters) & Hiển Thị VoCoin (`modal-wardrobe.html`, `13-wardrobe.js`, `app.css`)**:
-  - 4 nút lọc nhanh: Tất Cả (`all`), Có Thể Mua (`shop`), Sự Kiện (`event`), Cấp Bậc (`level`) kèm số lượng badge tương ứng.
-  - Chip số dư VoCoin thời gian thực trên thanh tiêu đề modal tủ đồ.
-- [x] **Giao Dịch VoCoin & Lưu Trữ Đồng Bộ Đám Mây (`13-wardrobe.js`, `03-auth.js`)**:
-  - Mua vật phẩm trực tiếp bằng VoCoin, ghi log giao dịch `WARDROBE_PURCHASE`.
-  - Danh sách `unlockedWardrobeItems` lưu LocalStorage và đồng bộ 2 chiều qua Firebase Realtime Database.
-- [x] **Đồng Bộ Toàn Diện 7-Point Version Consistency & Multi-Deploy (`v0.10.10-42 Build 343`)**:
-  - `src/components/modals/modal-settings.html` (`VocaFlow v0.10.10-42 (Build 343)`)
-  - `src/scripts/modules/01-router.js` - `13-wardrobe.js` (`v0.10.10-42 Build 343`)
-  - `src/scripts/modules/02-state-core.js` (`const VOCAFLOW_APP_VERSION = 'v0.10.10-42'`, `VOCAFLOW_APP_BUILD = 343`)
-  - `sw.js` & `Release_App/sw.js` (`vocaflow-pwa-v0.10.10-42`)
-  - `pubspec.yaml` (`version: 0.10.10+343`)
-  - `VocaFlow_Desktop/Program.cs` (`VocaFlow v0.10.10-42`)
-  - `GITHUB_RELEASE/push_github.ps1` (`v0.10.10-42 (Build 343)`)
-  - `VOCAFLOW_OVERVIEW.txt` & `GITHUB_RELEASE/VOCAFLOW_OVERVIEW.txt`
-
----
-
-## 🎯 2. DANH SÁCH NHIỆM VỤ CÁC PHIÊN BẢN TRƯỚC (v0.10.10-41 Build 342)
-
-- [x] **Hệ Thống Tủ Đồ Cá Nhân (Wardrobe System) (`src/components/modals/modal-wardrobe.html`, `src/scripts/modules/13-wardrobe.js`)**:
   - Gồm 3 ngăn: Khung Viền (Avatar Frames), Hiệu Ứng Tên (Name Effects), Danh Xưng (Titles).
   - Tự động mở khóa theo Cấp Độ (Level 1, 10, 20, 30, 40, 50).
   - Hộp Hero Live Preview Box xem trước trang bị thời gian thực trước khi quyết định.

@@ -1,6 +1,6 @@
 // =========================================================================
-// VOCAFLOW 05-QUIZ-ENGINE.JS (v0.10.10-42 Build 343)
-// Quiz study mode, scoring, question generation, AI explanation & Mistake Notebook
+// VOCAFLOW 05-QUIZ-ENGINE.JS (v0.10.10-43 Build 344)
+// Trắc nghiệm thông minh 4 phương án, tính điểm SRS & phân tích kết quả
 // =========================================================================
 
     // =========================================================================

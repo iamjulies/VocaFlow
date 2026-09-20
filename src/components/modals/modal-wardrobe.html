@@ -67,10 +67,13 @@
         </button>
       </div>
 
-      <!-- WARDROBE QUICK FILTER PILLS BAR (v0.10.10-42) -->
+      <!-- WARDROBE QUICK FILTER PILLS BAR (v0.10.10-43) -->
       <div id="wardrobe-filter-bar" style="display: flex; gap: 6px; margin-bottom: 14px; overflow-x: auto; padding-bottom: 2px;">
         <button type="button" class="btn btn-xs wardrobe-filter-pill active" id="wardrobe-filter-all" onclick="filterWardrobeCategory('all')" style="border-radius: 20px; font-weight: 700; padding: 4px 12px; font-size: 11px;">
           🌟 Tất Cả (<span id="wardrobe-filter-count-all">0</span>)
+        </button>
+        <button type="button" class="btn btn-xs wardrobe-filter-pill btn-outline" id="wardrobe-filter-vip" onclick="filterWardrobeCategory('vip')" style="border-radius: 20px; font-weight: 700; padding: 4px 12px; font-size: 11px; border-color: rgba(245,158,11,0.5); color: #fbbf24;">
+          👑 VocaVIP (<span id="wardrobe-filter-count-vip">0</span>)
         </button>
         <button type="button" class="btn btn-xs wardrobe-filter-pill btn-outline" id="wardrobe-filter-shop" onclick="filterWardrobeCategory('shop')" style="border-radius: 20px; font-weight: 700; padding: 4px 12px; font-size: 11px;">
           🛍️ Có Thể Mua (<span id="wardrobe-filter-count-shop">0</span>)

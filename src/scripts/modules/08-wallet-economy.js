@@ -1,5 +1,5 @@
 // =========================================================================
-// VOCAFLOW 08-WALLET-ECONOMY.JS (v0.10.10-42 Build 343)
+// VOCAFLOW 08-WALLET-ECONOMY.JS (v0.10.10-43 Build 344)
 // Economy, Wallet, Ledger, Lucky Spin, Cat Meme Reactions, Brain Energy & Study Settlements
 // =========================================================================
 
@@ -1342,37 +1342,43 @@
       container.innerHTML = html;
     }
 
-    // PROFILE 3-BADGE SHOWCASE (v0.10.8-alpha-10.3: Big Lock for Guests - Hình 2)
+    // PROFILE 3-BADGE SHOWCASE (v0.10.10-43: Glass Highlight Badges & Styled Empty Slot)
     function renderProfilePinnedBadges() {
       const container = document.getElementById('profile-pinned-badges-showcase');
       if (!container) return;
 
       const isGuest = !currentUser || !currentUser.email;
 
-      container.style.cssText = 'display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; width: 100%; box-sizing: border-box;';
+      container.style.cssText = 'display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; width: 100%; box-sizing: border-box;';
+
+      // Sanitize userPinnedBadges array & filter out any non-existent / broken IDs
+      const rawPinned = (typeof userPinnedBadges !== 'undefined' && Array.isArray(userPinnedBadges))
+        ? userPinnedBadges
+        : (JSON.parse(localStorage.getItem('vocaflow_pinned_badges') || '[]'));
+      const sanitizedPinned = rawPinned.filter(id => id && typeof ACHIEVEMENTS_REGISTRY !== 'undefined' && ACHIEVEMENTS_REGISTRY[id]);
 
       let html = '';
       for (let i = 0; i < 3; i++) {
         if (isGuest) {
-          // Guest: Show big Lock icon (Hình 2)
+          // Guest: Show Lock icon
           html += `
-            <div onclick="openAchievementsModal()" style="background: rgba(255,255,255,0.02); border: 1.5px dashed rgba(239,68,68,0.35); border-radius: 8px; padding: 6px 3px; text-align: center; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 52px; min-width: 0; overflow: hidden; transition: all 0.2s;" onmouseover="this.style.borderColor='#ef4444';this.style.background='rgba(239,68,68,0.08)'" onmouseout="this.style.borderColor='rgba(239,68,68,0.35)';this.style.background='rgba(255,255,255,0.02)'" title="Đăng nhập để mở khóa kho danh hiệu">
+            <div onclick="openAchievementsModal()" style="background: rgba(255,255,255,0.02); border: 1.5px dashed rgba(239,68,68,0.35); border-radius: 10px; padding: 8px 4px; text-align: center; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 60px; min-width: 0; overflow: hidden; transition: all 0.2s;" onmouseover="this.style.borderColor='#ef4444';this.style.background='rgba(239,68,68,0.08)'" onmouseout="this.style.borderColor='rgba(239,68,68,0.35)';this.style.background='rgba(255,255,255,0.02)'" title="Đăng nhập để mở khóa kho danh hiệu">
               <span style="font-size: 18px; line-height: 1;">🔒</span>
-              <span style="font-size: 9px; color: #f87171; margin-top: 2px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%;">Khóa (#${i + 1})</span>
+              <span style="font-size: 9.5px; color: #f87171; margin-top: 3px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%;">Khóa (#${i + 1})</span>
             </div>
           `;
           continue;
         }
 
-        const badgeId = userPinnedBadges[i];
+        const badgeId = sanitizedPinned[i];
         const badgeDef = badgeId ? ACHIEVEMENTS_REGISTRY[badgeId] : null;
 
         if (badgeDef) {
-          const t = BADGE_TIER_CONFIG[badgeDef.tier] || BADGE_TIER_CONFIG.bronze;
+          const t = (typeof BADGE_TIER_CONFIG !== 'undefined' && BADGE_TIER_CONFIG[badgeDef.tier]) ? BADGE_TIER_CONFIG[badgeDef.tier] : { name: 'Đồng 🥉', color: '#cd7f32' };
           html += `
-            <div class="pinned-badge-card tier-${badgeDef.tier || 'bronze'}" onclick="openAchievementsModal()" style="min-height: 58px;" title="${escapeHtml(badgeDef.name)}: ${escapeHtml(badgeDef.desc)} (Bấm để mở kho huy hiệu)">
+            <div class="pinned-badge-card tier-${badgeDef.tier || 'bronze'}" onclick="openAchievementsModal()" style="min-height: 60px;" title="${escapeHtml(badgeDef.name)}: ${escapeHtml(badgeDef.desc)} (Bấm để mở kho danh hiệu)">
               <div class="pinned-badge-content" style="padding: 6px 3px;">
-                <div style="font-size: 18px; line-height: 1; margin-bottom: 2px;">${badgeDef.icon}</div>
+                <div style="font-size: 19px; line-height: 1; margin-bottom: 2px;">${badgeDef.icon}</div>
                 <div style="font-size: 10px; font-weight: 800; color: ${t.color}; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; max-width: 100%;">${escapeHtml(badgeDef.name)}</div>
                 <div style="font-size: 8px; color: var(--text-muted); text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; max-width: 100%; margin-top: 1px;">${t.name}</div>
               </div>
@@ -1380,9 +1386,9 @@
           `;
         } else {
           html += `
-            <div onclick="openAchievementsModal()" style="background: rgba(255,255,255,0.02); border: 1.5px dashed var(--border); border-radius: 8px; padding: 6px 3px; text-align: center; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 52px; min-width: 0; overflow: hidden;" title="Nhấn để chọn huy hiệu ghim lên hồ sơ">
-              <span style="font-size: 14px; color: var(--text-muted); line-height: 1;">➕</span>
-              <span style="font-size: 9px; color: var(--text-muted); margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%;">Trống (#${i + 1})</span>
+            <div class="pinned-badge-empty-slot" onclick="openAchievementsModal()" style="min-height: 60px;" title="Nhấn để chọn danh hiệu ghim lên hồ sơ">
+              <span class="empty-icon">➕</span>
+              <span class="empty-text">Thêm danh hiệu</span>
             </div>
           `;
         }
