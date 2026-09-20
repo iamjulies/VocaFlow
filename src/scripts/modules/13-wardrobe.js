@@ -1,5 +1,5 @@
 // =========================================================================
-// VOCAFLOW 13-WARDROBE.JS (v0.10.10-45 Build 346)
+// VOCAFLOW 13-WARDROBE.JS (v0.10.10-46 Build 347)
 // Hệ Thống Tủ Đồ & Cửa Hàng Thẩm Mỹ: Khung Viền Avatar, Hiệu Ứng Tên & Danh Xưng
 // =========================================================================
 
@@ -1176,13 +1176,17 @@
           <circle cx="300" cy="300" r="236" fill="none" stroke="url(#vfDiaRingGrad)" stroke-width="24" class="diamond-blink-sweep" />
           <circle cx="300" cy="300" r="254" fill="none" stroke="#ffffff" stroke-width="3" stroke-dasharray="14 26 50 26" opacity="0.9" />
           <!-- Top Right Asymmetrical Gems -->
-          <g transform="translate(425, 145) rotate(22)" class="diamond-star-glint" style="filter: drop-shadow(0 0 8px #00f2fe);">
-            <polygon points="0,-36 30,-15 30,22 0,42 -30,22 -30,-15" fill="#ffffff" stroke="#e0f7fa" stroke-width="1.8" />
-            <polygon points="0,-36 30,-15 46,-38 0,-52" fill="url(#vfGemLight)" stroke="#ffffff" stroke-width="1.2" />
+          <g transform="translate(425, 145) rotate(22)">
+            <g class="diamond-star-glint" style="transform-box: fill-box; transform-origin: center center; filter: drop-shadow(0 0 8px #00f2fe);">
+              <polygon points="0,-36 30,-15 30,22 0,42 -30,22 -30,-15" fill="#ffffff" stroke="#e0f7fa" stroke-width="1.8" />
+              <polygon points="0,-36 30,-15 46,-38 0,-52" fill="url(#vfGemLight)" stroke="#ffffff" stroke-width="1.2" />
+            </g>
           </g>
           <!-- Bottom Left Crystals -->
-          <g transform="translate(145, 445) rotate(-38)" class="diamond-star-glint" style="filter: drop-shadow(0 0 8px #00f2fe);">
-            <polygon points="0,-42 18,0 0,42 -18,0" fill="url(#vfGemLight)" stroke="#ffffff" stroke-width="1.8" />
+          <g transform="translate(145, 445) rotate(-38)">
+            <g class="diamond-star-glint" style="transform-box: fill-box; transform-origin: center center; filter: drop-shadow(0 0 8px #00f2fe);">
+              <polygon points="0,-42 18,0 0,42 -18,0" fill="url(#vfGemLight)" stroke="#ffffff" stroke-width="1.8" />
+            </g>
           </g>
           <!-- Huy hiệu Kim Cương & 4 Sao Lam Ngọc ở 6h (Model 07-khungkimcuong.txt) -->
           <g transform="translate(300, 544)">
@@ -1332,32 +1336,32 @@
       return `<span class="vf-name-wrapper ${extraClasses}"><strong class="tier-vip animated-name-vip">${safeEscaped}</strong><span class="floating-crown-vip">👑</span></span>`;
     }
 
-    // Pet effects
+    // Pet effects (v0.10.10-46: Separate emojis from gradient text)
     if (eId === 'cat') {
-      return `<span class="vf-name-wrapper ${extraClasses}"><strong class="tier-cat">🐾 ${safeEscaped} 🐾</strong></span>`;
+      return `<span class="vf-name-wrapper ${extraClasses}"><span class="vf-name-icon">🐾</span> <strong class="tier-cat">${safeEscaped}</strong> <span class="vf-name-icon">🐾</span></span>`;
     }
     if (eId === 'dog') {
-      return `<span class="vf-name-wrapper ${extraClasses}"><strong class="tier-dog">🦴 ${safeEscaped} 🦴</strong></span>`;
+      return `<span class="vf-name-wrapper ${extraClasses}"><span class="vf-name-icon">🦴</span> <strong class="tier-dog">${safeEscaped}</strong> <span class="vf-name-icon">🦴</span></span>`;
     }
 
-    // Event effects
+    // Event effects (v0.10.10-46: Separate emojis from gradient text)
     if (eId === 'birthday') {
-      return `<span class="vf-name-wrapper ${extraClasses}"><strong class="tier-birthday">🎉 ${safeEscaped} 🎂</strong></span>`;
+      return `<span class="vf-name-wrapper ${extraClasses}"><span class="vf-name-icon">🎉</span> <strong class="tier-birthday">${safeEscaped}</strong> <span class="vf-name-icon">🎂</span></span>`;
     }
     if (eId === 'christmas') {
-      return `<span class="vf-name-wrapper ${extraClasses}"><strong class="tier-christmas">❄️ ${safeEscaped} 🔔</strong></span>`;
+      return `<span class="vf-name-wrapper ${extraClasses}"><span class="vf-name-icon">❄️</span> <strong class="tier-christmas">${safeEscaped}</strong> <span class="vf-name-icon">🔔</span></span>`;
     }
     if (eId === 'halloween') {
-      return `<span class="vf-name-wrapper ${extraClasses}"><strong class="tier-halloween">🎃 ${safeEscaped} 🦇</strong></span>`;
+      return `<span class="vf-name-wrapper ${extraClasses}"><span class="vf-name-icon">🎃</span> <strong class="tier-halloween">${safeEscaped}</strong> <span class="vf-name-icon">🦇</span></span>`;
     }
     if (eId === 'vietnam') {
-      return `<span class="vf-name-wrapper ${extraClasses}"><strong class="tier-vietnam">⭐ ${safeEscaped} 🇻🇳</strong></span>`;
+      return `<span class="vf-name-wrapper ${extraClasses}"><span class="vf-name-icon">⭐</span> <strong class="tier-vietnam">${safeEscaped}</strong> <span class="vf-name-icon">🇻🇳</span></span>`;
     }
     if (eId === 'tet') {
-      return `<span class="vf-name-wrapper ${extraClasses}"><strong class="tier-tet">🧧 ${safeEscaped} 🌸</strong></span>`;
+      return `<span class="vf-name-wrapper ${extraClasses}"><span class="vf-name-icon">🧧</span> <strong class="tier-tet">${safeEscaped}</strong> <span class="vf-name-icon">🌸</span></span>`;
     }
     if (eId === 'easter') {
-      return `<span class="vf-name-wrapper ${extraClasses}"><strong class="tier-easter">🐰 ${safeEscaped} 🥚</strong></span>`;
+      return `<span class="vf-name-wrapper ${extraClasses}"><span class="vf-name-icon">🐰</span> <strong class="tier-easter">${safeEscaped}</strong> <span class="vf-name-icon">🥚</span></span>`;
     }
 
     // Level-based effects
@@ -1423,12 +1427,8 @@
       `;
     }
 
-    // Default fallback for VIP users who have not explicitly chosen another style
-    if (eId === 'default' && typeof isUserVip === 'function' && isUserVip()) {
-      return `<span class="vf-name-wrapper ${extraClasses}"><strong class="tier-vip animated-name-vip">${safeEscaped}</strong><span class="floating-crown-vip">👑</span></span>`;
-    }
-
-    return `<span class="vf-name-wrapper ${extraClasses}"><strong style="color: var(--text);">${safeEscaped}</strong></span>`;
+    // Default style (v0.10.10-46: Always render pure default text without forcing VIP golden gradient)
+    return `<span class="vf-name-wrapper ${extraClasses}"><strong class="tier-default" style="color: var(--text);">${safeEscaped}</strong></span>`;
   }
   window.renderUsernameWithEffectHtml = renderUsernameWithEffectHtml;
 

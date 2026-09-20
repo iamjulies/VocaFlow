@@ -1,31 +1,26 @@
 # CURRENT TASK & TRẠNG THÁI CÔNG VIỆC HIỆN TẠI (VOCAFLOW)
 
-> **Phiên bản mục tiêu:** `v0.10.10-45 (Build 346)`  
+> **Phiên bản mục tiêu:** `v0.10.10-46 (Build 347)`  
 > **Cập nhật lần cuối:** 2026-09-20  
 > **Trạng thái:** 🚀 **ĐANG TIẾN HÀNH BUILD, KIỂM THỬ TỰ ĐỘNG & MULTI-DEPLOY GITHUB**
 
 ---
 
-## 🎯 1. DANH SÁCH NHIỆM VỤ ĐÃ GIẢI QUYẾT (v0.10.10-45 Build 346)
+## 🎯 1. DANH SÁCH NHIỆM VỤ ĐÃ GIẢI QUYẾT (v0.10.10-46 Build 347)
 
-- [x] **Sửa Lỗi Render Thẻ Huy Hiệu Vàng & Kim Cương Nổi Bật (`src/styles/app.css` - Issue 11)**:
-  - Khắc phục triệt để lỗi thẻ huy hiệu Vàng và Kim Cương hiển thị nền xanh trơn che mất icon và làm mờ chữ khi ở trạng thái tĩnh (idle).
-  - Tái cấu trúc lớp giao diện (stacking context): Trạng thái tĩnh sử dụng màu nền gradient nhẹ trực tiếp không cần lớp phủ `::after`. Hoạt họa quét sáng xoay tròn `::before` và lớp che `::after` chỉ kích hoạt khi rê chuột (`:hover`). Toàn bộ icon, tiêu đề và chi tiết thẻ được gán `position: relative; z-index: 2;` bảo đảm luôn sắc nét 100%.
-- [x] **Gỡ Bỏ Giới Hạn Cắt Khung Cũ 58px Trên Hồ Sơ /me (`src/styles/app.css` - Issue 12)**:
-  - Xóa bỏ hoàn toàn định kiểu di sản `width: 58px; height: 58px; overflow: hidden;` trên `#profile-avatar`, nâng cấp thành container `96px` không viền cứng, không che cắt (`overflow: visible; background: transparent; border: none; box-shadow: none;`).
-  - Đảm bảo tất cả khung viền nghệ thuật, chi tiết vương miện 12h và dải ruy băng 6h hiển thị lộng lẫy và hoàn chỉnh trên trang cá nhân.
-- [x] **Mở Rộng Hệ Thống Khung VIP Thành 3 Cấp Bậc (`src/scripts/modules/13-wardrobe.js`, `src/styles/app.css` - Issue 13)**:
-  - **Khung VIP Khởi Nguyên (VIP Monthly)**: Vành hoàng kim thanh lịch, vương miện mini tinh xảo đính ngọc hồng lựu ở 12h, dải ruy băng `VIP MONTHLY` ở 6h.
-  - **Khung VIP Thịnh Vượng (VIP Yearly)**: Vành kép hoàng kim, đôi cánh hoàng gia vươn cao ở 10h & 2h, đính ngọc ruby lấp lánh ở 4h & 8h, dải ruy băng `VIP YEARLY` ở 6h.
-  - **Khung VIP Hoàng Triều (VIP Lifetime)**: Vương miện 3D nảy nhẹ, dải hào quang pastel hồng hoàng kim chuyển động êm dịu, dải ruy băng `VIP LIFETIME` ở 6h.
-  - Cơ chế mở khóa phân tầng: Hội viên Lifetime mở khóa toàn bộ 3 khung; Hội viên Yearly mở khóa Yearly + Monthly; Hội viên Monthly mở khóa Monthly.
-- [x] **Chuẩn Hóa Vật Lý Hoạt Họa Chuông Giáng Sinh (`src/styles/app.css` - Issue 14)**:
-  - Sửa tâm xoay của hoạt họa chuông Giáng Sinh xoay quanh đúng điểm buộc nơ ở đỉnh chuông thay vì góc trên canvas (`transform-box: fill-box; transform-origin: 50% 10%;`).
-  - Tinh chỉnh góc lắc nhẹ nhàng từ `-4deg` đến `4deg` tạo chuyển động đung đưa tự nhiên như quả chuông thật.
-- [x] **Triệt Tiêu Che Khuất Khuôn Mặt Avatar (`src/scripts/modules/13-wardrobe.js` - Issue 15)**:
-  - Áp dụng tỷ lệ đường kính ảnh đại diện bên trong linh hoạt theo từng loại khung: `0.55` cho Rồng Thần Thoại Mythic (Lv.50), `0.63` cho các khung VIP (Lifetime, Yearly, Monthly), `0.65` cho các khung Thú Cưng & Sự Kiện, `0.70` cho các khung Cấp bậc (Đồng, Bạc, Vàng, Kim Cương), và `0.72` cho Mặc định.
-  - Mở rộng đường kính vành tròn trong của Rồng Thần Thoại (`r = 185`, `r = 192`) tạo khoảng đệm an toàn hơn 20px giúp khuôn mặt avatar hiển thị trọn vẹn 100% không bị che khuất bởi đầu rồng hay luồng lửa.
-- [x] **Đồng Bộ Toàn Diện 7-Point Version Consistency (`v0.10.10-45 Build 346`)**:
+- [x] **Sửa Lỗi Tách Rời Khối Pha Lê Khung Kim Cương Khi Rê Chuột (`src/styles/app.css`, `src/scripts/modules/13-wardrobe.js` - Issue 16 / Ảnh 133753.png)**:
+  - Khắc phục triệt để lỗi khi hover vào Khung Kim Cương, viên pha lê góc trên bên phải bị bay lệch lên góc trên cùng bên trái.
+  - Tách nhóm tọa độ SVG và nhóm hoạt họa CSS bằng cách bọc đa giác pha lê vào thẻ `<g class="diamond-star-glint">` bên trong, cấu hình `transform-box: fill-box; transform-origin: center center;` để co giãn tại tâm viên ngọc.
+- [x] **Tách Biệt Emoji Khỏi Gradient Hiệu Ứng Tên (`src/styles/app.css`, `src/scripts/modules/13-wardrobe.js` - Issue 17 / Ảnh 133927.png)**:
+  - Tách tất cả emoji (🎉, 🎂, ❄️, 🔔, 🎃, 🦇, ⭐, 🇻🇳, 🧧, 🌸, 🐰, 🥚, 🐾, 🦴) ra ngoài thẻ `<strong>` và bọc trong `<span class="vf-name-icon">` với `-webkit-text-fill-color: initial; color: initial;`, bảo toàn trọn vẹn màu sắc biểu cảm gốc và chống nhòe gradient.
+- [x] **Chuẩn Hóa Hiệu Ứng Tên Mặc Định Trắng Sáng (`src/scripts/modules/13-wardrobe.js` - Issue 18 / Ảnh 134034.png)**:
+  - Loại bỏ việc tự động ép hiệu ứng gradient vàng của VIP khi người dùng đã chọn phong cách "Mặc định". Trả về định dạng văn bản màu tiêu chuẩn (`color: var(--text)`).
+- [x] **Đồng Bộ Khung Viền & Hiệu Ứng Tên Trong Danh Sách Người Theo Dõi & Đang Theo Dõi (`src/scripts/modules/03-auth.js` - Issue 19 / Ảnh 134132.png)**:
+  - Nâng cấp modal danh sách người theo dõi (`modal-subscribers-list` / `openSubscribersListModal`), render avatar bằng `renderAvatarWithFrameHtml()` và username bằng `renderUsernameWithEffectHtml()` theo đúng tủ đồ của từng tác giả.
+- [x] **Đồng Bộ Toàn Diện Tủ Đồ & Lưu Trữ Đám Mây Đa Thiết Bị (`src/scripts/modules/03-auth.js` - Issue 20)**:
+  - Đồng bộ hóa bài viết Cộng đồng (`community-post-card`), bình luận (`renderSingleCommentHtml`), hồ sơ công khai (`openPublicProfileModal`), và trang cá nhân.
+  - Bổ sung cơ chế Two-Way Sync cho `equippedWardrobe` và `unlockedWardrobeItems` trong `mergeCloudDataIntoLocal`, khôi phục tự động khi đăng nhập và dọn dẹp sạch sẽ khi đăng xuất.
+- [x] **Đồng Bộ Toàn Diện 7-Point Version Consistency (`v0.10.10-46 Build 347`)**:
   - Cập nhật phiên bản nhất quán trên toàn bộ 7 điểm hệ thống: `modal-settings.html`, `02-state-core.js`, toàn bộ module headers `01-router.js` đến `13-wardrobe.js`, `sw.js` & `Release_App/sw.js`, `pubspec.yaml`, `Program.cs`, `push_github.ps1`, `VOCAFLOW_OVERVIEW.txt`, `GITHUB_RELEASE/VOCAFLOW_OVERVIEW.txt`.
 
 ---

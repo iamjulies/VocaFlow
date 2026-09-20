@@ -1,7 +1,7 @@
 // =========================================================================
-// VOCAFLOW PWA CACHE & OFFLINE ENGINE (v0.10.10-45)
+// VOCAFLOW PWA CACHE & OFFLINE ENGINE (v0.10.10-46)
 // =========================================================================
-const CACHE_NAME = 'vocaflow-pwa-v0.10.10-45';
+const CACHE_NAME = 'vocaflow-pwa-v0.10.10-46';
 const ASSETS = [
   './',
   './index.html',

@@ -1,0 +1,3 @@
+v0.10.10-47
+- vấn đề 21: lỗi hover của khung vip tháng và vip năm. với cả 
+- vấn đề 22: "C:\Users\DELL\Pictures\Screenshots\Ảnh chụp màn hình 2026-09-20 141655.png", xóa hiệu ứng ánh sáng xanh đằng sau của badge kim cương, sửa lỗi hover badge vàng

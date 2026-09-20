@@ -1,4 +1,24 @@
 ================================================================================
+Phiên bản: v0.10.10-46 (Build 347) - Sửa Lỗi Tách Rời Khối Pha Lê Khung Kim Cương Khi Rê Chuột, Tách Biệt Emoji Khỏi Gradient Hiệu Ứng Tên, Chuẩn Hóa Hiệu Ứng Tên Mặc Định Trắng Sáng & Đồng Bộ Toàn Diện Tủ Đồ Trên Toàn Ứng Dụng (Diamond Frame Hover Crystal Displacement Fix, Emoji Separation from Text Gradient, Default Plain Text Name Restoration, Universal Subscribers List & Community Wardrobe Sync)
+================================================================================
+1. [Sửa Lỗi Tách Rời Khối Pha Lê Khung Kim Cương Khi Rê Chuột (Diamond Frame Hover Crystal Displacement Fix - Issue 16)]:
+   - Khắc phục triệt để lỗi khi rê chuột vào Khung Kim Cương, viên pha lê góc trên bên phải bị bay lệch lên góc trên cùng bên trái của SVG.
+   - Nguyên nhân gốc rễ: Class `.diamond-star-glint` đặt trực tiếp trên thẻ `<g transform="translate(425, 145) rotate(22)">`, khi CSS animation kích hoạt thuộc tính `transform: scale()`, CSS đã ghi đè toàn bộ thuộc tính transform của SVG và làm mất tọa độ tịnh tiến.
+   - Giải pháp chuẩn: Tách riêng nhóm tọa độ SVG và nhóm hoạt họa CSS bằng cách bọc đa giác pha lê vào thẻ `<g class="diamond-star-glint">` bên trong, đồng thời cấu hình `transform-box: fill-box; transform-origin: center center;` để điểm neo co giãn luôn nằm chính xác ở tâm viên ngọc.
+2. [Tách Biệt Emoji Khỏi Gradient Hiệu Ứng Tên (Emoji Separation from Text Gradient - Issue 17)]:
+   - Khắc phục lỗi emoji trang trí trong các hiệu ứng tên Bé Mèo, Bé Cún và Sự Kiện (🎉, 🎂, ❄️, 🔔, 🎃, 🦇, ⭐, 🇻🇳, 🧧, 🌸, 🐰, 🥚, 🐾, 🦴) bị tô màu gradient và mờ/biến dạng do dính `-webkit-background-clip: text`.
+   - Đưa tất cả emoji ra ngoài thẻ `<strong>` và bọc trong `<span class="vf-name-icon">` với `-webkit-text-fill-color: initial; color: initial;`, giữ nguyên màu sắc biểu cảm gốc và độ sắc nét 100%.
+3. [Chuẩn Hóa Hiệu Ứng Tên Mặc Định (Default Plain Text Name Restoration - Issue 18)]:
+   - Khắc phục lỗi hội viên VIP khi chọn phong cách tên "Mặc định" bị ép hiển thị hiệu ứng gradient vàng lấp lánh của VIP.
+   - Khi chọn phong cách `default`, hệ thống hiển thị chữ trắng chuẩn (`color: var(--text)`), tôn trọng tuyệt đối lựa chọn thẩm mỹ tối giản của người dùng.
+4. [Đồng Bộ Khung Viền & Hiệu Ứng Tên Trong Danh Sách Người Theo Dõi & Đang Theo Dõi (Subscribers List Wardrobe Sync - Issue 19)]:
+   - Nâng cấp modal danh sách người theo dõi và đang theo dõi (`modal-subscribers-list` / `openSubscribersListModal`), thay thế avatar hình tròn tĩnh và tên đơn sắc bằng hàm `renderAvatarWithFrameHtml()` và `renderUsernameWithEffectHtml()`.
+   - Hiển thị chính xác khung viền và hiệu ứng tên mà từng tác giả/bạn bè đã trang bị trong Tủ Đồ.
+5. [Đồng Bộ Toàn Diện Tủ Đồ & Lưu Trữ Đám Mây Đa Thiết Bị (Universal Wardrobe Audit & Cloud Sync - Issue 20)]:
+   - Đồng bộ hóa khung viền và hiệu ứng tên tác giả trên toàn bộ bài viết Cộng đồng (`community-post-card`), bình luận (`renderSingleCommentHtml`), hồ sơ công khai (`openPublicProfileModal`), và trang cá nhân.
+   - Bổ sung cơ chế đồng bộ 2 chiều (Two-Way Sync) cho `equippedWardrobe` và `unlockedWardrobeItems` trong `mergeCloudDataIntoLocal`, khôi phục tự động khi đăng nhập và dọn dẹp sạch sẽ khi đăng xuất an toàn.
+
+================================================================================
 Phiên bản: v0.10.10-45 (Build 346) - Sửa Lỗi Hiển Thị Thẻ Huy Hiệu Vàng & Kim Cương Nổi Bật, Bỏ Giới Hạn Cắt 58px Trên Hồ Sơ /me, Mở Rộng 3 Cấp Độ Khung VIP, Chuẩn Hóa Vật Lý Hoạt Họa Chuông Giáng Sinh & Triệt Tiêu Che Khuất Khuôn Mặt Avatar (Pinned Badges Stacking Context Fix, Unclipped /me Avatar Container, 3-Tier VIP Frame Hierarchy, Accurate Christmas Bell Swing Physics, Frame-Specific Inner Ratios & Zero Face Occlusion)
 ================================================================================
 1. [Sửa Lỗi Render Thẻ Huy Hiệu Vàng & Kim Cương Nổi Bật (Pinned Badges Stacking Context Fix - Issue 11)]:

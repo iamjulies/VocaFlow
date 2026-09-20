@@ -1,5 +1,5 @@
 // =========================================================================
-// VOCAFLOW 03-AUTH.JS (v0.10.10-45 Build 346)
+// VOCAFLOW 03-AUTH.JS (v0.10.10-46 Build 347)
 // Authentication, Cloud Sync, Community, Profiles & Social Network
 // =========================================================================
 
@@ -3392,6 +3392,7 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
         let name = 'Tác giả VocaFlow';
         let handle = 'user_' + uid.slice(0, 6);
         let avatar = name;
+        let equippedWardrobe = null;
 
         // Try live registry first
         const liveEntry = (typeof getLiveUserRegistryEntry === 'function') ? getLiveUserRegistryEntry(uid) : null;
@@ -3399,29 +3400,41 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
           if (liveEntry.displayName) name = liveEntry.displayName;
           if (liveEntry.username) handle = liveEntry.username;
           if (liveEntry.avatar) avatar = liveEntry.avatar;
+          if (liveEntry.equippedWardrobe) equippedWardrobe = liveEntry.equippedWardrobe;
+        }
+
+        // Try current user if self
+        if (currentUser && uid === currentUser.uid) {
+          if (currentUser.displayName) name = currentUser.displayName;
+          if (currentUser.username) handle = currentUser.username;
+          if (typeof getUserAvatar === 'function') avatar = getUserAvatar();
+          else if (currentUser.avatar) avatar = currentUser.avatar;
+          if (typeof getEquippedWardrobe === 'function') equippedWardrobe = getEquippedWardrobe();
+          else if (currentUser.equippedWardrobe) equippedWardrobe = currentUser.equippedWardrobe;
         }
 
         // Try local matching from library decks fallback
         const foundDeck = allDecks.find(d => d.authorUid === uid);
         if (foundDeck) {
-          if (!liveEntry?.displayName) name = foundDeck.author || name;
-          if (!liveEntry?.username && foundDeck.authorUsername) handle = foundDeck.authorUsername;
-          if (!liveEntry?.avatar) avatar = foundDeck.authorAvatar || name;
+          if (!liveEntry?.displayName && !currentUser) name = foundDeck.author || name;
+          if (!liveEntry?.username && !currentUser && foundDeck.authorUsername) handle = foundDeck.authorUsername;
+          if (!liveEntry?.avatar && !currentUser) avatar = foundDeck.authorAvatar || name;
         }
 
         let isVip = isAuthorVipUser(uid, name);
         let vipTier = getAuthorVipTier(uid, name);
 
         // Fetch real-time profile if not fully resolved
-        if (!liveEntry || !liveEntry.displayName || !liveEntry.avatar) {
+        if (!liveEntry || !liveEntry.displayName || !liveEntry.avatar || !equippedWardrobe) {
           try {
             const res = await fetch(`${rtdbUrl}/users/${uid}/profile.json`);
             if (res.ok) {
               const p = await res.json();
               if (p && typeof p === 'object') {
-                if (p.displayName) name = p.displayName;
+                if (p.displayName && (!liveEntry || !liveEntry.displayName)) name = p.displayName;
                 if (p.username && p.username.trim().length >= 3) handle = p.username.trim();
-                if (p.avatar) avatar = p.avatar;
+                if (p.avatar && (!liveEntry || !liveEntry.avatar)) avatar = p.avatar;
+                if (p.equippedWardrobe && !equippedWardrobe) equippedWardrobe = p.equippedWardrobe;
                 if (p.isVip === true) {
                   isVip = true;
                   vipTier = p.vipTier || vipTier || 'lifetime';
@@ -3433,21 +3446,32 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
 
         if (isAuthorVipUser(uid, name)) isVip = true;
 
-        return { uid, name, handle, avatar, isVip, vipTier };
+        return { uid, name, handle, avatar, isVip, vipTier, equippedWardrobe };
       }));
 
       let html = '';
       userItems.forEach(u => {
         const isFollowed = !!myFollowingMap[u.uid];
+        const frameId = u.equippedWardrobe?.frame || (u.isVip ? (u.vipTier === 'monthly' ? 'vip_monthly' : (u.vipTier === 'yearly' ? 'vip_yearly' : 'vip')) : 'default');
+        const nameEffectId = u.equippedWardrobe?.nameEffect || (u.isVip ? 'vip' : 'default');
+
+        const avatarHtml = (typeof renderAvatarWithFrameHtml === 'function')
+          ? renderAvatarWithFrameHtml(u.avatar, 38, frameId)
+          : `<div style="width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center;">${renderAvatarHtml(u.avatar, 38, 16)}</div>`;
+
+        const nameHtml = (typeof renderUsernameWithEffectHtml === 'function')
+          ? renderUsernameWithEffectHtml(u.name, nameEffectId)
+          : (u.isVip ? `<span class="vip-name-wrapper"><span class="vip-crown-icon" style="font-size: 12px; margin-right: 4px;">👑</span><span class="vip-glowing-name">${escapeHtml(u.name)}</span></span>` : `<span>${escapeHtml(u.name)}</span>`);
+
         html += `
           <div style="background: var(--surface-elevated); border: 1px solid var(--border); border-radius: 10px; padding: 10px 12px; display: flex; justify-content: space-between; align-items: center; gap: 10px;">
             <div style="display: flex; align-items: center; gap: 10px; min-width: 0; flex: 1; cursor: pointer;" onclick="closeModal('modal-subscribers-list'); openPublicProfileModal('${escapeHtml(u.name)}', '${u.uid}')">
-              <div style="width: 38px; height: 38px; min-width: 38px; min-height: 38px; border-radius: 50%; background: linear-gradient(135deg, #a855f7, #6366f1); display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 800; color: white; overflow: hidden; ${u.isVip ? 'box-shadow: 0 0 0 2px #fbbf24, 0 0 10px rgba(251,191,36,0.6);' : ''}">
-                ${renderAvatarHtml(u.avatar, 38, 16)}
+              <div style="flex-shrink: 0; display: flex; align-items: center; justify-content: center;">
+                ${avatarHtml}
               </div>
               <div style="min-width: 0; flex: 1;">
                 <div style="font-weight: 700; font-size: 13px; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: flex; align-items: center; gap: 4px;">
-                  ${u.isVip ? `<span class="vip-name-wrapper"><span class="vip-crown-icon" style="font-size: 12px; margin-right: 4px;">👑</span><span class="vip-glowing-name">${escapeHtml(u.name)}</span></span>` : `<span>${escapeHtml(u.name)}</span>`}
+                  ${nameHtml}
                 </div>
                 <div style="font-size: 11px; color: #38bdf8; font-family: monospace;">@${escapeHtml(u.handle.replace(/^@/, ''))}</div>
               </div>
@@ -5616,17 +5640,22 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
             nameEl.innerHTML = `<span class="vip-name-wrapper" style="gap: 6px;"><span class="vip-glowing-name" style="font-size: 1.15em; background: linear-gradient(135deg, #f59e0b, #ec4899, #8b5cf6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 800;">VocaFlow Chuẩn</span><span style="font-size: 1.25em;" title="Đội ngũ sáng lập & phát triển VocaFlow">👑</span></span>`;
           } else if (isIamJulies) {
             nameEl.innerHTML = `<span class="vip-name-wrapper" style="gap: 6px;"><span class="vip-glowing-name" style="font-size: 1.15em; background: linear-gradient(135deg, #f59e0b, #ec4899, #8b5cf6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 800;">${escapeHtml(cleanResolvedName)}</span><span style="font-size: 1.25em;" title="Nhà Sáng Lập & Phát Triển VocaFlow">👑</span></span>`;
-          } else if (isAuthorVip) {
-            nameEl.innerHTML = `<span class="vip-name-wrapper" style="gap: 5px;"><span class="vip-glowing-name" style="font-size: 1.15em;">${escapeHtml(cleanResolvedName)}</span><span class="vip-crown-icon" style="font-size: 1.3em;" title="Tác giả VIP (${authorVipTier.toUpperCase()})">👑</span></span>`;
           } else if (targetWardrobe && targetWardrobe.nameEffect && targetWardrobe.nameEffect !== 'default' && typeof renderUsernameWithEffectHtml === 'function') {
             nameEl.innerHTML = renderUsernameWithEffectHtml(cleanResolvedName, targetWardrobe.nameEffect);
+          } else if (isAuthorVip) {
+            nameEl.innerHTML = (typeof renderUsernameWithEffectHtml === 'function')
+              ? renderUsernameWithEffectHtml(cleanResolvedName, 'vip')
+              : `<span class="vip-name-wrapper" style="gap: 5px;"><span class="vip-glowing-name" style="font-size: 1.15em;">${escapeHtml(cleanResolvedName)}</span><span class="vip-crown-icon" style="font-size: 1.3em;" title="Tác giả VIP (${authorVipTier.toUpperCase()})">👑</span></span>`;
+          } else if (typeof renderUsernameWithEffectHtml === 'function') {
+            nameEl.innerHTML = renderUsernameWithEffectHtml(cleanResolvedName, targetWardrobe?.nameEffect || 'default');
           } else {
             nameEl.textContent = cleanResolvedName;
           }
         }
         if (avEl) {
-          if (targetWardrobe && targetWardrobe.frame && targetWardrobe.frame !== 'default' && typeof renderAvatarWithFrameHtml === 'function') {
-            avEl.innerHTML = renderAvatarWithFrameHtml(resolvedAvatar, 96, targetWardrobe.frame, 'hoverable');
+          const pubFrameId = targetWardrobe?.frame || (isAuthorVip ? (authorVipTier === 'monthly' ? 'vip_monthly' : (authorVipTier === 'yearly' ? 'vip_yearly' : 'vip')) : 'default');
+          if (pubFrameId && pubFrameId !== 'default' && typeof renderAvatarWithFrameHtml === 'function') {
+            avEl.innerHTML = renderAvatarWithFrameHtml(resolvedAvatar, 96, pubFrameId, 'hoverable');
             avEl.style.boxShadow = 'none';
             avEl.style.borderColor = 'transparent';
           } else {
@@ -8186,14 +8215,24 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
         const isDeleted = !!c.isDeleted;
         const replyAuthorHandleClean = (c.replyToAuthorHandle || '').replace(/^@/, '');
 
+        let commentAuthorWardrobe = c.equippedWardrobe || (typeof getLiveUserRegistryEntry === 'function' ? getLiveUserRegistryEntry(c.authorUid)?.equippedWardrobe : null);
+        if (!commentAuthorWardrobe && currentUser && c.authorUid === currentUser.uid) {
+          commentAuthorWardrobe = (typeof getEquippedWardrobe === 'function') ? getEquippedWardrobe() : currentUser.equippedWardrobe;
+        }
+        const cIsVip = isAuthorVipUser(c.authorUid, cAuthorName);
+        const cFrameId = commentAuthorWardrobe?.frame || (cIsVip ? 'vip' : 'default');
+        const cAvatarHtml = (typeof renderAvatarWithFrameHtml === 'function')
+          ? renderAvatarWithFrameHtml(cAuthorAvatar, 22, cFrameId)
+          : `<div style="width: 20px; height: 20px; border-radius: 50%; overflow: hidden; display: flex; align-items: center; justify-content: center; background: var(--surface-elevated); font-size: 11px;">${renderAvatarHtml(cAuthorAvatar, 20, 10)}</div>`;
+
         return `
           <div class="community-comment-item ${isReply ? 'community-comment-reply' : ''}" id="comment-item-${c.id}" style="${isReply ? 'margin-left: 26px; border-left: 2px solid rgba(99,102,241,0.3); padding-left: 10px; margin-top: 6px;' : 'margin-bottom: 8px;'}">
             <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 8px 10px; font-size: 12.5px; position: relative;">
               <!-- COMMENT HEADER -->
               <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 3px;">
                 <div style="display: flex; align-items: center; gap: 6px; cursor: pointer;" onclick="openPublicProfileByAuthor('${escapeHtml(cAuthorName)}', '${c.authorUid || ''}', '${escapeHtml(cAuthorHandle)}')">
-                  <div style="width: 20px; height: 20px; border-radius: 50%; overflow: hidden; display: flex; align-items: center; justify-content: center; background: var(--surface-elevated); font-size: 11px;">
-                    ${renderAvatarHtml(cAuthorAvatar, 20, 10)}
+                  <div style="flex-shrink: 0; display: flex; align-items: center; justify-content: center;">
+                    ${cAvatarHtml}
                   </div>
                   <strong style="color: #38bdf8; font-size: 12px;">@${escapeHtml(cAuthorHandle.replace(/^@/, ''))}</strong>
                   <span style="font-size: 10px; color: var(--text-muted); cursor: help; text-decoration: underline dotted; text-underline-offset: 2px;" title="${escapeHtml(formatFullExactDateTime(commentDate))}">${formatTimeAgo(commentDate)}</span>
@@ -8234,17 +8273,32 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
         `;
       };
 
+      let postAuthorWardrobe = post.equippedWardrobe || (typeof getLiveUserRegistryEntry === 'function' ? getLiveUserRegistryEntry(post.authorUid)?.equippedWardrobe : null);
+      if (!postAuthorWardrobe && currentUser && post.authorUid === currentUser.uid) {
+        postAuthorWardrobe = (typeof getEquippedWardrobe === 'function') ? getEquippedWardrobe() : currentUser.equippedWardrobe;
+      }
+      const postFrameId = postAuthorWardrobe?.frame || (isVip ? (post.authorVipTier === 'monthly' ? 'vip_monthly' : (post.authorVipTier === 'yearly' ? 'vip_yearly' : 'vip')) : 'default');
+      const postNameEffectId = postAuthorWardrobe?.nameEffect || (isVip ? 'vip' : 'default');
+
+      const postAvatarHtml = (typeof renderAvatarWithFrameHtml === 'function')
+        ? renderAvatarWithFrameHtml(authorAvatar, 40, postFrameId)
+        : `<div style="width: 40px; height: 40px; border-radius: 50%; overflow: hidden; background: var(--surface); display: flex; align-items: center; justify-content: center; flex-shrink: 0; box-shadow: 0 2px 8px rgba(0,0,0,0.15);">${renderAvatarHtml(authorAvatar, 40, 16)}</div>`;
+
+      const postNameHtml = (typeof renderUsernameWithEffectHtml === 'function')
+        ? renderUsernameWithEffectHtml(authorName, postNameEffectId)
+        : `<strong style="font-size: 13.5px; color: var(--text);">${escapeHtml(authorName)}</strong>`;
+
       return `
         <div class="community-post-card" id="${idPrefix}post-card-${post.id}" style="background: var(--surface-elevated); border: 1px solid var(--border); border-radius: 14px; padding: 14px; box-shadow: 0 4px 14px rgba(0,0,0,0.06); margin-bottom: 12px;">
           <!-- AUTHOR HEADER -->
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
             <div style="display: flex; align-items: center; gap: 10px; cursor: pointer;" onclick="openPublicProfileByAuthor('${escapeHtml(authorName)}', '${post.authorUid}')">
-              <div style="width: 40px; height: 40px; border-radius: 50%; overflow: hidden; background: var(--surface); display: flex; align-items: center; justify-content: center; flex-shrink: 0; box-shadow: 0 2px 8px rgba(0,0,0,0.15);">
-                ${renderAvatarHtml(authorAvatar, 40, 16)}
+              <div style="flex-shrink: 0; display: flex; align-items: center; justify-content: center;">
+                ${postAvatarHtml}
               </div>
               <div>
                 <div style="display: flex; align-items: center; gap: 6px;">
-                  <strong style="font-size: 13.5px; color: var(--text);">${escapeHtml(authorName)}</strong>
+                  ${postNameHtml}
                   ${isVip ? '<span class="badge" style="background: linear-gradient(135deg, #f59e0b, #d97706); color: #fff; font-size: 9.5px; padding: 1px 5px;">👑 VIP</span>' : ''}
                 </div>
                 <div style="font-size: 11.5px; color: var(--text-muted); display: flex; align-items: center; gap: 6px;">
@@ -9536,6 +9590,11 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
       if (typeof renderAiChatMessages === 'function') renderAiChatMessages();
       if (typeof updateAiChatQuotaUI === 'function') updateAiChatQuotaUI();
 
+      // Wardrobe & Aesthetics complete wipeout (v0.10.10-46)
+      localStorage.removeItem('vocaflow_equipped_wardrobe');
+      localStorage.removeItem('vocaflow_unlocked_wardrobe_items');
+      if (typeof applyWardrobeToActiveUI === 'function') applyWardrobeToActiveUI();
+
       // 2. Reset decks & words to clean starter sample data (Trạng thái nguyên thủy)
       seedSampleData();
       saveDatabase(false);
@@ -9623,6 +9682,15 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
                     const rTier = prof.vipTier || uData.vipTier || 'none';
                     const rExp = prof.vipExpiresAt || uData.vipExpiresAt || 0;
                     applyVipState(rIsVip, rTier, rExp, 'auth_login', false);
+                  }
+                  // Restore Wardrobe on login (v0.10.10-46)
+                  if (prof.equippedWardrobe || uData.equippedWardrobe) {
+                    const eq = prof.equippedWardrobe || uData.equippedWardrobe;
+                    localStorage.setItem('vocaflow_equipped_wardrobe', JSON.stringify(eq));
+                  }
+                  if (prof.unlockedWardrobeItems || uData.unlockedWardrobeItems) {
+                    const un = prof.unlockedWardrobeItems || uData.unlockedWardrobeItems;
+                    localStorage.setItem('vocaflow_unlocked_wardrobe_items', JSON.stringify(un));
                   }
                 }
               }
@@ -11110,6 +11178,41 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
         } catch (errStudyTimeMerge) {
           console.warn('Daily study time cloud merge error:', errStudyTimeMerge);
         }
+      }
+
+      // 17. Wardrobe & Aesthetics Two-Way Sync (v0.10.10-46)
+      const remoteEquipped = (cloudData.profile && cloudData.profile.equippedWardrobe) || cloudData.equippedWardrobe;
+      if (remoteEquipped && typeof remoteEquipped === 'object') {
+        const localEquippedRaw = localStorage.getItem('vocaflow_equipped_wardrobe');
+        let localEquipped = null;
+        try { if (localEquippedRaw) localEquipped = JSON.parse(localEquippedRaw); } catch (e) {}
+        
+        const finalEquipped = {
+          frame: remoteEquipped.frame || localEquipped?.frame || 'default',
+          nameEffect: remoteEquipped.nameEffect || localEquipped?.nameEffect || 'default',
+          title: remoteEquipped.title || localEquipped?.title || 'default',
+          updatedAt: remoteEquipped.updatedAt || localEquipped?.updatedAt || new Date().toISOString()
+        };
+        localStorage.setItem('vocaflow_equipped_wardrobe', JSON.stringify(finalEquipped));
+        if (currentUser) currentUser.equippedWardrobe = finalEquipped;
+      }
+
+      const remoteUnlocked = (cloudData.profile && cloudData.profile.unlockedWardrobeItems) || cloudData.unlockedWardrobeItems;
+      if (remoteUnlocked && typeof remoteUnlocked === 'object') {
+        const localUnlockedRaw = localStorage.getItem('vocaflow_unlocked_wardrobe_items');
+        let localUnlocked = { frames: ['default'], nameEffects: ['default'], titles: ['default'] };
+        try { if (localUnlockedRaw) localUnlocked = JSON.parse(localUnlockedRaw); } catch (e) {}
+
+        const mergedUnlocked = {
+          frames: Array.from(new Set(['default', ...(localUnlocked.frames || []), ...(remoteUnlocked.frames || [])])),
+          nameEffects: Array.from(new Set(['default', ...(localUnlocked.nameEffects || []), ...(remoteUnlocked.nameEffects || [])])),
+          titles: Array.from(new Set(['default', ...(localUnlocked.titles || []), ...(remoteUnlocked.titles || [])]))
+        };
+        localStorage.setItem('vocaflow_unlocked_wardrobe_items', JSON.stringify(mergedUnlocked));
+        if (currentUser) currentUser.unlockedWardrobeItems = mergedUnlocked;
+      }
+      if (typeof applyWardrobeToActiveUI === 'function') {
+        applyWardrobeToActiveUI();
       }
 
       saveDatabase(triggerCloudPush);
