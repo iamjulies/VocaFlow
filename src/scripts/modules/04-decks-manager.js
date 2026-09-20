@@ -1,5 +1,5 @@
 // =========================================================================
-// VOCAFLOW 04-DECKS-MANAGER.JS (v0.10.10-44 Build 345)
+// VOCAFLOW 04-DECKS-MANAGER.JS (v0.10.10-45 Build 346)
 // Quản lý VocaDecks, Vocabulary Lists, Import/Export & CRUD Operations
 // =========================================================================
 

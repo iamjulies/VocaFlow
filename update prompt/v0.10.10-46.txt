@@ -1,0 +1,7 @@
+v0.10.10-46
+- vấn đề 16: "C:\Users\DELL\Pictures\Screenshots\Ảnh chụp màn hình 2026-09-20 133753.png" lỗi hover khung viền kim cương
+- vấn đề 17: "C:\Users\DELL\Pictures\Screenshots\Ảnh chụp màn hình 2026-09-20 133927.png" lỗi các emoji cũng đổi màu theo tên -> tách bạch ra hộ nhé
+- vấn đề 18: "C:\Users\DELL\Pictures\Screenshots\Ảnh chụp màn hình 2026-09-20 134034.png" lỗi hiệu ứng tên mặc định, phải là tên màu trắng plain
+- vấn đề 19: "C:\Users\DELL\Pictures\Screenshots\Ảnh chụp màn hình 2026-09-20 134132.png" lỗi chưa đồng bộ các tên (link) [idk how to mention this] chưa đồng bộ với hiệu ứng hiện đang dùng
+- vấn đề 20: yêu cầu rà soát và fix lỗi + đồng bộ hiệu ứng ở mọi nơi
+đọc và thực hiện các file markdown có trong "C:\Users\DELL\Documents\Modding\browser" (nếu quên)

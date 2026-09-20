@@ -1,5 +1,5 @@
 // =========================================================================
-// VOCAFLOW 11-PUBLISHER-STUDIO.JS (v0.10.10-44 Build 345)
+// VOCAFLOW 11-PUBLISHER-STUDIO.JS (v0.10.10-45 Build 346)
 // VocaLib Community Library, VocaStudio publisher portal, deck sharing
 // =========================================================================
 

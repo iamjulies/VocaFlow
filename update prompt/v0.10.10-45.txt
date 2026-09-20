@@ -1,0 +1,7 @@
+v0.10.10-45
+-vấn đề 11: badge thành tựu hạng kim cương và vàng vẫn bị lỗi hiển thị: "C:\Users\DELL\Pictures\Screenshots\Ảnh chụp màn hình 2026-09-20 133233.png", "C:\Users\DELL\Pictures\Screenshots\Ảnh chụp màn hình 2026-09-20 133255.png"
+- vấn đề 12: có vòng và vùng giới hạn cho khung viền avt ở /me -> xóa vòng và giới hạn cũ đi
+- vấn đề 13: "C:\Users\DELL\Pictures\Screenshots\Ảnh chụp màn hình 2026-09-20 133444.png" -> tạo nhiều khung vip hơn, gồm vip monthly, vip yearly và vip lifetime (đã có). tăng dần sự hầm hố từ month -> lifetime
+- vấn đề 14: hiệu ứng lắc của viền giáng sinh vẫn lố quá (tâm lắc kh đúng với tâm hình ấy)
+- vấn đề 15: "C:\Users\DELL\Pictures\Screenshots\Ảnh chụp màn hình 2026-09-20 133715.png" lỗi che lấp mất avt vẫn còn xuất hiện
+đọc và thực hiện các file markdown có trong "C:\Users\DELL\Documents\Modding\browser" (nếu quên)

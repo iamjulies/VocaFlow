@@ -1,4 +1,25 @@
 ================================================================================
+Phiên bản: v0.10.10-45 (Build 346) - Sửa Lỗi Hiển Thị Thẻ Huy Hiệu Vàng & Kim Cương Nổi Bật, Bỏ Giới Hạn Cắt 58px Trên Hồ Sơ /me, Mở Rộng 3 Cấp Độ Khung VIP, Chuẩn Hóa Vật Lý Hoạt Họa Chuông Giáng Sinh & Triệt Tiêu Che Khuất Khuôn Mặt Avatar (Pinned Badges Stacking Context Fix, Unclipped /me Avatar Container, 3-Tier VIP Frame Hierarchy, Accurate Christmas Bell Swing Physics, Frame-Specific Inner Ratios & Zero Face Occlusion)
+================================================================================
+1. [Sửa Lỗi Render Thẻ Huy Hiệu Vàng & Kim Cương Nổi Bật (Pinned Badges Stacking Context Fix - Issue 11)]:
+   - Khắc phục triệt để lỗi thẻ huy hiệu Vàng và Kim Cương hiển thị nền xanh trơn che mất icon và làm mờ chữ khi ở trạng thái tĩnh (idle).
+   - Tái cấu trúc lớp giao diện (stacking context): Trạng thái tĩnh sử dụng màu nền gradient nhẹ trực tiếp không cần lớp phủ `::after`. Hoạt họa quét sáng xoay tròn `::before` và lớp che `::after` chỉ kích hoạt khi rê chuột (`:hover`). Toàn bộ icon, tiêu đề và chi tiết thẻ được gán `position: relative; z-index: 2;` bảo đảm luôn sắc nét 100%.
+2. [Gỡ Bỏ Giới Hạn Cắt Khung Cũ 58px Trên Hồ Sơ /me (Unclipped /me Avatar Container - Issue 12)]:
+   - Xóa bỏ hoàn toàn định kiểu di sản `width: 58px; height: 58px; overflow: hidden;` trên `#profile-avatar`, nâng cấp thành container `96px` không viền cứng, không che cắt (`overflow: visible; background: transparent; border: none; box-shadow: none;`).
+   - Đảm bảo tất cả khung viền nghệ thuật, chi tiết vương miện 12h và dải ruy băng 6h hiển thị lộng lẫy và hoàn chỉnh trên trang cá nhân.
+3. [Mở Rộng Hệ Thống Khung VIP Thành 3 Cấp Bậc (3-Tier VIP Frame Hierarchy - Issue 13)]:
+   - Khung VIP Khởi Nguyên (VIP Monthly): Vành hoàng kim thanh lịch, vương miện mini tinh xảo đính ngọc hồng lựu ở 12h, dải ruy băng `VIP MONTHLY` ở 6h.
+   - Khung VIP Thịnh Vượng (VIP Yearly): Vành kép hoàng kim, đôi cánh hoàng gia vươn cao ở 10h & 2h, đính ngọc ruby lấp lánh ở 4h & 8h, dải ruy băng `VIP YEARLY` ở 6h.
+   - Khung VIP Hoàng Triều (VIP Lifetime): Vương miện 3D nảy nhẹ, dải hào quang pastel hồng hoàng kim chuyển động êm dịu, dải ruy băng `VIP LIFETIME` ở 6h.
+   - Cơ chế mở khóa phân tầng: Hội viên Lifetime mở khóa toàn bộ 3 khung; Hội viên Yearly mở khóa Yearly + Monthly; Hội viên Monthly mở khóa Monthly.
+4. [Chuẩn Hóa Vật Lý Hoạt Họa Chuông Giáng Sinh (Accurate Christmas Bell Swing Physics - Issue 14)]:
+   - Sửa tâm xoay của hoạt họa chuông Giáng Sinh xoay quanh đúng điểm buộc nơ ở đỉnh chuông thay vì góc trên canvas (`transform-box: fill-box; transform-origin: 50% 10%;`).
+   - Tinh chỉnh góc lắc nhẹ nhàng từ `-4deg` đến `4deg` tạo chuyển động đung đưa tự nhiên như quả chuông thật.
+5. [Triệt Tiêu Che Khuất Khuôn Mặt Avatar (Frame-Specific Inner Ratios & Zero Face Occlusion - Issue 15)]:
+   - Áp dụng tỷ lệ đường kính ảnh đại diện bên trong linh hoạt theo từng loại khung: `0.55` cho Rồng Thần Thoại Mythic (Lv.50), `0.63` cho các khung VIP (Lifetime, Yearly, Monthly), `0.65` cho các khung Thú Cưng & Sự Kiện, `0.70` cho các khung Cấp bậc (Đồng, Bạc, Vàng, Kim Cương), và `0.72` cho Mặc định.
+   - Mở rộng đường kính vành tròn trong của Rồng Thần Thoại (`r = 185`, `r = 192`) tạo khoảng đệm an toàn hơn 20px giúp khuôn mặt avatar hiển thị trọn vẹn 100% không bị che khuất bởi đầu rồng hay luồng lửa.
+
+================================================================================
 Phiên bản: v0.10.10-44 (Build 345) - Tối Ưu Hiệu Ứng Huy Hiệu Hồ Sơ Chống Lag, Chuẩn Hóa Khung Viền Vector VIP & Sự Kiện Không Che Avatar, Đồng Bộ Khung /me & Giữ Vật Phẩm Sự Kiện Độc Quyền (Profile Badges Hover-Only Light Sweep, Non-Occluding Vector Frames, VIP & Event Animations, Dynamic /me Frame Sync, Exclusive Event Badging)
 ================================================================================
 1. [Tối Ưu Hiệu Ứng Ánh Sáng Huy Hiệu Ghim Chống Giật Lag (Profile Badges Light Sweep Hover Fix)]:

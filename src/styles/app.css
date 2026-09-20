@@ -1551,18 +1551,19 @@
       display: block !important;
     }
     #profile-avatar {
-      width: 58px;
-      height: 58px;
-      min-width: 58px;
-      min-height: 58px;
-      max-width: 58px;
-      max-height: 58px;
-      border-radius: 50%;
-      overflow: hidden;
+      width: 96px;
+      height: 96px;
+      min-width: 96px;
+      min-height: 96px;
+      border-radius: 0;
+      overflow: visible;
+      background: transparent;
+      border: none;
       display: inline-flex;
       align-items: center;
       justify-content: center;
       flex-shrink: 0;
+      box-shadow: none;
     }
     #profile-avatar img {
       width: 100% !important;
@@ -1758,18 +1759,19 @@
       align-items: center;
       box-sizing: border-box;
       cursor: pointer;
-      transition: transform 0.15s, box-shadow 0.2s, border-color 0.2s;
+      transition: transform 0.15s, box-shadow 0.2s, border-color 0.2s, background 0.2s;
       min-width: 0;
       width: 100%;
       border: 1.5px solid rgba(255, 255, 255, 0.12);
       min-height: 58px;
+      background: var(--surface-card, #1e293b);
     }
-    .pinned-badge-card.tier-bronze { border-color: rgba(205, 127, 50, 0.6); }
-    .pinned-badge-card.tier-silver { border-color: rgba(203, 213, 225, 0.6); }
-    .pinned-badge-card.tier-gold { border-color: rgba(255, 215, 0, 0.65); }
-    .pinned-badge-card.tier-diamond { border-color: rgba(0, 210, 255, 0.65); }
-    .pinned-badge-card.tier-mythic { border-color: rgba(236, 72, 153, 0.65); }
-    .pinned-badge-card.tier-vip { border-color: rgba(245, 158, 11, 0.8); }
+    .pinned-badge-card.tier-bronze { border-color: rgba(205, 127, 50, 0.6); background: rgba(205, 127, 50, 0.08); }
+    .pinned-badge-card.tier-silver { border-color: rgba(203, 213, 225, 0.6); background: rgba(203, 213, 225, 0.08); }
+    .pinned-badge-card.tier-gold { border-color: rgba(255, 215, 0, 0.65); background: rgba(245, 158, 11, 0.08); }
+    .pinned-badge-card.tier-diamond { border-color: rgba(56, 189, 248, 0.65); background: rgba(56, 189, 248, 0.08); }
+    .pinned-badge-card.tier-mythic { border-color: rgba(236, 72, 153, 0.65); background: rgba(236, 72, 153, 0.08); }
+    .pinned-badge-card.tier-vip { border-color: rgba(245, 158, 11, 0.8); background: rgba(245, 158, 11, 0.08); }
 
     .pinned-badge-card:hover {
       transform: translateY(-2px);
@@ -1794,7 +1796,7 @@
       background: conic-gradient(transparent, #ffd700, #ff8c00, transparent 40%);
     }
     .pinned-badge-card.tier-diamond:hover::before {
-      background: conic-gradient(transparent, #00d2ff, #0066ff, transparent 40%);
+      background: conic-gradient(transparent, #38bdf8, #00f2fe, transparent 40%);
     }
     .pinned-badge-card.tier-mythic:hover::before {
       background: conic-gradient(transparent, #f472b6, #ec4899, #f59e0b, transparent 45%);
@@ -1803,16 +1805,17 @@
       background: conic-gradient(transparent, #fef08a, #eab308, #f59e0b, transparent 45%);
     }
 
-    .pinned-badge-card::after {
+    .pinned-badge-card:hover::after {
       content: '';
       position: absolute;
       inset: 2px;
-      background: var(--surface-elevated, #17202a);
+      background: var(--surface-card, #1e293b);
       border-radius: 8px;
       z-index: 1;
     }
 
-    .pinned-badge-card .pinned-badge-content {
+    .pinned-badge-card .pinned-badge-content,
+    .pinned-badge-card > * {
       position: relative;
       z-index: 2;
       width: 100%;
@@ -5534,17 +5537,20 @@
       transform-origin: 50% 22%;
       animation: santaHatTilt 0.7s ease-in-out infinite alternate;
     }
-    .vf-avatar-frame-box:hover .xmas-bell {
-      transform-origin: 50% 84%;
-      animation: bellJingle 0.6s ease-in-out infinite alternate;
+    .vf-avatar-frame-box:hover .xmas-bell,
+    .vf-avatar-frame-box.hoverable:hover .xmas-bell {
+      transform-box: fill-box;
+      transform-origin: 50% 10%;
+      animation: bellJingle 2.4s ease-in-out infinite;
     }
     @keyframes santaHatTilt {
       0% { transform: rotate(-4deg); }
       100% { transform: rotate(5deg); }
     }
     @keyframes bellJingle {
-      0% { transform: rotate(-5deg); }
-      100% { transform: rotate(5deg); }
+      0%, 100% { transform: rotate(0deg); }
+      25% { transform: rotate(-4deg); }
+      75% { transform: rotate(4deg); }
     }
 
     .vf-avatar-frame-box:hover .spooky-pumpkin {
@@ -5819,13 +5825,39 @@
       100% { transform: scale(1.2); opacity: 1; filter: drop-shadow(0 0 6px #ffffff); }
     }
 
-    /* VIP Royal Lifetime Frame */
+    /* VIP Royal Frames (Monthly, Yearly, Lifetime - v0.10.10-45) */
     .vf-avatar-frame-box:hover .royal-lifetime-crown,
-    .vf-avatar-frame-box.frame-vip:hover .royal-lifetime-crown {
+    .vf-avatar-frame-box.frame-vip:hover .royal-lifetime-crown,
+    .vf-avatar-frame-box.hoverable:hover .royal-lifetime-crown {
       animation: crownBounceSubtle 2.2s ease-in-out infinite;
       transform-origin: bottom center;
+    }
+    .vf-avatar-frame-box:hover .vip-monthly-crown,
+    .vf-avatar-frame-box.frame-vip_monthly:hover .vip-monthly-crown,
+    .vf-avatar-frame-box.hoverable:hover .vip-monthly-crown {
+      animation: crownBounceSubtle 2.8s ease-in-out infinite;
+      transform-origin: bottom center;
+    }
+    .vf-avatar-frame-box:hover .vip-yearly-wings,
+    .vf-avatar-frame-box.frame-vip_yearly:hover .vip-yearly-wings,
+    .vf-avatar-frame-box.hoverable:hover .vip-yearly-wings {
+      animation: royalWingPulse 2s ease-in-out infinite alternate;
+      transform-origin: center center;
+    }
+    .vf-avatar-frame-box:hover .vip-ruby-glint,
+    .vf-avatar-frame-box.frame-vip_yearly:hover .vip-ruby-glint,
+    .vf-avatar-frame-box.hoverable:hover .vip-ruby-glint {
+      animation: rubyGlint 1.4s ease-in-out infinite alternate;
     }
     @keyframes crownBounceSubtle {
       0%, 100% { transform: translateY(0) scale(1); }
       50% { transform: translateY(-4px) scale(1.04) rotate(2deg); }
+    }
+    @keyframes royalWingPulse {
+      0% { transform: scale(0.97) rotate(-1.5deg); }
+      100% { transform: scale(1.03) rotate(1.5deg); filter: drop-shadow(0 0 8px #ffd700); }
+    }
+    @keyframes rubyGlint {
+      0% { filter: drop-shadow(0 0 3px #dc2626); }
+      100% { filter: drop-shadow(0 0 10px #ff0055) drop-shadow(0 0 16px #ffffff); }
     }

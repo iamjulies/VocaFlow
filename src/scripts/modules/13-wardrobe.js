@@ -1,5 +1,5 @@
 // =========================================================================
-// VOCAFLOW 13-WARDROBE.JS (v0.10.10-44 Build 345)
+// VOCAFLOW 13-WARDROBE.JS (v0.10.10-45 Build 346)
 // Hệ Thống Tủ Đồ & Cửa Hàng Thẩm Mỹ: Khung Viền Avatar, Hiệu Ứng Tên & Danh Xưng
 // =========================================================================
 
@@ -99,11 +99,32 @@
 
       // --- C. ĐẶC QUYỀN VIP (VOCAVIP) ---
       {
+        id: 'vip_monthly',
+        name: 'Khung VocaVIP Khởi Nguyên',
+        type: 'vip',
+        vipTierReq: 'monthly',
+        desc: 'Đặc quyền VocaVIP Tháng: Vương miện mini tinh xảo 12h, viền hoàng kim thanh lịch & huy hiệu VIP MONTHLY.',
+        badge: '👑 VIP Tháng',
+        badgeColor: '#fbbf24',
+        icon: '👑'
+      },
+      {
+        id: 'vip_yearly',
+        name: 'Khung VocaVIP Thịnh Vượng',
+        type: 'vip',
+        vipTierReq: 'yearly',
+        desc: 'Đặc quyền VocaVIP Năm: Đôi cánh hoàng gia vươn cao, ngọc ruby đính góc & huy hiệu VIP YEARLY sang trọng.',
+        badge: '👑 VIP Năm',
+        badgeColor: '#f59e0b',
+        icon: '👑'
+      },
+      {
         id: 'vip',
         name: 'Khung VocaVIP Hoàng Triều',
         type: 'vip',
+        vipTierReq: 'lifetime',
         desc: 'Đặc quyền VocaVIP Hoàng Triều Vĩnh Cửu: Vương miện 3D nảy nhẹ, dải lụa hoàng gia chuyển màu và huy hiệu VIP Lifetime sang trọng.',
-        badge: '👑 VocaVIP',
+        badge: '👑 VIP Vĩnh Viễn',
         badgeColor: '#ffd700',
         icon: '👑'
       },
@@ -506,7 +527,13 @@
 
     // 1. VIP-exclusive unlock
     if (item.type === 'vip') {
-      return (typeof isUserVip === 'function' && isUserVip());
+      if (typeof isUserVip !== 'function' || !isUserVip()) return false;
+      const currentVipTier = (typeof getUserVipTier === 'function') ? getUserVipTier() : 'none';
+      const reqTier = item.vipTierReq || 'monthly';
+      if (currentVipTier === 'lifetime') return true;
+      if (currentVipTier === 'yearly') return reqTier === 'yearly' || reqTier === 'monthly';
+      if (currentVipTier === 'monthly') return reqTier === 'monthly';
+      return true;
     }
 
     // 2. Level-based unlock
@@ -645,7 +672,17 @@
   // 3. UNIVERSAL SVG & DOM RENDERING HELPERS
   function renderAvatarWithFrameHtml(avatarVal, size = 64, frameId = null, extraClasses = '') {
     const fId = frameId || getEquippedWardrobe().frame || 'default';
-    const innerSize = Math.round(size * 0.68);
+    let innerRatio = 0.72;
+    if (fId === 'mythic') {
+      innerRatio = 0.55;
+    } else if (fId === 'vip' || fId === 'vip_yearly' || fId === 'vip_monthly') {
+      innerRatio = 0.63;
+    } else if (fId === 'cat' || fId === 'dog' || fId === 'birthday' || fId === 'christmas' || fId === 'halloween' || fId === 'vietnam' || fId === 'tet' || fId === 'easter') {
+      innerRatio = 0.65;
+    } else if (fId === 'bronze' || fId === 'silver' || fId === 'gold' || fId === 'diamond') {
+      innerRatio = 0.70;
+    }
+    const innerSize = Math.round(size * innerRatio);
     const avHtml = (typeof renderAvatarHtml === 'function')
       ? renderAvatarHtml(avatarVal, innerSize, Math.round(innerSize * 0.45))
       : `<span style="font-size:${Math.round(innerSize*0.45)}px;">👤</span>`;
@@ -997,6 +1034,98 @@
           </g>
         </svg>
       `;
+    } else if (fId === 'vip_monthly') {
+      overlaySvg = `
+        <svg class="vf-avatar-frame-svg" viewBox="0 0 170 170" fill="none" style="filter: drop-shadow(0 0 8px rgba(251, 191, 36, 0.45));">
+          <defs>
+            <linearGradient id="vfVipMonthlyGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#fff5c0" />
+              <stop offset="40%" stop-color="#fbbf24" />
+              <stop offset="80%" stop-color="#d97706" />
+              <stop offset="100%" stop-color="#f59e0b" />
+            </linearGradient>
+            <linearGradient id="vfVipMonthlyRibbon" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#fef08a" />
+              <stop offset="50%" stop-color="#fbbf24" />
+              <stop offset="100%" stop-color="#b45309" />
+            </linearGradient>
+          </defs>
+          <!-- Vành tròn chính VIP Monthly -->
+          <circle cx="85" cy="85" r="58" stroke="url(#vfVipMonthlyGrad)" stroke-width="5" />
+          <circle cx="85" cy="85" r="54" stroke="#fef08a" stroke-width="1.2" opacity="0.7" />
+          <circle cx="85" cy="85" r="62" stroke="#fbbf24" stroke-width="1" opacity="0.6" stroke-dasharray="6 8" />
+          <!-- Vương miện mini tinh xảo ở 12h -->
+          <g class="vip-monthly-crown" transform="translate(85, 23)">
+            <path d="M -16,10 L -12,-6 L -4,3 L 0,-10 L 4,3 L 12,-6 L 16,10 Z" fill="url(#vfVipMonthlyGrad)" stroke="#78350f" stroke-width="1.2" style="filter: drop-shadow(0 2px 4px rgba(217,119,6,0.5));" />
+            <circle cx="0" cy="1" r="2.2" fill="#ef4444" />
+            <circle cx="-12" cy="-6" r="1.5" fill="#ffffff" />
+            <circle cx="0" cy="-10" r="1.8" fill="#ffffff" />
+            <circle cx="12" cy="-6" r="1.5" fill="#ffffff" />
+          </g>
+          <!-- Huy hiệu VIP Monthly ở 6h -->
+          <g transform="translate(85, 149)">
+            <rect x="-42" y="-9" width="84" height="18" rx="9" fill="url(#vfVipMonthlyRibbon)" stroke="#ffffff" stroke-width="1.2" style="filter: drop-shadow(0 2px 5px rgba(0,0,0,0.35));" />
+            <text x="0" y="1" text-anchor="middle" dominant-baseline="central" font-size="7.5" font-weight="900" fill="#451a03" letter-spacing="0.8">VIP MONTHLY</text>
+          </g>
+        </svg>
+      `;
+    } else if (fId === 'vip_yearly') {
+      overlaySvg = `
+        <svg class="vf-avatar-frame-svg" viewBox="0 0 170 170" fill="none" style="filter: drop-shadow(0 0 12px rgba(245, 158, 11, 0.55)) drop-shadow(0 0 6px rgba(220, 38, 38, 0.4));">
+          <defs>
+            <linearGradient id="vfVipYearlyGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#fffbeb" />
+              <stop offset="25%" stop-color="#f59e0b" />
+              <stop offset="50%" stop-color="#ffd700" />
+              <stop offset="75%" stop-color="#dc2626" />
+              <stop offset="100%" stop-color="#b45309" />
+            </linearGradient>
+            <linearGradient id="vfVipYearlyRibbon" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#fffbeb" />
+              <stop offset="50%" stop-color="#f59e0b" />
+              <stop offset="100%" stop-color="#78350f" />
+            </linearGradient>
+            <linearGradient id="vfRubyGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#fca5a5" />
+              <stop offset="50%" stop-color="#dc2626" />
+              <stop offset="100%" stop-color="#7f1d1d" />
+            </linearGradient>
+          </defs>
+          <!-- Cánh hoàng gia vươn cao ở 10h và 2h -->
+          <g class="vip-yearly-wings" transform="translate(85, 85)">
+            <!-- Cánh trái -->
+            <path d="M -54,-20 C -72,-42 -86,-25 -82,0 C -72,-6 -62,-8 -54,-20 Z" fill="url(#vfVipYearlyGrad)" stroke="#78350f" stroke-width="1" />
+            <path d="M -50,-35 C -66,-55 -76,-40 -70,-20 C -62,-25 -55,-28 -50,-35 Z" fill="#ffd700" opacity="0.8" />
+            <!-- Cánh phải -->
+            <path d="M 54,-20 C 72,-42 86,-25 82,0 C 72,-6 62,-8 54,-20 Z" fill="url(#vfVipYearlyGrad)" stroke="#78350f" stroke-width="1" />
+            <path d="M 50,-35 C 66,-55 76,-40 70,-20 C 62,-25 55,-28 50,-35 Z" fill="#ffd700" opacity="0.8" />
+          </g>
+          <!-- Vành tròn kép VIP Yearly -->
+          <circle cx="85" cy="85" r="58" stroke="url(#vfVipYearlyGrad)" stroke-width="6" />
+          <circle cx="85" cy="85" r="53" stroke="#ffd700" stroke-width="1.5" />
+          <circle cx="85" cy="85" r="63" stroke="#fffbeb" stroke-width="1.2" opacity="0.8" stroke-dasharray="8 10" />
+          <!-- Ngọc Ruby đính ở 4h và 8h -->
+          <g transform="translate(36, 126)" class="vip-ruby-glint">
+            <polygon points="0,-5 5,0 0,5 -5,0" fill="url(#vfRubyGrad)" stroke="#ffffff" stroke-width="1" />
+          </g>
+          <g transform="translate(134, 126)" class="vip-ruby-glint">
+            <polygon points="0,-5 5,0 0,5 -5,0" fill="url(#vfRubyGrad)" stroke="#ffffff" stroke-width="1" />
+          </g>
+          <!-- Vương miện 3D ở 12h -->
+          <g class="vip-yearly-wings" transform="translate(85, 20)">
+            <path d="M -22,12 L -18,-8 L -8,4 L 0,-14 L 8,4 L 18,-8 L 22,12 Z" fill="url(#vfVipYearlyGrad)" stroke="#78350f" stroke-width="1.4" style="filter: drop-shadow(0 2px 6px rgba(245,158,11,0.6));" />
+            <circle cx="0" cy="0" r="3" fill="url(#vfRubyGrad)" stroke="#ffffff" stroke-width="0.8" />
+            <circle cx="-18" cy="-8" r="2" fill="#ffd700" stroke="#ffffff" stroke-width="0.5" />
+            <circle cx="0" cy="-14" r="2.5" fill="#ffd700" stroke="#ffffff" stroke-width="0.6" />
+            <circle cx="18" cy="-8" r="2" fill="#ffd700" stroke="#ffffff" stroke-width="0.5" />
+          </g>
+          <!-- Huy hiệu VIP Yearly ở 6h -->
+          <g transform="translate(85, 149)">
+            <rect x="-42" y="-9" width="84" height="18" rx="9" fill="url(#vfVipYearlyRibbon)" stroke="#ffffff" stroke-width="1.4" style="filter: drop-shadow(0 2px 6px rgba(0,0,0,0.4));" />
+            <text x="0" y="1" text-anchor="middle" dominant-baseline="central" font-size="7.5" font-weight="900" fill="#451a03" letter-spacing="0.8">VIP YEARLY</text>
+          </g>
+        </svg>
+      `;
     } else if (fId === 'vip') {
       overlaySvg = `
         <svg class="vf-avatar-frame-svg" viewBox="0 0 170 170" fill="none" style="filter: drop-shadow(0 0 10px rgba(255, 182, 193, 0.45)) drop-shadow(0 0 18px rgba(212, 175, 55, 0.35));">
@@ -1100,10 +1229,10 @@
 
           <!-- 2. CÁC VÀNH ĐAI NĂNG LƯỢNG TRÒN -->
           <g id="frameRingsGroup" filter="url(#vfMythicGlow)">
-            <circle cx="300" cy="300" r="186" fill="none" stroke="#ff007f" stroke-width="2" stroke-dasharray="8 14 3 14" opacity="0.6" />
-            <circle cx="300" cy="300" r="176" fill="none" stroke="url(#vfMatrixRingGrad)" stroke-width="6.5" stroke-linecap="round" />
-            <circle cx="300" cy="300" r="171" fill="none" stroke="#ffe6f3" stroke-width="1.6" stroke-dasharray="3 15 35 15" opacity="0.85" />
-            <circle cx="300" cy="477" r="3.5" fill="#ffffff" /><circle cx="123" cy="300" r="3.5" fill="#ffffff" /><circle cx="477" cy="300" r="3.5" fill="#ffffff" />
+            <circle cx="300" cy="300" r="192" fill="none" stroke="#ff007f" stroke-width="2" stroke-dasharray="8 14 3 14" opacity="0.6" />
+            <circle cx="300" cy="300" r="185" fill="none" stroke="url(#vfMatrixRingGrad)" stroke-width="6.5" stroke-linecap="round" />
+            <circle cx="300" cy="300" r="178" fill="none" stroke="#ffe6f3" stroke-width="1.6" stroke-dasharray="3 15 35 15" opacity="0.85" />
+            <circle cx="300" cy="485" r="3.5" fill="#ffffff" /><circle cx="115" cy="300" r="3.5" fill="#ffffff" /><circle cx="485" cy="300" r="3.5" fill="#ffffff" />
           </g>
 
           <!-- 3. ĐUÔI RỒNG QUẤN GÓC DƯỚI BÊN TRÁI (7h - 9h) -->
@@ -1553,7 +1682,8 @@
       } else if (isUnlocked) {
         statusBadge = `<span class="badge" style="background: rgba(56,189,248,0.15); color: #38bdf8; font-size: 10px; font-weight: 700; border: 1px solid rgba(56,189,248,0.35);">🔓 Đã Sở Hữu</span>`;
       } else if (item.type === 'vip') {
-        statusBadge = `<span class="badge" style="background: rgba(245,158,11,0.2); color: #ffd700; font-size: 10px; font-weight: 800; border: 1px solid rgba(255,215,0,0.5);">👑 Đặc quyền VIP</span>`;
+        const tierLabel = item.vipTierReq === 'monthly' ? '👑 VIP Tháng' : (item.vipTierReq === 'yearly' ? '👑 VIP Năm' : (item.vipTierReq === 'lifetime' ? '👑 VIP Vĩnh Viễn' : '👑 Đặc quyền VIP'));
+        statusBadge = `<span class="badge" style="background: rgba(245,158,11,0.2); color: #ffd700; font-size: 10px; font-weight: 800; border: 1px solid rgba(255,215,0,0.5);">${tierLabel}</span>`;
       } else if (item.price) {
         const typeIcon = item.type === 'event' ? '🎪' : '🛍️';
         statusBadge = `<span class="badge" style="background: rgba(245,158,11,0.15); color: #fbbf24; font-size: 10px; font-weight: 800; border: 1px solid rgba(245,158,11,0.4);">${typeIcon} ${item.price}🪙</span>`;

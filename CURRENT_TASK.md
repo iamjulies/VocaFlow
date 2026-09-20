@@ -1,35 +1,32 @@
 # CURRENT TASK & TRẠNG THÁI CÔNG VIỆC HIỆN TẠI (VOCAFLOW)
 
-> **Phiên bản mục tiêu:** `v0.10.10-44 (Build 345)`  
+> **Phiên bản mục tiêu:** `v0.10.10-45 (Build 346)`  
 > **Cập nhật lần cuối:** 2026-09-20  
-> **Trạng thái:** 🚀 **ĐÃ HOÀN THÀNH BUILD, KIỂM THỬ TỰ ĐỘNG & MULTI-DEPLOY GITHUB**
+> **Trạng thái:** 🚀 **ĐANG TIẾN HÀNH BUILD, KIỂM THỬ TỰ ĐỘNG & MULTI-DEPLOY GITHUB**
 
 ---
 
-## 🎯 1. DANH SÁCH NHIỆM VỤ ĐÃ GIẢI QUYẾT (v0.10.10-44 Build 345)
+## 🎯 1. DANH SÁCH NHIỆM VỤ ĐÃ GIẢI QUYẾT (v0.10.10-45 Build 346)
 
-- [x] **Tối Ưu Hiệu Ứng Ánh Sáng Huy Hiệu Ghim Chống Giật Lag (`src/styles/app.css`)**:
-  - Khắc phục triệt để hiện tượng drop FPS và lỗi render ở mục Highlights hồ sơ (`/me`).
-  - Loại bỏ toàn bộ hoạt họa chạy ngầm liên tục khi idle, chỉ kích hoạt luồng sáng quét tròn quanh viền (`rotateLight 3s linear infinite`) khi người dùng rê chuột (`:hover`) theo chuẩn `model code/01-anhsang.html`.
-- [x] **Chuẩn Hóa Bộ Khung Viền Vector VIP & Sự Kiện (`src/scripts/modules/13-wardrobe.js`, `src/styles/app.css`)**:
-  - **Khung VIP Hoàng Triều Vĩnh Cửu**: Tích hợp theo chuẩn `model code/18-vip.txt` với vương miện 3D đỉnh đầu (`👑`), dải ruy băng VIP Lifetime chân khung và dải hào quang pastel hồng/vàng hoàng gia.
-  - **Khung Sinh Nhật (Birthday)**: Mũ chóp chuyển động nhấp nhô mềm mại (`translateY(0)` -> `translateY(-4px)`).
-  - **Khung Giáng Sinh (Christmas)**: Chuông vàng lắc lư êm dịu (`rotate(-5deg)` -> `rotate(5deg)`).
-  - **Khung Việt Nam (Vietnam)**: Ngôi sao vàng chính giữa đập nhịp hào quang chuẩn tâm (`transform-box: fill-box; transform-origin: center center;`).
-  - **Khung Tết (Tet)**: Lồng đèn và hoa mai đung đưa nhẹ nhàng, không rung lắc diện rộng.
-  - **Khung Bạc (Silver)**: Bổ sung huy hiệu 2 sao lấp lánh (`★ ★`) ở đáy khung theo `model code/05-khungbac.txt`.
-  - **Khung Vàng (Gold)**: Bổ sung huy hiệu 3 sao hoàng gia (`★ ★ ★`) ở đáy khung theo `model code/06-khungvang.txt`.
-  - **Khung Kim Cương Lam Ngọc (Diamond)**: Bổ sung huy hiệu 4 sao kim cương (`💎 ★ ★ ★ ★`), viền neon cyan và hiệu ứng quét sáng nhấp nháy (`model code/07-khungkimcuong.txt`).
-- [x] **Loại Bỏ Che Khuất Avatar & Mở Rộng Vùng Hiển Thị (`src/styles/app.css`, `src/scripts/modules/13-wardrobe.js`, `src/components/modals/modal-public-profile.html`)**:
-  - Tinh chỉnh bán kính vòng tròn ảnh đại diện (`innerSize = Math.round(size * 0.68)`) giúp hình ảnh nằm trọn bên trong lòng khung.
-  - Bỏ toàn bộ `overflow: hidden`, viền cứng và đổ bóng cố định ở `.ig-avatar-ring`, `#profile-avatar`, `#pub-view-avatar`, giúp các chi tiết ngoài vành khung hiển thị trọn vẹn, không bị cắt xén.
-- [x] **Đồng Bộ Tức Thì Khung Viền Trên Hồ Sơ Cá Nhân (`src/scripts/modules/03-auth.js`, `src/scripts/modules/13-wardrobe.js`)**:
-  - Kết nối `#profile-avatar` với hàm `renderAvatarWithFrameHtml()` và `applyWardrobeToActiveUI()`, tự động cập nhật ngay lập tức khung viền đang trang bị khi mở modal `/me` hoặc sau khi thay đổi trang bị trong tủ đồ.
-- [x] **Phân Quyền Vật Phẩm Sự Kiện Độc Quyền (`src/scripts/modules/13-wardrobe.js`)**:
-  - Khóa tính năng mua bằng VoCoin đối với toàn bộ khung viền sự kiện/lễ hội (`birthday`, `christmas`, `halloween`, `vietnam`, `tet`, `easter`), thiết lập `price: null` và gắn nhãn `🎁 Sự Kiện` độc quyền.
-- [x] **Đồng Bộ Toàn Diện 7-Point Version Consistency & Multi-Deploy (`v0.10.10-44 Build 345`)**:
-  - Cập nhật phiên bản nhất quán trên toàn bộ 7 điểm hệ thống: `modal-settings.html`, `02-state-core.js`, toàn bộ module headers `01-router.js` đến `13-wardrobe.js`, `sw.js` & `Release_App/sw.js`, `pubspec.yaml`, `Program.cs`, `push_github.ps1`.
-  - Biên dịch `VocaFlow.exe`, đóng gói `VocaFlow_v0.10.10-44_Windows_Portable.zip` và sẵn sàng multi-deploy lên 3 kho GitHub.
+- [x] **Sửa Lỗi Render Thẻ Huy Hiệu Vàng & Kim Cương Nổi Bật (`src/styles/app.css` - Issue 11)**:
+  - Khắc phục triệt để lỗi thẻ huy hiệu Vàng và Kim Cương hiển thị nền xanh trơn che mất icon và làm mờ chữ khi ở trạng thái tĩnh (idle).
+  - Tái cấu trúc lớp giao diện (stacking context): Trạng thái tĩnh sử dụng màu nền gradient nhẹ trực tiếp không cần lớp phủ `::after`. Hoạt họa quét sáng xoay tròn `::before` và lớp che `::after` chỉ kích hoạt khi rê chuột (`:hover`). Toàn bộ icon, tiêu đề và chi tiết thẻ được gán `position: relative; z-index: 2;` bảo đảm luôn sắc nét 100%.
+- [x] **Gỡ Bỏ Giới Hạn Cắt Khung Cũ 58px Trên Hồ Sơ /me (`src/styles/app.css` - Issue 12)**:
+  - Xóa bỏ hoàn toàn định kiểu di sản `width: 58px; height: 58px; overflow: hidden;` trên `#profile-avatar`, nâng cấp thành container `96px` không viền cứng, không che cắt (`overflow: visible; background: transparent; border: none; box-shadow: none;`).
+  - Đảm bảo tất cả khung viền nghệ thuật, chi tiết vương miện 12h và dải ruy băng 6h hiển thị lộng lẫy và hoàn chỉnh trên trang cá nhân.
+- [x] **Mở Rộng Hệ Thống Khung VIP Thành 3 Cấp Bậc (`src/scripts/modules/13-wardrobe.js`, `src/styles/app.css` - Issue 13)**:
+  - **Khung VIP Khởi Nguyên (VIP Monthly)**: Vành hoàng kim thanh lịch, vương miện mini tinh xảo đính ngọc hồng lựu ở 12h, dải ruy băng `VIP MONTHLY` ở 6h.
+  - **Khung VIP Thịnh Vượng (VIP Yearly)**: Vành kép hoàng kim, đôi cánh hoàng gia vươn cao ở 10h & 2h, đính ngọc ruby lấp lánh ở 4h & 8h, dải ruy băng `VIP YEARLY` ở 6h.
+  - **Khung VIP Hoàng Triều (VIP Lifetime)**: Vương miện 3D nảy nhẹ, dải hào quang pastel hồng hoàng kim chuyển động êm dịu, dải ruy băng `VIP LIFETIME` ở 6h.
+  - Cơ chế mở khóa phân tầng: Hội viên Lifetime mở khóa toàn bộ 3 khung; Hội viên Yearly mở khóa Yearly + Monthly; Hội viên Monthly mở khóa Monthly.
+- [x] **Chuẩn Hóa Vật Lý Hoạt Họa Chuông Giáng Sinh (`src/styles/app.css` - Issue 14)**:
+  - Sửa tâm xoay của hoạt họa chuông Giáng Sinh xoay quanh đúng điểm buộc nơ ở đỉnh chuông thay vì góc trên canvas (`transform-box: fill-box; transform-origin: 50% 10%;`).
+  - Tinh chỉnh góc lắc nhẹ nhàng từ `-4deg` đến `4deg` tạo chuyển động đung đưa tự nhiên như quả chuông thật.
+- [x] **Triệt Tiêu Che Khuất Khuôn Mặt Avatar (`src/scripts/modules/13-wardrobe.js` - Issue 15)**:
+  - Áp dụng tỷ lệ đường kính ảnh đại diện bên trong linh hoạt theo từng loại khung: `0.55` cho Rồng Thần Thoại Mythic (Lv.50), `0.63` cho các khung VIP (Lifetime, Yearly, Monthly), `0.65` cho các khung Thú Cưng & Sự Kiện, `0.70` cho các khung Cấp bậc (Đồng, Bạc, Vàng, Kim Cương), và `0.72` cho Mặc định.
+  - Mở rộng đường kính vành tròn trong của Rồng Thần Thoại (`r = 185`, `r = 192`) tạo khoảng đệm an toàn hơn 20px giúp khuôn mặt avatar hiển thị trọn vẹn 100% không bị che khuất bởi đầu rồng hay luồng lửa.
+- [x] **Đồng Bộ Toàn Diện 7-Point Version Consistency (`v0.10.10-45 Build 346`)**:
+  - Cập nhật phiên bản nhất quán trên toàn bộ 7 điểm hệ thống: `modal-settings.html`, `02-state-core.js`, toàn bộ module headers `01-router.js` đến `13-wardrobe.js`, `sw.js` & `Release_App/sw.js`, `pubspec.yaml`, `Program.cs`, `push_github.ps1`, `VOCAFLOW_OVERVIEW.txt`, `GITHUB_RELEASE/VOCAFLOW_OVERVIEW.txt`.
 
 ---
 
