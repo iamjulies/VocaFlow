@@ -1,5 +1,5 @@
 // =========================================================================
-// VOCAFLOW 06C-WRITING-ENGINE.JS (v0.10.10-47 Build 348 - SENTENCE WRITING LAB VIP)
+// VOCAFLOW 06C-WRITING-ENGINE.JS (v0.10.10-48 Build 349 - SENTENCE WRITING LAB VIP)
 // AI-Powered Writing Lab with Thematic Word Linking & Target Band Aim Polish
 // =========================================================================
 
@@ -711,7 +711,7 @@ Output MUST be valid JSON only (no markdown code blocks, no backticks) matching 
 
   try {
     const keys = typeof getStoredApiKeys === 'function' ? getStoredApiKeys() : [];
-    const modelsToTry = typeof getGeminiModelsForTier === 'function' ? getGeminiModelsForTier('deep') : ['gemini-3.8-flash', 'gemini-3.7-flash', 'gemini-2.0-flash', 'gemini-3.5-flash-lite'];
+    const modelsToTry = typeof getGeminiModelsForTier === 'function' ? getGeminiModelsForTier('deep') : ['gemini-3.7-flash', 'gemini-3.8-flash', 'gemini-2.0-flash', 'gemini-3.5-flash-lite'];
 
     for (const k of keys) {
       if (evalSuccess) break;

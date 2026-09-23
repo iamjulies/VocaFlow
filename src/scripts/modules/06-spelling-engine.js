@@ -1,5 +1,5 @@
 // =========================================================================
-// VOCAFLOW 06-SPELLING-ENGINE.JS (v0.10.10-47 Build 348)
+// VOCAFLOW 06-SPELLING-ENGINE.JS (v0.10.10-48 Build 349)
 // Luyện viết chính tả từ vựng & AI gợi ý
 // =========================================================================
 
@@ -1871,7 +1871,7 @@ Trả về DUY NHẤT một chuỗi JSON hợp lệ không có markdown block:
   ]
 }`;
 
-      const models = typeof getGeminiModelsForTier === 'function' ? getGeminiModelsForTier('fast') : ['gemini-3.5-flash-lite', 'gemini-3.1-flash-lite', 'gemini-2.0-flash-lite', 'gemini-3.8-flash'];
+      const models = typeof getGeminiModelsForTier === 'function' ? getGeminiModelsForTier('fast') : ['gemini-3.5-flash-lite', 'gemini-3.1-flash-lite', 'gemini-2.0-flash-lite', 'gemini-3.7-flash'];
 
       for (const m of models) {
         try {

@@ -1,4 +1,18 @@
 ================================================================================
+Phiên bản: v0.10.10-48 (Build 349) - Nâng Cấp Hệ Thống AI Google Gemini Đa Tầng, Ưu Tiên gemini-3.7-flash Cho Deep Reasoning & gemini-3.5-flash-lite Cho Micro-Task, Chuẩn Hóa 12 Khối Fallback Toàn Diện & Bảo Toàn Cache Mô Hình (Multi-Tier Gemini AI Engine Architecture, Deep gemini-3.7-flash & Fast gemini-3.5-flash-lite Prioritization, 12-Engine Unified Fallback Matrix & Model Cache Safeguard)
+================================================================================
+1. [Tái Cấu Trúc Hệ Thống AI Google Gemini Phân Tầng Thông Minh (Multi-Tier Gemini AI Architecture)]:
+   - Phân tầng Deep / Reasoning / Multimodal: Thiết lập `gemini-3.7-flash` làm mô hình ưu tiên số 1 cho VocaMentor AI, VocaDeck AI Studio, VocaSpeaking Lab, Writing Lab, Cloze & Translation nâng cao. Danh sách fallback tự động: `gemini-3.7-flash`, `gemini-3.8-flash`, `gemini-3.6-flash`, `gemini-3.5-flash`, `gemini-2.5-flash`, `gemini-2.0-flash`, `gemini-3.5-flash-lite`, `gemini-2.0-flash-lite`, `gemini-1.5-flash`, `gemini-1.5-pro`.
+   - Phân tầng Ultra-Fast / Micro-Task: Thiết lập `gemini-3.5-flash-lite` làm mô hình ưu tiên số 1 cho VocaOption AI sinh bẫy trắc nghiệm, VocaHint AI gợi ý ngữ cảnh, VocaExplanation AI, Luyện chính tả Spelling hint, Dictation scoring và Dịch thuật cơ bản. Danh sách fallback tự động: `gemini-3.5-flash-lite`, `gemini-3.1-flash-lite`, `gemini-2.5-flash-lite`, `gemini-2.0-flash-lite`, `gemini-3.7-flash`, `gemini-3.8-flash`, `gemini-2.5-flash`, `gemini-2.0-flash`, `gemini-1.5-flash-8b`, `gemini-1.5-flash`.
+   - Phân tầng Multimodal Vision: Thiết lập chuỗi nhận diện hình ảnh/OCR ưu tiên `gemini-3.7-flash`, `gemini-3.8-flash`, `gemini-3.5-flash`, `gemini-2.5-flash`, `gemini-2.0-flash`, `gemini-3.5-flash-lite`.
+2. [Chuẩn Hóa 12 Khối Fallback Cục Bộ Trên 8 Module Động Cơ AI (12-Engine Unified Fallback Matrix)]:
+   - Đồng bộ hóa toàn bộ mảng fallback trong `04-decks-manager.js`, `05-quiz-engine.js`, `06-spelling-engine.js`, `06c-writing-engine.js`, `06d-cloze-engine.js`, `06e-dictation-engine.js`, `06f-translation-engine.js`, `07-speaking-engine.js`, `09-ai-mentor.js`.
+   - Đảm bảo khi một mô hình hoặc endpoint gặp lỗi quota/bảo trì, hệ thống tự động trượt mượt mà xuống mô hình tiếp theo trong mili-giây mà không làm gián đoạn trải nghiệm học tập của người dùng.
+3. [Bảo Toàn Bộ Nhớ Đệm Mô Hình Hiện Đại (Model Cache Safeguard)]:
+   - Tinh chỉnh hàm `purgeInvalidGeminiModelCache()` chỉ dọn dẹp các mô hình đã bị Google khai tử (`gemini-pro`, `1.0-pro`, `text-bison`, `chat-bison`).
+   - Giữ nguyên các mô hình hoạt động hiệu quả `gemini-3.7-flash` và `gemini-3.5-flash-lite` trong bộ nhớ cục bộ (`localStorage`).
+
+================================================================================
 Phiên bản: v0.10.10-47 (Build 348) - Sửa Lỗi Tách Rời Tọa Độ Khung VIP Khi Rê Chuột, Tối Ưu Thẻ Huy Hiệu Nổi Bật Tĩnh & Rê Chuột, Mở Rộng Modal Tủ Đồ, Tái Thiết Kế 3 Khung VIP Huyền Thoại, Khắc Phục Giật Lag Bảng Giá VIP & Đồng Bộ Hiệu Ứng Tên Toàn Ứng Dụng (VIP Frames Hover SVG Coordinate Isolation, Pinned Badges Idle Glow Removal & Solid Gold/Diamond Hover State, Spacious Wardrobe Modal Layout, 3-Tier VIP Vector Frame Redesign with Magical Sparkle, VIP Pricing GPU Containment & Universal Name Effect Sync)
 ================================================================================
 1. [Sửa Lỗi Tách Rời Tọa Độ Khung VIP Khi Rê Chuột (VIP Monthly & Yearly Hover Coordinate Reset Fix - Issue 21)]:

@@ -1,5 +1,5 @@
 // =========================================================================
-// VOCAFLOW 06D-CLOZE-ENGINE.JS (v0.10.10-47 Build 348 - EXTENDED LEARNING MODE BETA)
+// VOCAFLOW 06D-CLOZE-ENGINE.JS (v0.10.10-48 Build 349 - EXTENDED LEARNING MODE BETA)
 // Contextual Reading & Cloze Test Passage Generator with Strict JSON Schema
 // =========================================================================
 
@@ -513,8 +513,8 @@ Output MUST be valid JSON only (no markdown code blocks, no backticks) matching 
     // Issue 14: Use Deep / High-Reasoning Flash models for Hard & Expert to ensure superior quality and speed
     const isHardOrExpert = (difficulty === 'hard' || difficulty === 'expert');
     const modelsToTry = isHardOrExpert
-      ? ['gemini-3.7-flash', 'gemini-3.6-flash', 'gemini-3.8-flash', 'gemini-3.5-flash', 'gemini-2.5-flash']
-      : (typeof getGeminiModelsForTier === 'function' ? getGeminiModelsForTier('fast') : ['gemini-3.5-flash-lite', 'gemini-3.1-flash-lite', 'gemini-2.5-flash-lite', 'gemini-3.7-flash']);
+      ? (typeof getGeminiModelsForTier === 'function' ? getGeminiModelsForTier('deep') : ['gemini-3.7-flash', 'gemini-3.8-flash', 'gemini-2.0-flash', 'gemini-3.5-flash-lite'])
+      : (typeof getGeminiModelsForTier === 'function' ? getGeminiModelsForTier('fast') : ['gemini-3.5-flash-lite', 'gemini-3.1-flash-lite', 'gemini-2.0-flash-lite', 'gemini-3.7-flash']);
 
     const timeoutMs = isHardOrExpert ? 16000 : 12000;
 

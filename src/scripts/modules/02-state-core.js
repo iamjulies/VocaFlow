@@ -1,57 +1,56 @@
-// VOCAFLOW 02-STATE-CORE.JS (v0.10.10-47 Build 348)
+// VOCAFLOW 02-STATE-CORE.JS (v0.10.10-48 Build 349)
 // Global constants, core database state, storage keys, recovery & audio engine
 // =========================================================================
 
     // =========================================================================
-    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.10-47 Build 348)
+    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.10-48 Build 349)
     // =========================================================================
-    const VOCAFLOW_APP_VERSION = 'v0.10.10-47';
-    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.10-47 (Build 348)';
-    const VOCAFLOW_APP_BUILD = 348;
+    const VOCAFLOW_APP_VERSION = 'v0.10.10-48';
+    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.10-48 (Build 349)';
+    const VOCAFLOW_APP_BUILD = 349;
     window.VOCAFLOW_APP_VERSION = VOCAFLOW_APP_VERSION;
     window.VOCAFLOW_APP_FULL_TITLE = VOCAFLOW_APP_FULL_TITLE;
     window.VOCAFLOW_APP_BUILD = VOCAFLOW_APP_BUILD;
 
     // =========================================================================
-    // GEMINI AI MODEL ARCHITECTURE & MULTI-TIER FALLBACK ENGINE (v0.10.9-67)
+    // GEMINI AI MODEL ARCHITECTURE & MULTI-TIER FALLBACK ENGINE (v0.10.10-48)
     // =========================================================================
-    // Deep / Reasoning / Multimodal tier (VocaMentor AI, VocaDeck AI, VocaSpeaking AI)
+    // Deep / Reasoning / Multimodal tier (VocaMentor AI, VocaDeck AI, VocaSpeaking AI, Writing Lab)
     const GEMINI_MODELS_DEEP = [
-      'gemini-3.8-flash',
       'gemini-3.7-flash',
+      'gemini-3.8-flash',
       'gemini-3.6-flash',
       'gemini-3.5-flash',
       'gemini-2.5-flash',
       'gemini-2.0-flash',
       'gemini-3.5-flash-lite',
-      'gemini-3.1-flash-lite',
-      'gemini-2.5-flash-lite',
-      'gemini-2.0-flash-lite'
+      'gemini-2.0-flash-lite',
+      'gemini-1.5-flash',
+      'gemini-1.5-pro'
     ];
-    // Ultra-fast / Micro-task tier (VocaFill AI, VocaHint AI, VocaOption AI, VocaComment AI)
+    // Ultra-fast / Micro-task tier (VocaFill AI, VocaHint AI, VocaOption AI, VocaComment AI, Cloze/Dictation/Translation)
     const GEMINI_MODELS_FAST = [
       'gemini-3.5-flash-lite',
       'gemini-3.1-flash-lite',
       'gemini-2.5-flash-lite',
       'gemini-2.0-flash-lite',
-      'gemini-3.8-flash',
       'gemini-3.7-flash',
-      'gemini-3.6-flash',
-      'gemini-3.5-flash',
+      'gemini-3.8-flash',
       'gemini-2.5-flash',
-      'gemini-2.0-flash'
+      'gemini-2.0-flash',
+      'gemini-1.5-flash-8b',
+      'gemini-1.5-flash'
     ];
     // Multimodal Vision tier (Image Lightbox / OCR / Image decks)
     const GEMINI_VISION_MODELS = [
-      'gemini-3.8-flash',
       'gemini-3.7-flash',
+      'gemini-3.8-flash',
       'gemini-3.5-flash',
       'gemini-2.5-flash',
       'gemini-2.0-flash',
       'gemini-3.5-flash-lite',
-      'gemini-3.1-flash-lite',
-      'gemini-2.5-flash-lite',
-      'gemini-2.0-flash-lite'
+      'gemini-1.5-flash',
+      'gemini-1.5-pro'
     ];
 
     const GEMINI_STANDARD_MODELS = GEMINI_MODELS_DEEP;
@@ -95,7 +94,7 @@
     window.saveWorkingGeminiModel = saveWorkingGeminiModel;
 
     function purgeInvalidGeminiModelCache() {
-      const invalidKeywords = ['gemini-pro', '1.0-pro', '1.5-pro', 'text-bison', 'chat-bison'];
+      const invalidKeywords = ['gemini-pro', '1.0-pro', 'text-bison', 'chat-bison'];
       ['vocaflow_gemini_working_model', 'vocaflow_gemini_working_model_deep', 'vocaflow_gemini_working_model_fast'].forEach(k => {
         const val = localStorage.getItem(k);
         if (val && invalidKeywords.some(bad => val.toLowerCase().includes(bad))) {

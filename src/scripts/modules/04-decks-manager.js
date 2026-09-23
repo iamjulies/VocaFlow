@@ -1,5 +1,5 @@
 // =========================================================================
-// VOCAFLOW 04-DECKS-MANAGER.JS (v0.10.10-47 Build 348)
+// VOCAFLOW 04-DECKS-MANAGER.JS (v0.10.10-48 Build 349)
 // Quản lý VocaDecks, Vocabulary Lists, Import/Export & CRUD Operations
 // =========================================================================
 
@@ -3570,7 +3570,7 @@ Return ONLY a valid raw JSON 2D array with NO markdown fences:
       try {
         let rawResponseText = '';
         const keys = typeof getStoredApiKeys === 'function' ? getStoredApiKeys() : [key];
-        const modelsToTry = typeof getGeminiModelsForTier === 'function' ? getGeminiModelsForTier('deep') : ['gemini-3.8-flash', 'gemini-3.7-flash', 'gemini-2.0-flash', 'gemini-3.5-flash-lite'];
+        const modelsToTry = typeof getGeminiModelsForTier === 'function' ? getGeminiModelsForTier('deep') : ['gemini-3.7-flash', 'gemini-3.8-flash', 'gemini-2.0-flash', 'gemini-3.5-flash-lite'];
 
         let fetchSuccess = false;
         let lastErrorMsg = '';

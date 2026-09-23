@@ -1,5 +1,5 @@
 // =========================================================================
-// VOCAFLOW 07-SPEAKING-ENGINE.JS (v0.10.10-47 Build 348)
+// VOCAFLOW 07-SPEAKING-ENGINE.JS (v0.10.10-48 Build 349)
 // AI Speaking Lab, MediaRecorder, VAD, Gemini audio analysis, multi-take economy & IndexedDB Best Take
 // =========================================================================
 
@@ -1460,7 +1460,7 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
 
       try {
         const keys = typeof getStoredApiKeys === 'function' ? getStoredApiKeys() : [key];
-        const modelsToTry = typeof getGeminiModelsForTier === 'function' ? getGeminiModelsForTier('deep') : ['gemini-3.8-flash', 'gemini-3.7-flash', 'gemini-2.0-flash', 'gemini-3.5-flash-lite'];
+        const modelsToTry = typeof getGeminiModelsForTier === 'function' ? getGeminiModelsForTier('deep') : ['gemini-3.7-flash', 'gemini-3.8-flash', 'gemini-2.0-flash', 'gemini-3.5-flash-lite'];
 
         let evalSuccess = false;
         let evalData = null;

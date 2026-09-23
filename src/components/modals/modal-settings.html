@@ -60,12 +60,16 @@
             💡 <strong>Cơ chế tự động:</strong> Dùng hết hạn ngạch Khóa 1 mới sang Khóa 2 (rồi sang Khóa 3). Khóa 1 là bắt buộc, Khóa 2 & 3 dành riêng cho VocaVIP giúp nhân 3 hạn ngạch gọi AI.
           </div>
 
+          <div style="margin-bottom: 8px; padding: 6px 10px; background: rgba(239, 68, 68, 0.12); border-radius: 8px; border-left: 3px solid #ef4444; font-size: 11px; color: #fca5a5;">
+            ⚠️ <strong>Lưu ý quan trọng:</strong> Bạn cần lấy API Key từ <strong>Google AI Studio</strong>. <em>TUYỆT ĐỐI KHÔNG</em> dùng "Browser key (auto created by Firebase)" trong Google Cloud vì khóa này bị chặn quyền Generative Language API (gây lỗi 403 Forbidden).
+          </div>
+
           <div style="display: flex; flex-direction: column; gap: 4px;">
-            <div><strong style="color: #60a5fa;">Bước 1:</strong> Truy cập <a href="https://aistudio.google.com/projects" target="_blank" style="color: #93c5fd; text-decoration: underline; font-weight: 700;">https://aistudio.google.com/projects</a> (đăng nhập tài khoản Google).</div>
-            <div><strong style="color: #60a5fa;">Bước 2:</strong> Nhấn nút <strong>"Create a new project"</strong> (Tạo dự án mới).</div>
-            <div><strong style="color: #60a5fa;">Bước 3:</strong> Đặt tên project dễ nhớ (ví dụ: <em>VocaFlow1</em>, <em>VocaFlow2</em>, <em>VocaFlow3</em>).</div>
-            <div><strong style="color: #60a5fa;">Bước 4:</strong> Nhấn <strong>"Create API key"</strong> (Tạo khóa API mới) từ project vừa tạo.</div>
-            <div><strong style="color: #60a5fa;">Bước 5:</strong> Copy mã API Key và dán lần lượt vào các ô Khóa 1, Khóa 2, Khóa 3 bên dưới. Nhấn <strong>"🧪 Thử kết nối"</strong> để hoàn tất!</div>
+            <div><strong style="color: #60a5fa;">Bước 1:</strong> Truy cập <a href="https://aistudio.google.com/app/apikey" target="_blank" style="color: #93c5fd; text-decoration: underline; font-weight: 700;">https://aistudio.google.com/app/apikey</a> (đăng nhập tài khoản Google).</div>
+            <div><strong style="color: #60a5fa;">Bước 2:</strong> Nhấn nút <strong>"Create API key"</strong> (Tạo khóa API mới).</div>
+            <div><strong style="color: #60a5fa;">Bước 3:</strong> Chọn project hoặc tạo project mới (ví dụ: <em>VocaFlow1</em>, <em>VocaFlow2</em>, <em>VocaFlow3</em>).</div>
+            <div><strong style="color: #60a5fa;">Bước 4:</strong> Copy chuỗi ký tự API Key (bắt đầu bằng <code>AIzaSy...</code>).</div>
+            <div><strong style="color: #60a5fa;">Bước 5:</strong> Dán lần lượt vào các ô Khóa 1, Khóa 2, Khóa 3 bên dưới rồi nhấn <strong>"🧪 Thử kết nối toàn bộ khóa"</strong>!</div>
           </div>
         </div>
 
@@ -293,7 +297,7 @@
       <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 16px;">
         <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px;">📦 Thông Tin Ứng Dụng</label>
         <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6; background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);">
-          <div>Phiên bản: <strong style="color: var(--text); user-select: text;" id="settings-app-version-label">VocaFlow v0.10.10-47 (Build 348)</strong></div>
+          <div>Phiên bản: <strong style="color: var(--text); user-select: text;" id="settings-app-version-label">VocaFlow v0.10.10-48 (Build 349)</strong></div>
           <div>Môi trường: <span style="color: var(--text);">Offline-First Web PWA & Windows EXE</span></div>
           <div>Lưu trữ: <span style="color: var(--text);">Cục bộ + Đồng bộ Cloud Realtime</span></div>
         </div>

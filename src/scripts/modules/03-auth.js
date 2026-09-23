@@ -1,5 +1,5 @@
 // =========================================================================
-// VOCAFLOW 03-AUTH.JS (v0.10.10-47 Build 348)
+// VOCAFLOW 03-AUTH.JS (v0.10.10-48 Build 349)
 // Authentication, Cloud Sync, Community, Profiles & Social Network
 // =========================================================================
 
@@ -926,7 +926,7 @@ Trả về DUY NHẤT 1 JSON (không bọc trong markdown hay bất kỳ chữ n
   "code": "S40"
 }`;
 
-            const visionModels = (typeof GEMINI_VISION_MODELS !== 'undefined' && GEMINI_VISION_MODELS.length > 0) ? GEMINI_VISION_MODELS : ['gemini-3.8-flash', 'gemini-3.7-flash', 'gemini-3.5-flash', 'gemini-2.0-flash'];
+            const visionModels = (typeof GEMINI_VISION_MODELS !== 'undefined' && GEMINI_VISION_MODELS.length > 0) ? GEMINI_VISION_MODELS : ['gemini-2.0-flash', 'gemini-1.5-flash', 'gemini-1.5-pro'];
             for (const vModel of visionModels) {
               try {
                 const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${vModel}:generateContent?key=${apiKey}`, {
@@ -7294,6 +7294,13 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
     // AUTO-SEED OFFICIAL UPDATE POST, HOLIDAY/SALE EVENTS & GLOWING NOTIFICATIONS (v0.10.10-33 / Build 334)
     // =========================================================================
     const VOCAFLOW_OFFICIAL_RELEASES_REGISTRY = {
+      'v0.10.10-48': {
+        postId: 'official_update_v0_10_10_48',
+        releaseTime: '2026-09-23T22:30:00.000Z',
+        title: '🤖 Cứu Hộ & Nâng Cấp Toàn Diện Hệ Thống Gemini AI (v0.10.10-48 Build 349)!',
+        summary: 'Khắc phục triệt để lỗi 404 (loại bỏ model ảo, chuyển sang model Google chính thức: Gemini 2.0 Flash, 1.5 Flash, 2.0 Flash-Lite, 1.5 Flash-8B, 1.5 Pro); nâng cấp hệ thống chẩn đoán mã lỗi HTTP (403, 429, 400); tự động dọn dẹp bộ đệm model cũ; chuẩn hóa toàn bộ 8+ module AI.',
+        content: `🎉 Chào mừng bạn đến với bản cập nhật VocaFlow v0.10.10-48 (Build 349)!\n\n✨ Những điểm mới nổi bật:\n🤖 Khắc Phục Triệt Để Lỗi 404 Gemini AI: Loại bỏ toàn bộ các tên model hư cấu/không tồn tại trên Google API (gemini-3.8, gemini-3.7, gemini-2.5-flash), chuẩn hóa 100% sang các mô hình Google chính thức: Gemini 2.0 Flash, Gemini 1.5 Flash, Gemini 2.0 Flash-Lite, Gemini 1.5 Flash-8B và Gemini 1.5 Pro.\n🔑 Nâng Cấp Bộ Chẩn Đoán Khóa API Thông Minh: Khi nhấn "Thử kết nối toàn bộ khóa", hệ thống hiển thị chính xác mã lỗi HTTP từng khóa (403 Bị cấm/Firebase Browser key hạn chế quyền, 429 Hết hạn ngạch, 400 Sai key, 200 Chuẩn).\n🧹 Tự Động Quét & Dọn Dẹp Model Hỏng: Khởi động app sẽ tự động quét và xóa sạch các model lỗi thời bị lưu trong bộ nhớ máy (LocalStorage).\n🚀 Đồng Bộ 8+ Engine AI Toàn Ứng Dụng: VocaMentor AI, VocaDeck AI Studio, VocaOption AI, VocaHint AI, Cloze Lab, Dictation Lab, Writing Lab, Translation Lab, Speaking Lab và OCR Hóa đơn.\n📖 Cập Nhật Hướng Dẫn Lấy API Key Chuẩn: Hướng dẫn chi tiết tạo key miễn phí từ Google AI Studio không bị giới hạn Referrer.\n\nChúc bạn có những giờ phút rèn luyện hứng khởi và trải nghiệm AI siêu tốc cùng VocaFlow! 🚀🤖✨`
+      },
       'v0.10.10-47': {
         postId: 'official_update_v0_10_10_47',
         releaseTime: '2026-09-20T16:30:00.000Z',

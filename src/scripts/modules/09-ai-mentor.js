@@ -1,5 +1,5 @@
 // =========================================================================
-// VOCAFLOW 09-AI-MENTOR.JS (v0.10.10-47 Build 348)
+// VOCAFLOW 09-AI-MENTOR.JS (v0.10.10-48 Build 349)
 // Gemini AI chatbot, quick chips, quota management, multi-key pool
 // =========================================================================
 
@@ -259,16 +259,20 @@
       }
 
       if (btn) btn.textContent = '⏳ Đang thử toàn bộ khóa...';
-      const models = typeof getGeminiModelsForTier === 'function' ? getGeminiModelsForTier('deep') : ['gemini-3.8-flash', 'gemini-3.7-flash', 'gemini-2.0-flash', 'gemini-3.5-flash-lite'];
+      const models = typeof getGeminiModelsForTier === 'function' ? getGeminiModelsForTier('deep') : ['gemini-3.7-flash', 'gemini-3.8-flash', 'gemini-2.0-flash', 'gemini-3.5-flash-lite'];
 
       const results = [];
       for (let i = 0; i < keys.length; i++) {
         const key = keys[i];
+        const badgeEl = document.getElementById(`gemini-key-${i+1}-status-badge`);
         let keyOk = false;
+        let lastStatusCode = 0;
+        let lastErrMsg = '';
+
         for (const m of models) {
           try {
             const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), 10000);
+            const timeoutId = setTimeout(() => controller.abort(), 8000);
             const testRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${m}:generateContent?key=${key}`, {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
@@ -279,6 +283,8 @@
               })
             });
             clearTimeout(timeoutId);
+            lastStatusCode = testRes.status;
+
             if (testRes.ok) {
               keyOk = true;
               if (typeof saveWorkingGeminiModel === 'function') {
@@ -287,15 +293,43 @@
                 localStorage.setItem('vocaflow_gemini_working_model', m);
               }
               break;
+            } else {
+              const errData = await testRes.json().catch(() => ({}));
+              lastErrMsg = errData?.error?.message || `HTTP ${testRes.status}`;
             }
-          } catch (e) {}
+          } catch (e) {
+            lastErrMsg = e.message || 'Mạng ngắt quãng';
+          }
         }
-        results.push(`Khóa ${i+1}: ${keyOk ? '✅ Hoạt động' : '❌ Lỗi kết nối'}`);
+
+        if (keyOk) {
+          results.push(`Khóa ${i+1}: ✅ Chuẩn`);
+          if (badgeEl) {
+            badgeEl.textContent = '✅ Hoạt động tốt';
+            badgeEl.style.color = '#34d399';
+          }
+        } else {
+          let diag = 'Lỗi kết nối';
+          if (lastStatusCode === 403) {
+            diag = '403 Bị cấm (chưa bật Generative Language API hoặc dùng nhầm Firebase Browser Key)';
+          } else if (lastStatusCode === 429) {
+            diag = '429 Hết hạn ngạch / Quota limit';
+          } else if (lastStatusCode === 400) {
+            diag = '400 Khóa API không hợp lệ';
+          } else if (lastStatusCode === 404) {
+            diag = '404 Không tìm thấy model';
+          }
+          results.push(`Khóa ${i+1}: ❌ ${diag}`);
+          if (badgeEl) {
+            badgeEl.textContent = `❌ ${lastStatusCode ? 'Lỗi ' + lastStatusCode : 'Lỗi mạng'}`;
+            badgeEl.style.color = '#f87171';
+          }
+        }
       }
 
       if (btn) btn.textContent = '🧪 Thử kết nối toàn bộ khóa';
       if (statusText) {
-        statusText.innerHTML = results.join(' • ');
+        statusText.innerHTML = results.join('<br>');
         statusText.style.color = results.every(r => r.includes('✅')) ? '#34d399' : '#fbbf24';
       }
     }
@@ -918,7 +952,7 @@
             <div style="font-size: 40px; margin-bottom: 10px;">🤖</div>
             <div style="font-size: 15px; font-weight: 700; color: var(--text); margin-bottom: 6px;">Chào bạn! Mình là VocaMentor AI</div>
             <div style="font-size: 12.5px; line-height: 1.5; max-width: 440px; margin: 0 auto; color: var(--text-muted);">
-              Được trang bị <strong>Gemini 3.8 Flash Vision</strong>, mình có thể giải thích chuyên sâu, sửa lỗi ngữ pháp, đóng vai hội thoại, luyện phát âm và đặc biệt là <strong>phân tích ảnh chụp bài tập/sách (tối đa 5 ảnh hoặc dán Ctrl+V)</strong>.
+              Được trang bị <strong>Gemini 2.0 Flash Multimodal</strong>, mình có thể giải thích chuyên sâu, sửa lỗi ngữ pháp, đóng vai hội thoại, luyện phát âm và đặc biệt là <strong>phân tích ảnh chụp bài tập/sách (tối đa 5 ảnh hoặc dán Ctrl+V)</strong>.
             </div>
           </div>
         `;
@@ -967,7 +1001,7 @@
                   ${parsedContent}
                 </div>
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 8px; padding-top: 6px; border-top: 1px dashed rgba(255,255,255,0.06); font-size: 10px; color: var(--text-muted);">
-                  <span>VocaMentor AI (Gemini 3.8 Flash)</span>
+                  <span>VocaMentor AI (Gemini 2.0 Flash)</span>
                   <div style="display: flex; gap: 6px;">
                     <button type="button" onclick="copyAiChatText(${idx})" title="Sao chép câu trả lời" style="background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 11px; padding: 0;">📋 Sao chép</button>
                     <span>• ${timeStr}</span>
@@ -1265,7 +1299,7 @@
         }
 
         const keys = typeof getStoredApiKeys === 'function' ? getStoredApiKeys() : [key];
-        const modelsToTry = typeof getGeminiModelsForTier === 'function' ? getGeminiModelsForTier('deep') : ['gemini-3.8-flash', 'gemini-3.7-flash', 'gemini-2.0-flash', 'gemini-3.5-flash-lite'];
+        const modelsToTry = typeof getGeminiModelsForTier === 'function' ? getGeminiModelsForTier('deep') : ['gemini-3.7-flash', 'gemini-3.8-flash', 'gemini-2.0-flash', 'gemini-3.5-flash-lite'];
 
         const isSentence = targetText.trim().includes(' ');
         const promptInstruction = isSentence
@@ -1512,7 +1546,7 @@ Quy tắc phản hồi quan trọng:
         }
       });
 
-      const modelsToTry = typeof getGeminiModelsForTier === 'function' ? getGeminiModelsForTier('deep') : ['gemini-3.8-flash', 'gemini-3.7-flash', 'gemini-2.0-flash', 'gemini-3.5-flash-lite'];
+      const modelsToTry = typeof getGeminiModelsForTier === 'function' ? getGeminiModelsForTier('deep') : ['gemini-3.7-flash', 'gemini-3.8-flash', 'gemini-2.0-flash', 'gemini-3.5-flash-lite'];
 
       let fetchSuccess = false;
       let replyText = '';

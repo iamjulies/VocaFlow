@@ -1,5 +1,5 @@
 // =========================================================================
-// VOCAFLOW 06E-DICTATION-ENGINE.JS (v0.10.10-47 Build 348 - SENTENCE DICTATION VIP β)
+// VOCAFLOW 06E-DICTATION-ENGINE.JS (v0.10.10-48 Build 349 - SENTENCE DICTATION VIP β)
 // Full Sentence Dictation Engine with Natural Speech, Speed Slider, AI Scoring & Sequence Alignment
 // =========================================================================
 
@@ -1032,7 +1032,7 @@ Return strictly JSON matching this schema:
     const keys = typeof getStoredApiKeys === 'function' ? getStoredApiKeys() : [];
     const modelsToTry = (typeof getGeminiModelsForTier === 'function')
       ? getGeminiModelsForTier('fast')
-      : ['gemini-2.5-flash-lite', 'gemini-3.5-flash-lite', 'gemini-3.7-flash'];
+      : ['gemini-3.5-flash-lite', 'gemini-3.1-flash-lite', 'gemini-2.0-flash-lite', 'gemini-3.7-flash'];
 
     for (const k of keys) {
       for (const m of modelsToTry) {

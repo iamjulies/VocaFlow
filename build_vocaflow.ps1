@@ -5,7 +5,7 @@
 [Console]::OutputEncoding = [System.Text.Encoding]::UTF8
 $sw = [System.Diagnostics.Stopwatch]::StartNew()
 
-$root = "C:\Users\DELL\Documents\Modding\browser"
+$root = if ($PSScriptRoot) { $PSScriptRoot } else { "C:\Users\DELL\Documents\Modding\VocaFlow" }
 $srcDir = Join-Path $root "src"
 
 Write-Host "==========================================================" -ForegroundColor Cyan

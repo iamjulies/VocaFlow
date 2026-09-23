@@ -1,5 +1,5 @@
 // =========================================================================
-// VOCAFLOW 06F-TRANSLATION-ENGINE.JS (v0.10.10-47 Build 348 - TRANSLATION LAB VIP β)
+// VOCAFLOW 06F-TRANSLATION-ENGINE.JS (v0.10.10-48 Build 349 - TRANSLATION LAB VIP β)
 // Bidirectional Translation Engine (EN ↔ VI) with Direct Gemini AI Generation, Multi-Tier VocaHint & Balance v3
 // =========================================================================
 
@@ -434,8 +434,8 @@ OUTPUT FORMAT: Return STRICT JSON ONLY without markdown fences or backticks:
     const keys = typeof getStoredApiKeys === 'function' ? getStoredApiKeys() : [];
     const isHard = (difficulty === 'hard');
     const modelsToTry = isHard
-      ? (typeof getGeminiModelsForTier === 'function' ? getGeminiModelsForTier('deep') : ['gemini-3.7-flash', 'gemini-3.6-flash', 'gemini-3.8-flash', 'gemini-3.5-flash-lite'])
-      : (typeof getGeminiModelsForTier === 'function' ? getGeminiModelsForTier('fast') : ['gemini-3.5-flash-lite', 'gemini-3.1-flash-lite', 'gemini-2.5-flash-lite', 'gemini-3.8-flash']);
+      ? (typeof getGeminiModelsForTier === 'function' ? getGeminiModelsForTier('deep') : ['gemini-3.7-flash', 'gemini-3.8-flash', 'gemini-2.0-flash', 'gemini-3.5-flash-lite'])
+      : (typeof getGeminiModelsForTier === 'function' ? getGeminiModelsForTier('fast') : ['gemini-3.5-flash-lite', 'gemini-3.1-flash-lite', 'gemini-2.0-flash-lite', 'gemini-3.7-flash']);
 
     const timeoutMs = 16000;
 
@@ -1072,7 +1072,7 @@ OUTPUT FORMAT: Return STRICT JSON ONLY without markdown fences or backticks:
     const keys = typeof getStoredApiKeys === 'function' ? getStoredApiKeys() : [];
     const modelsToTry = typeof getGeminiModelsForTier === 'function'
       ? getGeminiModelsForTier('fast')
-      : ['gemini-3.5-flash-lite', 'gemini-3.1-flash-lite', 'gemini-2.5-flash-lite', 'gemini-3.8-flash', 'gemini-3.7-flash', 'gemini-2.5-flash', 'gemini-2.0-flash'];
+      : ['gemini-3.5-flash-lite', 'gemini-3.1-flash-lite', 'gemini-2.0-flash-lite', 'gemini-3.7-flash'];
 
     for (const k of keys) {
       if (evalSuccess) break;
