@@ -1,5 +1,5 @@
 // =========================================================================
-// VOCAFLOW 06D-CLOZE-ENGINE.JS (v0.10.10-48 Build 349 - EXTENDED LEARNING MODE BETA)
+// VOCAFLOW 06D-CLOZE-ENGINE.JS (v0.10.10-49 Build 350 - EXTENDED LEARNING MODE BETA)
 // Contextual Reading & Cloze Test Passage Generator with Strict JSON Schema
 // =========================================================================
 
@@ -1457,11 +1457,14 @@ function evaluateClozeResults() {
   }
 
   // Calculate Xu Reward
-  const minXu = diffCfg.baseXuRange[0];
-  const maxXu = diffCfg.baseXuRange[1];
-  let earnedXu = Math.round(minXu + (maxXu - minXu) * (accuracyPct / 100));
-  if (!isFloorPassed) {
-    earnedXu = Math.round(earnedXu * 0.4); // Partial credit if below floor score
+  let earnedXu = 0;
+  if (accuracyPct > 0 && correctCount > 0) {
+    const minXu = diffCfg.baseXuRange[0];
+    const maxXu = diffCfg.baseXuRange[1];
+    earnedXu = Math.round(minXu + (maxXu - minXu) * (accuracyPct / 100));
+    if (!isFloorPassed) {
+      earnedXu = Math.max(1, Math.round(earnedXu * 0.4)); // Partial credit if below floor score but > 0
+    }
   }
   clozeSessionPointsEarned += earnedXu;
 
@@ -1732,7 +1735,7 @@ function finishClozeSession() {
   try {
     const total = clozePassagesList.length || 1;
     if (typeof calculateUnifiedSessionPoints === 'function') {
-      clozeRes = calculateUnifiedSessionPoints('cloze', clozeSessionPointsEarned, total, total);
+      clozeRes = calculateUnifiedSessionPoints('cloze', clozeSessionPointsEarned, total, total, currentClozeDifficulty);
     } else if (typeof calculateSessionFinalPointsV3 === 'function') {
       clozeRes = calculateSessionFinalPointsV3(clozeSessionPointsEarned, total, total, true);
     } else if (typeof calculateSessionFinalPoints === 'function') {
@@ -1743,7 +1746,7 @@ function finishClozeSession() {
   if (bonusBox && clozeRes) {
     if (clozeRes.commitmentFactor < 1.0 || clozeRes.volumeMultiplier > 1.0 || (clozeRes.vipMultiplier && clozeRes.vipMultiplier > 1.0)) {
       bonusBox.style.display = 'block';
-      bonusBox.innerHTML = `✨ Hệ số hoàn thành: <strong>x${clozeRes.commitmentFactor || clozeRes.completionMult || 1.0}</strong> • Khối lượng: <strong>x${clozeRes.volumeMultiplier || clozeRes.deckLengthMult || 1.0}</strong> • Trọng số: <strong>x${clozeRes.modeWeight || 2.8}</strong>`;
+      bonusBox.innerHTML = `✨ Hệ số hoàn thành: <strong>x${clozeRes.commitmentFactor || clozeRes.completionMult || 1.0}</strong> • Khối lượng: <strong>x${clozeRes.volumeMultiplier || clozeRes.deckLengthMult || 1.0}</strong> • Trọng số: <strong>x${clozeRes.modeWeight || 2.0}</strong>`;
     } else {
       bonusBox.style.display = 'none';
     }
@@ -1791,12 +1794,18 @@ function exitClozeMode() {
 
   if (!clozeIsCompleted && (done > 0 || clozeSessionPointsEarned !== 0 || currentClozeIndex > 0)) {
     if (typeof promptStudyEarlyExit === 'function') {
+      const totalBlanks = clozeSessionTotalBlanksCount || done;
+      const clozeItems = [];
+      for (let i = 0; i < (clozeSessionTotalBlanksCount || done); i++) {
+        clozeItems.push(i < clozeSessionCorrectBlanksCount ? 100 : 0);
+      }
       promptStudyEarlyExit({
         mode: 'cloze',
         done,
         total,
         basePoints: clozeSessionPointsEarned,
         difficulty: currentClozeDifficulty,
+        questions: clozeItems.length > 0 ? clozeItems : new Array(done).fill(100),
         onConfirmExit: () => doExecuteExitCloze(done, total)
       });
       return;
@@ -1814,7 +1823,7 @@ function doExecuteExitCloze(done, total) {
   if (!clozeIsCompleted && (clozeSessionPointsEarned !== 0 || done > 0)) {
     const isComp = done >= total && total > 0;
     const res = (typeof calculateUnifiedSessionPoints === 'function')
-      ? calculateUnifiedSessionPoints('cloze', clozeSessionPointsEarned, done, total)
+      ? calculateUnifiedSessionPoints('cloze', clozeSessionPointsEarned, done, total, currentClozeDifficulty)
       : (typeof calculateSessionFinalPointsV3 === 'function')
         ? calculateSessionFinalPointsV3(clozeSessionPointsEarned, done, total, isComp)
         : calculateSessionFinalPoints(clozeSessionPointsEarned, done, total, isComp);

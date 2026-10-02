@@ -1,4 +1,30 @@
 ================================================================================
+Phiên bản: v0.10.10-49 (Build 350) - Chuẩn Hóa Toàn Diện Hệ Thống Điểm Thưởng EXP & VoCoin Trên Toàn Bộ 8 Chế Độ Học, Cân Chỉnh Trọng Số Nhận Thức W_mode, Đồng Bộ Hệ Số Độ Khó & Quét Sạch Mâu Thuẫn Hiển Thị Giữa Modal Xác Nhận Thoát Sớm Với Bảng Tổng Kết (Comprehensive EXP & VoCoin Economy Standardization Across All 8 Study Modes, Cognitive Weight Alignment, Difficulty Multiplier Sync & Complete Early Exit Settlement Sweep)
+================================================================================
+1. [Chuẩn Hóa Trọng Số Nhận Thức W_mode Cho Hệ Thống Tính Điểm EXP & VoCoin Unified Balance v4 (Issue 28)]:
+   - Thiết lập bảng trọng số nhận thức độ phức tạp tư duy ($W_{\text{mode}}$) chuẩn xác tuyệt đối trên toàn bộ 8 chế độ học:
+     * Flashcard / Auto Flashcard: 0.0x (0 EXP / 0 VoCoin) - bảo vệ nền kinh tế chống cày cuốc tự động vô hạn.
+     * Quiz (Trắc Nghiệm): 1.00x
+     * Spelling (Luyện Chính Tả): 1.33x
+     * Speaking (Luyện Nói AI): 1.67x
+     * Cloze Test (Điền Từ Đoạn Văn): 2.00x
+     * Translation (Dịch Thuật Song Phương): 2.33x
+     * Dictation (Nghe Gõ Câu): 2.67x
+     * Writing (Luyện Viết Tự Luận): 3.00x
+   - Cập nhật hàm tính toán điểm kinh nghiệm cốt lõi `calculateUnifiedStudyExp` và `calculateUnifiedSessionPoints` trong `02-state-core.js` để tự động xử lý hệ số độ khó dạng chuỗi (`'easy'`, `'medium'`, `'hard'`, `'expert'`) lẫn dạng đối tượng/số thực (`difficultyMult`, `diffMultiplier`).
+   - Xử lý triệt để trường hợp $W_{\text{mode}} \le 0$ trả về đúng 0 EXP thay vì trả về điểm sàn 1 EXP.
+
+2. [Quét Sạch Triệt Để Mọi Điểm Bất Nhất Giữa Modal Thoát Sớm (Early Exit Confirmation) & Bảng Tổng Kết]:
+   - Sửa lỗi truyền thiếu mảng điểm thực tế (`questions` / `spellingItems` / `scores`) vào `promptStudyEarlyExit`, khiến modal cảnh báo thoát sớm giả định người dùng đạt 100% điểm ở tất cả các câu đã làm, dẫn đến EXP hiển thị trong modal thoát cao hơn EXP thực tế nhận được khi xác nhận thoát.
+   - Đồng bộ hóa toàn diện tham số độ khó (`currentQuizDifficulty`, `currentSpellingDifficulty`, `currentWritingDifficulty`, `currentClozeDifficulty`, `currentDictationDifficulty`, `currentTranslationDifficulty`, `currentSpeakingDifficulty`) trên cả 7 động cơ học tập khi thoát sớm lẫn khi hoàn thành toàn bộ bài học.
+
+3. [Sửa Lỗi Chế Độ Điền Từ (Cloze Test) Đạt 0% Vẫn Được Nhận Xu (0% Accuracy 0 Xu Guard)]:
+   - Khắc phục lỗi tại `06d-cloze-engine.js` khi người dùng sai toàn bộ 0% các ô trống nhưng công thức nội suy điểm sàn vẫn cộng +8 Xu do điểm tối thiểu mặc định. Bổ sung điều kiện kiểm tra nghiêm ngặt `accuracyPct > 0 && correctCount > 0`, nếu đúng 0 từ thì nhận đúng 0 Xu.
+
+4. [Việt Hóa & Hoàn Thiện Thẻ Đánh Giá Viết Tự Luận Writing Lab]:
+   - Chuyển đổi nhãn thưởng thuộc từ trong thẻ phản hồi đánh giá bài viết từ tiếng Anh "Mastery" sang tiếng Việt "Thuộc từ" chuẩn mực, đồng bộ cùng hệ thống danh xưng toàn ứng dụng.
+
+================================================================================
 Phiên bản: v0.10.10-48 (Build 349) - Nâng Cấp Hệ Thống AI Google Gemini Đa Tầng, Ưu Tiên gemini-3.7-flash Cho Deep Reasoning & gemini-3.5-flash-lite Cho Micro-Task, Chuẩn Hóa 12 Khối Fallback Toàn Diện & Bảo Toàn Cache Mô Hình (Multi-Tier Gemini AI Engine Architecture, Deep gemini-3.7-flash & Fast gemini-3.5-flash-lite Prioritization, 12-Engine Unified Fallback Matrix & Model Cache Safeguard)
 ================================================================================
 1. [Tái Cấu Trúc Hệ Thống AI Google Gemini Phân Tầng Thông Minh (Multi-Tier Gemini AI Architecture)]:

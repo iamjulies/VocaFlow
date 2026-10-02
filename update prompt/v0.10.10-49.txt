@@ -1,0 +1,12 @@
+v0.10.10-49
+- vấn đề 28: à vậy cũng ổn. lí thuyết như này thì ok, nhưng mà chưa áp dụng được hết thì phải? ý là nhiều cái hiện một đằng mà cộng 1 nẻo ấy. t cáu á. t muốn mày xem kĩ qua tất cả các chế độ học có cộng EXP (7 chế độ) rồi sửa lại mấy chỗ ghi sai -> sửa lại cho đúng với chế độ hiện tại (một vài chỗ t nhận thấy: màn hình cảnh báo thoát giữa chừng, màn hình tổng kết, nhận xét writing "C:\Users\DELL\Pictures\Screenshots\Ảnh chụp màn hình 2026-10-02 235051.png", "C:\Users\DELL\Pictures\Screenshots\Ảnh chụp màn hình 2026-10-02 235221.png",...). t cũng sửa lại 1 chút cái bảng của m: 
+autofc / flashcard -> 0.0x
+quiz 1.00x
+spelling 1.33x
+speaking 1.67x
+cloze 2.00x
+translation 2.33x
+dictation 2.67x
+writing 3.00x
+-> sửa triệt để vấn đề này bằng cách quét rò tìm mìn nha
+đọc và thực hiện các file markdown có trong "C:\Users\DELL\Documents\Modding\browser" (nếu quên)

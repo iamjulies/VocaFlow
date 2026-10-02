@@ -1,5 +1,5 @@
 // =========================================================================
-// VOCAFLOW 06E-DICTATION-ENGINE.JS (v0.10.10-48 Build 349 - SENTENCE DICTATION VIP β)
+// VOCAFLOW 06E-DICTATION-ENGINE.JS (v0.10.10-49 Build 350 - SENTENCE DICTATION VIP β)
 // Full Sentence Dictation Engine with Natural Speech, Speed Slider, AI Scoring & Sequence Alignment
 // =========================================================================
 
@@ -1286,7 +1286,7 @@ function finishDictationSession() {
 
   let res = { finalPts: dictationSessionPointsEarned, completionMult: 1.0, deckLengthMult: 1.0, milestoneBonus: 0, combinedMult: 1.0 };
   if (typeof calculateUnifiedSessionPoints === 'function') {
-    res = calculateUnifiedSessionPoints('dictation', dictationSessionPointsEarned, done, total);
+    res = calculateUnifiedSessionPoints('dictation', dictationSessionPointsEarned, done, total, currentDictationDifficulty);
   } else if (typeof calculateSessionFinalPointsV3 === 'function') {
     res = calculateSessionFinalPointsV3(dictationSessionPointsEarned, done, total, isComp);
   } else if (typeof calculateSessionFinalPoints === 'function') {
@@ -1361,7 +1361,7 @@ function finishDictationSession() {
   if (bonusBox) {
     if (res.commitmentFactor < 1.0 || res.volumeMultiplier > 1.0 || (res.vipMultiplier && res.vipMultiplier > 1.0)) {
       bonusBox.style.display = 'block';
-      bonusBox.innerHTML = `✨ Hệ số hoàn thành: <strong>x${res.commitmentFactor || res.completionMult || 1.0}</strong> • Khối lượng: <strong>x${res.volumeMultiplier || res.deckLengthMult || 1.0}</strong> • Trọng số: <strong>x${res.modeWeight || 2.4}</strong>`;
+      bonusBox.innerHTML = `✨ Hệ số hoàn thành: <strong>x${res.commitmentFactor || res.completionMult || 1.0}</strong> • Khối lượng: <strong>x${res.volumeMultiplier || res.deckLengthMult || 1.0}</strong> • Trọng số: <strong>x${res.modeWeight || 2.67}</strong>`;
     } else {
       bonusBox.style.display = 'none';
     }
@@ -1448,6 +1448,7 @@ function exitDictationMode() {
         total,
         basePoints: dictationSessionPointsEarned,
         difficulty: currentDictationDifficulty,
+        questions: dictationSessionScores.length > 0 ? dictationSessionScores : new Array(done).fill(80),
         onConfirmExit: () => doExecuteExitDictation(done, total)
       });
       return;
@@ -1469,7 +1470,7 @@ function doExecuteExitDictation(done, total) {
   if (!dictationIsCompleted && (dictationSessionPointsEarned !== 0 || done > 0)) {
     const isComp = done >= total && total > 0;
     const res = (typeof calculateUnifiedSessionPoints === 'function')
-      ? calculateUnifiedSessionPoints('dictation', dictationSessionPointsEarned, done, total)
+      ? calculateUnifiedSessionPoints('dictation', dictationSessionPointsEarned, done, total, currentDictationDifficulty)
       : (typeof calculateSessionFinalPointsV3 === 'function')
         ? calculateSessionFinalPointsV3(dictationSessionPointsEarned, done, total, isComp)
         : calculateSessionFinalPoints(dictationSessionPointsEarned, done, total, isComp);

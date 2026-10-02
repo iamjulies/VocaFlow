@@ -1,13 +1,13 @@
-// VOCAFLOW 02-STATE-CORE.JS (v0.10.10-48 Build 349)
+// VOCAFLOW 02-STATE-CORE.JS (v0.10.10-49 Build 350)
 // Global constants, core database state, storage keys, recovery & audio engine
 // =========================================================================
 
     // =========================================================================
-    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.10-48 Build 349)
+    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.10-49 Build 350)
     // =========================================================================
-    const VOCAFLOW_APP_VERSION = 'v0.10.10-48';
-    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.10-48 (Build 349)';
-    const VOCAFLOW_APP_BUILD = 349;
+    const VOCAFLOW_APP_VERSION = 'v0.10.10-49';
+    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.10-49 (Build 350)';
+    const VOCAFLOW_APP_BUILD = 350;
     window.VOCAFLOW_APP_VERSION = VOCAFLOW_APP_VERSION;
     window.VOCAFLOW_APP_FULL_TITLE = VOCAFLOW_APP_FULL_TITLE;
     window.VOCAFLOW_APP_BUILD = VOCAFLOW_APP_BUILD;
@@ -647,13 +647,14 @@
     // =========================================================================
     const MODE_COGNITIVE_WEIGHTS = {
       autofc: 0.0,
-      quiz: 1.0,
-      spelling: 1.3,
-      speaking: 1.8,
-      dictation: 2.4,
-      cloze: 2.8,
-      translation: 3.0,
-      writing: 3.5
+      flashcard: 0.0,
+      quiz: 1.00,
+      spelling: 1.33,
+      speaking: 1.67,
+      cloze: 2.00,
+      translation: 2.33,
+      dictation: 2.67,
+      writing: 3.00
     };
     window.MODE_COGNITIVE_WEIGHTS = MODE_COGNITIVE_WEIGHTS;
 
@@ -740,7 +741,21 @@
       const done = Math.max(0, Number(doneCount) || 0);
       const total = Math.max(1, Number(totalCount) || done || 1);
       const rawSum = Number(rawItemPointsSum) || 0;
-      const M_diff = Math.max(0.1, Number(difficultyMult) || 1.0);
+      
+      let M_diff = 1.0;
+      if (typeof difficultyMult === 'number') {
+        M_diff = Math.max(0.1, difficultyMult);
+      } else if (typeof difficultyMult === 'string') {
+        const dStr = difficultyMult.toLowerCase();
+        if (dStr.includes('easy') || dStr.includes('dễ')) M_diff = 1.0;
+        else if (dStr.includes('medium') || dStr.includes('trung')) M_diff = 1.5;
+        else if (dStr.includes('hard') || dStr.includes('khó')) M_diff = 2.0;
+        else if (dStr.includes('expert') || dStr.includes('chuyên') || dStr.includes('siêu')) M_diff = 2.5;
+        else M_diff = 1.0;
+      } else if (difficultyMult && typeof difficultyMult === 'object') {
+        if (typeof difficultyMult.diffMultiplier === 'number') M_diff = difficultyMult.diffMultiplier;
+        else if (typeof difficultyMult.difficultyMult === 'number') M_diff = difficultyMult.difficultyMult;
+      }
       
       const eta = getDailyFatigueEfficiency();
       const isVip = (typeof isUserVip === 'function') ? isUserVip() : false;
@@ -1485,17 +1500,17 @@
 
       // 1. Mode Cognitive Weight (W_mode)
       const modeWeights = {
-        'autofc': 0.2,
-        'flashcard': 0.2,
-        'quiz': 1.0,
-        'spelling': 1.3,
-        'speaking': 1.8,
-        'dictation': 2.4,
-        'cloze': 2.8,
-        'translation': 3.0,
-        'writing': 3.5
+        'autofc': 0.0,
+        'flashcard': 0.0,
+        'quiz': 1.00,
+        'spelling': 1.33,
+        'speaking': 1.67,
+        'cloze': 2.00,
+        'translation': 2.33,
+        'dictation': 2.67,
+        'writing': 3.00
       };
-      const W_mode = (typeof modeWeights[normMode] === 'number') ? modeWeights[normMode] : (getModeCognitiveWeight(normMode) || 1.0);
+      const W_mode = (typeof modeWeights[normMode] === 'number') ? modeWeights[normMode] : (getModeCognitiveWeight(normMode) || 0.0);
 
       // 2. Parse Items & N_done / N_total
       let items = [];
@@ -1509,14 +1524,14 @@
       const done = items.length;
       const total = Math.max(1, Number(totalExpectedCount) || done || 1);
 
-      if (done === 0) {
+      if (done === 0 || W_mode <= 0) {
         return {
           finalExp: 0,
           baseExpSum: 0,
           qualitySum: 0,
-          done: 0,
+          done,
           total,
-          ratio: 0,
+          ratio: total > 0 ? (done / total) : 0,
           metrics: {
             modeWeight: W_mode,
             diffMultiplier: 1.0,
@@ -1574,6 +1589,13 @@
       } else if (difficultyMultOrOptions && typeof difficultyMultOrOptions === 'object') {
         if (typeof difficultyMultOrOptions.diffMultiplier === 'number') M_diff = difficultyMultOrOptions.diffMultiplier;
         else if (typeof difficultyMultOrOptions.difficultyMult === 'number') M_diff = difficultyMultOrOptions.difficultyMult;
+        else if (typeof difficultyMultOrOptions.difficulty === 'string' || typeof difficultyMultOrOptions.diff === 'string') {
+          const dStr = (difficultyMultOrOptions.difficulty || difficultyMultOrOptions.diff).toLowerCase();
+          if (dStr.includes('easy') || dStr.includes('dễ')) M_diff = 1.0;
+          else if (dStr.includes('medium') || dStr.includes('trung')) M_diff = 1.5;
+          else if (dStr.includes('hard') || dStr.includes('khó')) M_diff = 2.0;
+          else if (dStr.includes('expert') || dStr.includes('chuyên') || dStr.includes('siêu')) M_diff = 2.5;
+        }
       }
 
       // 5. Volume Scaling Factor: Phi(N_done) = 1.0 + 0.3 * (N_done / (N_done + 15))
@@ -1599,9 +1621,9 @@
       flowStreak = Math.max(0, flowStreak);
       const flowMult = Math.round((1.0 + Math.min(0.20, flowStreak * 0.01)) * 10000) / 10000;
 
-      // 9. Final EXP Calculation (Floor, with minimum 1 EXP if done >= 1)
+      // 9. Final EXP Calculation (Floor, 0 if W_mode is 0 or baseExpSum is 0)
       const rawExpProduct = baseExpSum * W_mode * M_diff * volumeMult * commitmentMult * M_vip * flowMult;
-      const finalExp = Math.max(1, Math.floor(rawExpProduct));
+      const finalExp = (W_mode <= 0 || rawExpProduct <= 0) ? 0 : Math.max(1, Math.floor(rawExpProduct));
 
       return {
         finalExp,
@@ -1637,7 +1659,7 @@
         basePoints = modeOrObj.basePoints ?? modeOrObj.currentPointsEarned ?? 0;
         onConfirmExit = modeOrObj.onConfirmExit;
         sessionItems = modeOrObj.sessionItems ?? modeOrObj.items ?? null;
-        diffM = modeOrObj.difficultyMult ?? modeOrObj.diffMultiplier ?? 1.0;
+        diffM = modeOrObj.difficultyMult ?? modeOrObj.diffMultiplier ?? modeOrObj.difficulty ?? modeOrObj.diff ?? 1.0;
       } else {
         mode = modeOrObj;
         done = doneArg ?? 0;

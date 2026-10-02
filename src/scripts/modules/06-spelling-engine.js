@@ -1,5 +1,5 @@
 // =========================================================================
-// VOCAFLOW 06-SPELLING-ENGINE.JS (v0.10.10-48 Build 349)
+// VOCAFLOW 06-SPELLING-ENGINE.JS (v0.10.10-49 Build 350)
 // Luyện viết chính tả từ vựng & AI gợi ý
 // =========================================================================
 
@@ -1416,21 +1416,27 @@
       const total = spellingTotalQuestions || (spellingList ? spellingList.length : 1);
       const done = Math.min(total, spellingIndex + (spellingIsAnswered ? 1 : 0));
 
+      const spellingItems = [];
+      for (let i = 0; i < done; i++) {
+        spellingItems.push(i < spellingCorrectCount ? 100 : 0);
+      }
+
       if (!spellingIsCompleted && (done > 0 || spellingPointsEarned !== 0)) {
         promptStudyEarlyExit({
           mode: 'spelling',
           done,
           total,
           basePoints: spellingPointsEarned,
-          difficulty: currentSpellingDifficulty,
-          onConfirmExit: () => doExecuteExitSpelling(done, total)
+          sessionItems: spellingItems,
+          difficultyMult: currentSpellingDifficulty,
+          onConfirmExit: () => doExecuteExitSpelling(done, total, spellingItems)
         });
         return;
       }
-      doExecuteExitSpelling(done, total);
+      doExecuteExitSpelling(done, total, spellingItems);
     }
 
-    function doExecuteExitSpelling(done, total) {
+    function doExecuteExitSpelling(done, total, doneItems = null) {
       stopAllAudio();
 
       if (spellingStartTime > 0) {
@@ -1452,7 +1458,7 @@
             : calculateSessionFinalPoints(spellingPointsEarned, done, total, false);
           const finalPts = res.finalPoints ?? res.finalPts;
 
-          const itemsToScore = new Array(done).fill(100);
+          const itemsToScore = doneItems || new Array(done).fill(100);
           const expRes = (typeof calculateUnifiedStudyExp === 'function')
             ? calculateUnifiedStudyExp('spelling', itemsToScore, total, currentSpellingDifficulty)
             : { finalExp: 0 };

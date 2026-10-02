@@ -1,12 +1,42 @@
 # CURRENT TASK & TRẠNG THÁI CÔNG VIỆC HIỆN TẠI (VOCAFLOW)
 
-> **Phiên bản mục tiêu:** `v0.10.10-47 (Build 348)`  
-> **Cập nhật lần cuối:** 2026-09-20  
+> **Phiên bản mục tiêu:** `v0.10.10-49 (Build 350)`  
+> **Cập nhật lần cuối:** 2026-10-03  
 > **Trạng thái:** 🚀 **ĐANG TIẾN HÀNH BUILD, KIỂM THỬ TỰ ĐỘNG & MULTI-DEPLOY GITHUB**
 
 ---
 
-## 🎯 1. DANH SÁCH NHIỆM VỤ ĐÃ GIẢI QUYẾT (v0.10.10-47 Build 348)
+## 🎯 1. DANH SÁCH NHIỆM VỤ ĐÃ GIẢI QUYẾT (v0.10.10-49 Build 350 - Issue 28)
+
+- [x] **Chuẩn Hóa Trọng Số Nhận Thức $W_{\text{mode}}$ Cho Hệ Thống Tính Điểm EXP & VoCoin Unified Balance v4 (`02-state-core.js`)**:
+  - Thiết lập bảng trọng số nhận thức độ phức tạp tư duy ($W_{\text{mode}}$) chuẩn xác tuyệt đối trên toàn bộ 8 chế độ học:
+    * Flashcard / Auto Flashcard: **0.0x** (0 EXP / 0 VoCoin) - bảo vệ nền kinh tế chống cày cuốc tự động vô hạn.
+    * Quiz (Trắc Nghiệm): **1.00x**
+    * Spelling (Luyện Chính Tả): **1.33x**
+    * Speaking (Luyện Nói AI): **1.67x**
+    * Cloze Test (Điền Từ Đoạn Văn): **2.00x**
+    * Translation (Dịch Thuật Song Phương): **2.33x**
+    * Dictation (Nghe Gõ Câu): **2.67x**
+    * Writing (Luyện Viết Tự Luận): **3.00x**
+  - Cập nhật hàm tính toán điểm kinh nghiệm cốt lõi `calculateUnifiedStudyExp` và `calculateUnifiedSessionPoints` trong `02-state-core.js` để tự động xử lý hệ số độ khó dạng chuỗi (`'easy'`, `'medium'`, `'hard'`, `'expert'`) lẫn dạng đối tượng/số thực (`difficultyMult`, `diffMultiplier`).
+  - Xử lý triệt để trường hợp $W_{\text{mode}} \le 0$ trả về đúng `0` EXP thay vì trả về điểm sàn `1` EXP.
+
+- [x] **Quét Sạch Triệt Để Mọi Điểm Bất Nhất Giữa Modal Thoát Sớm (Early Exit Confirmation) & Bảng Tổng Kết (`05-quiz-engine.js`, `06-spelling-engine.js`, `06c-writing-engine.js`, `06d-cloze-engine.js`, `06e-dictation-engine.js`, `06f-translation-engine.js`, `07-speaking-engine.js`)**:
+  - Sửa lỗi truyền thiếu mảng điểm thực tế (`questions` / `spellingItems` / `scores`) vào `promptStudyEarlyExit`, khiến modal cảnh báo thoát sớm giả định người dùng đạt 100% điểm ở tất cả các câu đã làm, dẫn đến EXP hiển thị trong modal thoát cao hơn EXP thực tế nhận được khi xác nhận thoát.
+  - Đồng bộ hóa toàn diện tham số độ khó (`currentQuizDifficulty`, `currentSpellingDifficulty`, `currentWritingDifficulty`, `currentClozeDifficulty`, `currentDictationDifficulty`, `currentTranslationDifficulty`, `currentSpeakingDifficulty`) trên cả 7 động cơ học tập khi thoát sớm lẫn khi hoàn thành toàn bộ bài học.
+
+- [x] **Sửa Lỗi Chế Độ Điền Từ (Cloze Test) Đạt 0% Vẫn Được Nhận Xu (`06d-cloze-engine.js` - Ảnh 235221.png)**:
+  - Khắc phục lỗi tại `06d-cloze-engine.js` khi người dùng sai toàn bộ 0% các ô trống nhưng công thức nội suy điểm sàn vẫn cộng +8 Xu do điểm tối thiểu mặc định (`minXu = 20 * 0.4 = 8`). Bổ sung điều kiện kiểm tra nghiêm ngặt `accuracyPct > 0 && correctCount > 0`, nếu đúng 0 từ thì nhận đúng 0 Xu.
+
+- [x] **Việt Hóa & Hoàn Thiện Thẻ Đánh Giá Viết Tự Luận Writing Lab (`06c-writing-engine.js` - Ảnh 235051.png)**:
+  - Chuyển đổi nhãn thưởng thuộc từ trong thẻ phản hồi đánh giá bài viết từ tiếng Anh "Mastery" sang tiếng Việt "Thuộc từ" chuẩn mực, đồng bộ cùng hệ thống danh xưng toàn ứng dụng.
+
+- [x] **Đồng Bộ Toàn Diện 7-Point Version Consistency (`v0.10.10-49 Build 350`)**:
+  - Cập nhật phiên bản nhất quán trên toàn bộ 7 điểm hệ thống: `modal-settings.html`, `02-state-core.js`, toàn bộ module headers `01-router.js` đến `13-wardrobe.js`, `sw.js` & `Release_App/sw.js`, `pubspec.yaml`, `Program.cs`, `push_github.ps1`, `VOCAFLOW_OVERVIEW.txt`, `GITHUB_RELEASE/VOCAFLOW_OVERVIEW.txt`.
+
+---
+
+## 🎯 2. DANH SÁCH NHIỆM VỤ CÁC PHIÊN BẢN TRƯỚC (v0.10.10-48 Build 349)
 
 - [x] **Sửa Lỗi Tách Rời Tọa Độ Khung VIP Khi Rê Chuột (`src/styles/app.css`, `src/scripts/modules/13-wardrobe.js` - Vấn đề 21)**:
   - Khắc phục triệt để lỗi khi hover vào Khung VIP Tháng và VIP Năm, các chi tiết vương miện, cánh thiên thần bị bay lệch góc hoặc biến dạng tọa độ do CSS animation ghi đè `transform` của SVG.

@@ -1,5 +1,5 @@
 // =========================================================================
-// VOCAFLOW 05-QUIZ-ENGINE.JS (v0.10.10-48 Build 349)
+// VOCAFLOW 05-QUIZ-ENGINE.JS (v0.10.10-49 Build 350)
 // Trắc nghiệm thông minh 4 phương án, tính điểm SRS & phân tích kết quả
 // =========================================================================
 
@@ -1925,7 +1925,7 @@ Yêu cầu nghiêm ngặt:
       let quizExpRes = null;
       try {
         const res = (typeof calculateUnifiedSessionPoints === 'function')
-          ? calculateUnifiedSessionPoints('quiz', quizPointsEarned, total, total, 1.0)
+          ? calculateUnifiedSessionPoints('quiz', quizPointsEarned, total, total, currentQuizDifficulty)
           : calculateSessionFinalPoints(quizPointsEarned, total, total, true);
         quizSettlementRes = res;
         quizPointsEarned = res.finalPoints ?? res.finalPts;
@@ -2199,7 +2199,7 @@ Yêu cầu nghiêm ngặt:
         // Unified Study EXP Engine & Unified Balance v4 incomplete session settlement
         if (!quizIsCompleted && (quizPointsEarned !== 0 || done > 0)) {
           const res = (typeof calculateUnifiedSessionPoints === 'function')
-            ? calculateUnifiedSessionPoints('quiz', quizPointsEarned, done, total, 1.0)
+            ? calculateUnifiedSessionPoints('quiz', quizPointsEarned, done, total, currentQuizDifficulty)
             : calculateSessionFinalPoints(quizPointsEarned, done, total, false);
           const finalPts = res.finalPoints ?? res.finalPts;
 

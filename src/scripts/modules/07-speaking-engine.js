@@ -1,5 +1,5 @@
 // =========================================================================
-// VOCAFLOW 07-SPEAKING-ENGINE.JS (v0.10.10-48 Build 349)
+// VOCAFLOW 07-SPEAKING-ENGINE.JS (v0.10.10-49 Build 350)
 // AI Speaking Lab, MediaRecorder, VAD, Gemini audio analysis, multi-take economy & IndexedDB Best Take
 // =========================================================================
 
@@ -468,12 +468,17 @@
       const done = speakingCompletedWords;
 
       if (!speakingIsCompleted && (done > 0 || speakingSessionPointsEarned !== 0 || currentSpeakingIndex > 0)) {
+        const allScores = speakingSessionTakes.map(t => t.score);
+        const itemsToScore = allScores.length > 0 ? allScores : new Array(done).fill(80);
+        const diffM = typeof getSpeakingTotalMult === 'function' ? getSpeakingTotalMult() : 1.0;
         promptStudyEarlyExit({
           mode: 'speaking',
           done,
           total,
           basePoints: speakingSessionPointsEarned,
           difficulty: currentSpeakingDifficulty,
+          difficultyMult: diffM,
+          questions: itemsToScore,
           onConfirmExit: () => doExecuteExitSpeaking(done, total)
         });
         return;
@@ -912,7 +917,7 @@
 
       if (bonusBoxEl && spkRes) {
         try {
-          bonusBoxEl.innerHTML = '🎁 <strong>Thưởng Unified Balance v4:</strong> Trọng số W_mode x' + (spkRes.metrics?.modeWeight || 1.8) + ' • Quy mô x' + (spkRes.metrics?.volumeMult || spkRes.deckLengthMult || 1.0) + (spkRes.isVipBonus ? ' • VIP x1.25' : '');
+          bonusBoxEl.innerHTML = '🎁 <strong>Thưởng Unified Balance v4:</strong> Trọng số W_mode x' + (spkRes.metrics?.modeWeight || 1.67) + ' • Quy mô x' + (spkRes.metrics?.volumeMult || spkRes.deckLengthMult || 1.0) + (spkRes.isVipBonus ? ' • VIP x1.25' : '');
           bonusBoxEl.style.display = 'block';
           if (typeof updateModalBrainEnergyIndicator === 'function') {
             updateModalBrainEnergyIndicator('spk-res-energy-box', spkRes);

@@ -1,5 +1,5 @@
 // =========================================================================
-// VOCAFLOW 06C-WRITING-ENGINE.JS (v0.10.10-48 Build 349 - SENTENCE WRITING LAB VIP)
+// VOCAFLOW 06C-WRITING-ENGINE.JS (v0.10.10-49 Build 350 - SENTENCE WRITING LAB VIP)
 // AI-Powered Writing Lab with Thematic Word Linking & Target Band Aim Polish
 // =========================================================================
 
@@ -978,7 +978,7 @@ function renderWritingEvaluationResult(evalData, question) {
 
     if (rewardCont) {
       rewardCont.style.display = 'flex';
-      rewardCont.innerHTML = `<span class="badge" style="font-size: 13px; font-weight: 800; padding: 7px 18px; border-radius: 20px; background: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.4);">💰 +${earnedXu} VoCoin • 📈 +${cfg.masteryBonus}% Mastery</span>`;
+      rewardCont.innerHTML = `<span class="badge" style="font-size: 13px; font-weight: 800; padding: 7px 18px; border-radius: 20px; background: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.4);">💰 +${earnedXu} VoCoin • 📈 +${cfg.masteryBonus}% Thuộc từ</span>`;
     }
 
     if (typeof playVocaSfx === 'function') playVocaSfx('correct');
@@ -1191,7 +1191,7 @@ function finishWritingSession() {
   let finalPts = writingSessionPointsEarned;
   try {
     if (typeof calculateUnifiedSessionPoints === 'function') {
-      writingRes = calculateUnifiedSessionPoints('writing', writingSessionPointsEarned, passedQuestions, totalQuestions);
+      writingRes = calculateUnifiedSessionPoints('writing', writingSessionPointsEarned, passedQuestions, totalQuestions, currentWritingDifficulty);
       finalPts = writingRes.finalPoints ?? writingRes.finalPts ?? writingSessionPointsEarned;
     } else if (typeof calculateSessionFinalPointsV3 === 'function') {
       writingRes = calculateSessionFinalPointsV3(writingSessionPointsEarned, passedQuestions, totalQuestions, true);
@@ -1242,7 +1242,7 @@ function finishWritingSession() {
   if (bonusBox && writingRes) {
     if (writingRes.commitmentFactor < 1.0 || writingRes.volumeMultiplier > 1.0 || (writingRes.vipMultiplier && writingRes.vipMultiplier > 1.0)) {
       bonusBox.style.display = 'block';
-      bonusBox.innerHTML = `✨ Hệ số hoàn thành: <strong>x${writingRes.commitmentFactor || writingRes.completionMult || 1.0}</strong> • Khối lượng: <strong>x${writingRes.volumeMultiplier || writingRes.deckLengthMult || 1.0}</strong> • Trọng số: <strong>x${writingRes.modeWeight || 3.5}</strong>`;
+      bonusBox.innerHTML = `✨ Hệ số hoàn thành: <strong>x${writingRes.commitmentFactor || writingRes.completionMult || 1.0}</strong> • Khối lượng: <strong>x${writingRes.volumeMultiplier || writingRes.deckLengthMult || 1.0}</strong> • Trọng số: <strong>x${writingRes.modeWeight || 3.0}</strong>`;
     } else {
       bonusBox.style.display = 'none';
     }
@@ -1287,6 +1287,8 @@ function retryWritingWrongWordsOnly() {
 function exitWritingMode() {
   const total = writingQuestionsList.length || 1;
   const done = writingQuestionsList.filter(q => q.evaluated || q.status === 'skipped').length;
+  const scores = writingQuestionsList.filter(q => q.evalData?.score).map(q => q.evalData.score);
+  const itemsToScore = scores.length > 0 ? scores : new Array(done).fill(80);
 
   if (!writingIsCompleted && (done > 0 || writingSessionPointsEarned !== 0 || currentWritingIndex > 0)) {
     if (typeof promptStudyEarlyExit === 'function') {
@@ -1295,16 +1297,17 @@ function exitWritingMode() {
         done,
         total,
         basePoints: writingSessionPointsEarned,
-        difficulty: currentWritingDifficulty,
-        onConfirmExit: () => doExecuteExitWriting(done, total)
+        sessionItems: itemsToScore,
+        difficultyMult: currentWritingDifficulty,
+        onConfirmExit: () => doExecuteExitWriting(done, total, itemsToScore)
       });
       return;
     }
   }
-  doExecuteExitWriting(done, total);
+  doExecuteExitWriting(done, total, itemsToScore);
 }
 
-function doExecuteExitWriting(done, total) {
+function doExecuteExitWriting(done, total, doneItems = null) {
   if (typeof stopVocaSfx === 'function') stopVocaSfx('fireworks');
   closeWritingResultModal();
 
@@ -1341,7 +1344,7 @@ function doExecuteExitWriting(done, total) {
     let res = null;
     let expRes = { finalExp: 0 };
     if (typeof calculateUnifiedSessionPoints === 'function') {
-      res = calculateUnifiedSessionPoints('writing', writingSessionPointsEarned, done, total);
+      res = calculateUnifiedSessionPoints('writing', writingSessionPointsEarned, done, total, currentWritingDifficulty);
       finalPts = res.finalPoints ?? res.finalPts;
     } else if (typeof calculateSessionFinalPoints === 'function') {
       res = calculateSessionFinalPoints(writingSessionPointsEarned, done, total, isComp);
@@ -1349,7 +1352,7 @@ function doExecuteExitWriting(done, total) {
     }
 
     const scores = writingQuestionsList.filter(q => q.evalData?.score).map(q => q.evalData.score);
-    const itemsToScore = scores.length > 0 ? scores : new Array(done).fill(80);
+    const itemsToScore = doneItems || (scores.length > 0 ? scores : new Array(done).fill(80));
     if (typeof calculateUnifiedStudyExp === 'function') {
       expRes = calculateUnifiedStudyExp('writing', itemsToScore, total, currentWritingDifficulty);
     }

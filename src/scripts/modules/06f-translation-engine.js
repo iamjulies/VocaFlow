@@ -1,5 +1,5 @@
 // =========================================================================
-// VOCAFLOW 06F-TRANSLATION-ENGINE.JS (v0.10.10-48 Build 349 - TRANSLATION LAB VIP β)
+// VOCAFLOW 06F-TRANSLATION-ENGINE.JS (v0.10.10-49 Build 350 - TRANSLATION LAB VIP β)
 // Bidirectional Translation Engine (EN ↔ VI) with Direct Gemini AI Generation, Multi-Tier VocaHint & Balance v3
 // =========================================================================
 
@@ -1295,7 +1295,7 @@ function finishTranslationSession() {
 
   let res = { finalPts: translationSessionPointsEarned, completionMult: 1.0, deckLengthMult: 1.0, milestoneBonus: 0, combinedMult: 1.0 };
   if (typeof calculateUnifiedSessionPoints === 'function') {
-    res = calculateUnifiedSessionPoints('translation', translationSessionPointsEarned, done, total);
+    res = calculateUnifiedSessionPoints('translation', translationSessionPointsEarned, done, total, currentTranslationDifficulty);
   } else if (typeof calculateSessionFinalPointsV3 === 'function') {
     res = calculateSessionFinalPointsV3(translationSessionPointsEarned, done, total, isComp);
   } else if (typeof calculateSessionFinalPoints === 'function') {
@@ -1385,7 +1385,7 @@ function finishTranslationSession() {
   if (bonusBox) {
     if (res.commitmentFactor < 1.0 || res.volumeMultiplier > 1.0 || (res.vipMultiplier && res.vipMultiplier > 1.0)) {
       bonusBox.style.display = 'block';
-      bonusBox.innerHTML = `✨ Hệ số hoàn thành: <strong>x${res.commitmentFactor || res.completionMult || 1.0}</strong> • Khối lượng: <strong>x${res.volumeMultiplier || res.deckLengthMult || 1.0}</strong> • Trọng số: <strong>x${res.modeWeight || 3.0}</strong>`;
+      bonusBox.innerHTML = `✨ Hệ số hoàn thành: <strong>x${res.commitmentFactor || res.completionMult || 1.0}</strong> • Khối lượng: <strong>x${res.volumeMultiplier || res.deckLengthMult || 1.0}</strong> • Trọng số: <strong>x${res.modeWeight || 2.33}</strong>`;
     } else {
       bonusBox.style.display = 'none';
     }
@@ -1476,7 +1476,7 @@ function exitTranslationMode(force = false) {
       const isComp = false;
       let res = { finalPts: translationSessionPointsEarned, completionMult: 1.0, deckLengthMult: 1.0, milestoneBonus: 0, combinedMult: 1.0 };
       if (typeof calculateUnifiedSessionPoints === 'function') {
-        res = calculateUnifiedSessionPoints('translation', translationSessionPointsEarned, done, total);
+        res = calculateUnifiedSessionPoints('translation', translationSessionPointsEarned, done, total, currentTranslationDifficulty);
       } else if (typeof calculateSessionFinalPointsV3 === 'function') {
         res = calculateSessionFinalPointsV3(translationSessionPointsEarned, done, total, isComp);
       } else if (typeof calculateSessionFinalPoints === 'function') {
@@ -1529,6 +1529,7 @@ function exitTranslationMode(force = false) {
         total,
         basePoints: translationSessionPointsEarned,
         difficulty: currentTranslationDifficulty,
+        questions: translationSessionScores.length > 0 ? translationSessionScores : new Array(done).fill(80),
         onConfirmExit: () => exitTranslationMode(true)
       });
       return;
