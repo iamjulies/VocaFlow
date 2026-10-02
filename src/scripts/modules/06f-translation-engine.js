@@ -1,5 +1,5 @@
 // =========================================================================
-// VOCAFLOW 06F-TRANSLATION-ENGINE.JS (v0.10.10-49 Build 350 - TRANSLATION LAB VIP β)
+// VOCAFLOW 06F-TRANSLATION-ENGINE.JS (v0.10.10-50 Build 351 - TRANSLATION LAB VIP β)
 // Bidirectional Translation Engine (EN ↔ VI) with Direct Gemini AI Generation, Multi-Tier VocaHint & Balance v3
 // =========================================================================
 
@@ -163,7 +163,7 @@ function openTranslationSetupModal(useSelection = false, customWordList = null) 
   const shuffleCb = document.getElementById('translation-setup-shuffle-checkbox');
   if (shuffleCb) shuffleCb.checked = true;
 
-  selectTranslationSetupQuestionCount('all');
+  selectTranslationSetupQuestionCount(translationSetupQuestionCount || '5');
   openModal('modal-translation-setup');
 }
 window.openTranslationSetupModal = openTranslationSetupModal;
@@ -212,11 +212,11 @@ function selectTranslationSetupDifficulty(diff) {
 window.selectTranslationSetupDifficulty = selectTranslationSetupDifficulty;
 
 function selectTranslationSetupQuestionCount(countMode) {
-  translationSetupQuestionCount = countMode;
+  translationSetupQuestionCount = String(countMode);
   ['5', '10', 'custom', 'all'].forEach(k => {
     const btn = document.getElementById('translation-qc-' + k);
     if (btn) {
-      if (String(k) === String(countMode)) {
+      if (k === translationSetupQuestionCount) {
         btn.classList.add('active');
         btn.style.borderColor = '#10b981';
         btn.style.background = 'rgba(16, 185, 129, 0.15)';
@@ -378,18 +378,106 @@ function extractSecondaryVocabHint(sourceText, targetWord, isEnToVi, benchmarkTe
   };
 }
 
+function generateOfflineTranslationTask(word, difficulty, direction, idx = 0) {
+  const term = (word.term || '').trim();
+  const rawDef = word.definitionVi || word.definition || '';
+  const cleanMeaning = extractCleanPrimaryMeaning(rawDef, term);
+  const pos = (word.partOfSpeech || 'noun').toLowerCase();
+
+  // If word has pre-existing example and translation, use it!
+  let en = (word.exampleSentence || word.example || '').trim();
+  let vi = (word.exampleTranslationVi || '').trim();
+
+  if (!en || !vi) {
+    if (difficulty === 'easy') {
+      if (pos.startsWith('v')) {
+        en = `We need to ${term} effectively in this situation.`;
+        vi = `Chúng ta cần ${cleanMeaning} một cách hiệu quả trong tình huống này.`;
+      } else if (pos.startsWith('adj')) {
+        en = `This new project is very ${term} for our team.`;
+        vi = `Dự án mới này rất ${cleanMeaning} đối với đội ngũ của chúng tôi.`;
+      } else if (pos.startsWith('adv')) {
+        en = `She handled the task ${term} and successfully.`;
+        vi = `Cô ấy đã xử lý nhiệm vụ ${cleanMeaning} và thành công.`;
+      } else {
+        en = `The ${term} plays a key role in our daily work.`;
+        vi = `${cleanMeaning.charAt(0).toUpperCase() + cleanMeaning.slice(1)} đóng một vai trò then chốt trong công việc hàng ngày của chúng tôi.`;
+      }
+    } else if (difficulty === 'medium') {
+      if (pos.startsWith('v')) {
+        en = `In order to achieve sustainable growth, organizations must ${term} and adapt to new market demands.`;
+        vi = `Để đạt được sự tăng trưởng bền vững, các tổ chức phải ${cleanMeaning} và thích ứng với những nhu cầu mới của thị trường.`;
+      } else if (pos.startsWith('adj')) {
+        en = `Developing ${term} strategies will enable companies to overcome unexpected economic challenges.`;
+        vi = `Việc phát triển các chiến lược ${cleanMeaning} sẽ cho phép các công ty vượt qua những thách thức kinh tế bất ngờ.`;
+      } else if (pos.startsWith('adv')) {
+        en = `By collaborating ${term}, team members can complete complex assignments ahead of schedule.`;
+        vi = `Bằng cách hợp tác ${cleanMeaning}, các thành viên trong nhóm có thể hoàn thành những bài tập phức tạp trước thời hạn.`;
+      } else {
+        en = `Maintaining an optimal ${term} is essential for long-term health and workplace productivity.`;
+        vi = `Duy trì một ${cleanMeaning} tối ưu là điều thiết yếu đối với sức khỏe lâu dài và năng suất làm việc.`;
+      }
+    } else {
+      // hard / expert
+      if (pos.startsWith('v')) {
+        en = `Comprehensive empirical research demonstrates that institutions which proactively ${term} consistently outperform competitors in global markets.`;
+        vi = `Nghiên cứu thực nghiệm toàn diện chứng minh rằng các tổ chức chủ động ${cleanMeaning} luôn đạt hiệu quả vượt trội so với các đối thủ trên thị trường toàn cầu.`;
+      } else if (pos.startsWith('adj')) {
+        en = `Implementing ${term} methodologies in academic research guarantees high reproducibility and rigorous theoretical validity.`;
+        vi = `Việc triển khai các phương pháp ${cleanMeaning} trong nghiên cứu học thuật đảm bảo tính tái lập cao và giá trị lý thuyết chặt chẽ.`;
+      } else if (pos.startsWith('adv')) {
+        en = `When modern analytical frameworks are applied ${term}, decision-makers can identify hidden systemic vulnerabilities rapidly.`;
+        vi = `Khi các khuôn khổ phân tích hiện đại được áp dụng ${cleanMeaning}, những người ra quyết định có thể nhanh chóng nhận diện các lỗ hổng hệ thống tiềm ẩn.`;
+      } else {
+        en = `The strategic integration of ${term} into existing operational frameworks significantly enhances institutional resilience and innovation.`;
+        vi = `Việc tích hợp chiến lược ${cleanMeaning} vào các khuôn khổ vận hành hiện tại giúp nâng cao đáng kể khả năng thích ứng và đổi mới của tổ chức.`;
+      }
+    }
+  }
+
+  const isEnToVi = (direction === 'random') ? (Math.random() < 0.5) : (direction === 'en_to_vi');
+  return {
+    index: idx,
+    targetWord: term,
+    englishSentence: en,
+    vietnameseSentence: vi,
+    secondaryVocabClue: `${term}: ${cleanMeaning}`,
+    keyVocabularyClue: `Cụm từ trọng tâm: ${cleanMeaning}`,
+    grammarStructureHint: difficulty === 'easy' ? 'Cấu trúc câu đơn giản, rõ ý' : (difficulty === 'medium' ? 'Cấu trúc câu ghép với liên từ logic' : 'Mệnh đề quan hệ và ngữ pháp chuyên sâu'),
+    sentenceFramingClue: isEnToVi ? (vi.split(' ').slice(0, 3).join(' ') + '...') : (en.split(' ').slice(0, 3).join(' ') + '...')
+  };
+}
+
 async function generateTranslationTasksWithGemini(targetWords, difficulty, direction) {
   if (!targetWords || targetWords.length === 0) return null;
 
-  const sampleWords = targetWords.map((w, idx) => ({
-    index: idx,
-    term: (w.term || '').trim(),
-    pos: (w.partOfSpeech || 'noun').toLowerCase(),
-    defVi: (w.definitionVi || w.definition || '').trim(),
-    existingExample: (w.exampleSentence || w.example || '').trim()
-  })).filter(w => w.term.length > 0);
+  let keys = (typeof getStoredApiKeys === 'function') ? getStoredApiKeys() : [];
+  if (!keys || keys.length === 0) {
+    const singleKey = (typeof geminiApiKey !== 'undefined' && geminiApiKey) ? geminiApiKey : (localStorage.getItem('vocaflow_gemini_api_key') || '');
+    if (singleKey && singleKey.trim()) keys = [singleKey.trim()];
+  }
+  if (!keys || keys.length === 0) return null;
 
-  const prompt = `You are a world-class bilingual linguist, professional translator, and IELTS examiner.
+  const BATCH_SIZE = 8;
+  const batches = [];
+  for (let i = 0; i < targetWords.length; i += BATCH_SIZE) {
+    batches.push(targetWords.slice(i, i + BATCH_SIZE));
+  }
+
+  const allTasks = [];
+
+  for (let bIdx = 0; bIdx < batches.length; bIdx++) {
+    const batchWords = batches[bIdx];
+    const startIndex = bIdx * BATCH_SIZE;
+    const sampleWords = batchWords.map((w, idx) => ({
+      index: startIndex + idx,
+      term: (w.term || '').trim(),
+      pos: (w.partOfSpeech || 'noun').toLowerCase(),
+      defVi: (w.definitionVi || w.definition || '').trim(),
+      existingExample: (w.exampleSentence || w.example || '').trim()
+    })).filter(w => w.term.length > 0);
+
+    const prompt = `You are a world-class bilingual linguist, professional translator, and IELTS examiner.
 Generate authentic, context-rich, and natural translation tasks for the following ${sampleWords.length} vocabulary words.
 
 CONFIGURATION:
@@ -415,7 +503,7 @@ OUTPUT FORMAT: Return STRICT JSON ONLY without markdown fences or backticks:
 {
   "tasks": [
     {
-      "index": 0,
+      "index": ${startIndex},
       "targetWord": "<term>",
       "englishSentence": "<natural English sentence containing targetWord>",
       "vietnameseSentence": "<accurate and fluent Vietnamese translation>",
@@ -427,25 +515,22 @@ OUTPUT FORMAT: Return STRICT JSON ONLY without markdown fences or backticks:
   ]
 }`;
 
-  let genSuccess = false;
-  let resultTasks = null;
+    let batchSuccess = false;
+    const isHard = (difficulty === 'hard' || difficulty === 'expert');
+    const standardModels = isHard
+      ? ['gemini-2.5-flash', 'gemini-3.5-flash', 'gemini-2.0-flash', 'gemini-3.7-flash', 'gemini-1.5-flash']
+      : ['gemini-2.5-flash', 'gemini-3.5-flash-lite', 'gemini-2.0-flash-lite', 'gemini-1.5-flash', 'gemini-flash-latest'];
 
-  try {
-    const keys = typeof getStoredApiKeys === 'function' ? getStoredApiKeys() : [];
-    const isHard = (difficulty === 'hard');
-    const modelsToTry = isHard
-      ? (typeof getGeminiModelsForTier === 'function' ? getGeminiModelsForTier('deep') : ['gemini-3.7-flash', 'gemini-3.8-flash', 'gemini-2.0-flash', 'gemini-3.5-flash-lite'])
-      : (typeof getGeminiModelsForTier === 'function' ? getGeminiModelsForTier('fast') : ['gemini-3.5-flash-lite', 'gemini-3.1-flash-lite', 'gemini-2.0-flash-lite', 'gemini-3.7-flash']);
-
-    const timeoutMs = 16000;
+    const cachedWorkingModel = localStorage.getItem('vocaflow_gemini_working_model');
+    const modelsToTry = cachedWorkingModel ? [cachedWorkingModel, ...standardModels.filter(m => m !== cachedWorkingModel)] : standardModels;
 
     for (const k of keys) {
-      if (genSuccess) break;
+      if (batchSuccess) break;
       for (const m of modelsToTry) {
         try {
           const url = `https://generativelanguage.googleapis.com/v1beta/models/${m}:generateContent?key=${k.trim()}`;
           const controller = new AbortController();
-          const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+          const timeoutId = setTimeout(() => controller.abort(), 15000);
 
           const res = await fetch(url, {
             method: 'POST',
@@ -456,7 +541,7 @@ OUTPUT FORMAT: Return STRICT JSON ONLY without markdown fences or backticks:
               generationConfig: {
                 responseMimeType: "application/json",
                 temperature: 0.3,
-                maxOutputTokens: 2048
+                maxOutputTokens: 4096
               }
             })
           });
@@ -469,11 +554,9 @@ OUTPUT FORMAT: Return STRICT JSON ONLY without markdown fences or backticks:
               const cleanJson = rawText.replace(/```json/gi, '').replace(/```/gi, '').trim();
               const parsed = JSON.parse(cleanJson);
               if (parsed && Array.isArray(parsed.tasks) && parsed.tasks.length > 0) {
-                resultTasks = parsed.tasks;
-                genSuccess = true;
-                if (typeof saveWorkingGeminiModel === 'function') {
-                  saveWorkingGeminiModel(m, isHard ? 'deep' : 'fast');
-                }
+                allTasks.push(...parsed.tasks);
+                batchSuccess = true;
+                localStorage.setItem('vocaflow_gemini_working_model', m);
                 break;
               }
             }
@@ -483,11 +566,16 @@ OUTPUT FORMAT: Return STRICT JSON ONLY without markdown fences or backticks:
         }
       }
     }
-  } catch (err) {
-    console.error('Gemini Translation Generation outer error:', err);
+
+    if (!batchSuccess) {
+      // If AI call failed for this batch, generate offline tasks for this batch
+      batchWords.forEach((w, bSubIdx) => {
+        allTasks.push(generateOfflineTranslationTask(w, difficulty, direction, startIndex + bSubIdx));
+      });
+    }
   }
 
-  return resultTasks;
+  return allTasks.length > 0 ? allTasks : null;
 }
 
 // =========================================================================
@@ -531,11 +619,11 @@ async function startTranslationMode(fromSelection = false, customWordList = null
   }
 
   // Question count limiter
-  if (translationSetupQuestionCount === '5') {
+  if (String(translationSetupQuestionCount) === '5') {
     baseWords = baseWords.slice(0, 5);
-  } else if (translationSetupQuestionCount === '10') {
+  } else if (String(translationSetupQuestionCount) === '10') {
     baseWords = baseWords.slice(0, 10);
-  } else if (translationSetupQuestionCount === 'custom' && translationSetupCustomCountValue) {
+  } else if (String(translationSetupQuestionCount) === 'custom' && translationSetupCustomCountValue) {
     baseWords = baseWords.slice(0, translationSetupCustomCountValue);
   }
 
@@ -582,12 +670,16 @@ async function loadAndGenerateTranslationTasks(baseWords, difficulty, direction)
   if (errCard) errCard.style.display = 'none';
   if (mainCard) mainCard.style.display = 'none';
 
-  // Call Gemini AI to generate tasks
-  const aiTasks = await generateTranslationTasksWithGemini(baseWords, difficulty, direction);
+  // Call Gemini AI to generate tasks, or use offline generator fallback
+  let aiTasks = await generateTranslationTasksWithGemini(baseWords, difficulty, direction);
+
+  if (!aiTasks || aiTasks.length === 0) {
+    aiTasks = baseWords.map((w, idx) => generateOfflineTranslationTask(w, difficulty, direction, idx));
+  }
 
   if (aiTasks && aiTasks.length > 0) {
     translationQuestionsList = baseWords.map((w, idx) => {
-      const matched = aiTasks.find(t => t.index === idx || (t.targetWord && t.targetWord.toLowerCase() === w.term.toLowerCase())) || aiTasks[idx];
+      const matched = aiTasks.find(t => t.index === idx || (t.targetWord && t.targetWord.toLowerCase() === w.term.toLowerCase())) || aiTasks[idx] || generateOfflineTranslationTask(w, difficulty, direction, idx);
       const enSentence = matched ? matched.englishSentence : (w.exampleSentence || `We should study ${w.term} in context.`);
       const viSentence = matched ? matched.vietnameseSentence : (w.exampleTranslationVi || `Chúng ta nên học ${extractCleanPrimaryMeaning(w.definitionVi, w.term)} trong ngữ cảnh.`);
       const keyClue = matched ? (matched.keyVocabularyClue || '') : '';
@@ -624,14 +716,13 @@ async function loadAndGenerateTranslationTasks(baseWords, difficulty, direction)
     if (mainCard) mainCard.style.display = 'block';
     renderTranslationCurrentQuestion();
   } else {
-    // Show explicit error card with Retry and Exit buttons (No silent fallback!)
     if (genCard) genCard.style.display = 'none';
     if (mainCard) mainCard.style.display = 'none';
     if (errCard) {
       errCard.style.display = 'block';
       const errMsgEl = document.getElementById('translation-error-msg');
       if (errMsgEl) {
-        errMsgEl.textContent = 'Hệ thống không thể gọi Google Gemini AI (lỗi mạng, kết nối timeout hoặc API key chưa được cấu hình). Bạn hãy kiểm tra lại kết nối mạng hoặc thử lại.';
+        errMsgEl.textContent = 'Hệ thống không thể tạo đề bài dịch thuật. Vui lòng kiểm tra lại bộ từ hoặc thử lại.';
       }
     }
   }

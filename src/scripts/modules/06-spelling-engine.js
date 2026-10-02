@@ -1,5 +1,5 @@
 // =========================================================================
-// VOCAFLOW 06-SPELLING-ENGINE.JS (v0.10.10-49 Build 350)
+// VOCAFLOW 06-SPELLING-ENGINE.JS (v0.10.10-50 Build 351)
 // Luyện viết chính tả từ vựng & AI gợi ý
 // =========================================================================
 
@@ -1448,13 +1448,8 @@
       try {
         // Unified Study EXP Engine & Unified Balance v4 incomplete session settlement
         if (!spellingIsCompleted && (spellingPointsEarned !== 0 || done > 0)) {
-          let diffM = 1.0;
-          try {
-            const m = getSpellingMultipliers();
-            diffM = m?.diffMult || 1.0;
-          } catch (e) {}
           const res = (typeof calculateUnifiedSessionPoints === 'function')
-            ? calculateUnifiedSessionPoints('spelling', spellingPointsEarned, done, total, diffM)
+            ? calculateUnifiedSessionPoints('spelling', spellingPointsEarned, done, total, currentSpellingDifficulty)
             : calculateSessionFinalPoints(spellingPointsEarned, done, total, false);
           const finalPts = res.finalPoints ?? res.finalPts;
 

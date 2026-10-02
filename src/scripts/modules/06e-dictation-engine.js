@@ -1,5 +1,5 @@
 // =========================================================================
-// VOCAFLOW 06E-DICTATION-ENGINE.JS (v0.10.10-49 Build 350 - SENTENCE DICTATION VIP β)
+// VOCAFLOW 06E-DICTATION-ENGINE.JS (v0.10.10-50 Build 351 - SENTENCE DICTATION VIP β)
 // Full Sentence Dictation Engine with Natural Speech, Speed Slider, AI Scoring & Sequence Alignment
 // =========================================================================
 
@@ -156,11 +156,11 @@ function selectDictationSetupDifficulty(diff) {
 window.selectDictationSetupDifficulty = selectDictationSetupDifficulty;
 
 function selectDictationSetupQuestionCount(count) {
-  dictationSetupQuestionCount = count;
+  dictationSetupQuestionCount = String(count);
   ['5', '10', 'custom', 'all'].forEach(c => {
     const btn = document.getElementById('dictation-qc-' + c);
     if (btn) {
-      if (String(c) === String(count)) {
+      if (c === dictationSetupQuestionCount) {
         btn.classList.add('active');
         btn.style.borderColor = '#6366f1';
         btn.style.background = 'rgba(99,102,241,0.15)';
@@ -430,9 +430,9 @@ function startDictationMode(fromSelection = false, customWordList = null, doShuf
     workingList.sort(() => Math.random() - 0.5);
   }
 
-  if (dictationSetupQuestionCount === '5') workingList = workingList.slice(0, 5);
-  else if (dictationSetupQuestionCount === '10') workingList = workingList.slice(0, 10);
-  else if (dictationSetupQuestionCount === 'custom' && dictationSetupCustomCountValue) {
+  if (String(dictationSetupQuestionCount) === '5') workingList = workingList.slice(0, 5);
+  else if (String(dictationSetupQuestionCount) === '10') workingList = workingList.slice(0, 10);
+  else if (String(dictationSetupQuestionCount) === 'custom' && dictationSetupCustomCountValue) {
     workingList = workingList.slice(0, dictationSetupCustomCountValue);
   }
 

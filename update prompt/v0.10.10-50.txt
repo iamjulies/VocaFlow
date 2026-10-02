@@ -1,0 +1,5 @@
+v0.10.10-50
+vấn đề 29: đây là vấn đề về AI gen của chế độ học translation -> hiện tại khi dùng chế độ này thì cả 3 kiểu học: vi-en, en-vi hay ngẫu nhiên đều kh tạo đc đề bài
+vấn đề 30: sự sai lệch: "C:\Users\DELL\Pictures\Screenshots\Ảnh chụp màn hình 2026-10-03 003058.png" "C:\Users\DELL\Pictures\Screenshots\Ảnh chụp màn hình 2026-10-03 003224.png"
+vấn đề 31: "C:\Users\DELL\Pictures\Screenshots\Ảnh chụp màn hình 2026-10-03 003720.png" lỗi chọn 5 hay 10 hay bất kì số câu đều ra "C:\Users\DELL\Pictures\Screenshots\Ảnh chụp màn hình 2026-10-03 003810.png" tất cả các câu. tương tự, cd dịch thuật cũng lỗi, chọn 5 ra 10, 10 ra 10, toàn bộ ra 10,...
+đọc và thực hiện các file markdown có trong "C:\Users\DELL\Documents\Modding\VocaFlow" (nếu quên)

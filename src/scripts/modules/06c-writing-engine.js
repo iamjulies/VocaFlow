@@ -1,5 +1,5 @@
 // =========================================================================
-// VOCAFLOW 06C-WRITING-ENGINE.JS (v0.10.10-49 Build 350 - SENTENCE WRITING LAB VIP)
+// VOCAFLOW 06C-WRITING-ENGINE.JS (v0.10.10-50 Build 351 - SENTENCE WRITING LAB VIP)
 // AI-Powered Writing Lab with Thematic Word Linking & Target Band Aim Polish
 // =========================================================================
 
@@ -120,11 +120,11 @@ function handleWritingCustomQuestionCountInput(val) {
 window.handleWritingCustomQuestionCountInput = handleWritingCustomQuestionCountInput;
 
 function selectWritingSetupQuestionCount(count) {
-  writingSetupQuestionCount = count;
+  writingSetupQuestionCount = String(count);
   ['5', '10', 'custom', 'all'].forEach(c => {
     const btn = document.getElementById('writing-qc-' + c);
     if (btn) {
-      if (String(c) === String(count)) {
+      if (c === writingSetupQuestionCount) {
         btn.classList.add('active');
         btn.style.borderColor = '#6366f1';
         btn.style.background = 'rgba(99,102,241,0.15)';
@@ -255,14 +255,14 @@ function buildThematicWordClusters(targetWords, diff, maxQuestions) {
   }
 
   let limit = pool.length;
-  if (maxQuestions === 'custom' && writingSetupCustomCountValue) {
+  if (String(maxQuestions) === 'custom' && writingSetupCustomCountValue) {
     limit = Math.min(writingSetupCustomCountValue, pool.length);
-  } else if (typeof maxQuestions === 'number' && maxQuestions > 0) {
-    limit = Math.min(maxQuestions, pool.length);
-  } else if (maxQuestions === 5) {
+  } else if (String(maxQuestions) === '5') {
     limit = Math.min(5, pool.length);
-  } else if (maxQuestions === 10) {
+  } else if (String(maxQuestions) === '10') {
     limit = Math.min(10, pool.length);
+  } else if (!isNaN(parseInt(maxQuestions, 10)) && parseInt(maxQuestions, 10) > 0 && String(maxQuestions) !== 'all') {
+    limit = Math.min(parseInt(maxQuestions, 10), pool.length);
   }
 
   for (let i = 0; i < limit; i++) {

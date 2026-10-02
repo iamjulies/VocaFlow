@@ -1,12 +1,31 @@
 # CURRENT TASK & TRẠNG THÁI CÔNG VIỆC HIỆN TẠI (VOCAFLOW)
 
-> **Phiên bản mục tiêu:** `v0.10.10-49 (Build 350)`  
+> **Phiên bản mục tiêu:** `v0.10.10-50 (Build 351)`  
 > **Cập nhật lần cuối:** 2026-10-03  
 > **Trạng thái:** 🚀 **ĐANG TIẾN HÀNH BUILD, KIỂM THỬ TỰ ĐỘNG & MULTI-DEPLOY GITHUB**
 
 ---
 
-## 🎯 1. DANH SÁCH NHIỆM VỤ ĐÃ GIẢI QUYẾT (v0.10.10-49 Build 350 - Issue 28)
+## 🎯 1. DANH SÁCH NHIỆM VỤ ĐÃ GIẢI QUYẾT (v0.10.10-50 Build 351 - Issue 29, 30, 31)
+
+- [x] **Khắc Phục Lỗi Sinh Bài Tập Dịch Thuật AI Song Phương & Bổ Sung Fallback Offline Chuẩn Xác (`06f-translation-engine.js` - Issue 29)**:
+  - Sửa lỗi sinh bài tập Dịch thuật AI (Translation Engine) thất bại trên cả 3 chiều dịch (`vi_to_en`, `en_to_vi`, `random`).
+  - Tối ưu hóa kích thước gói tạo câu hỏi (batching tối đa 8 từ/lượt), nâng trần token `maxOutputTokens: 4096`, mở rộng chuỗi model Gemini hiện đại (`gemini-2.5-flash`, `gemini-3.5-flash-lite`, `gemini-2.0-flash`, v.v.) và lấy fallback API key trực tiếp từ `STORAGE_KEY_GEMINI_KEY`.
+  - Tích hợp động cơ sinh câu hỏi dịch thuật Offline thông minh `generateOfflineTranslationTask` chất lượng cao với bẫy trắc nghiệm ngữ cảnh, ngữ âm và định nghĩa phong phú, đảm bảo người dùng luôn có bài học ngay cả khi offline hoặc API gặp sự cố.
+
+- [x] **Sửa Lỗi Chọn Số Lượng Câu Hỏi Trong Modal Thiết Lập (`06c-writing-engine.js`, `06d-cloze-engine.js`, `06e-dictation-engine.js`, `06f-translation-engine.js` - Issue 31)**:
+  - Khắc phục triệt để lỗi khi người dùng chọn 5 câu, 10 câu hoặc tùy chỉnh trong modal thiết lập của Dictation, Translation, Writing nhưng hệ thống vẫn tải toàn bộ từ vựng trong bộ từ (ví dụ 215 từ).
+  - Xử lý ép kiểu dữ liệu chuỗi/số đồng nhất (`'5'`, `'10'`, `'custom'`, `parseInt(val, 10)`) và cắt lát danh sách từ (`slice(0, targetCount)`) chính xác tuyệt đối.
+
+- [x] **Đồng Bộ Hệ Số Quyết Toán Thoát Sớm Luyện Viết (`06-spelling-engine.js` - Issue 30)**:
+  - Chuẩn hóa tham số độ khó trong `doExecuteExitSpelling` truyền trực tiếp `currentSpellingDifficulty` vào `calculateUnifiedSessionPoints`, đảm bảo tính toán đồng nhất 100% giữa dự đoán trên modal thoát sớm và số VoCoin ghi nhận vào Sổ Cái (Ledger).
+
+- [x] **Đồng Bộ Toàn Diện 7-Point Version Consistency (`v0.10.10-50 Build 351`)**:
+  - Cập nhật phiên bản nhất quán trên toàn bộ 7 điểm hệ thống: `modal-settings.html`, `02-state-core.js`, toàn bộ module headers `01-router.js` đến `13-wardrobe.js`, `sw.js` & `Release_App/sw.js`, `pubspec.yaml`, `Program.cs`, `push_github.ps1`, `VOCAFLOW_OVERVIEW.txt`, `GITHUB_RELEASE/VOCAFLOW_OVERVIEW.txt`, `CURRENT_TASK.md`.
+
+---
+
+## 🎯 2. DANH SÁCH NHIỆM VỤ CÁC PHIÊN BẢN TRƯỚC (v0.10.10-49 Build 350 - Issue 28)
 
 - [x] **Chuẩn Hóa Trọng Số Nhận Thức $W_{\text{mode}}$ Cho Hệ Thống Tính Điểm EXP & VoCoin Unified Balance v4 (`02-state-core.js`)**:
   - Thiết lập bảng trọng số nhận thức độ phức tạp tư duy ($W_{\text{mode}}$) chuẩn xác tuyệt đối trên toàn bộ 8 chế độ học:

@@ -1,4 +1,22 @@
 ================================================================================
+Phiên bản: v0.10.10-50 (Build 351) - Khắc Phục Lỗi Sinh Câu Hỏi Dịch Thuật AI Cả 3 Chiều & Fallback Offline Chuẩn Xác, Sửa Lỗi Số Lượng Câu Hỏi Trong Modal Thiết Lập Dictation/Translation/Writing, Chuẩn Hóa Điểm Thoát Sớm Luyện Viết (Issue 29, 30, 31)
+================================================================================
+1. [Khắc Phục Lỗi Sinh Bài Tập Dịch Thuật AI Song Phương & Bổ Sung Fallback Offline Chuẩn Xác (Issue 29)]:
+   - Sửa lỗi sinh bài tập Dịch thuật AI (Translation Engine) thất bại trên cả 3 chiều dịch (vi_to_en, en_to_vi, random).
+   - Tối ưu hóa kích thước gói tạo câu hỏi (batching tối đa 8 từ/lượt), nâng trần token maxOutputTokens: 4096, mở rộng chuỗi model Gemini hiện đại và lấy fallback API key trực tiếp từ STORAGE_KEY_GEMINI_KEY.
+   - Tích hợp động cơ sinh câu hỏi dịch thuật Offline thông minh generateOfflineTranslationTask chất lượng cao với bẫy trắc nghiệm ngữ cảnh, ngữ âm và định nghĩa phong phú, đảm bảo người dùng luôn có bài học ngay cả khi offline hoặc API gặp sự cố.
+
+2. [Sửa Lỗi Chọn Số Lượng Câu Hỏi Trong Modal Thiết Lập (Issue 31)]:
+   - Khắc phục triệt để lỗi khi người dùng chọn 5 câu, 10 câu hoặc tùy chỉnh trong modal thiết lập của Dictation, Translation, Writing nhưng hệ thống vẫn tải toàn bộ từ vựng trong bộ từ (ví dụ 215 từ).
+   - Xử lý ép kiểu dữ liệu chuỗi/số đồng nhất ('5', '10', 'custom', parseInt(val, 10)) và cắt lát danh sách từ (slice(0, targetCount)) chính xác tuyệt đối.
+
+3. [Đồng Bộ Hệ Số Quyết Toán Thoát Sớm Luyện Viết (Issue 30)]:
+   - Chuẩn hóa tham số độ khó trong doExecuteExitSpelling truyền trực tiếp currentSpellingDifficulty vào calculateUnifiedSessionPoints, đảm bảo tính toán đồng nhất 100% giữa dự đoán trên modal thoát sớm và số VoCoin ghi nhận vào Sổ Cái (Ledger).
+
+4. [Đồng Bộ Toàn Diện 7-Point Version Consistency & Multi-Deploy (v0.10.10-50 Build 351)]:
+   - Cập nhật phiên bản nhất quán trên toàn bộ 7 điểm hệ thống: modal-settings.html, 02-state-core.js, toàn bộ module headers 01-router.js đến 13-wardrobe.js, sw.js & Release_App/sw.js, pubspec.yaml, Program.cs, push_github.ps1, VOCAFLOW_OVERVIEW.txt, GITHUB_RELEASE/VOCAFLOW_OVERVIEW.txt, CURRENT_TASK.md.
+
+================================================================================
 Phiên bản: v0.10.10-49 (Build 350) - Chuẩn Hóa Toàn Diện Hệ Thống Điểm Thưởng EXP & VoCoin Trên Toàn Bộ 8 Chế Độ Học, Cân Chỉnh Trọng Số Nhận Thức W_mode, Đồng Bộ Hệ Số Độ Khó & Quét Sạch Mâu Thuẫn Hiển Thị Giữa Modal Xác Nhận Thoát Sớm Với Bảng Tổng Kết (Comprehensive EXP & VoCoin Economy Standardization Across All 8 Study Modes, Cognitive Weight Alignment, Difficulty Multiplier Sync & Complete Early Exit Settlement Sweep)
 ================================================================================
 1. [Chuẩn Hóa Trọng Số Nhận Thức W_mode Cho Hệ Thống Tính Điểm EXP & VoCoin Unified Balance v4 (Issue 28)]:

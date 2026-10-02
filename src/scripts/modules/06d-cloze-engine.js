@@ -1,5 +1,5 @@
 // =========================================================================
-// VOCAFLOW 06D-CLOZE-ENGINE.JS (v0.10.10-49 Build 350 - EXTENDED LEARNING MODE BETA)
+// VOCAFLOW 06D-CLOZE-ENGINE.JS (v0.10.10-50 Build 351 - EXTENDED LEARNING MODE BETA)
 // Contextual Reading & Cloze Test Passage Generator with Strict JSON Schema
 // =========================================================================
 
@@ -250,8 +250,8 @@ async function confirmStartClozeFromModal() {
   let finalCount = 1;
   if (clozeSetupPassageCount === 'custom' && clozeSetupCustomPassageCountValue) {
     finalCount = clozeSetupCustomPassageCountValue;
-  } else if (typeof clozeSetupPassageCount === 'number') {
-    finalCount = clozeSetupPassageCount;
+  } else if (clozeSetupPassageCount) {
+    finalCount = parseInt(clozeSetupPassageCount, 10) || 1;
   }
 
   if (typeof closeModal === 'function') closeModal('modal-cloze-setup');
