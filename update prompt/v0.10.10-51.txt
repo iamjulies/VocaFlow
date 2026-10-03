@@ -1,0 +1,7 @@
+v0.10.10-51
+vấn đề 32: hiện thông báo cộng lượt quay vòng quay may mắn mà không cộng thật -> tức là có thông báo nhưng hàm cộng hình như bị lỗi rồi
+vấn đề 33: hiệu ứng tên ở public profile "C:\Users\DELL\Pictures\Screenshots\Ảnh chụp màn hình 2026-10-03 101244.png" đang không đồng bộ với /me (trang cá nhân tùy chỉnh) "C:\Users\DELL\Pictures\Screenshots\Ảnh chụp màn hình 2026-10-03 101151.png"
+vấn đề 34: hiệu ứng tên và hiệu ứng viền ảnh ở danh sách người theo dõi và danh sách theo dõi "C:\Users\DELL\Pictures\Screenshots\Ảnh chụp màn hình 2026-10-03 101413.png" đang không đồng bộ với public profile của người khác: "C:\Users\DELL\Pictures\Screenshots\Ảnh chụp màn hình 2026-10-03 101537.png", "C:\Users\DELL\Pictures\Screenshots\Ảnh chụp màn hình 2026-10-03 101611.png", "C:\Users\DELL\Pictures\Screenshots\Ảnh chụp màn hình 2026-10-03 101636.png"
+vấn đề 35: hiệu ứng tên, hiệu ứng viền ảnh và danh xưng ở trung tâm cộng đồng "C:\Users\DELL\Pictures\Screenshots\Ảnh chụp màn hình 2026-10-03 103550.png", "C:\Users\DELL\Pictures\Screenshots\Ảnh chụp màn hình 2026-10-03 103559.png" đang không đồng bộ với public profile của người khác: "C:\Users\DELL\Pictures\Screenshots\Ảnh chụp màn hình 2026-10-03 103820.png", "C:\Users\DELL\Pictures\Screenshots\Ảnh chụp màn hình 2026-10-03 101611.png"
+
+đọc và thực hiện các file markdown có trong "C:\Users\DELL\Documents\Modding\VocaFlow" (nếu quên)

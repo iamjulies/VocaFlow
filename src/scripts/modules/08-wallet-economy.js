@@ -1,5 +1,5 @@
 // =========================================================================
-// VOCAFLOW 08-WALLET-ECONOMY.JS (v0.10.10-50 Build 351)
+// VOCAFLOW 08-WALLET-ECONOMY.JS (v0.10.10-51 Build 352)
 // Economy, Wallet, Ledger, Lucky Spin, Cat Meme Reactions, Brain Energy & Study Settlements
 // =========================================================================
 
@@ -230,6 +230,7 @@
       }
 
       luckyWheelIsSpinning = true;
+      localStorage.setItem('vocaflow_last_spin_date', getTodayString());
       setLuckySpinsCount(spins - 1);
 
       const wheel = document.getElementById('lucky-wheel-element');

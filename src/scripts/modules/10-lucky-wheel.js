@@ -1,5 +1,5 @@
 // =========================================================================
-// VOCAFLOW 10-LUCKY-WHEEL.JS (v0.10.10-50 Build 351)
+// VOCAFLOW 10-LUCKY-WHEEL.JS (v0.10.10-51 Build 352)
 // Lucky wheel canvas, spin purchase, rewarded video ads, monetization
 // =========================================================================
 
@@ -140,79 +140,10 @@
     // VIP DAILY SPIN SELF-HEALING & EXCESS CORRECTION (v0.10.9-alpha-19)
     // =========================================================================
     function autoHealExcessVipSpinsToday() {
-      const isVip = typeof isUserVip === 'function' ? isUserVip() : false;
-      if (!isVip) return;
-
+      // Safe guard: Do not destructively reset or clamp spins earned from ads, bounties, or leveling up
       const HEAL_KEY = 'vocaflow_spins_healed_v0109a19';
       if (localStorage.getItem(HEAL_KEY)) return;
-
-      const today = (typeof formatLocalDateString === 'function') ? formatLocalDateString(new Date()) : getTodayString();
-      let curSpins = parseInt(localStorage.getItem('vocaflow_lucky_spins_left') || '0', 10);
-      if (isNaN(curSpins)) curSpins = 0;
-
-      const isDateMatchToday = (dateStr) => {
-        if (!dateStr) return false;
-        if (dateStr === today || (typeof dateStr.startsWith === 'function' && dateStr.startsWith(today))) return true;
-        try {
-          const d = new Date(dateStr);
-          if (!isNaN(d.getTime())) {
-            const loc = (typeof formatLocalDateString === 'function') ? formatLocalDateString(d) : '';
-            if (loc === today) return true;
-          }
-        } catch (e) {}
-        return false;
-      };
-
-      // Count VIP spin daily notifications or compensation notifications for today
-      const todayDailyNotifs = Array.isArray(userNotifications) ? userNotifications.filter(n =>
-        n && (n.id === 'notif_vip_daily_spin_' + today || (n.type === 'VIP_BONUS' && n.title && (n.title.includes('Quà Tặng VIP Hằng Ngày') || n.title.includes('Quà Tặng VocaVIP Hằng Ngày') || n.title.includes('Bồi Hoàn Lượt Quay VIP') || n.title.includes('Bồi Hoàn VocaSpin VIP')) && isDateMatchToday(n.timestamp)))
-      ) : [];
-
-      const hasPurchasedSpins = Array.isArray(userLedger) && userLedger.some(tx =>
-        tx && (tx.type === 'BUY_SPINS' || tx.type === 'PURCHASE_SPIN')
-      );
-
-      const lastSpinDate = localStorage.getItem('vocaflow_last_spin_date') || '';
-      const hasSpunToday = lastSpinDate === today;
-
-      // If user received multiple spin grants today (inflated to > 2 without purchasing)
-      if (!hasPurchasedSpins && (todayDailyNotifs.length > 1 || curSpins > 2)) {
-        const adjustedSpins = hasSpunToday ? 0 : 2;
-        localStorage.setItem('vocaflow_lucky_spins_left', adjustedSpins.toString());
-        localStorage.setItem('vocaflow_last_vip_spin_date', today);
-        localStorage.setItem(STORAGE_KEY_ECONOMY_TIME, Date.now().toString());
-        localStorage.setItem(HEAL_KEY, 'true');
-
-        // Deduplicate notifications: retain only one single valid notification for today
-        if (Array.isArray(userNotifications)) {
-          let keptOne = false;
-          userNotifications = userNotifications.filter(n => {
-            if (!n) return false;
-            const isDup = n.id === 'notif_vip_daily_spin_' + today || (n.type === 'VIP_BONUS' && n.title && (n.title.includes('Quà Tặng VIP Hằng Ngày') || n.title.includes('Quà Tặng VocaVIP Hằng Ngày') || n.title.includes('Bồi Hoàn Lượt Quay VIP') || n.title.includes('Bồi Hoàn VocaSpin VIP')) && isDateMatchToday(n.timestamp));
-            if (isDup) {
-              if (!keptOne) { keptOne = true; return true; }
-              return false;
-            }
-            return true;
-          });
-          localStorage.setItem('vocaflow_notifications', JSON.stringify(userNotifications));
-          if (typeof updateNotificationsUI === 'function') updateNotificationsUI();
-          if (typeof renderNotificationsList === 'function') renderNotificationsList();
-        }
-
-        updateLuckyWheelUI();
-        updateShopBonusesUI();
-        saveDatabase(true);
-        if (typeof syncEconomyToCloud === 'function') {
-          syncEconomyToCloud();
-        }
-        if (typeof broadcastEconomyUpdate === 'function') {
-          broadcastEconomyUpdate();
-        }
-        showToast('👑 Đã hiệu chỉnh lại VocaSpin VIP hôm nay: đúng chuẩn +2 lượt/ngày!');
-      } else {
-        localStorage.setItem(HEAL_KEY, 'true');
-      }
+      localStorage.setItem(HEAL_KEY, 'true');
     }
 
     function getLuckySpinsCount() {
@@ -227,7 +158,6 @@
     function setLuckySpinsCount(count) {
       const cleanCount = Math.max(0, count);
       localStorage.setItem('vocaflow_lucky_spins_left', cleanCount.toString());
-      localStorage.setItem('vocaflow_last_spin_date', getTodayString());
       localStorage.setItem(STORAGE_KEY_ECONOMY_TIME, Date.now().toString());
       updateLuckyWheelUI();
       if (typeof syncEconomyToCloud === 'function') {

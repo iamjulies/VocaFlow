@@ -1,5 +1,5 @@
 // =========================================================================
-// VOCAFLOW 04-DECKS-MANAGER.JS (v0.10.10-50 Build 351)
+// VOCAFLOW 04-DECKS-MANAGER.JS (v0.10.10-51 Build 352)
 // Quản lý VocaDecks, Vocabulary Lists, Import/Export & CRUD Operations
 // =========================================================================
 
@@ -1095,8 +1095,11 @@
           ` : ''}
           ${(() => {
             const { author: liveAuthor, authorUid: liveAuthorUid, isVip: isVipAuth } = getLiveDeckAuthor(deck);
-            const authorNameEffect = (currentUser && liveAuthorUid === currentUser.uid)
-              ? (typeof getEquippedWardrobe === 'function' ? getEquippedWardrobe()?.nameEffect : null)
+            const authorWardrobe = (currentUser && liveAuthorUid === currentUser.uid)
+              ? (typeof getEquippedWardrobe === 'function' ? getEquippedWardrobe() : null)
+              : (typeof getLiveUserRegistryEntry === 'function' ? getLiveUserRegistryEntry(liveAuthorUid, liveAuthor)?.equippedWardrobe : null);
+            const authorNameEffect = (authorWardrobe?.nameEffect && authorWardrobe.nameEffect !== 'default')
+              ? authorWardrobe.nameEffect
               : (isVipAuth ? 'vip' : 'default');
             const authorFormattedName = (typeof renderUsernameWithEffectHtml === 'function')
               ? renderUsernameWithEffectHtml(liveAuthor, authorNameEffect)
@@ -1231,8 +1234,11 @@
         const { author: liveAuthor, authorUid: liveAuthorUid, isVip: isVipAuth } = getLiveDeckAuthor(deck);
 
         if (liveAuthor) {
-          const authorNameEffect = (currentUser && liveAuthorUid === currentUser.uid)
-            ? (typeof getEquippedWardrobe === 'function' ? getEquippedWardrobe()?.nameEffect : null)
+          const authorWardrobe = (currentUser && liveAuthorUid === currentUser.uid)
+            ? (typeof getEquippedWardrobe === 'function' ? getEquippedWardrobe() : null)
+            : (typeof getLiveUserRegistryEntry === 'function' ? getLiveUserRegistryEntry(liveAuthorUid, liveAuthor)?.equippedWardrobe : null);
+          const authorNameEffect = (authorWardrobe?.nameEffect && authorWardrobe.nameEffect !== 'default')
+            ? authorWardrobe.nameEffect
             : (isVipAuth ? 'vip' : 'default');
           const authorFormattedName = (typeof renderUsernameWithEffectHtml === 'function')
             ? renderUsernameWithEffectHtml(liveAuthor, authorNameEffect)

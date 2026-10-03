@@ -1,5 +1,5 @@
 // =========================================================================
-// VOCAFLOW 03-AUTH.JS (v0.10.10-50 Build 351)
+// VOCAFLOW 03-AUTH.JS (v0.10.10-51 Build 352)
 // Authentication, Cloud Sync, Community, Profiles & Social Network
 // =========================================================================
 
@@ -3391,6 +3391,24 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
         let handle = 'user_' + uid.slice(0, 6);
         let avatar = name;
         let equippedWardrobe = null;
+        let isVip = false;
+        let vipTier = 'none';
+
+        if (uid === 'official') {
+          name = 'VocaFlow Chuẩn';
+          handle = 'official';
+          avatar = 'icons/vocaflow_official_avatar.png';
+          equippedWardrobe = { frame: 'mythic', nameEffect: 'mythic', title: 'lv50' };
+          isVip = true;
+          vipTier = 'diamond';
+        } else if (uid === 'iamjulies') {
+          name = 'Julies';
+          handle = 'iamjulies';
+          avatar = 'icons/vocaflow_official_avatar.png';
+          equippedWardrobe = { frame: 'mythic', nameEffect: 'mythic', title: 'founder' };
+          isVip = true;
+          vipTier = 'diamond';
+        }
 
         // Try live registry first
         const liveEntry = (typeof getLiveUserRegistryEntry === 'function') ? getLiveUserRegistryEntry(uid) : null;
@@ -3399,6 +3417,8 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
           if (liveEntry.username) handle = liveEntry.username;
           if (liveEntry.avatar) avatar = liveEntry.avatar;
           if (liveEntry.equippedWardrobe) equippedWardrobe = liveEntry.equippedWardrobe;
+          if (liveEntry.isVip) isVip = true;
+          if (liveEntry.vipTier && liveEntry.vipTier !== 'none') vipTier = liveEntry.vipTier;
         }
 
         // Try current user if self
@@ -3409,6 +3429,10 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
           else if (currentUser.avatar) avatar = currentUser.avatar;
           if (typeof getEquippedWardrobe === 'function') equippedWardrobe = getEquippedWardrobe();
           else if (currentUser.equippedWardrobe) equippedWardrobe = currentUser.equippedWardrobe;
+          if (typeof isUserVip === 'function' && isUserVip()) {
+            isVip = true;
+            vipTier = typeof getUserVipTier === 'function' ? getUserVipTier() : (currentUser.vipTier || 'monthly');
+          }
         }
 
         // Try local matching from library decks fallback
@@ -3419,8 +3443,10 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
           if (!liveEntry?.avatar && !currentUser) avatar = foundDeck.authorAvatar || name;
         }
 
-        let isVip = isAuthorVipUser(uid, name);
-        let vipTier = getAuthorVipTier(uid, name);
+        if (isAuthorVipUser(uid, name)) {
+          isVip = true;
+          if (vipTier === 'none') vipTier = getAuthorVipTier(uid, name);
+        }
 
         // Fetch real-time profile if not fully resolved
         if (!liveEntry || !liveEntry.displayName || !liveEntry.avatar || !equippedWardrobe) {
@@ -3450,8 +3476,14 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
       let html = '';
       userItems.forEach(u => {
         const isFollowed = !!myFollowingMap[u.uid];
-        const frameId = u.equippedWardrobe?.frame || (u.isVip ? (u.vipTier === 'monthly' ? 'vip_monthly' : (u.vipTier === 'yearly' ? 'vip_yearly' : 'vip')) : 'default');
-        const nameEffectId = u.equippedWardrobe?.nameEffect || (u.isVip ? 'vip' : 'default');
+        const isSpecialOfficial = u.uid === 'official' || u.handle.toLowerCase().replace(/^@/, '') === 'official';
+        const isSpecialFounder = u.uid === 'iamjulies' || u.handle.toLowerCase().replace(/^@/, '') === 'iamjulies';
+        const frameId = (u.equippedWardrobe?.frame && u.equippedWardrobe.frame !== 'default')
+          ? u.equippedWardrobe.frame
+          : (isSpecialOfficial || isSpecialFounder ? 'mythic' : (u.isVip ? (u.vipTier === 'monthly' ? 'vip_monthly' : (u.vipTier === 'yearly' ? 'vip_yearly' : 'vip')) : 'default'));
+        const nameEffectId = (u.equippedWardrobe?.nameEffect && u.equippedWardrobe.nameEffect !== 'default')
+          ? u.equippedWardrobe.nameEffect
+          : (isSpecialOfficial || isSpecialFounder ? 'mythic' : (u.isVip ? 'vip' : 'default'));
 
         const avatarHtml = (typeof renderAvatarWithFrameHtml === 'function')
           ? renderAvatarWithFrameHtml(u.avatar, 38, frameId)
@@ -5626,10 +5658,16 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
         const cleanResolvedName = stripVipAffixes(resolvedName);
         const isIamJulies = (authorClean === 'iamjulies' || (resolvedHandle && resolvedHandle.toLowerCase() === 'iamjulies') || (targetUid && targetUid.toLowerCase() === 'iamjulies'));
 
+        const liveRegistryEntry = (typeof getLiveUserRegistryEntry === 'function') ? getLiveUserRegistryEntry(targetUid, resolvedName, resolvedHandle) : null;
+
         const targetWardrobe = (isCurrentUser && typeof getEquippedWardrobe === 'function') 
           ? getEquippedWardrobe()
-          : ((uData && (uData.equippedWardrobe || (uData.profile && uData.profile.equippedWardrobe))) 
-              || (isVocaFlowOfficial ? { frame: 'mythic', nameEffect: 'mythic', title: 'lv50' } : { frame: 'default', nameEffect: 'default', title: 'default' }));
+          : ((liveRegistryEntry && liveRegistryEntry.equippedWardrobe)
+              || (uData && (uData.equippedWardrobe || (uData.profile && uData.profile.equippedWardrobe))) 
+              || (matchedStudent && (matchedStudent.equippedWardrobe || (matchedStudent.profile && matchedStudent.profile.equippedWardrobe)))
+              || (regEntry && regEntry.equippedWardrobe)
+              || (nameMapEntry && nameMapEntry.equippedWardrobe)
+              || (isVocaFlowOfficial ? { frame: 'mythic', nameEffect: 'mythic', title: 'lv50' } : (isIamJulies ? { frame: 'mythic', nameEffect: 'mythic', title: 'founder' } : { frame: 'default', nameEffect: 'default', title: 'default' })));
 
         if (nameEl) {
           if (isVocaFlowOfficial) {
@@ -5649,7 +5687,9 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
           }
         }
         if (avEl) {
-          const pubFrameId = targetWardrobe?.frame || (isAuthorVip ? (authorVipTier === 'monthly' ? 'vip_monthly' : (authorVipTier === 'yearly' ? 'vip_yearly' : 'vip')) : 'default');
+          const pubFrameId = (targetWardrobe?.frame && targetWardrobe.frame !== 'default') 
+            ? targetWardrobe.frame 
+            : (isVocaFlowOfficial || isIamJulies ? 'mythic' : (isAuthorVip ? (authorVipTier === 'monthly' ? 'vip_monthly' : (authorVipTier === 'yearly' ? 'vip_yearly' : 'vip')) : 'default'));
           if (pubFrameId && pubFrameId !== 'default' && typeof renderAvatarWithFrameHtml === 'function') {
             avEl.innerHTML = renderAvatarWithFrameHtml(resolvedAvatar, 100, pubFrameId, 'hoverable');
             avEl.style.boxShadow = 'none';
@@ -5661,7 +5701,22 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
           }
         }
         if (pubSubBadgeEl) {
-          if (isVocaFlowOfficial) {
+          if (targetWardrobe && targetWardrobe.title && targetWardrobe.title !== 'default' && typeof VOCAFLOW_WARDROBE_REGISTRY !== 'undefined') {
+            const customTitle = VOCAFLOW_WARDROBE_REGISTRY.titles.find(t => t.id === targetWardrobe.title);
+            if (customTitle) {
+              pubSubBadgeEl.innerHTML = escapeHtml(customTitle.tag);
+              pubSubBadgeEl.style.background = `${customTitle.color}25`;
+              pubSubBadgeEl.style.color = customTitle.color;
+              pubSubBadgeEl.style.fontWeight = '700';
+              pubSubBadgeEl.style.border = `1px solid ${customTitle.color}60`;
+            } else {
+              pubSubBadgeEl.innerHTML = '🎓 Flower VocaFlow';
+              pubSubBadgeEl.style.background = 'rgba(16, 185, 129, 0.15)';
+              pubSubBadgeEl.style.color = '#34d399';
+              pubSubBadgeEl.style.fontWeight = '700';
+              pubSubBadgeEl.style.border = '1px solid rgba(16, 185, 129, 0.3)';
+            }
+          } else if (isVocaFlowOfficial) {
             pubSubBadgeEl.innerHTML = '👑 Đội Ngũ Phát Triển';
             pubSubBadgeEl.style.background = 'linear-gradient(135deg, rgba(245,158,11,0.25), rgba(236,72,153,0.25))';
             pubSubBadgeEl.style.color = '#fbbf24';
@@ -5686,21 +5741,6 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
               pubSubBadgeEl.style.color = '#fbbf24';
               pubSubBadgeEl.style.fontWeight = '700';
               pubSubBadgeEl.style.border = '1px solid rgba(245, 158, 11, 0.3)';
-            }
-          } else if (targetWardrobe && targetWardrobe.title && targetWardrobe.title !== 'default' && typeof VOCAFLOW_WARDROBE_REGISTRY !== 'undefined') {
-            const customTitle = VOCAFLOW_WARDROBE_REGISTRY.titles.find(t => t.id === targetWardrobe.title);
-            if (customTitle) {
-              pubSubBadgeEl.innerHTML = escapeHtml(customTitle.tag);
-              pubSubBadgeEl.style.background = `${customTitle.color}25`;
-              pubSubBadgeEl.style.color = customTitle.color;
-              pubSubBadgeEl.style.fontWeight = '700';
-              pubSubBadgeEl.style.border = `1px solid ${customTitle.color}60`;
-            } else {
-              pubSubBadgeEl.innerHTML = '🎓 Flower VocaFlow';
-              pubSubBadgeEl.style.background = 'rgba(16, 185, 129, 0.15)';
-              pubSubBadgeEl.style.color = '#34d399';
-              pubSubBadgeEl.style.fontWeight = '700';
-              pubSubBadgeEl.style.border = '1px solid rgba(16, 185, 129, 0.3)';
             }
           } else {
             pubSubBadgeEl.innerHTML = '🎓 Flower VocaFlow';
@@ -8020,6 +8060,19 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
           displayName: 'VocaFlow Chuẩn',
           username: 'official',
           avatar: 'icons/vocaflow_official_avatar.png',
+          equippedWardrobe: { frame: 'mythic', nameEffect: 'mythic', title: 'lv50' },
+          isVip: true,
+          vipTier: 'diamond'
+        };
+      }
+
+      if (uid === 'iamjulies' || cleanHandle === 'iamjulies' || cleanName === 'julies' || cleanName === 'julies (iamjulies)') {
+        return {
+          uid: 'iamjulies',
+          displayName: 'Julies',
+          username: 'iamjulies',
+          avatar: 'icons/vocaflow_official_avatar.png',
+          equippedWardrobe: { frame: 'mythic', nameEffect: 'mythic', title: 'founder' },
           isVip: true,
           vipTier: 'diamond'
         };
@@ -8031,6 +8084,7 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
           displayName: currentUser.displayName || name,
           username: currentUser.username || handle,
           avatar: (typeof getUserAvatar === 'function' ? getUserAvatar() : null) || currentUser.avatar || currentUser.photoURL,
+          equippedWardrobe: (typeof getEquippedWardrobe === 'function' ? getEquippedWardrobe() : null) || currentUser.equippedWardrobe || (currentUser.profile && currentUser.profile.equippedWardrobe) || { frame: 'default', nameEffect: 'default', title: 'default' },
           isVip: typeof isUserVip === 'function' ? isUserVip() : !!currentUser.isVip,
           vipTier: currentUser.vipTier || 'none'
         };
@@ -8038,10 +8092,28 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
       const reg = (typeof globalVipRegistry !== 'undefined' ? globalVipRegistry : window.globalVipRegistry) || {};
       const nameMap = (typeof globalVipRegistryNameMap !== 'undefined' ? globalVipRegistryNameMap : window.globalVipRegistryNameMap) || {};
 
-      if (uid && reg[uid]) return reg[uid];
+      if (uid && reg[uid]) {
+        const item = reg[uid];
+        return {
+          ...item,
+          equippedWardrobe: item.equippedWardrobe || (item.profile && item.profile.equippedWardrobe) || null
+        };
+      }
 
-      if (cleanName && nameMap[cleanName]) return nameMap[cleanName];
-      if (cleanHandle && nameMap[cleanHandle]) return nameMap[cleanHandle];
+      if (cleanName && nameMap[cleanName]) {
+        const item = nameMap[cleanName];
+        return {
+          ...item,
+          equippedWardrobe: item.equippedWardrobe || (item.profile && item.profile.equippedWardrobe) || null
+        };
+      }
+      if (cleanHandle && nameMap[cleanHandle]) {
+        const item = nameMap[cleanHandle];
+        return {
+          ...item,
+          equippedWardrobe: item.equippedWardrobe || (item.profile && item.profile.equippedWardrobe) || null
+        };
+      }
 
       if (typeof adminStudentsData !== 'undefined' && Array.isArray(adminStudentsData)) {
         const student = adminStudentsData.find(s => (uid && s.uid === uid) || (cleanName && (s.displayName || '').trim().toLowerCase() === cleanName) || (cleanHandle && (s.username || '').toLowerCase() === cleanHandle));
@@ -8051,6 +8123,7 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
             displayName: student.displayName || student.name || name,
             username: student.username || student.handle || handle,
             avatar: student.avatar || student.avatarUrl || student.photoURL,
+            equippedWardrobe: student.equippedWardrobe || (student.profile && student.profile.equippedWardrobe) || null,
             isVip: !!student.isVip,
             vipTier: student.vipTier || 'none'
           };
@@ -8063,6 +8136,7 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
           displayName: currentPublicProfileAuthor.resolvedName || name,
           username: currentPublicProfileAuthor.resolvedHandle || handle,
           avatar: currentPublicProfileAuthor.resolvedAvatar,
+          equippedWardrobe: currentPublicProfileAuthor.targetWardrobe || currentPublicProfileAuthor.equippedWardrobe || null,
           isVip: typeof isAuthorVipUser === 'function' ? isAuthorVipUser(uid, currentPublicProfileAuthor.resolvedName) : false,
           vipTier: typeof getAuthorVipTier === 'function' ? getAuthorVipTier(uid, currentPublicProfileAuthor.resolvedName) : 'none'
         };
@@ -8104,6 +8178,17 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
     }
     window.getCommunityAuthorIsVip = getCommunityAuthorIsVip;
 
+    function getCommunityAuthorWardrobe(post) {
+      if (!post) return null;
+      const entry = getLiveUserRegistryEntry(post.authorUid, post.authorName, post.authorHandle);
+      if (entry && entry.equippedWardrobe) return entry.equippedWardrobe;
+      if (currentUser && post.authorUid === currentUser.uid) {
+        return (typeof getEquippedWardrobe === 'function') ? getEquippedWardrobe() : currentUser.equippedWardrobe;
+      }
+      return post.equippedWardrobe || null;
+    }
+    window.getCommunityAuthorWardrobe = getCommunityAuthorWardrobe;
+
     function getCommunityCommentAuthorName(c) {
       if (!c) return 'Flower';
       const entry = getLiveUserRegistryEntry(c.authorUid, c.authorName, c.authorHandle);
@@ -8135,6 +8220,17 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
       return !!c.isVip;
     }
     window.getCommunityCommentAuthorIsVip = getCommunityCommentAuthorIsVip;
+
+    function getCommunityCommentAuthorWardrobe(c) {
+      if (!c) return null;
+      const entry = getLiveUserRegistryEntry(c.authorUid, c.authorName, c.authorHandle);
+      if (entry && entry.equippedWardrobe) return entry.equippedWardrobe;
+      if (currentUser && c.authorUid === currentUser.uid) {
+        return (typeof getEquippedWardrobe === 'function') ? getEquippedWardrobe() : currentUser.equippedWardrobe;
+      }
+      return c.equippedWardrobe || null;
+    }
+    window.getCommunityCommentAuthorWardrobe = getCommunityCommentAuthorWardrobe;
 
     function highlightAndScrollToPost(postId, context = 'cc') {
       setTimeout(() => {
@@ -8217,17 +8313,25 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
         const isDeleted = !!c.isDeleted;
         const replyAuthorHandleClean = (c.replyToAuthorHandle || '').replace(/^@/, '');
 
-        let commentAuthorWardrobe = c.equippedWardrobe || (typeof getLiveUserRegistryEntry === 'function' ? getLiveUserRegistryEntry(c.authorUid)?.equippedWardrobe : null);
+        let commentAuthorWardrobe = (typeof getCommunityCommentAuthorWardrobe === 'function')
+          ? getCommunityCommentAuthorWardrobe(c)
+          : (c.equippedWardrobe || (typeof getLiveUserRegistryEntry === 'function' ? getLiveUserRegistryEntry(c.authorUid)?.equippedWardrobe : null));
         if (!commentAuthorWardrobe && currentUser && c.authorUid === currentUser.uid) {
           commentAuthorWardrobe = (typeof getEquippedWardrobe === 'function') ? getEquippedWardrobe() : currentUser.equippedWardrobe;
         }
+        const cIsSpecialOfficial = c.authorUid === 'official' || cAuthorHandle.toLowerCase().replace(/^@/, '') === 'official';
+        const cIsSpecialFounder = c.authorUid === 'iamjulies' || cAuthorHandle.toLowerCase().replace(/^@/, '') === 'iamjulies';
         const cIsVip = isAuthorVipUser(c.authorUid, cAuthorName);
-        const cFrameId = commentAuthorWardrobe?.frame || (cIsVip ? 'vip' : 'default');
+        const cFrameId = (commentAuthorWardrobe?.frame && commentAuthorWardrobe.frame !== 'default')
+          ? commentAuthorWardrobe.frame
+          : (cIsSpecialOfficial || cIsSpecialFounder ? 'mythic' : (cIsVip ? 'vip' : 'default'));
         const cAvatarHtml = (typeof renderAvatarWithFrameHtml === 'function')
           ? renderAvatarWithFrameHtml(cAuthorAvatar, 22, cFrameId)
           : `<div style="width: 20px; height: 20px; border-radius: 50%; overflow: hidden; display: flex; align-items: center; justify-content: center; background: var(--surface-elevated); font-size: 11px;">${renderAvatarHtml(cAuthorAvatar, 20, 10)}</div>`;
 
-        const cNameEffectId = commentAuthorWardrobe?.nameEffect || (cIsVip ? 'vip' : 'default');
+        const cNameEffectId = (commentAuthorWardrobe?.nameEffect && commentAuthorWardrobe.nameEffect !== 'default')
+          ? commentAuthorWardrobe.nameEffect
+          : (cIsSpecialOfficial || cIsSpecialFounder ? 'mythic' : (cIsVip ? 'vip' : 'default'));
         const cNameHtml = (typeof renderUsernameWithEffectHtml === 'function')
           ? renderUsernameWithEffectHtml(cAuthorName, cNameEffectId)
           : escapeHtml(cAuthorName);
@@ -8283,12 +8387,22 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
         `;
       };
 
-      let postAuthorWardrobe = post.equippedWardrobe || (typeof getLiveUserRegistryEntry === 'function' ? getLiveUserRegistryEntry(post.authorUid)?.equippedWardrobe : null);
+      let postAuthorWardrobe = (typeof getCommunityAuthorWardrobe === 'function')
+        ? getCommunityAuthorWardrobe(post)
+        : (post.equippedWardrobe || (typeof getLiveUserRegistryEntry === 'function' ? getLiveUserRegistryEntry(post.authorUid)?.equippedWardrobe : null));
       if (!postAuthorWardrobe && currentUser && post.authorUid === currentUser.uid) {
         postAuthorWardrobe = (typeof getEquippedWardrobe === 'function') ? getEquippedWardrobe() : currentUser.equippedWardrobe;
       }
-      const postFrameId = postAuthorWardrobe?.frame || (isVip ? (post.authorVipTier === 'monthly' ? 'vip_monthly' : (post.authorVipTier === 'yearly' ? 'vip_yearly' : 'vip')) : 'default');
-      const postNameEffectId = postAuthorWardrobe?.nameEffect || (isVip ? 'vip' : 'default');
+
+      const isPostOfficial = post.authorUid === 'official' || (authorHandle && authorHandle.toLowerCase().replace(/^@/, '') === 'official');
+      const isPostFounder = (post.authorUid && post.authorUid.toLowerCase() === 'iamjulies') || (authorHandle && authorHandle.toLowerCase().replace(/^@/, '') === 'iamjulies');
+
+      const postFrameId = (postAuthorWardrobe?.frame && postAuthorWardrobe.frame !== 'default')
+        ? postAuthorWardrobe.frame
+        : (isPostOfficial || isPostFounder ? 'mythic' : (isVip ? (post.authorVipTier === 'monthly' ? 'vip_monthly' : (post.authorVipTier === 'yearly' ? 'vip_yearly' : 'vip')) : 'default'));
+      const postNameEffectId = (postAuthorWardrobe?.nameEffect && postAuthorWardrobe.nameEffect !== 'default')
+        ? postAuthorWardrobe.nameEffect
+        : (isPostOfficial || isPostFounder ? 'mythic' : (isVip ? 'vip' : 'default'));
 
       const postAvatarHtml = (typeof renderAvatarWithFrameHtml === 'function')
         ? renderAvatarWithFrameHtml(authorAvatar, 40, postFrameId)
@@ -8297,6 +8411,23 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
       const postNameHtml = (typeof renderUsernameWithEffectHtml === 'function')
         ? renderUsernameWithEffectHtml(authorName, postNameEffectId)
         : `<strong style="font-size: 13.5px; color: var(--text);">${escapeHtml(authorName)}</strong>`;
+
+      let postTitleBadgeHtml = '';
+      if (postAuthorWardrobe && postAuthorWardrobe.title && postAuthorWardrobe.title !== 'default' && typeof VOCAFLOW_WARDROBE_REGISTRY !== 'undefined') {
+        const customTitle = VOCAFLOW_WARDROBE_REGISTRY.titles.find(t => t.id === postAuthorWardrobe.title);
+        if (customTitle) {
+          postTitleBadgeHtml = `<span class="badge" style="background: ${customTitle.color}25; color: ${customTitle.color}; font-size: 9.5px; font-weight: 700; padding: 1px 6px; border: 1px solid ${customTitle.color}60;">${escapeHtml(customTitle.tag)}</span>`;
+        }
+      }
+      if (!postTitleBadgeHtml) {
+        if (isPostOfficial) {
+          postTitleBadgeHtml = `<span class="badge" style="background: linear-gradient(135deg, rgba(245,158,11,0.25), rgba(236,72,153,0.25)); color: #fbbf24; font-size: 9.5px; font-weight: 800; padding: 1px 6px; border: 1px solid rgba(251,191,36,0.5);">👑 Đội Ngũ Phát Triển</span>`;
+        } else if (isPostFounder) {
+          postTitleBadgeHtml = `<span class="badge" style="background: linear-gradient(135deg, rgba(245,158,11,0.25), rgba(236,72,153,0.25)); color: #fbbf24; font-size: 9.5px; font-weight: 800; padding: 1px 6px; border: 1px solid rgba(251,191,36,0.5);">👑 Nhà Sáng Lập & Phát Triển</span>`;
+        } else if (isVip) {
+          postTitleBadgeHtml = `<span class="badge" style="background: linear-gradient(135deg, #f59e0b, #d97706); color: #fff; font-size: 9.5px; font-weight: 700; padding: 1px 6px;">👑 VIP</span>`;
+        }
+      }
 
       return `
         <div class="community-post-card" id="${idPrefix}post-card-${post.id}" style="background: var(--surface-elevated); border: 1px solid var(--border); border-radius: 14px; padding: 14px; box-shadow: 0 4px 14px rgba(0,0,0,0.06); margin-bottom: 12px;">
@@ -8307,9 +8438,9 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
                 ${postAvatarHtml}
               </div>
               <div>
-                <div style="display: flex; align-items: center; gap: 6px;">
+                <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
                   ${postNameHtml}
-                  ${isVip ? '<span class="badge" style="background: linear-gradient(135deg, #f59e0b, #d97706); color: #fff; font-size: 9.5px; padding: 1px 5px;">👑 VIP</span>' : ''}
+                  ${postTitleBadgeHtml}
                 </div>
                 <div style="font-size: 11.5px; color: var(--text-muted); display: flex; align-items: center; gap: 6px;">
                   <span>@${escapeHtml((authorHandle || 'user').replace(/^@/, ''))}</span>
@@ -10064,6 +10195,7 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
               displayName: currentUser.displayName || (currentUser.email ? currentUser.email.split('@')[0] : 'Khách'),
               username: currentUser.username || '',
               avatar: avToSave,
+              equippedWardrobe: (typeof getEquippedWardrobe === 'function') ? getEquippedWardrobe() : null,
               isVip: true,
               vipTier: getUserVipTier(),
               vipExpiresAt: userVipExpiresAt,

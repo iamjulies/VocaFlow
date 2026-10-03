@@ -1,5 +1,5 @@
 // =========================================================================
-// VOCAFLOW 12-ACHIEVEMENTS.JS (v0.10.10-50 Build 351)
+// VOCAFLOW 12-ACHIEVEMENTS.JS (v0.10.10-51 Build 352)
 // Badges, daily tasks, highlights showcase, notifications, VocaMail, User Guide
 // =========================================================================
 
@@ -38,6 +38,7 @@
         displayName: name,
         username,
         avatar,
+        equippedWardrobe: authorObj.equippedWardrobe || (authorObj.profile && authorObj.profile.equippedWardrobe) || null,
         vipExpiresAt: isActiveVip ? vipExpiresAt : 0
       };
 
@@ -1412,8 +1413,16 @@
           if (!curSpinsRes.ok && authParam) curSpinsRes = await fetch(`${rtdbUrl}/users/${userUid}/lucky_spins_left.json`);
           const curSpins = (curSpinsRes.ok ? await curSpinsRes.json() : 0) || 0;
           const newSpins = (parseInt(curSpins, 10) || 0) + amount;
-          let spRes = await fetch(`${rtdbUrl}/users/${userUid}/lucky_spins_left.json${authParam}`, { method: 'PUT', body: JSON.stringify(newSpins) });
-          if (!spRes.ok && authParam) await fetch(`${rtdbUrl}/users/${userUid}/lucky_spins_left.json`, { method: 'PUT', body: JSON.stringify(newSpins) });
+          await Promise.allSettled([
+            fetch(`${rtdbUrl}/users/${userUid}/lucky_spins_left.json${authParam}`, { method: 'PUT', body: JSON.stringify(newSpins) }),
+            fetch(`${rtdbUrl}/users/${userUid}/economy/luckySpins.json${authParam}`, { method: 'PUT', body: JSON.stringify(newSpins) }),
+            fetch(`${rtdbUrl}/users/${userUid}/economy/spins.json${authParam}`, { method: 'PUT', body: JSON.stringify(newSpins) }),
+            fetch(`${rtdbUrl}/users/${userUid}/economy.json${authParam}`, {
+              method: 'PATCH',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ luckySpins: newSpins, updatedAt: new Date().toISOString() })
+            })
+          ]);
           if (isSelf) setLuckySpinsCount(getLuckySpinsCount() + amount);
 
         } else if (currentBountyType === 'vip') {

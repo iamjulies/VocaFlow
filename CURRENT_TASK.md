@@ -1,12 +1,37 @@
 # CURRENT TASK & TRẠNG THÁI CÔNG VIỆC HIỆN TẠI (VOCAFLOW)
 
-> **Phiên bản mục tiêu:** `v0.10.10-50 (Build 351)`  
+> **Phiên bản mục tiêu:** `v0.10.10-51 (Build 352)`  
 > **Cập nhật lần cuối:** 2026-10-03  
 > **Trạng thái:** 🚀 **ĐANG TIẾN HÀNH BUILD, KIỂM THỬ TỰ ĐỘNG & MULTI-DEPLOY GITHUB**
 
 ---
 
-## 🎯 1. DANH SÁCH NHIỆM VỤ ĐÃ GIẢI QUYẾT (v0.10.10-50 Build 351 - Issue 29, 30, 31)
+## 🎯 1. DANH SÁCH NHIỆM VỤ ĐÃ GIẢI QUYẾT (v0.10.10-51 Build 352 - Issue 32, 33, 34, 35)
+
+- [x] **Khắc Phục Lỗi Mất Lượt Quay May Mắn VocaSpin & Không Được Cộng (`10-lucky-wheel.js`, `08-wallet-economy.js`, `12-achievements.js` - Issue 32)**:
+  - Loại bỏ hoàn toàn `localStorage.setItem('vocaflow_last_spin_date', getTodayString())` khỏi `setLuckySpinsCount()`, chỉ cập nhật ngày quay khi thực sự quay trong `triggerLuckyWheelSpin()`.
+  - Vô hiệu hóa logic tự ý reset/kẹp số lượt quay trong `autoHealExcessVipSpinsToday()`, bảo vệ các lượt quay nhận được từ xem video quảng cáo, Level Up, rương danh vọng, hoặc admin bug bounty.
+  - Đồng bộ toàn bộ các trường RTDB Firebase (`economy/luckySpins.json`, `economy/spins.json`, `economy.json` và `lucky_spins_left.json`) khi trao thưởng lượt quay.
+
+- [x] **Đồng Bộ Hiệu Ứng Tên & Danh Xưng Wardrobe Trên Public Profile (`03-auth.js` - Issue 33, Ảnh 101151.png vs 101244.png)**:
+  - Khắc phục lỗi Hồ sơ công khai (`/u/:uid` / `/@username`) bị đè danh xưng VIP mặc định và bỏ qua danh hiệu Wardrobe đã trang bị (ví dụ `🌸 Hoa Khôi VocaFlow`).
+  - Ưu tiên hiển thị danh hiệu Wardrobe tùy chỉnh (`targetWardrobe.title`) trên huy hiệu hồ sơ công khai khớp 100% với trang cá nhân `/me`.
+  - Cập nhật khung viền avatar và hiệu ứng tên phản ánh chính xác trạng thái trang bị thời gian thực.
+
+- [x] **Đồng Bộ Hiệu Ứng Tên & Khung Avatar Trong Modal Người Theo Dõi / Đang Theo Dõi (`03-auth.js` - Issue 34, Ảnh 101413.png vs 101537.png, 101611.png, 101636.png)**:
+  - Bổ sung trường `equippedWardrobe` vào bộ đối soát người dùng thời gian thực (`getLiveUserRegistryEntry`) và các tài khoản đặc biệt (VocaFlow Chuẩn, Founder Julies).
+  - Chuẩn hóa điều kiện kiểm tra khung viền và hiệu ứng tên tùy chỉnh trước khi chuyển sang trạng thái VIP mặc định trong `openSubscribersListModal`.
+
+- [x] **Đồng Bộ Toàn Diện Thẻ Bài Viết Bảng Tin Cộng Đồng & Bình Luận (`03-auth.js` - Issue 35, Ảnh 103550.png, 103559.png vs 103820.png, 101611.png)**:
+  - Tích hợp hiển thị huy hiệu Danh Xưng Wardrobe (`postTitleBadgeHtml`) ngay cạnh tên tác giả bài viết trên Bảng Tin Trung Tâm Cộng Đồng (Community Center Feed).
+  - Đồng bộ khung viền avatar, hiệu ứng tên động cho cả tác giả bài viết và người bình luận theo đúng trang bị hồ sơ cá nhân.
+
+- [x] **Đồng Bộ Toàn Diện 7-Point Version Consistency (`v0.10.10-51 Build 352`)**:
+  - Cập nhật phiên bản nhất quán trên toàn bộ 7 điểm hệ thống: `modal-settings.html`, `02-state-core.js`, toàn bộ module headers `01-router.js` đến `13-wardrobe.js`, `sw.js` & `Release_App/sw.js`, `pubspec.yaml`, `Program.cs`, `push_github.ps1`, `VOCAFLOW_OVERVIEW.txt`, `GITHUB_RELEASE/VOCAFLOW_OVERVIEW.txt`, `CURRENT_TASK.md`.
+
+---
+
+## 🎯 2. DANH SÁCH NHIỆM VỤ CÁC PHIÊN BẢN TRƯỚC (v0.10.10-50 Build 351 - Issue 29, 30, 31)
 
 - [x] **Khắc Phục Lỗi Sinh Bài Tập Dịch Thuật AI Song Phương & Bổ Sung Fallback Offline Chuẩn Xác (`06f-translation-engine.js` - Issue 29)**:
   - Sửa lỗi sinh bài tập Dịch thuật AI (Translation Engine) thất bại trên cả 3 chiều dịch (`vi_to_en`, `en_to_vi`, `random`).
