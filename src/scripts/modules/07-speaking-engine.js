@@ -1,5 +1,5 @@
 ﻿// =========================================================================
-// VOCAFLOW 07-SPEAKING-ENGINE.JS (v0.10.10-55 Build 356)
+// VOCAFLOW 07-SPEAKING-ENGINE.JS (v0.10.10-56 Build 357)
 // AI Speaking Lab, MediaRecorder, VAD, Gemini audio analysis, multi-take economy & IndexedDB Best Take
 // =========================================================================
 

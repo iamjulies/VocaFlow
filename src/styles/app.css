@@ -5918,3 +5918,34 @@
       50% { transform: scale(1.25) rotate(45deg); opacity: 1; filter: drop-shadow(0 0 8px #ffffff) drop-shadow(0 0 14px #c084fc); }
       100% { transform: scale(0.75) rotate(90deg); opacity: 0.5; }
     }
+
+    /* ========================================================================= */
+    /* MOBILE VIRTUAL KEYBOARD OPTIMIZATIONS (v0.10.10-56 / v1.0-0)              */
+    /* ========================================================================= */
+    @media (max-width: 768px) {
+      input[type="text"],
+      input[type="search"],
+      input[type="password"],
+      input[type="email"],
+      input[type="number"],
+      textarea,
+      select {
+        font-size: 16px !important; /* Prevents auto-zoom on iOS Safari */
+      }
+
+      .screen-study-container,
+      .study-session-box,
+      .writing-workspace-container,
+      .dictation-workspace-container,
+      .translation-workspace-container,
+      .modal-body,
+      .modal {
+        scroll-padding-bottom: 45vh;
+      }
+
+      .writing-input-area,
+      .dictation-input-area,
+      .translation-input-area {
+        margin-bottom: 24px;
+      }
+    }

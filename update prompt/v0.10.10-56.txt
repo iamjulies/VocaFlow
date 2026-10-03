@@ -1,0 +1,8 @@
+v0.10.10-56 (những tinh chỉnh cuối để tiến lên v1.0-0)
+1. Trải nghiệm người dùng mới -> Người dùng mới mở app lần đầu sẽ thấy popup trang hướng dẫn https://iamjulies.github.io/VocaFlow/guide để người dùng set up được.
+2. Khóa các tính năng cần khóa dành cho free user, và guest
+3. Hãy chắc chắn file .gitignore đã có dòng .git_token để không bao giờ bị lộ token lên GitHub public repository.
+4. Tối ưu hóa giao diện bàn phím ảo trên Di động
+5. Thêm một tooltip hoặc nhắc nhở nhẹ trong Cài Đặt khuyến khích người dùng thỉnh thoảng bấm "Xuất File Sao Lưu (.json / Excel)" để lưu trữ an toàn trên máy tính cá nhân phòng trường hợp mất mạng hoặc đổi thiết bị.
+6. Xem và sửa (nếu có lỗi) trong cơ chế "thuế" giúp hạn chế kiếm quá nhiều xu trong ngày. Hiện tại thì xu kiếm từ học khá là ổn (đã được tích hợp với cơ chế độ bão hòa hay gì đó) còn xu kiếm được từ việc khác thì không... cần giải quyết được việc này.
+đọc và thực hiện các file markdown có trong "C:\Users\DELL\Documents\Modding\VocaFlow" (nếu quên)

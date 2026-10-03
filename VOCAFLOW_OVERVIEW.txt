@@ -1,4 +1,28 @@
 ================================================================================
+Phiên bản: v0.10.10-56 (Build 357) - Tinh Chỉnh Hoàn Thiện Cuối Cùng Tiến Lên v1.0-0: Onboarding Guide Trực Tuyến, Khóa Quyền Guest/Free Chuẩn Mực, Thuế Bão Hòa Thu Nhập Ngoài Học Tập, Tối Ưu Bàn Phím Ảo Di Động & Nhắc Nhở Sao Lưu
+================================================================================
+1. [Trải Nghiệm Người Dùng Mới & Cẩm Nang Onboarding Trực Tuyến]:
+   - Thêm modal chào mừng `modal-welcome-onboarding` cho người dùng mới khi mở app lần đầu với 3 bước thiết lập nhanh và nút mở link trực tiếp cẩm nang hướng dẫn `https://iamjulies.github.io/VocaFlow/guide`.
+
+2. [Khóa Quyền Chuẩn Mực Cho Guest & Free User]:
+   - Tích hợp chuẩn hóa `openGuestFeatureLockModal` và `openVipPricingModal` trên toàn bộ các phòng học VIP (Sentence Writing Lab VIP, Dictation Lab VIP, Translation Lab VIP, Cloze Test VIP), Vòng quay may mắn và Tủ đồ Wardrobe.
+
+3. [Bảo Mật Tuyệt Đối .gitignore]:
+   - Rà soát và thêm đầy đủ mẫu bỏ qua token (`.git_token`, `**/.git_token`, `GITHUB_RELEASE/.git_token`, `*.token`, `**/*.token`) ngăn ngừa lộ token lên GitHub public repository.
+
+4. [Tối Ưu Hóa Giao Diện Bàn Phím Ảo Trên Di Động (Mobile Virtual Keyboard UX)]:
+   - Bổ sung bộ lắng nghe `setupMobileVirtualKeyboardAutoScroll` tự động cuộn input/textarea vào giữa màn hình khi focus trên mobile hoặc khi `visualViewport` thay đổi kích thước, kèm CSS chống auto-zoom trên iOS Safari.
+
+5. [Khuyến Nghị An Toàn Dữ Liệu & Nút Xuất Sao Lưu 1-Click Trong Cài Đặt]:
+   - Bổ sung khung nhắc nhở an toàn dữ liệu kèm 2 nút xuất sao lưu nhanh: **"📥 Xuất File JSON (.json)"** và **"📊 Xuất File Excel (.xlsx)"** ngay trong modal Cài Đặt.
+
+6. [Cơ Chế Thuế Bão Hòa Thu Nhập Ngoài Học Tập (Progressive Non-Study Coin Tax Engine)]:
+   - Xây dựng hệ thống tính thuế bão hòa lũy tiến `calculateNonStudyCoinTax(grossAmount, source, isExempt)` (Tier 1: 0%, Tier 2: 30%, Tier 3: 60%, Tier 4: 85% với trần VIP gấp 2 lần) cho Vòng quay may mắn và các nguồn thưởng ngoài học tập.
+
+7. [Đồng Bộ Toàn Diện 7-Point Version Consistency & Multi-Deploy (v0.10.10-56 Build 357)]:
+   - Cập nhật phiên bản nhất quán trên toàn bộ 7 điểm hệ thống: `modal-settings.html`, `02-state-core.js`, toàn bộ module headers `01-router.js` đến `13-wardrobe.js`, `sw.js` & `Release_App/sw.js`, `pubspec.yaml`, `Program.cs`, `push_github.ps1`, `VOCAFLOW_OVERVIEW.txt`, `CURRENT_TASK.md`.
+
+================================================================================
 Phiên bản: v0.10.10-55 (Build 356) - Khắc Phục Lỗi Bóc Tách Điểm 0đ Azure Pronunciation Assessment, Chuẩn Hóa Bảng Phiên Âm Quốc Tế IPA & Trực Quan Hóa Âm Tiết Syllables
 ================================================================================
 1. [Khắc Phục Lỗi Bóc Tách Điểm 0đ Azure Pronunciation Assessment REST API]:

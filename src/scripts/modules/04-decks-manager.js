@@ -1,5 +1,5 @@
 ﻿// =========================================================================
-// VOCAFLOW 04-DECKS-MANAGER.JS (v0.10.10-55 Build 356)
+// VOCAFLOW 04-DECKS-MANAGER.JS (v0.10.10-56 Build 357)
 // Quản lý VocaDecks, Vocabulary Lists, Import/Export & CRUD Operations
 // =========================================================================
 
@@ -75,7 +75,50 @@
       }
       // Pre-fetch cloud library in background so author profiles are always ready (v0.10.6c)
       fetchCloudLibraryDecks().catch(() => {});
+
+      // First-time User Onboarding Popup (v0.10.10-56 / v1.0-0)
+      if (typeof checkAndShowWelcomeOnboarding === 'function') {
+        checkAndShowWelcomeOnboarding();
+      }
     });
+
+    // =========================================================================
+    // FIRST-TIME USER ONBOARDING & SETUP GUIDE (v0.10.10-56 / v1.0-0)
+    // =========================================================================
+    function checkAndShowWelcomeOnboarding() {
+      try {
+        const isShown = localStorage.getItem('vocaflow_onboarding_shown');
+        if (!isShown) {
+          setTimeout(() => {
+            const m = document.getElementById('modal-welcome-onboarding');
+            if (m && !m.classList.contains('active') && typeof openModal === 'function') {
+              openModal('modal-welcome-onboarding');
+            }
+          }, 800);
+        }
+      } catch (e) {}
+    }
+    window.checkAndShowWelcomeOnboarding = checkAndShowWelcomeOnboarding;
+
+    function dismissWelcomeOnboarding() {
+      try {
+        const chk = document.getElementById('chk-dont-show-onboarding-again');
+        if (!chk || chk.checked) {
+          localStorage.setItem('vocaflow_onboarding_shown', 'true');
+        }
+      } catch (e) {}
+      if (typeof closeModal === 'function') {
+        closeModal('modal-welcome-onboarding');
+      }
+    }
+    window.dismissWelcomeOnboarding = dismissWelcomeOnboarding;
+
+    function openWelcomeOnboardingModal() {
+      if (typeof openModal === 'function') {
+        openModal('modal-welcome-onboarding');
+      }
+    }
+    window.openWelcomeOnboardingModal = openWelcomeOnboardingModal;
 
     function loadAuthState() {
       try {

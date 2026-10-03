@@ -1,5 +1,5 @@
 ﻿// =========================================================================
-// VOCAFLOW 08-WALLET-ECONOMY.JS (v0.10.10-55 Build 356)
+// VOCAFLOW 08-WALLET-ECONOMY.JS (v0.10.10-56 Build 357)
 // Economy, Wallet, Ledger, Lucky Spin, Cat Meme Reactions, Brain Energy & Study Settlements
 // =========================================================================
 
@@ -217,6 +217,15 @@
     function triggerLuckyWheelSpin() {
       if (luckyWheelIsSpinning) return;
 
+      if (!currentUser || !currentUser.email) {
+        if (typeof openGuestFeatureLockModal === 'function') {
+          openGuestFeatureLockModal('Vòng Quay May Mắn', 'Vòng Quay May Mắn & Nhận Thưởng VoCoin / VocaVIP', '🎡 🔒');
+        } else if (typeof openAuthModal === 'function') {
+          openAuthModal('login');
+        }
+        return;
+      }
+
       const spins = getLuckySpinsCount();
       if (spins <= 0) {
         if (!isUserVip()) {
@@ -294,9 +303,24 @@
             addNotification('FINANCIAL', '👑 Trúng Giải Độc Đắc VocaVIP', prizeMsg);
           }
         } else if (prize.type === 'POINTS') {
-          setUserPoints(getUserPoints() + prize.val);
-          addLedgerEntry('LUCKY_WHEEL', prize.val, `🎁 Trúng ${prize.val} VoCoin từ VocaWheel`);
-          prizeMsg = `🎉 Chúc mừng bạn đã trúng ${prize.val} VoCoin!`;
+          const rawPts = prize.val || 0;
+          const taxRes = (typeof calculateNonStudyCoinTax === 'function')
+            ? calculateNonStudyCoinTax(rawPts, 'LUCKY_WHEEL')
+            : { netAmount: rawPts, taxAmount: 0, taxRate: 0, notice: '' };
+
+          if (typeof recordTodayNonStudyEarnedCoins === 'function') {
+            recordTodayNonStudyEarnedCoins(taxRes.netAmount);
+          }
+
+          setUserPoints(getUserPoints() + taxRes.netAmount);
+          const ledgerDesc = `🎁 Trúng ${rawPts} VoCoin từ VocaWheel${taxRes.notice}`;
+          addLedgerEntry('LUCKY_WHEEL', taxRes.netAmount, ledgerDesc);
+
+          if (taxRes.taxAmount > 0) {
+            prizeMsg = `🎉 Trúng ${rawPts} VoCoin (Nhận thực tế: +${taxRes.netAmount} VoCoin do thuế bão hòa ngày ${taxRes.taxRate}%)`;
+          } else {
+            prizeMsg = `🎉 Chúc mừng bạn đã trúng +${taxRes.netAmount} VoCoin!`;
+          }
           saveDatabase(true);
           pushCurrentDatabaseToCloud();
         } else if (prize.type === 'HINTS') {

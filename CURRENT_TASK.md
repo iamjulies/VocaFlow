@@ -1,12 +1,43 @@
 # CURRENT TASK & TRẠNG THÁI CÔNG VIỆC HIỆN TẠI (VOCAFLOW)
 
-> **Phiên bản mục tiêu:** `v0.10.10-55 (Build 356)`  
+> **Phiên bản mục tiêu:** `v0.10.10-56 (Build 357)`  
 > **Cập nhật lần cuối:** 2026-10-03  
 > **Trạng thái:** 🚀 **ĐÃ HOÀN THÀNH - ĐANG TIẾN HÀNH BUILD & MULTI-DEPLOY GITHUB**
 
 ---
 
-## 🎯 1. DANH SÁCH NHIỆM VỤ ĐÃ GIẢI QUYẾT (v0.10.10-55 Build 356 - Khắc Phục Lỗi Chấm Điểm 0đ Azure Pronunciation Assessment & Chuẩn Hóa Bảng Phiên Âm IPA)
+## 🎯 1. DANH SÁCH NHIỆM VỤ ĐÃ GIẢI QUYẾT (v0.10.10-56 Build 357 - Tinh Chỉnh Hoàn Thiện Cuối Cùng Tiến Lên v1.0-0)
+
+- [x] **Trải Nghiệm Người Dùng Mới & Cẩm Nang Onboarding Trực Tuyến (`modal-welcome-onboarding.html`, `04-decks-manager.js`)**:
+  - Tạo mới popup onboarding `modal-welcome-onboarding` tự động hiển thị cho người dùng mới khi mở app lần đầu (kèm checkbox "Không hiển thị lại").
+  - Hướng dẫn nhanh 3 bước: Cài đặt khóa AI miễn phí, Đăng ký tài khoản đồng bộ Cloud, và Nút mở link trực tiếp cẩm nang hướng dẫn sử dụng chi tiết tại `https://iamjulies.github.io/VocaFlow/guide`.
+  - Hỗ trợ xem lại cẩm nang bất kỳ lúc nào từ nút trong Cài Đặt.
+
+- [x] **Khóa Tính Năng Chuẩn Mực Cho Khách (Guest) & Người Dùng Miễn Phí (Free User)**:
+  - Tích hợp chuẩn hóa `openGuestFeatureLockModal` và `openVipPricingModal` trên toàn bộ các phòng học VIP: Sentence Writing Lab VIP (`06c-writing-engine.js`), Sentence Dictation Lab VIP (`06e-dictation-engine.js`), Translation Lab VIP (`06f-translation-engine.js`), Cloze Test VIP (`06d-cloze-engine.js`).
+  - Khóa Vòng quay may mắn (Lucky Wheel) và Tủ đồ (Wardrobe) nếu chưa đăng nhập, hướng dẫn tạo tài khoản bảo vệ dữ liệu.
+
+- [x] **Bảo Mật An Toàn Tuyệt Đối Cho `.gitignore`**:
+  - Bổ sung và rà soát toàn diện các mẫu ignore `.git_token`, `**/.git_token`, `GITHUB_RELEASE/.git_token`, `*.token`, `**/*.token`, ngăn chặn 100% việc vô tình lộ token lên GitHub repository.
+
+- [x] **Tối Ưu Hóa Giao Diện Bàn Phím Ảo Trên Di Động (Mobile Virtual Keyboard UX)**:
+  - Bổ sung bộ lắng nghe `setupMobileVirtualKeyboardAutoScroll` tự động cuộn input/textarea vào trung tâm khung nhìn khi focus trên thiết bị cảm ứng hoặc khi `visualViewport` thay đổi kích thước.
+  - Tinh chỉnh CSS chống auto-zoom trên iOS Safari (`font-size: 16px !important`) và cấu hình `scroll-padding-bottom: 45vh` tránh bàn phím che khuất nút Nộp bài / Gửi bài.
+
+- [x] **Nhắc Nhở & Công Cụ Xuất Sao Lưu Dữ Liệu Nhanh Trong Cài Đặt (`modal-settings.html`)**:
+  - Bổ sung khung khuyến nghị an toàn dữ liệu và tích hợp 2 nút xuất sao lưu 1-click: **"📥 Xuất File JSON (.json)"** và **"📊 Xuất File Excel (.xlsx)"** ngay trong modal Cài Đặt.
+
+- [x] **Xây Dựng Cơ Chế "Thuế Bão Hòa" Thu Nhập Ngoài Học Tập (Progressive Non-Study Coin Tax Engine)**:
+  - Xây dựng hệ thống tính thuế bão hòa lũy tiến `calculateNonStudyCoinTax(grossAmount, source, isExempt)` và bộ theo dõi `getTodayNonStudyEarnedCoins()`.
+  - Phân tầng hạn ngạch rõ ràng (Tier 1: 0%, Tier 2: 30%, Tier 3: 60%, Tier 4: 85% với mức trần VIP gấp đôi Free).
+  - Tích hợp vào Vòng quay may mắn (Lucky Wheel) và các nguồn thưởng ngoài học tập, ghi chép sổ cái minh bạch và thông báo trực quan khi chạm ngưỡng bão hòa.
+
+- [x] **Đồng Bộ Toàn Diện 7-Point Version Consistency (`v0.10.10-56 Build 357`)**:
+  - Cập nhật phiên bản nhất quán trên toàn bộ 7 điểm hệ thống: `modal-settings.html`, `02-state-core.js`, toàn bộ module headers `01-router.js` đến `13-wardrobe.js`, `sw.js` & `Release_App/sw.js`, `pubspec.yaml`, `Program.cs`, `push_github.ps1`, `VOCAFLOW_OVERVIEW.txt`, `CURRENT_TASK.md`.
+
+---
+
+## 🎯 2. DANH SÁCH NHIỆM VỤ CÁC PHIÊN BẢN TRƯỚC (v0.10.10-55 Build 356)
 
 - [x] **Khắc Phục Lỗi Bóc Tách Điểm Số Azure REST API (`07-speaking-engine.js`)**:
   - **Nguyên nhân gốc rễ**: Khi gọi Azure Speech REST API với định dạng `detailed`, các chỉ số điểm số cốt lõi (`PronScore`, `AccuracyScore`, `FluencyScore`, `ProsodyScore`, `CompletenessScore`) nằm trực tiếp ở cấp cao nhất của `NBest[0]`, và điểm số từ/âm vị/âm tiết nằm trực tiếp tại `w.AccuracyScore`, `p.AccuracyScore`, `s.AccuracyScore`. Bộ phân tích trước đó đọc qua `nbest.PronunciationAssessment.PronScore` dẫn đến `undefined` -> trả về 0đ dù phát âm chuẩn xác 100%.

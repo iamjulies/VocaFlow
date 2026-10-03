@@ -1,5 +1,5 @@
 ﻿// =========================================================================
-// VOCAFLOW 13-WARDROBE.JS (v0.10.10-55 Build 356)
+// VOCAFLOW 13-WARDROBE.JS (v0.10.10-56 Build 357)
 // Hệ Thống Tủ Đồ & Cửa Hàng Thẩm Mỹ: Khung Viền Avatar, Hiệu Ứng Tên & Danh Xưng
 // =========================================================================
 
@@ -1699,6 +1699,12 @@
 
   // 5. MODAL & TAB & FILTER LOGIC
   function openWardrobeModal(defaultTab = 'frames') {
+    if (!currentUser || !currentUser.email) {
+      if (typeof openGuestFeatureLockModal === 'function') {
+        openGuestFeatureLockModal('Tủ Đồ Wardrobe', 'Tủ Đồ Cá Nhân Hóa (Khung Avatar, Hiệu Ứng Tên & Danh Hiệu)', '👘 🔒');
+        return;
+      }
+    }
     if (typeof closeModal === 'function') {
       closeModal('modal-profile');
     }

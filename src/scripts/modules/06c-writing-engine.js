@@ -1,5 +1,5 @@
 ﻿// =========================================================================
-// VOCAFLOW 06C-WRITING-ENGINE.JS (v0.10.10-55 Build 356 - SENTENCE WRITING LAB VIP)
+// VOCAFLOW 06C-WRITING-ENGINE.JS (v0.10.10-56 Build 357 - SENTENCE WRITING LAB VIP)
 // AI-Powered Writing Lab with Thematic Word Linking & Target Band Aim Polish
 // =========================================================================
 
@@ -178,12 +178,16 @@ function openWritingSetupModal(useSelection = false, customWordList = null) {
   }
 
   if (typeof isUserVip === 'function' && !isUserVip()) {
-    if (!currentUser || !currentUser.email) {
-      alert('🔒 Chế độ Luyện Viết Câu (Writing Lab) là đặc quyền dành riêng cho thành viên VocaVIP!\nVui lòng đăng nhập và nâng cấp VIP để mở khóa.');
-      if (typeof openAuthModal === 'function') openAuthModal('login');
+    const isGuest = typeof currentUser === 'undefined' || !currentUser || !currentUser.email;
+    if (isGuest && typeof openGuestFeatureLockModal === 'function') {
+      openGuestFeatureLockModal('writing_lab', 'Chế Độ Luyện Viết Câu (Writing Lab VIP)', '📝 🔒', 'Tính Năng Độc Quyền VocaVIP');
+    } else if (typeof openVipPricingModal === 'function') {
+      if (typeof showToast === 'function') {
+        showToast('👑 Chế độ Luyện Viết Câu (Writing Lab) là đặc quyền độc quyền dành riêng cho VocaVIP!');
+      }
+      openVipPricingModal();
     } else {
-      alert('🔒 Chế độ Luyện Viết Câu (Writing Lab) là đặc quyền dành riêng cho thành viên VocaVIP!\nHãy nâng cấp gói VIP để mở khóa phòng luyện viết câu AI.');
-      if (typeof openVipModal === 'function') openVipModal();
+      alert('🔒 Chế độ Luyện Viết Câu (Writing Lab) là đặc quyền dành riêng cho thành viên VocaVIP!');
     }
     return;
   }
