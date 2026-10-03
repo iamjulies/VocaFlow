@@ -1,5 +1,5 @@
-// =========================================================================
-// VOCAFLOW 13-WARDROBE.JS (v0.10.10-52 Build 353)
+﻿// =========================================================================
+// VOCAFLOW 13-WARDROBE.JS (v0.10.10-53 Build 354)
 // Hệ Thống Tủ Đồ & Cửa Hàng Thẩm Mỹ: Khung Viền Avatar, Hiệu Ứng Tên & Danh Xưng
 // =========================================================================
 
@@ -215,14 +215,14 @@
         icon: '🦴'
       },
 
-      // --- B. SỰ KIỆN ĐẶC BIỆT (EVENT) ---
+      // --- B. SỰ KIỆN ĐẶC BIỆT (EVENT - CHỈ TẶNG MIỄN PHÍ VÀO ĐÚNG NGÀY SỰ KIỆN) ---
       {
         id: 'birthday',
         name: 'Tên Tiệc Sinh Nhật',
         type: 'event',
-        price: 600,
-        desc: 'Gradient đa sắc tiệc tùng, pháo bông & confetti bay bổng.',
-        badge: 'Sự Kiện: 600🪙',
+        price: null,
+        desc: 'Phần thưởng độc quyền Sinh Nhật VocaFlow (10/08): Gradient đa sắc tiệc tùng, pháo bông & confetti bay bổng.',
+        badge: '🎁 Sự Kiện (10/08)',
         badgeColor: '#ff007f',
         icon: '🎉'
       },
@@ -230,9 +230,9 @@
         id: 'christmas',
         name: 'Tên Giáng Sinh Tuyết Rơi',
         type: 'event',
-        price: 600,
-        desc: 'Xanh thông tuyết trắng, đỏ kẹo ngọt & chuông vàng Noel.',
-        badge: 'Sự Kiện: 600🪙',
+        price: null,
+        desc: 'Phần thưởng độc quyền Lễ Giáng Sinh (18h 24/12 - 25/12): Xanh thông tuyết trắng, đỏ kẹo ngọt & chuông vàng Noel.',
+        badge: '🎁 Sự Kiện (24-25/12)',
         badgeColor: '#22c55e',
         icon: '❄️'
       },
@@ -240,9 +240,9 @@
         id: 'halloween',
         name: 'Tên Halloween Ma Quái',
         type: 'event',
-        price: 600,
-        desc: 'Cam bí ngô rực lửa, tím bóng đêm & hào quang huyền bí.',
-        badge: 'Sự Kiện: 600🪙',
+        price: null,
+        desc: 'Phần thưởng độc quyền Lễ Halloween (31/10): Cam bí ngô rực lửa, tím bóng đêm & hào quang huyền bí.',
+        badge: '🎁 Sự Kiện (31/10)',
         badgeColor: '#f97316',
         icon: '👻'
       },
@@ -250,9 +250,9 @@
         id: 'vietnam',
         name: 'Tên Tự Hào Việt Nam',
         type: 'event',
-        price: 600,
-        desc: 'Đỏ cờ Tổ quốc thắm tươi, sao vàng hoàng kim & hào quang rạng rỡ.',
-        badge: 'Sự Kiện: 600🪙',
+        price: null,
+        desc: 'Phần thưởng độc quyền Lễ 30/04 & Quốc Khánh 02/09: Đỏ cờ Tổ quốc thắm tươi, sao vàng hoàng kim & hào quang rạng rỡ.',
+        badge: '🎁 Sự Kiện (30/4 & 2/9)',
         badgeColor: '#ef4444',
         icon: '🇻🇳'
       },
@@ -260,9 +260,9 @@
         id: 'tet',
         name: 'Tên Khai Xuân Đắc Lộc',
         type: 'event',
-        price: 600,
-        desc: 'Đỏ kim tiền may mắn, hoa mai vàng khoe sắc & pháo hoa chúc phúc.',
-        badge: 'Sự Kiện: 600🪙',
+        price: null,
+        desc: 'Phần thưởng độc quyền Tết Nguyên Đán (Mùng 1-3 Tết Âm Lịch): Đỏ kim tiền may mắn, hoa mai vàng khoe sắc & pháo hoa chúc phúc.',
+        badge: '🎁 Sự Kiện (Mùng 1-3 Tết)',
         badgeColor: '#eab308',
         icon: '🌸'
       },
@@ -270,9 +270,9 @@
         id: 'easter',
         name: 'Tên Phục Sinh Sắc Xuân',
         type: 'event',
-        price: 600,
-        desc: 'Pastel mùa xuân dịu dàng, tai thỏ trắng muốt & trứng sắc màu.',
-        badge: 'Sự Kiện: 600🪙',
+        price: null,
+        desc: 'Phần thưởng độc quyền Lễ Phục Sinh (Chủ Nhật Phục Sinh): Pastel mùa xuân dịu dàng, tai thỏ trắng muốt & trứng sắc màu.',
+        badge: '🎁 Sự Kiện (Lễ Phục Sinh)',
         badgeColor: '#c084fc',
         icon: '🥚'
       },
@@ -519,6 +519,136 @@
   }
   window.unlockWardrobeItem = unlockWardrobeItem;
 
+  // =========================================================================
+  // LUNAR & EVENT CALENDAR ALGORITHMS (Vietnamese Lunar UTC+7 & Computus Easter)
+  // =========================================================================
+  function getEasterSundayDate(year) {
+    const a = year % 19;
+    const b = Math.floor(year / 100);
+    const c = year % 100;
+    const d = Math.floor(b / 4);
+    const e = b % 4;
+    const f = Math.floor((b + 8) / 25);
+    const g = Math.floor((b - f + 1) / 3);
+    const h = (19 * a + b - d - g + 15) % 30;
+    const i = Math.floor(c / 4);
+    const k = c % 4;
+    const l = (32 + 2 * e + 2 * i - h - k) % 7;
+    const m = Math.floor((a + 11 * h + 22 * l) / 451);
+    const month = Math.floor((h + l - 7 * m + 114) / 31); // 3 = March, 4 = April
+    const day = ((h + l - 7 * m + 114) % 31) + 1;
+    return { year, month, day };
+  }
+  window.getEasterSundayDate = getEasterSundayDate;
+
+  // Precomputed table of Lunar New Year (Mùng 1 Tết) in Solar (Dương lịch) for 2020 - 2050
+  const LUNAR_TET_SOLAR_MAP = {
+    2020: { month: 1, day: 25 },
+    2021: { month: 2, day: 12 },
+    2022: { month: 2, day: 1 },
+    2023: { month: 1, day: 22 },
+    2024: { month: 2, day: 10 },
+    2025: { month: 1, day: 29 },
+    2026: { month: 2, day: 17 },
+    2027: { month: 2, day: 6 },
+    2028: { month: 1, day: 26 },
+    2029: { month: 2, day: 13 },
+    2030: { month: 2, day: 3 },
+    2031: { month: 1, day: 23 },
+    2032: { month: 2, day: 11 },
+    2033: { month: 1, day: 31 },
+    2034: { month: 2, day: 19 },
+    2035: { month: 2, day: 8 },
+    2036: { month: 1, day: 28 },
+    2037: { month: 2, day: 15 },
+    2038: { month: 2, day: 4 },
+    2039: { month: 1, day: 24 },
+    2040: { month: 2, day: 12 },
+    2041: { month: 2, day: 1 },
+    2042: { month: 1, day: 22 },
+    2043: { month: 2, day: 10 },
+    2044: { month: 1, day: 30 },
+    2045: { month: 2, day: 17 },
+    2046: { month: 2, day: 6 },
+    2047: { month: 1, day: 26 },
+    2048: { month: 2, day: 14 },
+    2049: { month: 2, day: 2 },
+    2050: { month: 1, day: 23 }
+  };
+
+  function isTetLunarHoliday(dateObj = new Date()) {
+    const y = dateObj.getFullYear();
+    const tet = LUNAR_TET_SOLAR_MAP[y];
+    if (!tet) return false;
+    // Tết diễn ra trong 3 ngày: Mùng 1, Mùng 2, Mùng 3
+    const d1 = new Date(y, tet.month - 1, tet.day, 0, 0, 0);
+    const d3 = new Date(y, tet.month - 1, tet.day + 2, 23, 59, 59, 999);
+    return dateObj >= d1 && dateObj <= d3;
+  }
+  window.isTetLunarHoliday = isTetLunarHoliday;
+
+  function getWardrobeEventSchedule(eventId, dateObj = new Date()) {
+    const y = dateObj.getFullYear();
+    const m = dateObj.getMonth() + 1;
+    const d = dateObj.getDate();
+    const h = dateObj.getHours();
+
+    switch (eventId) {
+      case 'birthday':
+        return {
+          id: 'birthday',
+          name: 'Tiệc Sinh Nhật',
+          scheduleText: 'Cả ngày 10/08',
+          isActive: (m === 8 && d === 10)
+        };
+      case 'christmas':
+        return {
+          id: 'christmas',
+          name: 'Lễ Giáng Sinh',
+          scheduleText: '18h 24/12 ➔ 23:59 25/12',
+          isActive: ((m === 12 && d === 24 && h >= 18) || (m === 12 && d === 25))
+        };
+      case 'halloween':
+        return {
+          id: 'halloween',
+          name: 'Lễ Halloween',
+          scheduleText: 'Cả ngày 31/10',
+          isActive: (m === 10 && d === 31)
+        };
+      case 'vietnam':
+        return {
+          id: 'vietnam',
+          name: 'Tự Hào Việt Nam',
+          scheduleText: 'Cả ngày 30/04 & 02/09',
+          isActive: ((m === 4 && d === 30) || (m === 9 && d === 2))
+        };
+      case 'tet':
+        return {
+          id: 'tet',
+          name: 'Tết Nguyên Đán',
+          scheduleText: 'Mùng 1, 2, 3 Tết Âm Lịch',
+          isActive: isTetLunarHoliday(dateObj)
+        };
+      case 'easter': {
+        const easter = getEasterSundayDate(y);
+        return {
+          id: 'easter',
+          name: 'Lễ Phục Sinh (Easter)',
+          scheduleText: `Chủ Nhật Phục Sinh (${String(easter.day).padStart(2,'0')}/${String(easter.month).padStart(2,'0')})`,
+          isActive: (m === easter.month && d === easter.day)
+        };
+      }
+      default:
+        return { id: eventId, name: 'Sự Kiện Đặc Biệt', scheduleText: 'Sự Kiện', isActive: false };
+    }
+  }
+  window.getWardrobeEventSchedule = getWardrobeEventSchedule;
+
+  function isWardrobeEventActive(eventId, dateObj = new Date()) {
+    return getWardrobeEventSchedule(eventId, dateObj).isActive;
+  }
+  window.isWardrobeEventActive = isWardrobeEventActive;
+
   function isWardrobeItemUnlocked(category, itemId) {
     if (!itemId || itemId === 'default') return true;
     const list = VOCAFLOW_WARDROBE_REGISTRY[category] || [];
@@ -536,13 +666,20 @@
       return true;
     }
 
-    // 2. Level-based unlock
+    // 2. Event-based unlock (Free to equip during active event window or if claimed)
+    if (item.type === 'event') {
+      if (isWardrobeEventActive(item.id)) return true;
+      const unlocked = getUnlockedWardrobeItems();
+      return (unlocked[category] || []).includes(itemId);
+    }
+
+    // 3. Level-based unlock
     if (item.type === 'level' || (item.minLevel && !item.price)) {
       const userLevel = (typeof getCurrentUserLevelInfo === 'function') ? getCurrentUserLevelInfo().level : 1;
       return userLevel >= (item.minLevel || 1);
     }
 
-    // 3. Shop / Event unlock (by purchase or event claim)
+    // 4. Shop unlock (by VoCoin purchase)
     const unlocked = getUnlockedWardrobeItems();
     return (unlocked[category] || []).includes(itemId);
   }
@@ -554,14 +691,26 @@
     if (!item) return { success: false, reason: 'ITEM_NOT_FOUND' };
 
     if (item.type === 'event') {
-      if (typeof showToast === 'function') {
-        showToast('🎁 Vật phẩm này là phần thưởng độc quyền chỉ nhận được khi tham gia Sự Kiện & Lễ Hội!');
+      const sched = getWardrobeEventSchedule(item.id);
+      if (sched.isActive) {
+        unlockWardrobeItem(category, itemId);
+        equipWardrobeItem(category, itemId);
+        if (typeof playSfx === 'function') playSfx('award');
+        if (typeof showToast === 'function') {
+          showToast(`🎉 Chúc mừng bạn đã nhận miễn phí vật phẩm sự kiện: ${item.name}!`);
+        }
+        return { success: true, item, isFreeEventClaim: true };
+      } else {
+        if (typeof showToast === 'function') {
+          showToast(`🔒 Sự kiện "${item.name}" chỉ mở tặng miễn phí vào ${sched.scheduleText}! Hãy quay lại đúng ngày sự kiện nhé!`);
+        }
+        return { success: false, reason: 'EVENT_NOT_ACTIVE' };
       }
-      return { success: false, reason: 'EVENT_EXCLUSIVE' };
     }
 
     if (item.type === 'vip') {
-      if (typeof openModal === 'function') openModal('modal-vip-upgrade');
+      if (typeof openVipPricingModal === 'function') openVipPricingModal();
+      else if (typeof openModal === 'function') openModal('modal-vip-upgrade');
       return { success: false, reason: 'VIP_EXCLUSIVE' };
     }
 
@@ -611,16 +760,23 @@
   window.buyWardrobeItem = buyWardrobeItem;
 
   function equipWardrobeItem(category, itemId) {
-    if (!isWardrobeItemUnlocked(category, itemId)) {
-      const item = (VOCAFLOW_WARDROBE_REGISTRY[category] || []).find(i => i.id === itemId);
-      if (item && item.type === 'vip') {
-        if (typeof openModal === 'function') openModal('modal-vip-upgrade');
+    const list = VOCAFLOW_WARDROBE_REGISTRY[category] || [];
+    const item = list.find(i => i.id === itemId);
+
+    if (item && item.type === 'event' && !isWardrobeItemUnlocked(category, itemId)) {
+      const sched = getWardrobeEventSchedule(item.id);
+      if (sched.isActive) {
+        unlockWardrobeItem(category, itemId);
+      } else {
+        if (typeof showToast === 'function') {
+          showToast(`🔒 Sự kiện "${item.name}" chỉ mở tặng miễn phí vào ${sched.scheduleText}!`);
+        }
         return;
       }
-      if (item && item.type === 'event') {
-        if (typeof showToast === 'function') {
-          showToast('🎁 Vật phẩm này là phần thưởng độc quyền chỉ nhận được khi tham gia Sự Kiện & Lễ Hội!');
-        }
+    } else if (!isWardrobeItemUnlocked(category, itemId)) {
+      if (item && item.type === 'vip') {
+        if (typeof openVipPricingModal === 'function') openVipPricingModal();
+        else if (typeof openModal === 'function') openModal('modal-vip-upgrade');
         return;
       }
       if (item && item.price) {
@@ -1186,9 +1342,9 @@
             </g>
           </g>
 
-          <!-- Vương miện Pha Lê Tím Thần Kỳ ở 12h -->
+          <!-- Vương miện Pha Lê Tím Thần Kỳ ở 12h (Lắc lư & float tại tâm trung tâm) -->
           <g transform="translate(85, 20)">
-            <g class="vip-lifetime-starlight" style="transform-box: fill-box; transform-origin: bottom center;">
+            <g class="vip-lifetime-crown-inner" style="transform-box: fill-box; transform-origin: center center;">
               <!-- Đế vương miện -->
               <path d="M -24,14 L -20,-8 L -8,5 L 0,-16 L 8,5 L 20,-8 L 24,14 Z" fill="url(#vfVipMagicalGrad)" stroke="#ffffff" stroke-width="1.2" style="filter: drop-shadow(0 2px 8px rgba(168,85,247,0.7));" />
               <!-- Tinh thể pha lê tím trung tâm -->
@@ -1728,17 +1884,27 @@
         `;
       }
 
+      const isEventItem = item.type === 'event';
+      const eventSched = isEventItem ? getWardrobeEventSchedule(item.id) : null;
+
       let statusBadge = '';
       if (isEquipped) {
         statusBadge = `<span class="badge" style="background: rgba(16,185,129,0.2); color: #34d399; font-size: 10px; font-weight: 800; border: 1px solid rgba(16,185,129,0.5);">✅ Đang Dùng</span>`;
+      } else if (isEventItem) {
+        if (eventSched.isActive) {
+          statusBadge = `<span class="badge" style="background: rgba(16,185,129,0.2); color: #34d399; font-size: 10px; font-weight: 800; border: 1px solid rgba(16,185,129,0.5);">🎁 Đang Mở (Miễn Phí)</span>`;
+        } else if (isUnlocked) {
+          statusBadge = `<span class="badge" style="background: rgba(56,189,248,0.15); color: #38bdf8; font-size: 10px; font-weight: 700; border: 1px solid rgba(56,189,248,0.35);">🔓 Đã Sở Hữu</span>`;
+        } else {
+          statusBadge = `<span class="badge" style="background: rgba(239,68,68,0.15); color: #f87171; font-size: 10px; font-weight: 700; border: 1px solid rgba(239,68,68,0.35);">🔒 ${eventSched.scheduleText}</span>`;
+        }
       } else if (isUnlocked) {
         statusBadge = `<span class="badge" style="background: rgba(56,189,248,0.15); color: #38bdf8; font-size: 10px; font-weight: 700; border: 1px solid rgba(56,189,248,0.35);">🔓 Đã Sở Hữu</span>`;
       } else if (item.type === 'vip') {
         const tierLabel = item.vipTierReq === 'monthly' ? '👑 VIP Tháng' : (item.vipTierReq === 'yearly' ? '👑 VIP Năm' : (item.vipTierReq === 'lifetime' ? '👑 VIP Vĩnh Viễn' : '👑 Đặc quyền VIP'));
         statusBadge = `<span class="badge" style="background: rgba(245,158,11,0.2); color: #ffd700; font-size: 10px; font-weight: 800; border: 1px solid rgba(255,215,0,0.5);">${tierLabel}</span>`;
       } else if (item.price) {
-        const typeIcon = item.type === 'event' ? '🎪' : '🛍️';
-        statusBadge = `<span class="badge" style="background: rgba(245,158,11,0.15); color: #fbbf24; font-size: 10px; font-weight: 800; border: 1px solid rgba(245,158,11,0.4);">${typeIcon} ${item.price}🪙</span>`;
+        statusBadge = `<span class="badge" style="background: rgba(245,158,11,0.15); color: #fbbf24; font-size: 10px; font-weight: 800; border: 1px solid rgba(245,158,11,0.4);">🛍️ ${item.price}🪙</span>`;
       } else {
         statusBadge = `<span class="badge" style="background: rgba(239,68,68,0.15); color: #f87171; font-size: 10px; font-weight: 700; border: 1px solid rgba(239,68,68,0.35);">🔒 Cần Cấp ${item.minLevel}</span>`;
       }
@@ -1749,6 +1915,22 @@
           actionBtn = `<button type="button" class="btn btn-outline btn-sm" disabled style="width: 100%; font-size: 11.5px; opacity: 0.6; cursor: default;">Mặc Định</button>`;
         } else {
           actionBtn = `<button type="button" class="btn btn-outline btn-sm" onclick="unequipWardrobeItem('${tabName}')" style="width: 100%; font-size: 11.5px; color: #f87171; border-color: rgba(248,113,113,0.4); font-weight: 700;">Tháo Ra</button>`;
+        }
+      } else if (isEventItem) {
+        if (eventSched.isActive || isUnlocked) {
+          actionBtn = `
+            <div style="display: flex; gap: 6px; width: 100%;">
+              <button type="button" class="btn btn-outline btn-sm" onclick="previewWardrobeItem('${tabName}', '${item.id}')" style="flex: 1; font-size: 11px; padding: 4px 6px;" title="Xem thử trên người">👁️ Thử</button>
+              <button type="button" class="btn btn-primary btn-sm" onclick="equipWardrobeItem('${tabName}', '${item.id}')" style="flex: 1.5; font-size: 11.5px; font-weight: 800; background: linear-gradient(135deg, #10b981, #059669); border: none;">🎁 ${isUnlocked ? 'Trang Bị' : 'Nhận Miễn Phí'}</button>
+            </div>
+          `;
+        } else {
+          actionBtn = `
+            <div style="display: flex; gap: 6px; width: 100%;">
+              <button type="button" class="btn btn-outline btn-sm" onclick="previewWardrobeItem('${tabName}', '${item.id}')" style="flex: 1; font-size: 11px; padding: 4px 6px;" title="Xem thử trên người">👁️ Thử</button>
+              <button type="button" class="btn btn-outline btn-sm" disabled style="flex: 1.8; font-size: 10.5px; color: var(--text-muted); opacity: 0.6; cursor: not-allowed;" title="Sự kiện chỉ mở tặng miễn phí vào ${eventSched.scheduleText}">🔒 Mở vào ${eventSched.scheduleText}</button>
+            </div>
+          `;
         }
       } else if (isUnlocked) {
         actionBtn = `

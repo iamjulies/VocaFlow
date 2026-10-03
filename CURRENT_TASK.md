@@ -1,12 +1,38 @@
 # CURRENT TASK & TRẠNG THÁI CÔNG VIỆC HIỆN TẠI (VOCAFLOW)
 
-> **Phiên bản mục tiêu:** `v0.10.10-52 (Build 353)`  
+> **Phiên bản mục tiêu:** `v0.10.10-53 (Build 354)`  
 > **Cập nhật lần cuối:** 2026-10-03  
 > **Trạng thái:** 🚀 **ĐÃ HOÀN THÀNH - ĐANG TIẾN HÀNH BUILD & MULTI-DEPLOY GITHUB**
 
 ---
 
-## 🎯 1. DANH SÁCH NHIỆM VỤ ĐÃ GIẢI QUYẾT (v0.10.10-52 Build 353 - Issue 36, 37, 38, 39, 40)
+## 🎯 1. DANH SÁCH NHIỆM VỤ ĐÃ GIẢI QUYẾT (v0.10.10-53 Build 354 - Issue 41, 42, 43, 44, 45)
+
+- [x] **Khắc Phục Lỗi Không Mở Được Hồ Sơ Công Khai @official & Người Dùng Khác (`03-auth.js` - Issue 41)**:
+  - Khai báo các biến `matchedStudent`, `regEntry`, `nameMapEntry` ở phạm vi đầu hàm `openPublicProfileByAuthor`, sửa dứt điểm lỗi `ReferenceError: matchedStudent is not defined` khi mở hồ sơ `@official`.
+  - Bổ sung kiểm tra an toàn `safeStudents = (typeof adminStudentsData !== 'undefined' && Array.isArray(adminStudentsData)) ? adminStudentsData : []` giúp người dùng chưa đăng nhập hoặc không phải Admin vẫn mở xem hồ sơ của tất cả học viên và người dùng khác một cách trơn tru.
+
+- [x] **Khóa & Quản Lý Thời Gian Mở Hiệu Ứng Tên Sự Kiện Wardrobe (`13-wardrobe.js` - Issue 42, Ảnh 134007.png)**:
+  - Loại bỏ hoàn toàn giá mua VoCoin khỏi các hiệu ứng tên sự kiện (`price: null`).
+  - Tích hợp thuật toán tính ngày Lễ Phục Sinh (Computus Meeus/Jones/Butcher) và bảng tra cứu Âm Lịch Việt Nam (2020-2050) để tự động nhận diện chính xác Mùng 1 - Mùng 3 Tết.
+  - Tự động mở MIỄN PHÍ hiệu ứng vào đúng thời gian sự kiện: Tiệc sinh nhật (10/08), Giáng sinh (18h 24/12 -> 23:59 25/12), Halloween (31/10), Tự hào Việt Nam (30/04 & 02/09), Tết Âm Lịch (Mùng 1 - Mùng 3 Âm lịch), Lễ Phục Sinh (Chủ Nhật Phục Sinh). Khóa và hiển thị lịch sự kiện khi chưa đến ngày.
+
+- [x] **Điều Chỉnh Hiệu Ứng Vương Miện Khung VIP Lifetime Bồng Bềnh Nhẹ Nhàng (`13-wardrobe.js`, `app.css` - Issue 43, Ảnh 134854.png)**:
+  - Tách riêng class vương miện đỉnh 12h thành `vip-lifetime-crown-inner` với `transform-box: fill-box; transform-origin: center center;`.
+  - Thay thế hiệu ứng xoay 360 độ dữ dội bằng animation `vipLifetimeCrownFloat` (dập dềnh bồng bềnh, scale 0.96 - 1.04, nghiêng nhẹ -2deg đến 2deg quanh tâm) mang phong thái thanh lịch hoàng gia.
+
+- [x] **Giải Trình Chi Tiết Cơ Chế Tích Lũy Điểm Rèn Luyện (Study EXP - Issue 44)**:
+  - Phân tích và làm rõ vì sao tổng EXP hiện tại là 902 EXP (EXP ra mắt từ Build 335/341, Flashcard/Auto-Flashcard có trọng số nhận thức W_mode = 0 không tích lũy EXP để chống cày macro, chỉ các bài Quiz/Spelling/Speaking/Dictation/Writing/Translation mới tích lũy EXP).
+
+- [x] **Hướng Dẫn Cung Cấp & Cấu Hình Thông Tin Azure AI (Speaking Lab - Issue 45)**:
+  - Hướng dẫn cụ thể về Azure Speech Service (Key + Region) và Azure OpenAI Service (Endpoint, API Key, Deployment Model) phục vụ nâng cấp Speaking Engine.
+
+- [x] **Đồng Bộ Toàn Diện 7-Point Version Consistency (`v0.10.10-53 Build 354`)**:
+  - Cập nhật phiên bản nhất quán trên toàn bộ 7 điểm hệ thống: `modal-settings.html`, `02-state-core.js`, toàn bộ module headers `01-router.js` đến `13-wardrobe.js`, `sw.js` & `Release_App/sw.js`, `pubspec.yaml`, `Program.cs`, `push_github.ps1`, `VOCAFLOW_OVERVIEW.txt`, `CURRENT_TASK.md`.
+
+---
+
+## 🎯 2. DANH SÁCH NHIỆM VỤ CÁC PHIÊN BẢN TRƯỚC (v0.10.10-52 Build 353 - Issue 36, 37, 38, 39, 40)
 
 - [x] **Khắc Phục Lỗi Lệch Khung Avatar & Danh Xưng Community Tab Trong Hồ Sơ Công Khai (`03-auth.js` - Issue 36, Ảnh 124607.png)**:
   - Lưu trữ trực tiếp `targetWardrobe` và `vipTier` vào `currentPublicProfileAuthor` ngay khi tính toán xong, ngăn chặn việc rơi về khung tím VIP mặc định khi render tab Bài Viết Cộng Đồng trong hồ sơ công khai (`renderPubProfileCommunityPosts`).

@@ -1,5 +1,5 @@
-// =========================================================================
-// VOCAFLOW 03-AUTH.JS (v0.10.10-52 Build 353)
+﻿// =========================================================================
+// VOCAFLOW 03-AUTH.JS (v0.10.10-53 Build 354)
 // Authentication, Cloud Sync, Community, Profiles & Social Network
 // =========================================================================
 
@@ -5330,6 +5330,9 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
 
         let uDataFound = false;
         let uData = null;
+        let matchedStudent = null;
+        let regEntry = null;
+        let nameMapEntry = null;
 
         if (isVocaFlowOfficial) {
           targetLastActiveAt = Date.now();
@@ -5376,14 +5379,16 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
           targetDailyStudyTime = (typeof getDailyStudyTimeMap === 'function') ? getDailyStudyTimeMap() : {};
           targetLedger = Array.isArray(userLedger) ? userLedger : [];
         } else {
+          const safeStudents = (typeof adminStudentsData !== 'undefined' && Array.isArray(adminStudentsData)) ? adminStudentsData : [];
+
           // Resolve targetUid from all available registries if not provided
           if (!targetUid) {
-            if (globalVipRegistryNameMap && globalVipRegistryNameMap[authorClean]?.uid) {
+            if (typeof globalVipRegistryNameMap !== 'undefined' && globalVipRegistryNameMap && globalVipRegistryNameMap[authorClean]?.uid) {
               targetUid = globalVipRegistryNameMap[authorClean].uid;
-            } else if (globalVipRegistryNameMap && globalVipRegistryNameMap[(authorName || '').trim().toLowerCase()]?.uid) {
+            } else if (typeof globalVipRegistryNameMap !== 'undefined' && globalVipRegistryNameMap && globalVipRegistryNameMap[(authorName || '').trim().toLowerCase()]?.uid) {
               targetUid = globalVipRegistryNameMap[(authorName || '').trim().toLowerCase()].uid;
             } else {
-              const studentMatch = adminStudentsData.find(s => 
+              const studentMatch = safeStudents.find(s => 
                 (s.username && s.username.toLowerCase() === authorClean) ||
                 (s.email && s.email.split('@')[0].toLowerCase() === authorClean) ||
                 (s.displayName && s.displayName.trim().toLowerCase() === (authorName || '').trim().toLowerCase())
@@ -5528,7 +5533,7 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
             }
           }
 
-          const matchedStudent = adminStudentsData.find(s => 
+          matchedStudent = safeStudents.find(s => 
             (targetUid && s.uid === targetUid) || 
             (s.username && s.username.toLowerCase() === authorClean) ||
             (s.email && s.email.split('@')[0].toLowerCase() === authorClean) ||
@@ -5563,8 +5568,8 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
             );
           }
 
-          const regEntry = (targetUid && typeof globalVipRegistry !== 'undefined') ? globalVipRegistry[targetUid] : null;
-          const nameMapEntry = (typeof globalVipRegistryNameMap !== 'undefined') ? (globalVipRegistryNameMap[authorClean] || globalVipRegistryNameMap[(authorName || '').trim().toLowerCase()]) : null;
+          regEntry = (targetUid && typeof globalVipRegistry !== 'undefined' && globalVipRegistry) ? globalVipRegistry[targetUid] : null;
+          nameMapEntry = (typeof globalVipRegistryNameMap !== 'undefined' && globalVipRegistryNameMap) ? (globalVipRegistryNameMap[authorClean] || globalVipRegistryNameMap[(authorName || '').trim().toLowerCase()]) : null;
 
           const isRealUser = isVocaFlowOfficial || isCurrentUser || uDataFound || !!matchedStudent || !!regEntry || !!nameMapEntry || (authorDecks.length > 0) || (authorName && authorName !== 'Khách' && authorClean.length > 0);
 
@@ -8066,7 +8071,7 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
     }
     window.filterCommunityFeed = filterCommunityFeed;
 
-    // Helper functions for author and comment resolution (v0.10.10-52 Realtime User Metadata Matcher)
+    // Helper functions for author and comment resolution (v0.10.10-53 Realtime User Metadata Matcher)
     function getLiveUserRegistryEntry(uid, name = '', handle = '') {
       const cleanName = (name || '').trim().toLowerCase();
       const cleanHandle = (handle || '').trim().toLowerCase().replace(/^@/, '');

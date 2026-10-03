@@ -1,0 +1,8 @@
+v0.10.10-53
+vấn đề 41: không thể truy cập hồ sơ public của @official và nhiều người khác (trừ chính t và @nglinh_k8) không biết là do lỗi mạng hay gì nhưng cứ thử xem qua và sửa đi
+vấn đề 42: khóa những hiệu ứng tên sự kiện này vào cho tao "C:\Users\DELL\Pictures\Screenshots\Ảnh chụp màn hình 2026-10-03 134007.png", nó chỉ mở tặng miễn phí vào đúng ngày hôm đó thôi. sự kiện: tiệc sinh nhật (cả ngày 10 thg 8), giáng sinh (18h 24thg12 -> 00h 26thg12), halloween (cả ngày 31thg10), tự hào việt nam (cả ngày 30thg4 và 2thg9), tết (phải dựng hàm để xác định hoặc dùng công cụ nào đó để xác định đúng 3 ngày tết từ mùng 1 đến 3 âm lịch), phục sinh (phải dựng hàm để xác định hoặc dùng công cụ nào đó để xác định đúng Chủ nhật bất kỳ trong khoảng từ ngày 22 tháng 3 đến ngày 25 tháng 4 dương lịch)
+vấn đề 43: vương miện của hiệu ứng viền vip lifetime xoay xoay mạnh quá, cho nó lắc lư tại chỗ hoặc phóng to-nhỏ tại chỗ, lấy tâm ở giữa hộ nha "C:\Users\DELL\Pictures\Screenshots\Ảnh chụp màn hình 2026-10-03 134854.png"
+vấn đề 44: tao thấy tính tổng EXP bị sai? tổng của t có 902 mà đáng lẽ phải hơn nhiều chứ? hay là khi update bị reset hay gi? hay là app mới ghi nhận từ lúc cập nhật cái EXP này? t cần đc làm rõ
+vấn đề 45: t đã có azure AI để chấm speaking rồi. hướng dẫn t cách chuẩn bị thông tin cho m, và những thông tin m cần?
+
+đọc và thực hiện các file markdown có trong "C:\Users\DELL\Documents\Modding\VocaFlow" (nếu quên)
