@@ -1,0 +1,4 @@
+v0.10.10-55
+vấn đề 1: "C:\Users\DELL\Pictures\Screenshots\Ảnh chụp màn hình 2026-10-03 151159.png" azure AI chấm bài bị sai vì nói đúng rồi nhưng vẫn chấm là sai. t cần lời giải thích, cách sửa và tiến hành sửa. yêu cầu t nếu cần thêm setting gì hay thông tin gì
+
+đọc và thực hiện các file markdown có trong "C:\Users\DELL\Documents\Modding\VocaFlow" (nếu quên)

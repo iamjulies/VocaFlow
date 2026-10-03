@@ -1,12 +1,30 @@
 # CURRENT TASK & TRẠNG THÁI CÔNG VIỆC HIỆN TẠI (VOCAFLOW)
 
-> **Phiên bản mục tiêu:** `v0.10.10-54 (Build 355)`  
+> **Phiên bản mục tiêu:** `v0.10.10-55 (Build 356)`  
 > **Cập nhật lần cuối:** 2026-10-03  
 > **Trạng thái:** 🚀 **ĐÃ HOÀN THÀNH - ĐANG TIẾN HÀNH BUILD & MULTI-DEPLOY GITHUB**
 
 ---
 
-## 🎯 1. DANH SÁCH NHIỆM VỤ ĐÃ GIẢI QUYẾT (v0.10.10-54 Build 355 - Tích Hợp Toàn Diện Azure AI Speech & Speaking Pronunciation Assessment)
+## 🎯 1. DANH SÁCH NHIỆM VỤ ĐÃ GIẢI QUYẾT (v0.10.10-55 Build 356 - Khắc Phục Lỗi Chấm Điểm 0đ Azure Pronunciation Assessment & Chuẩn Hóa Bảng Phiên Âm IPA)
+
+- [x] **Khắc Phục Lỗi Bóc Tách Điểm Số Azure REST API (`07-speaking-engine.js`)**:
+  - **Nguyên nhân gốc rễ**: Khi gọi Azure Speech REST API với định dạng `detailed`, các chỉ số điểm số cốt lõi (`PronScore`, `AccuracyScore`, `FluencyScore`, `ProsodyScore`, `CompletenessScore`) nằm trực tiếp ở cấp cao nhất của `NBest[0]`, và điểm số từ/âm vị/âm tiết nằm trực tiếp tại `w.AccuracyScore`, `p.AccuracyScore`, `s.AccuracyScore`. Bộ phân tích trước đó đọc qua `nbest.PronunciationAssessment.PronScore` dẫn đến `undefined` -> trả về 0đ dù phát âm chuẩn xác 100%.
+  - **Giải pháp**: Bổ sung cơ chế fallback đọc song song `nbest.PronScore ?? pron.PronScore ?? nbest.AccuracyScore ?? pron.AccuracyScore`, cũng như `w.AccuracyScore ?? w.PronunciationAssessment?.AccuracyScore` và `s.AccuracyScore`.
+
+- [x] **Chuẩn Hóa Bảng Phiên Âm Sang Chuẩn Quốc Tế IPA (`07-speaking-engine.js`)**:
+  - **Nguyên nhân**: Azure Speech mặc định dùng bảng ký hiệu `SAPI` khi không chỉ định `PhonemeAlphabet`, dẫn đến hiển thị chuỗi ký tự thô như `/aekaxdehmihk/` thay vì ký hiệu IPA chuẩn Oxford.
+  - **Giải pháp**: Thiết lập bắt buộc `PhonemeAlphabet: "IPA"` trong cấu hình request header của cả hàm đánh giá âm thanh lẫn hàm kiểm tra kết nối (`testAzureSpeechConnection`). Giờ đây mọi từ vựng hiển thị chuẩn xác ký hiệu IPA Oxford như `/ækədɛmɪk/`.
+
+- [x] **Hiển Thị Chi Tiết Từng Âm Tiết (Syllable Breakdown Chips - `07-speaking-engine.js`)**:
+  - Hiển thị trực quan từng âm tiết kèm grapheme và độ chuẩn xác (%) với màu sắc chỉ báo rõ ràng (xanh lá: chuẩn xác >= 70%, vàng: cảnh báo >= 50%, đỏ: lỗi < 50%).
+
+- [x] **Đồng Bộ Toàn Diện 7-Point Version Consistency (`v0.10.10-55 Build 356`)**:
+  - Cập nhật phiên bản nhất quán trên toàn bộ 7 điểm hệ thống: `modal-settings.html`, `02-state-core.js`, toàn bộ module headers `01-router.js` đến `13-wardrobe.js`, `sw.js` & `Release_App/sw.js`, `pubspec.yaml`, `Program.cs`, `push_github.ps1`, `VOCAFLOW_OVERVIEW.txt`, `CURRENT_TASK.md`.
+
+---
+
+## 🎯 2. DANH SÁCH NHIỆM VỤ CÁC PHIÊN BẢN TRƯỚC (v0.10.10-54 Build 355 - Tích Hợp Toàn Diện Azure AI Speech)
 
 - [x] **Tích Hợp Toàn Diện Microsoft Azure AI Speech (Pronunciation Assessment REST API - `07-speaking-engine.js`)**:
   - Xây dựng module chuyển đổi âm thanh `convertAudioBlobToWav16k` thuần JavaScript trong trình duyệt, tự động chuẩn hóa mọi định dạng ghi âm (WebM/Opus/AAC/WAV) sang chuẩn âm thanh 16,000Hz 16-bit Mono WAV PCM không phụ thuộc thư viện ngoài.

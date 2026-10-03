@@ -1,4 +1,20 @@
 ================================================================================
+Phiên bản: v0.10.10-55 (Build 356) - Khắc Phục Lỗi Bóc Tách Điểm 0đ Azure Pronunciation Assessment, Chuẩn Hóa Bảng Phiên Âm Quốc Tế IPA & Trực Quan Hóa Âm Tiết Syllables
+================================================================================
+1. [Khắc Phục Lỗi Bóc Tách Điểm 0đ Azure Pronunciation Assessment REST API]:
+   - Sửa cơ chế đọc dữ liệu phản hồi chi tiết từ Azure REST API: Đọc các chỉ số điểm số `PronScore`, `AccuracyScore`, `FluencyScore`, `ProsodyScore`, `CompletenessScore` trực tiếp từ cấp cao nhất của `NBest[0]`, hỗ trợ fallback đa tầng an toàn.
+   - Bóc tách chính xác độ chuẩn xác của từng từ (`w.AccuracyScore`), từng âm vị (`p.AccuracyScore`) và từng âm tiết (`s.AccuracyScore`).
+
+2. [Chuẩn Hóa Ký Tự Phiên Âm Sang Chuẩn Quốc Tế IPA Oxford]:
+   - Thiết lập bắt buộc `PhonemeAlphabet: "IPA"` trong cấu hình request header của Azure Speech, loại bỏ hoàn toàn các ký tự SAPI thô như `/aekaxdehmihk/` và thay bằng IPA chuẩn `/ækədɛmɪk/`.
+
+3. [Trực Quan Hóa Chi Tiết Từng Âm Tiết (Syllable Breakdown Chips)]:
+   - Bổ sung thanh hiển thị trực quan từng âm tiết kèm phần chữ (grapheme), âm vị và % chuẩn xác với mã màu phân cấp (xanh lá, vàng cam, đỏ cảnh báo).
+
+4. [Đồng Bộ Nhất Quán 7-Point Version Consistency & Multi-Deploy (v0.10.10-55 Build 356)]:
+   - Cập nhật phiên bản nhất quán trên toàn bộ 7 điểm hệ thống: `modal-settings.html`, `02-state-core.js`, toàn bộ module headers `01-router.js` đến `13-wardrobe.js`, `sw.js` & `Release_App/sw.js`, `pubspec.yaml`, `Program.cs`, `push_github.ps1`, `VOCAFLOW_OVERVIEW.txt`, `CURRENT_TASK.md`.
+
+================================================================================
 Phiên bản: v0.10.10-54 (Build 355) - Tích Hợp Toàn Diện Microsoft Azure AI Speech (Pronunciation Assessment REST API), Kiến Trúc AI Đa Tầng Hybrid & Quản Lý Cấu Hình Bảo Mật Key
 ================================================================================
 1. [Tích Hợp Toàn Diện Microsoft Azure AI Speech (Pronunciation Assessment)]:

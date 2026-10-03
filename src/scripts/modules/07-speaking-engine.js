@@ -1,5 +1,5 @@
 ﻿// =========================================================================
-// VOCAFLOW 07-SPEAKING-ENGINE.JS (v0.10.10-54 Build 355)
+// VOCAFLOW 07-SPEAKING-ENGINE.JS (v0.10.10-55 Build 356)
 // AI Speaking Lab, MediaRecorder, VAD, Gemini audio analysis, multi-take economy & IndexedDB Best Take
 // =========================================================================
 
@@ -1756,7 +1756,9 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
           GradingSystem: "HundredMark",
           Granularity: "Phoneme",
           Dimension: "Comprehensive",
-          EnableMiscue: true
+          EnableProsodyAssessment: true,
+          EnableMiscue: true,
+          PhonemeAlphabet: "IPA"
         });
         const pronBase64 = btoa(unescape(encodeURIComponent(pronJson)));
 
@@ -1889,7 +1891,8 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
         Granularity: "Phoneme",
         Dimension: "Comprehensive",
         EnableProsodyAssessment: true,
-        EnableMiscue: true
+        EnableMiscue: true,
+        PhonemeAlphabet: "IPA"
       };
 
       const pronHeader = btoa(unescape(encodeURIComponent(JSON.stringify(pronParams))));
@@ -1921,11 +1924,11 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
       if (!nbest) throw new Error('AZURE_EMPTY_NBEST');
 
       const pron = nbest.PronunciationAssessment || {};
-      const overallScore = Math.max(0, Math.min(100, Math.round(Number(pron.PronScore ?? pron.AccuracyScore) || 0)));
-      const accuracyScore = Math.max(0, Math.min(100, Math.round(Number(pron.AccuracyScore) || 0)));
-      const fluencyScore = Math.max(0, Math.min(100, Math.round(Number(pron.FluencyScore) || 0)));
-      const prosodyScore = Math.max(0, Math.min(100, Math.round(Number(pron.ProsodyScore) || 0)));
-      const completenessScore = Math.max(0, Math.min(100, Math.round(Number(pron.CompletenessScore) || 0)));
+      const overallScore = Math.max(0, Math.min(100, Math.round(Number(nbest.PronScore ?? pron.PronScore ?? nbest.AccuracyScore ?? pron.AccuracyScore) || 0)));
+      const accuracyScore = Math.max(0, Math.min(100, Math.round(Number(nbest.AccuracyScore ?? pron.AccuracyScore) || 0)));
+      const fluencyScore = Math.max(0, Math.min(100, Math.round(Number(nbest.FluencyScore ?? pron.FluencyScore) || 0)));
+      const prosodyScore = Math.max(0, Math.min(100, Math.round(Number(nbest.ProsodyScore ?? pron.ProsodyScore) || 0)));
+      const completenessScore = Math.max(0, Math.min(100, Math.round(Number(nbest.CompletenessScore ?? pron.CompletenessScore) || 0)));
 
       const detectedTranscript = nbest.Display || nbest.Lexical || resJson.DisplayText || targetTerm;
       const azureWords = Array.isArray(nbest.Words) ? nbest.Words : [];
@@ -1938,8 +1941,8 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
       });
 
       const wordsBreakdown = azureWords.map(w => {
-        const wAcc = Math.round(w.PronunciationAssessment?.AccuracyScore || 0);
-        const errType = w.PronunciationAssessment?.ErrorType || 'None';
+        const wAcc = Math.round(Number(w.AccuracyScore ?? w.PronunciationAssessment?.AccuracyScore) || 0);
+        const errType = w.ErrorType || w.PronunciationAssessment?.ErrorType || 'None';
         const isOk = (wAcc >= 70 && errType === 'None');
         const isWarn = (wAcc >= 50 && errType === 'None');
         const ipaStr = (w.Phonemes || []).map(p => p.Phoneme).join('');
@@ -1957,10 +1960,11 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
 
       if (allPhonemes.length > 0) {
         const lastPhoneme = allPhonemes[allPhonemes.length - 1];
-        const lastAcc = lastPhoneme.PronunciationAssessment?.AccuracyScore ?? 100;
-        if (lastAcc < 60 || lastPhoneme.PronunciationAssessment?.ErrorType === 'Mispronunciation') {
+        const lastAcc = Number(lastPhoneme.AccuracyScore ?? lastPhoneme.PronunciationAssessment?.AccuracyScore) ?? 100;
+        const lastErr = lastPhoneme.ErrorType || lastPhoneme.PronunciationAssessment?.ErrorType || 'None';
+        if (lastAcc < 60 || lastErr === 'Mispronunciation') {
           endingSoundsText = '⚠️ Chú ý âm đuôi /' + lastPhoneme.Phoneme + '/ (' + Math.round(lastAcc) + '%)';
-        } else if (lastPhoneme.PronunciationAssessment?.ErrorType === 'Omission') {
+        } else if (lastErr === 'Omission') {
           endingSoundsText = '⚠️ Chưa phát âm âm đuôi /' + lastPhoneme.Phoneme + '/';
         }
       }
@@ -1986,10 +1990,11 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
       else verdict = 'Chưa chuẩn';
 
       const syllableBreakdown = allSyllables.map(s => {
-        const sAcc = Math.round(s.PronunciationAssessment?.AccuracyScore || 0);
+        const sAcc = Math.round(Number(s.AccuracyScore ?? s.PronunciationAssessment?.AccuracyScore) || 0);
         return {
           part: s.Syllable,
-          ipa: '',
+          grapheme: s.Grapheme || '',
+          ipa: s.Syllable ? '/' + s.Syllable + '/' : '',
           status: sAcc >= 70 ? 'correct' : (sAcc >= 50 ? 'warning' : 'error'),
           tip: 'Độ chuẩn: ' + sAcc + '%'
         };
@@ -2481,6 +2486,20 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
             `;
           });
           phtml += '</div>';
+
+          if (Array.isArray(data.syllableBreakdown) && data.syllableBreakdown.length > 0) {
+            phtml += '<div style="display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; justify-content: center;">';
+            data.syllableBreakdown.forEach(s => {
+              const isOk = s.status === 'correct';
+              const isWarn = s.status === 'warning';
+              const sBg = isOk ? 'rgba(52,211,153,0.12)' : (isWarn ? 'rgba(245,158,11,0.12)' : 'rgba(239,68,68,0.12)');
+              const sCol = isOk ? '#34d399' : (isWarn ? '#fbbf24' : '#f87171');
+              const sBdr = isOk ? 'rgba(52,211,153,0.35)' : (isWarn ? 'rgba(245,158,11,0.35)' : 'rgba(239,68,68,0.35)');
+              const sLabel = s.grapheme ? `${s.grapheme} [${s.part}]` : s.part;
+              phtml += `<div style="background: ${sBg}; color: ${sCol}; border: 1px solid ${sBdr}; border-radius: 8px; padding: 3px 8px; display: inline-flex; flex-direction: column; align-items: center; font-size: 11px;" title="${escapeHtml(s.tip || '')}"><strong style="font-size: 12px;">${escapeHtml(sLabel)}</strong><span style="font-size: 9.5px; opacity: 0.85;">${escapeHtml(s.tip || '')}</span></div>`;
+            });
+            phtml += '</div>';
+          }
         } else {
           phtml = '<span class="badge" style="background: rgba(52,211,153,0.15); color: #34d399; font-size: 11px; padding: 4px 10px;">' + (currentWord?.term || '') + '</span>';
         }
