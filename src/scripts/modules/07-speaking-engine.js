@@ -1,5 +1,5 @@
 ﻿// =========================================================================
-// VOCAFLOW 07-SPEAKING-ENGINE.JS (v0.10.10-53 Build 354)
+// VOCAFLOW 07-SPEAKING-ENGINE.JS (v0.10.10-54 Build 355)
 // AI Speaking Lab, MediaRecorder, VAD, Gemini audio analysis, multi-take economy & IndexedDB Best Take
 // =========================================================================
 
@@ -1336,7 +1336,7 @@
       const btnSubmitEval = document.getElementById('btn-spk-submit-eval');
       if (btnSubmitEval) btnSubmitEval.style.display = 'none';
 
-      evaluateSpeakingAudioWithGemini(speakingFinalAudioMime || 'audio/webm');
+      evaluateSpeakingAudio(speakingFinalAudioMime || 'audio/webm');
     }
 
     // String similarity (Levenshtein distance) for anti-hallucination / anti-nonsense guard (v0.10.9-33)
@@ -1605,7 +1605,7 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
         const aiContent = document.getElementById('speaking-ai-content');
         if (aiLoading) aiLoading.style.display = 'block';
         if (aiContent) aiContent.style.display = 'none';
-        evaluateSpeakingAudioWithGemini(speakingFinalAudioMime || 'audio/webm');
+        evaluateSpeakingAudio(speakingFinalAudioMime || 'audio/webm');
       } else {
         showToast('⚠️ Không còn bản thu âm chờ. Hãy thu âm lại!');
       }
@@ -1621,6 +1621,463 @@ RETURN ONLY VALID JSON MATCHING THIS EXACT SCHEMA WITHOUT MARKDOWN BLOCKS:
       if (resultPanel) resultPanel.style.display = 'none';
       speakingFlowState = 'idle';
       showToast('🎙️ Hãy thu âm lại!');
+    }
+
+    // =========================================================================
+    // AZURE AI SPEECH & PRONUNCIATION ASSESSMENT ENGINE (v0.10.10-54)
+    // =========================================================================
+
+    function saveAzureSpeechKeySetting(val) {
+      const k = (val || '').trim();
+      localStorage.setItem(STORAGE_KEY_AZURE_SPEECH_KEY, k);
+      updateSettingsAzureSpeechStatusText();
+    }
+    window.saveAzureSpeechKeySetting = saveAzureSpeechKeySetting;
+
+    function saveAzureSpeechRegionSetting(val) {
+      const r = (val || 'japaneast').trim().toLowerCase();
+      localStorage.setItem(STORAGE_KEY_AZURE_SPEECH_REGION, r);
+      updateSettingsAzureSpeechStatusText();
+    }
+    window.saveAzureSpeechRegionSetting = saveAzureSpeechRegionSetting;
+
+    function updateSpeakingEngineMode(val) {
+      const m = val || 'hybrid';
+      localStorage.setItem(STORAGE_KEY_SPEAKING_ENGINE_MODE, m);
+      const labelMap = {
+        hybrid: '🌟 Tự động Hybrid (Azure + Gemini)',
+        azure: '⚡ Azure AI Speech (<1s)',
+        gemini: '🧠 Google Gemini Multimodal'
+      };
+      showToast('🎯 Đã chuyển chế độ: ' + (labelMap[m] || m));
+    }
+    window.updateSpeakingEngineMode = updateSpeakingEngineMode;
+
+    function toggleAzureSpeechGuide(event) {
+      if (event) event.stopPropagation();
+      const box = document.getElementById('azure-speech-guide-box');
+      if (box) {
+        box.style.display = box.style.display === 'none' ? 'block' : 'none';
+      }
+    }
+    window.toggleAzureSpeechGuide = toggleAzureSpeechGuide;
+
+    function updateSettingsAzureSpeechStatusText() {
+      const statusText = document.getElementById('azure-speech-status-text');
+      const badge = document.getElementById('azure-speech-status-badge');
+      const k = getEffectiveAzureSpeechKey();
+      const r = getEffectiveAzureSpeechRegion();
+      if (!statusText) return;
+      if (!k) {
+        statusText.textContent = 'Chưa cài đặt Azure Key (sẽ dùng Gemini AI).';
+        statusText.style.color = 'var(--text-muted)';
+        if (badge) badge.textContent = '';
+      } else {
+        statusText.textContent = '✅ Đã lưu Azure Key (' + r + ')';
+        statusText.style.color = '#38bdf8';
+        if (badge) badge.textContent = '✓ ' + r;
+      }
+    }
+    window.updateSettingsAzureSpeechStatusText = updateSettingsAzureSpeechStatusText;
+
+    function updateSettingsAzureSpeechUI() {
+      const k = getEffectiveAzureSpeechKey();
+      const r = getEffectiveAzureSpeechRegion();
+      const m = getSpeakingEngineMode();
+
+      const keyInp = document.getElementById('azure-speech-key-input');
+      const regInp = document.getElementById('azure-speech-region-input');
+      const modeSel = document.getElementById('settings-speaking-engine-mode');
+
+      if (keyInp) keyInp.value = k;
+      if (regInp) regInp.value = r;
+      if (modeSel) modeSel.value = m;
+
+      updateSettingsAzureSpeechStatusText();
+    }
+    window.updateSettingsAzureSpeechUI = updateSettingsAzureSpeechUI;
+
+    async function testAzureSpeechConnection() {
+      const btn = document.getElementById('btn-test-azure-speech');
+      const statusText = document.getElementById('azure-speech-status-text');
+      const k = getEffectiveAzureSpeechKey();
+      const r = getEffectiveAzureSpeechRegion();
+
+      if (!k) {
+        showToast('⚠️ Vui lòng dán Azure Speech Key trước khi thử kết nối!');
+        if (statusText) {
+          statusText.textContent = '⚠️ Chưa nhập Key!';
+          statusText.style.color = '#f87171';
+        }
+        return;
+      }
+
+      if (btn) {
+        btn.disabled = true;
+        btn.innerHTML = '<span class="loading-spinner" style="width:12px;height:12px;border-width:2px;display:inline-block;vertical-align:middle;margin-right:4px;"></span> Đang kiểm tra...';
+      }
+      if (statusText) {
+        statusText.textContent = 'Đang kết nối Azure Speech (' + r + ')...';
+        statusText.style.color = '#fbbf24';
+      }
+
+      try {
+        const sampleRate = 16000;
+        const numSamples = 16000;
+        const dataSize = numSamples * 2;
+        const wavBuffer = new ArrayBuffer(44 + dataSize);
+        const view = new DataView(wavBuffer);
+
+        function _wStr(o, s) { for (let i = 0; i < s.length; i++) view.setUint8(o + i, s.charCodeAt(i)); }
+        _wStr(0, 'RIFF');
+        view.setUint32(4, 36 + dataSize, true);
+        _wStr(8, 'WAVE');
+        _wStr(12, 'fmt ');
+        view.setUint32(16, 16, true);
+        view.setUint16(20, 1, true);
+        view.setUint16(22, 1, true);
+        view.setUint32(24, sampleRate, true);
+        view.setUint32(28, sampleRate * 2, true);
+        view.setUint16(32, 2, true);
+        view.setUint16(34, 16, true);
+        _wStr(36, 'data');
+        view.setUint32(40, dataSize, true);
+
+        let off = 44;
+        for (let i = 0; i < numSamples; i++) {
+          const s = Math.sin(2 * Math.PI * 440 * i / sampleRate) * 1000;
+          view.setInt16(off, s, true);
+          off += 2;
+        }
+
+        const testWavBlob = new Blob([view], { type: 'audio/wav' });
+        const pronJson = JSON.stringify({
+          ReferenceText: "good",
+          GradingSystem: "HundredMark",
+          Granularity: "Phoneme",
+          Dimension: "Comprehensive",
+          EnableMiscue: true
+        });
+        const pronBase64 = btoa(unescape(encodeURIComponent(pronJson)));
+
+        const url = 'https://' + r + '.stt.speech.microsoft.com/speech/recognition/conversation/cognitiveservices/v1?language=en-US&format=detailed';
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 10000);
+
+        const res = await fetch(url, {
+          method: 'POST',
+          signal: controller.signal,
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'audio/wav; codecs=audio/pcm; samplerate=16000',
+            'Ocp-Apim-Subscription-Key': k,
+            'Pronunciation-Assessment': pronBase64
+          },
+          body: testWavBlob
+        });
+        clearTimeout(timeoutId);
+
+        if (res.ok) {
+          const resJson = await res.json();
+          if (resJson.RecognitionStatus === 'Success' || resJson.RecognitionStatus === 'NoMatch' || resJson.DisplayText) {
+            showToast('🎉 Kết nối Azure AI Speech (' + r + ') thành công 100%!');
+            if (statusText) {
+              statusText.textContent = '✅ Kết nối thành công (' + r + ')!';
+              statusText.style.color = '#34d399';
+            }
+          } else {
+            showToast('⚠️ Azure phản hồi: ' + resJson.RecognitionStatus);
+            if (statusText) {
+              statusText.textContent = '⚠️ Trạng thái: ' + resJson.RecognitionStatus;
+              statusText.style.color = '#fbbf24';
+            }
+          }
+        } else {
+          const errText = await res.text();
+          throw new Error('HTTP ' + res.status + ': ' + (errText || res.statusText));
+        }
+      } catch (err) {
+        console.error('Azure Speech Test Error:', err);
+        showToast('❌ Không thể kết nối Azure Speech: ' + (err.message || 'Lỗi mạng hoặc Key sai'));
+        if (statusText) {
+          statusText.textContent = '❌ Lỗi: ' + (err.message || 'Key hoặc Region không hợp lệ');
+          statusText.style.color = '#f87171';
+        }
+      } finally {
+        if (btn) {
+          btn.disabled = false;
+          btn.innerHTML = '🧪 Thử kết nối Azure Speech';
+        }
+      }
+    }
+    window.testAzureSpeechConnection = testAzureSpeechConnection;
+
+    async function convertAudioBlobToWav16k(blob) {
+      const arrayBuffer = await blob.arrayBuffer();
+      const AudioCtx = window.AudioContext || window.webkitAudioContext;
+      if (!AudioCtx) throw new Error('AudioContext not supported');
+      
+      const audioCtx = new AudioCtx();
+      let audioBuffer;
+      try {
+        audioBuffer = await audioCtx.decodeAudioData(arrayBuffer);
+      } finally {
+        try { await audioCtx.close(); } catch (e) {}
+      }
+
+      const targetSampleRate = 16000;
+      const OfflineCtx = window.OfflineAudioContext || window.webkitOfflineAudioContext;
+      let renderedBuffer;
+      
+      if (OfflineCtx) {
+        const targetLength = Math.max(1, Math.ceil(audioBuffer.duration * targetSampleRate));
+        const offlineCtx = new OfflineCtx(1, targetLength, targetSampleRate);
+        const source = offlineCtx.createBufferSource();
+        source.buffer = audioBuffer;
+        source.connect(offlineCtx.destination);
+        source.start(0);
+        renderedBuffer = await offlineCtx.startRendering();
+      } else {
+        renderedBuffer = audioBuffer;
+      }
+
+      const channelData = renderedBuffer.getChannelData(0);
+      const dataSize = channelData.length * 2;
+      const wavBuffer = new ArrayBuffer(44 + dataSize);
+      const view = new DataView(wavBuffer);
+
+      function _w(off, str) {
+        for (let i = 0; i < str.length; i++) view.setUint8(off + i, str.charCodeAt(i));
+      }
+
+      _w(0, 'RIFF');
+      view.setUint32(4, 36 + dataSize, true);
+      _w(8, 'WAVE');
+      _w(12, 'fmt ');
+      view.setUint32(16, 16, true);
+      view.setUint16(20, 1, true);
+      view.setUint16(22, 1, true);
+      view.setUint32(24, targetSampleRate, true);
+      view.setUint32(28, targetSampleRate * 2, true);
+      view.setUint16(32, 2, true);
+      view.setUint16(34, 16, true);
+      _w(36, 'data');
+      view.setUint32(40, dataSize, true);
+
+      let offset = 44;
+      for (let i = 0; i < channelData.length; i++) {
+        const s = Math.max(-1, Math.min(1, channelData[i]));
+        view.setInt16(offset, s < 0 ? s * 0x8000 : s * 0x7FFF, true);
+        offset += 2;
+      }
+
+      return new Blob([view], { type: 'audio/wav' });
+    }
+
+    async function evaluateSpeakingAudioWithAzure(currentWord, rawAudioBlob) {
+      const key = getEffectiveAzureSpeechKey();
+      const region = getEffectiveAzureSpeechRegion();
+
+      if (!key) throw new Error('NO_AZURE_KEY');
+
+      const wavBlob = await convertAudioBlobToWav16k(rawAudioBlob);
+      const targetTerm = (currentWord.term || '').trim();
+
+      const pronParams = {
+        ReferenceText: targetTerm,
+        GradingSystem: "HundredMark",
+        Granularity: "Phoneme",
+        Dimension: "Comprehensive",
+        EnableProsodyAssessment: true,
+        EnableMiscue: true
+      };
+
+      const pronHeader = btoa(unescape(encodeURIComponent(JSON.stringify(pronParams))));
+      const url = 'https://' + region + '.stt.speech.microsoft.com/speech/recognition/conversation/cognitiveservices/v1?language=en-US&format=detailed';
+
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 12000);
+
+      const res = await fetch(url, {
+        method: 'POST',
+        signal: controller.signal,
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'audio/wav; codecs=audio/pcm; samplerate=16000',
+          'Ocp-Apim-Subscription-Key': key,
+          'Pronunciation-Assessment': pronHeader
+        },
+        body: wavBlob
+      });
+      clearTimeout(timeoutId);
+
+      if (!res.ok) {
+        const errTxt = await res.text();
+        throw new Error('Azure HTTP ' + res.status + ': ' + errTxt);
+      }
+
+      const resJson = await res.json();
+      const nbest = resJson?.NBest?.[0];
+      if (!nbest) throw new Error('AZURE_EMPTY_NBEST');
+
+      const pron = nbest.PronunciationAssessment || {};
+      const overallScore = Math.max(0, Math.min(100, Math.round(Number(pron.PronScore ?? pron.AccuracyScore) || 0)));
+      const accuracyScore = Math.max(0, Math.min(100, Math.round(Number(pron.AccuracyScore) || 0)));
+      const fluencyScore = Math.max(0, Math.min(100, Math.round(Number(pron.FluencyScore) || 0)));
+      const prosodyScore = Math.max(0, Math.min(100, Math.round(Number(pron.ProsodyScore) || 0)));
+      const completenessScore = Math.max(0, Math.min(100, Math.round(Number(pron.CompletenessScore) || 0)));
+
+      const detectedTranscript = nbest.Display || nbest.Lexical || resJson.DisplayText || targetTerm;
+      const azureWords = Array.isArray(nbest.Words) ? nbest.Words : [];
+
+      let allPhonemes = [];
+      let allSyllables = [];
+      azureWords.forEach(w => {
+        if (Array.isArray(w.Phonemes)) allPhonemes.push(...w.Phonemes);
+        if (Array.isArray(w.Syllables)) allSyllables.push(...w.Syllables);
+      });
+
+      const wordsBreakdown = azureWords.map(w => {
+        const wAcc = Math.round(w.PronunciationAssessment?.AccuracyScore || 0);
+        const errType = w.PronunciationAssessment?.ErrorType || 'None';
+        const isOk = (wAcc >= 70 && errType === 'None');
+        const isWarn = (wAcc >= 50 && errType === 'None');
+        const ipaStr = (w.Phonemes || []).map(p => p.Phoneme).join('');
+        return {
+          word: w.Word,
+          ipa: ipaStr ? '/' + ipaStr + '/' : (currentWord.phonetic || '/.../'),
+          status: isOk ? 'correct' : (isWarn ? 'warning' : 'error'),
+          feedback: errType === 'Mispronunciation' ? ('Phát âm chưa chuẩn (' + wAcc + '%)') : (errType === 'Omission' ? 'Bị thiếu từ này' : ('Độ chính xác: ' + wAcc + '%'))
+        };
+      });
+
+      let endingSoundsText = 'Âm đuôi đầy đủ, rõ ràng';
+      let stressText = prosodyScore >= 80 ? 'Ngữ điệu & Trọng âm rất tự nhiên' : (prosodyScore >= 60 ? 'Trọng âm cơ bản đạt' : 'Cần nhấn rõ trọng âm chính');
+      let vowelsText = accuracyScore >= 75 ? 'Nguyên âm chuẩn xác' : 'Cần mở rộng khẩu hình nguyên âm';
+
+      if (allPhonemes.length > 0) {
+        const lastPhoneme = allPhonemes[allPhonemes.length - 1];
+        const lastAcc = lastPhoneme.PronunciationAssessment?.AccuracyScore ?? 100;
+        if (lastAcc < 60 || lastPhoneme.PronunciationAssessment?.ErrorType === 'Mispronunciation') {
+          endingSoundsText = '⚠️ Chú ý âm đuôi /' + lastPhoneme.Phoneme + '/ (' + Math.round(lastAcc) + '%)';
+        } else if (lastPhoneme.PronunciationAssessment?.ErrorType === 'Omission') {
+          endingSoundsText = '⚠️ Chưa phát âm âm đuôi /' + lastPhoneme.Phoneme + '/';
+        }
+      }
+
+      let feedbackVi = '';
+      if (overallScore >= 90) {
+        feedbackVi = '🌟 Phát âm xuất sắc chuẩn Oxford/ELSA (' + overallScore + 'đ)! Ngữ điệu và trọng âm rất tự nhiên.';
+      } else if (overallScore >= 80) {
+        feedbackVi = '👍 Phát âm rất tốt (' + overallScore + 'đ). Độ lưu loát ' + fluencyScore + '%, ngữ điệu ' + prosodyScore + '%.';
+      } else if (overallScore >= 70) {
+        feedbackVi = '✅ Đạt yêu cầu (' + overallScore + 'đ). Chú ý trau chuốt thêm các phụ âm và ngữ điệu để đạt điểm tối đa nhé!';
+      } else if (overallScore >= 50) {
+        feedbackVi = '💡 Cần cải thiện (' + overallScore + 'đ). ' + (endingSoundsText.includes('⚠️') ? endingSoundsText : 'Hãy nghe lại phát âm mẫu và nhấn mạnh đúng trọng âm nhé!');
+      } else {
+        feedbackVi = '⚠️ Phát âm chưa chuẩn (' + overallScore + 'đ). Vui lòng nghe lại phát âm mẫu và nói to, rõ ràng từng âm tiết nhé!';
+      }
+
+      let verdict = 'Đạt chuẩn';
+      if (overallScore >= 90) verdict = 'Xuất sắc';
+      else if (overallScore >= 80) verdict = 'Rất tốt';
+      else if (overallScore >= 70) verdict = 'Đạt chuẩn';
+      else if (overallScore >= 50) verdict = 'Cần cải thiện';
+      else verdict = 'Chưa chuẩn';
+
+      const syllableBreakdown = allSyllables.map(s => {
+        const sAcc = Math.round(s.PronunciationAssessment?.AccuracyScore || 0);
+        return {
+          part: s.Syllable,
+          ipa: '',
+          status: sAcc >= 70 ? 'correct' : (sAcc >= 50 ? 'warning' : 'error'),
+          tip: 'Độ chuẩn: ' + sAcc + '%'
+        };
+      });
+
+      return {
+        engine: 'azure',
+        score: overallScore,
+        verdict: verdict,
+        detectedTranscript: detectedTranscript,
+        wordsBreakdown: wordsBreakdown.length > 0 ? wordsBreakdown : [{
+          word: targetTerm,
+          ipa: currentWord.phonetic || '/.../',
+          status: overallScore >= 70 ? 'correct' : 'error',
+          feedback: 'Độ chính xác: ' + accuracyScore + '%'
+        }],
+        phonemeDiagnostics: {
+          stress: stressText,
+          endingSounds: endingSoundsText,
+          vowels: vowelsText
+        },
+        feedbackVi: feedbackVi,
+        syllableCount: allSyllables.length > 0 ? allSyllables.length : undefined,
+        syllableBreakdown: syllableBreakdown.length > 0 ? syllableBreakdown : undefined,
+        azureMetrics: {
+          pronScore: overallScore,
+          accuracyScore: accuracyScore,
+          fluencyScore: fluencyScore,
+          prosodyScore: prosodyScore,
+          completenessScore: completenessScore
+        }
+      };
+    }
+
+    async function evaluateSpeakingAudio(mimeType = 'audio/webm') {
+      const mode = getSpeakingEngineMode();
+      const azureKey = getEffectiveAzureSpeechKey();
+      const geminiKey = (typeof geminiApiKey !== 'undefined' && geminiApiKey ? geminiApiKey : localStorage.getItem(STORAGE_KEY_GEMINI_KEY) || '').trim();
+      const currentWord = speakingWordsList[currentSpeakingIndex];
+
+      const aiLoading = document.getElementById('speaking-ai-loading');
+      const aiContent = document.getElementById('speaking-ai-content');
+
+      // 1. Try Azure Speech if configured and mode allows
+      if ((mode === 'hybrid' || mode === 'azure') && azureKey && (pendingAudioBlob || speakingAudioBlob)) {
+        try {
+          const azureData = await evaluateSpeakingAudioWithAzure(currentWord, pendingAudioBlob || speakingAudioBlob);
+
+          if (aiLoading) aiLoading.style.display = 'none';
+          if (aiContent) aiContent.style.display = 'block';
+
+          speakingCurrentAudioBase64 = null;
+          pendingAudioBlob = null;
+          pendingAudioBase64 = null;
+          isEvaluatingSpeaking = false;
+
+          renderDiagnosticResult(azureData, true);
+          return;
+        } catch (azureErr) {
+          console.warn('[SpeakingEngine] Azure Speech evaluation failed, falling back to Gemini:', azureErr);
+          if (mode === 'azure' && !geminiKey) {
+            isEvaluatingSpeaking = false;
+            if (aiLoading) aiLoading.style.display = 'none';
+            if (aiContent) aiContent.style.display = 'block';
+            showNetworkErrorBanner();
+            return;
+          }
+        }
+      }
+
+      // 2. Fallback to Gemini Multimodal AI
+      if (geminiKey || (typeof hasAtLeastOneApiKey === 'function' && hasAtLeastOneApiKey())) {
+        evaluateSpeakingAudioWithGemini(mimeType);
+        return;
+      }
+
+      // 3. No keys available
+      isEvaluatingSpeaking = false;
+      if (aiLoading) aiLoading.style.display = 'none';
+      if (aiContent) aiContent.style.display = 'block';
+      renderDiagnosticResult({
+        score: 0,
+        verdict: 'Cần cấu hình AI Key',
+        detectedTranscript: '(Chưa cài đặt API Key)',
+        wordsBreakdown: [],
+        phonemeDiagnostics: { stress: 'Cần Key', endingSounds: 'Cần Key', vowels: 'Cần Key' },
+        feedbackVi: '🔑 Bạn chưa cài đặt Gemini API Key hoặc Azure Speech Key. Hãy vào mục Cài Đặt nhập Key để AI phân tích âm vị chuẩn xác như ELSA nhé!'
+      }, false);
     }
 
     function speakPhonemePart(wordOrIpa) {

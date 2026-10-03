@@ -1,13 +1,13 @@
-﻿// VOCAFLOW 02-STATE-CORE.JS (v0.10.10-53 Build 354)
+﻿// VOCAFLOW 02-STATE-CORE.JS (v0.10.10-54 Build 355)
 // Global constants, core database state, storage keys, recovery & audio engine
 // =========================================================================
 
     // =========================================================================
-    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.10-53 Build 354)
+    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.10-54 Build 355)
     // =========================================================================
-    const VOCAFLOW_APP_VERSION = 'v0.10.10-53';
-    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.10-53 (Build 354)';
-    const VOCAFLOW_APP_BUILD = 353;
+    const VOCAFLOW_APP_VERSION = 'v0.10.10-54';
+    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.10-54 (Build 355)';
+    const VOCAFLOW_APP_BUILD = 355;
     window.VOCAFLOW_APP_VERSION = VOCAFLOW_APP_VERSION;
     window.VOCAFLOW_APP_FULL_TITLE = VOCAFLOW_APP_FULL_TITLE;
     window.VOCAFLOW_APP_BUILD = VOCAFLOW_APP_BUILD;
@@ -1802,6 +1802,24 @@
     const STORAGE_KEY_AUTO_DELAY = 'vocaflow_auto_delay';
     const STORAGE_KEY_GEMINI_KEY = 'vocaflow_gemini_api_key';
     const STORAGE_KEY_GEMINI_KEYS = 'vocaflow_gemini_api_keys';
+    const STORAGE_KEY_AZURE_SPEECH_KEY = 'vocaflow_azure_speech_key';
+    const STORAGE_KEY_AZURE_SPEECH_REGION = 'vocaflow_azure_speech_region';
+    const STORAGE_KEY_SPEAKING_ENGINE_MODE = 'vocaflow_speaking_engine_mode';
+
+    function getEffectiveAzureSpeechKey() {
+      return (localStorage.getItem(STORAGE_KEY_AZURE_SPEECH_KEY) || (typeof window !== 'undefined' && window.VOCAFLOW_AZURE_SPEECH_KEY) || '').trim();
+    }
+    window.getEffectiveAzureSpeechKey = getEffectiveAzureSpeechKey;
+
+    function getEffectiveAzureSpeechRegion() {
+      return (localStorage.getItem(STORAGE_KEY_AZURE_SPEECH_REGION) || 'japaneast').trim().toLowerCase();
+    }
+    window.getEffectiveAzureSpeechRegion = getEffectiveAzureSpeechRegion;
+
+    function getSpeakingEngineMode() {
+      return localStorage.getItem(STORAGE_KEY_SPEAKING_ENGINE_MODE) || 'hybrid';
+    }
+    window.getSpeakingEngineMode = getSpeakingEngineMode;
 
     let currentSpeechRateEn = parseFloat(localStorage.getItem(STORAGE_KEY_SPEECH_RATE_EN)) || parseFloat(localStorage.getItem(STORAGE_KEY_SPEECH_RATE)) || 0.9;
     let currentSpeechRateVi = parseFloat(localStorage.getItem(STORAGE_KEY_SPEECH_RATE_VI)) || 1.0;
@@ -2053,6 +2071,7 @@
       if (scoreCb) scoreCb.checked = showFilterScoreSetting;
 
       updateSettingsApiKeysUI();
+      if (typeof updateSettingsAzureSpeechUI === 'function') updateSettingsAzureSpeechUI();
 
       const memeChk = document.getElementById('setting-vip-cat-meme');
       const durationSlider = document.getElementById('setting-vip-cat-meme-duration');

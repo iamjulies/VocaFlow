@@ -1,0 +1,9 @@
+v0.10.10-54
+KEY 1: [AZURE_SPEECH_KEY_CONFIGURED_IN_SETTINGS]
+KEY 2: [AZURE_SPEECH_KEY_CONFIGURED_IN_SETTINGS]
+Location/Region: japaneast
+Endpoint: https://japaneast.api.cognitive.microsoft.com/
+
+(Lưu ý nhỏ: Key này tương đương mật khẩu truy cập, nếu sau này đưa vào source code thì nhớ để trong file .env hoặc cấu hình biến môi trường, đừng commit thẳng file chứa key lên GitHub public)
+
+đọc và thực hiện các file markdown có trong "C:\Users\DELL\Documents\Modding\VocaFlow" (nếu quên)

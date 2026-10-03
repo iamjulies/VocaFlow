@@ -1,5 +1,5 @@
 ﻿// =========================================================================
-// VOCAFLOW 03-AUTH.JS (v0.10.10-53 Build 354)
+// VOCAFLOW 03-AUTH.JS (v0.10.10-54 Build 355)
 // Authentication, Cloud Sync, Community, Profiles & Social Network
 // =========================================================================
 
@@ -8071,7 +8071,7 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
     }
     window.filterCommunityFeed = filterCommunityFeed;
 
-    // Helper functions for author and comment resolution (v0.10.10-53 Realtime User Metadata Matcher)
+    // Helper functions for author and comment resolution (v0.10.10-54 Realtime User Metadata Matcher)
     function getLiveUserRegistryEntry(uid, name = '', handle = '') {
       const cleanName = (name || '').trim().toLowerCase();
       const cleanHandle = (handle || '').trim().toLowerCase().replace(/^@/, '');
@@ -10172,6 +10172,9 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
             claimedPrestigeChests: currentPrestigeChests,
             geminiApiKey: geminiApiKey || '',
             geminiApiKeys: getStoredApiKeys(),
+            azureSpeechKey: (typeof getEffectiveAzureSpeechKey === 'function' ? getEffectiveAzureSpeechKey() : localStorage.getItem('vocaflow_azure_speech_key')) || '',
+            azureSpeechRegion: (typeof getEffectiveAzureSpeechRegion === 'function' ? getEffectiveAzureSpeechRegion() : localStorage.getItem('vocaflow_azure_speech_region')) || 'japaneast',
+            speakingEngineMode: (typeof getSpeakingEngineMode === 'function' ? getSpeakingEngineMode() : localStorage.getItem('vocaflow_speaking_engine_mode')) || 'hybrid',
             followerCount: Math.max(currentUser.followerCount || 0, Object.keys(myFollowersMap || {}).length),
             followingCount: Math.max(currentUser.followingCount || 0, Object.keys(myFollowingMap || {}).length),
             isVip: isUserVip(),
@@ -10826,6 +10829,21 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
         cloudData.geminiApiKey = geminiApiKey;
         cloudData.geminiApiKeys = getStoredApiKeys(false);
       }
+
+      // Sync Azure AI Speech Settings
+      const remAzureKey = (cloudData.profile && cloudData.profile.azureSpeechKey) || cloudData.azureSpeechKey;
+      if (remAzureKey && !localStorage.getItem(STORAGE_KEY_AZURE_SPEECH_KEY)) {
+        localStorage.setItem(STORAGE_KEY_AZURE_SPEECH_KEY, remAzureKey);
+      }
+      const remAzureRegion = (cloudData.profile && cloudData.profile.azureSpeechRegion) || cloudData.azureSpeechRegion;
+      if (remAzureRegion && !localStorage.getItem(STORAGE_KEY_AZURE_SPEECH_REGION)) {
+        localStorage.setItem(STORAGE_KEY_AZURE_SPEECH_REGION, remAzureRegion);
+      }
+      const remSpkMode = (cloudData.profile && cloudData.profile.speakingEngineMode) || cloudData.speakingEngineMode;
+      if (remSpkMode && !localStorage.getItem(STORAGE_KEY_SPEAKING_ENGINE_MODE)) {
+        localStorage.setItem(STORAGE_KEY_SPEAKING_ENGINE_MODE, remSpkMode);
+      }
+      if (typeof updateSettingsAzureSpeechUI === 'function') updateSettingsAzureSpeechUI();
 
       // 4. Decks & Words with Tombstone Guard & Deduplication
       const remoteDecks = Array.isArray(cloudData.decks) ? cloudData.decks : (cloudData.decks ? Object.values(cloudData.decks) : []);

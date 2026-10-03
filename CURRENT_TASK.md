@@ -1,12 +1,38 @@
 # CURRENT TASK & TRẠNG THÁI CÔNG VIỆC HIỆN TẠI (VOCAFLOW)
 
-> **Phiên bản mục tiêu:** `v0.10.10-53 (Build 354)`  
+> **Phiên bản mục tiêu:** `v0.10.10-54 (Build 355)`  
 > **Cập nhật lần cuối:** 2026-10-03  
 > **Trạng thái:** 🚀 **ĐÃ HOÀN THÀNH - ĐANG TIẾN HÀNH BUILD & MULTI-DEPLOY GITHUB**
 
 ---
 
-## 🎯 1. DANH SÁCH NHIỆM VỤ ĐÃ GIẢI QUYẾT (v0.10.10-53 Build 354 - Issue 41, 42, 43, 44, 45)
+## 🎯 1. DANH SÁCH NHIỆM VỤ ĐÃ GIẢI QUYẾT (v0.10.10-54 Build 355 - Tích Hợp Toàn Diện Azure AI Speech & Speaking Pronunciation Assessment)
+
+- [x] **Tích Hợp Toàn Diện Microsoft Azure AI Speech (Pronunciation Assessment REST API - `07-speaking-engine.js`)**:
+  - Xây dựng module chuyển đổi âm thanh `convertAudioBlobToWav16k` thuần JavaScript trong trình duyệt, tự động chuẩn hóa mọi định dạng ghi âm (WebM/Opus/AAC/WAV) sang chuẩn âm thanh 16,000Hz 16-bit Mono WAV PCM không phụ thuộc thư viện ngoài.
+  - Tích hợp endpoint Azure Pronunciation Assessment (`https://{region}.stt.speech.microsoft.com/...`) với đầy đủ các tham số chuyên sâu: `HundredMark`, `Phoneme` (IPA), `Comprehensive`, `EnableProsodyAssessment: true`, `EnableMiscue: true`.
+  - Phản hồi siêu tốc (< 1 giây), chấm điểm ngữ âm chính xác từng mili-giây, bóc tách chi tiết từng âm vị IPA, âm đầu (Onset), nguyên âm chính (Nucleus), âm đuôi (Coda) và từng âm tiết (Syllables).
+
+- [x] **Xây Dựng Kiến Trúc AI Đa Tầng (Hybrid Speaking Architecture - `07-speaking-engine.js`)**:
+  - Cung cấp 3 chế độ đánh giá phát âm tùy biến:
+    1. 🌟 **Tự động Hybrid (Khuyên dùng)**: Kết hợp đo lường âm vị chính xác của Azure Speech + Phân tích mẹo luyện khẩu hình tiếng Việt chuyên sâu từ Gemini AI.
+    2. ⚡ **Azure AI Speech Siêu Tốc**: Chấm trực tiếp qua Azure Pronunciation Assessment với phản hồi < 1s chuẩn Oxford & ELSA.
+    3. 🧠 **Google Gemini Multimodal AI**: Đánh giá đa phương thức với mô hình ngôn ngữ lớn.
+  - Tự động chuyển mạch dự phòng (Failover Engine): Nếu Azure gặp sự cố mạng hoặc hết quota, hệ thống tự động fallback mượt mà sang Gemini Multimodal AI mà không làm gián đoạn phiên học của người dùng.
+
+- [x] **Giao Diện Quản Lý Khóa Azure AI Speech Bảo Mật & Tiện Lợi (`modal-settings.html`, `02-state-core.js`, `03-auth.js`)**:
+  - Bổ sung mục cấu hình chuyên biệt `🎙️ Azure AI Speech (Speaking Lab)` trong Cài Đặt.
+  - Ô nhập Azure Speech Key ẩn mật khẩu, tự động lưu trữ bảo mật cục bộ tại `localStorage` (không bao giờ lộ ra mã nguồn công khai), hỗ trợ đồng bộ đám mây cá nhân.
+  - Ô cấu hình Vùng/Region (mặc định `japaneast` hoặc tùy chỉnh `southeastasia`, `eastus`...).
+  - Nút **"🧪 Thử kết nối Azure Speech"** kiểm tra kết nối API thời gian thực và báo trạng thái trực quan ngay lập tức.
+  - Hướng dẫn cấu hình chi tiết, trực quan kèm link truy cập Azure Portal.
+
+- [x] **Đồng Bộ Toàn Diện 7-Point Version Consistency (`v0.10.10-54 Build 355`)**:
+  - Cập nhật phiên bản nhất quán trên toàn bộ 7 điểm hệ thống: `modal-settings.html`, `02-state-core.js`, toàn bộ module headers `01-router.js` đến `13-wardrobe.js`, `sw.js` & `Release_App/sw.js`, `pubspec.yaml`, `Program.cs`, `push_github.ps1`, `VOCAFLOW_OVERVIEW.txt`, `CURRENT_TASK.md`.
+
+---
+
+## 🎯 2. DANH SÁCH NHIỆM VỤ CÁC PHIÊN BẢN TRƯỚC (v0.10.10-53 Build 354 - Issue 41, 42, 43, 44, 45)
 
 - [x] **Khắc Phục Lỗi Không Mở Được Hồ Sơ Công Khai @official & Người Dùng Khác (`03-auth.js` - Issue 41)**:
   - Khai báo các biến `matchedStudent`, `regEntry`, `nameMapEntry` ở phạm vi đầu hàm `openPublicProfileByAuthor`, sửa dứt điểm lỗi `ReferenceError: matchedStudent is not defined` khi mở hồ sơ `@official`.

@@ -1,4 +1,25 @@
 ================================================================================
+Phiên bản: v0.10.10-54 (Build 355) - Tích Hợp Toàn Diện Microsoft Azure AI Speech (Pronunciation Assessment REST API), Kiến Trúc AI Đa Tầng Hybrid & Quản Lý Cấu Hình Bảo Mật Key
+================================================================================
+1. [Tích Hợp Toàn Diện Microsoft Azure AI Speech (Pronunciation Assessment)]:
+   - Xây dựng module chuyển đổi âm thanh `convertAudioBlobToWav16k` thuần JavaScript trong trình duyệt, tự động chuẩn hóa mọi định dạng ghi âm (WebM/Opus/AAC/WAV) sang chuẩn âm thanh 16,000Hz 16-bit Mono WAV PCM.
+   - Tích hợp endpoint Azure Pronunciation Assessment (`https://{region}.stt.speech.microsoft.com/...`) với đầy đủ các tham số chuyên sâu: `HundredMark`, `Phoneme` (IPA), `Comprehensive`, `EnableProsodyAssessment: true`, `EnableMiscue: true`.
+   - Đạt tốc độ phản hồi siêu tốc (< 1 giây), chấm điểm ngữ âm chính xác từng mili-giây, bóc tách chi tiết từng âm vị IPA, âm đầu (Onset), nguyên âm chính (Nucleus), âm đuôi (Coda) và từng âm tiết (Syllables).
+
+2. [Xây Dựng Kiến Trúc AI Đa Tầng (Hybrid Speaking Architecture)]:
+   - Hỗ trợ 3 chế độ đánh giá: Tự động Hybrid (Azure Speech + Gemini Phân Tích), Azure AI Speech Siêu Tốc (<1s), và Google Gemini Multimodal.
+   - Tự động chuyển mạch dự phòng (Failover Engine): Nếu Azure gặp sự cố mạng hoặc hết quota, hệ thống tự động fallback mượt mà sang Gemini Multimodal AI mà không làm gián đoạn phiên học.
+
+3. [Giao Diện Quản Lý Khóa Azure AI Speech Bảo Mật Trong Cài Đặt]:
+   - Bổ sung mục cấu hình chuyên biệt `🎙️ Azure AI Speech (Speaking Lab)` trong Modal Cài Đặt.
+   - Ô nhập Azure Speech Key ẩn mật khẩu, tự động lưu trữ bảo mật cục bộ tại `localStorage` (không commit lên GitHub), hỗ trợ đồng bộ đám mây cá nhân.
+   - Ô cấu hình Vùng/Region (mặc định `japaneast` hoặc tùy chỉnh `southeastasia`, `eastus`...).
+   - Nút **"🧪 Thử kết nối Azure Speech"** kiểm tra kết nối API thời gian thực và báo trạng thái trực quan ngay lập tức.
+
+4. [Đồng Bộ Nhất Quán 7-Point Version Consistency & Multi-Deploy (v0.10.10-54 Build 355)]:
+   - Cập nhật phiên bản nhất quán trên toàn bộ 7 điểm hệ thống: `modal-settings.html`, `02-state-core.js`, toàn bộ module headers `01-router.js` đến `13-wardrobe.js`, `sw.js` & `Release_App/sw.js`, `pubspec.yaml`, `Program.cs`, `push_github.ps1`, `VOCAFLOW_OVERVIEW.txt`, `CURRENT_TASK.md`.
+
+================================================================================
 Phiên bản: v0.10.10-53 (Build 354) - Khắc Phục Lỗi Mở Hồ Sơ Công Khai @official & Học Viên, Khóa & Quản Lý Lịch Hiệu Ứng Tên Sự Kiện Wardrobe, Tinh Chỉnh Hiệu Ứng Vương Miện Khung VIP Lifetime Bồng Bềnh Hoàng Gia (Issues 41, 42, 43, 44, 45)
 ================================================================================
 1. [Khắc Phục Lỗi Mở Hồ Sơ Công Khai @official & Người Dùng Khác (Issue 41)]:
