@@ -1,12 +1,38 @@
 # CURRENT TASK & TRẠNG THÁI CÔNG VIỆC HIỆN TẠI (VOCAFLOW)
 
-> **Phiên bản mục tiêu:** `v0.10.10-51 (Build 352)`  
+> **Phiên bản mục tiêu:** `v0.10.10-52 (Build 353)`  
 > **Cập nhật lần cuối:** 2026-10-03  
-> **Trạng thái:** 🚀 **ĐANG TIẾN HÀNH BUILD, KIỂM THỬ TỰ ĐỘNG & MULTI-DEPLOY GITHUB**
+> **Trạng thái:** 🚀 **ĐÃ HOÀN THÀNH - ĐANG TIẾN HÀNH BUILD & MULTI-DEPLOY GITHUB**
 
 ---
 
-## 🎯 1. DANH SÁCH NHIỆM VỤ ĐÃ GIẢI QUYẾT (v0.10.10-51 Build 352 - Issue 32, 33, 34, 35)
+## 🎯 1. DANH SÁCH NHIỆM VỤ ĐÃ GIẢI QUYẾT (v0.10.10-52 Build 353 - Issue 36, 37, 38, 39, 40)
+
+- [x] **Khắc Phục Lỗi Lệch Khung Avatar & Danh Xưng Community Tab Trong Hồ Sơ Công Khai (`03-auth.js` - Issue 36, Ảnh 124607.png)**:
+  - Lưu trữ trực tiếp `targetWardrobe` và `vipTier` vào `currentPublicProfileAuthor` ngay khi tính toán xong, ngăn chặn việc rơi về khung tím VIP mặc định khi render tab Bài Viết Cộng Đồng trong hồ sơ công khai (`renderPubProfileCommunityPosts`).
+  - Sử dụng `getAuthorVipTier(post.authorUid, authorName)` để phân loại chính xác các cấp bậc VIP (Monthly, Yearly, Lifetime).
+
+- [x] **Đồng Bộ Toàn Diện Hiệu Ứng Tên & Danh Hiệu @official Trong Community Center (`03-auth.js` - Issue 37, Ảnh 124634.png)**:
+  - Chuẩn hóa nhận diện tác giả `@official` với mọi bí danh (VocaFlow Chuẩn, VocaFlow Official, VocaFlow VocaVIP Official).
+  - Hiển thị nhất quán chữ Gradient vàng/hồng/tím kèm vương miện hoàng gia 👑 và huy hiệu `👑 Đội Ngũ Phát Triển` trên mọi thẻ bài viết và bình luận cộng đồng.
+
+- [x] **Khắc Phục Lỗi Bị Ghi Đè Hồ Sơ @iamjulies Trong Community Center (`03-auth.js` - Issue 38, Ảnh 124653.png)**:
+  - Tái cấu trúc cơ chế tra cứu `getLiveUserRegistryEntry`: Ưu tiên tuyệt đối `currentUser` lên đầu tiên, cho phép người dùng `@iamjulies` tự do đổi tên hiển thị (như bé pè thâm), ảnh đại diện cá nhân, khung viền (Bé Mèo), hiệu ứng tên và danh xưng mà không bị ghi đè bởi hồ sơ mặc định của Founder.
+
+- [x] **Thiết Lập /me (Hồ Sơ Cá Nhân) Làm Single Source of Truth (`03-auth.js`, `13-wardrobe.js` - Issue 39, Ảnh 125120.png)**:
+  - Đồng bộ hóa nhất quán 100% mọi tùy chỉnh thẩm mỹ (Khung viền Avatar, Hiệu ứng tên, Danh xưng, Ảnh đại diện) từ trang cá nhân `/me` sang Header Desktop/Mobile, Bảng tin Cộng đồng, Danh sách bình luận, và Hồ sơ công khai.
+  - Khắc phục xung đột giữa `updateAuthUI` và `applyWardrobeToActiveUI`, đảm bảo huy hiệu danh xưng hiển thị đúng trang bị Wardrobe thay vì bị đè bởi chuỗi VIP mặc định.
+
+- [x] **Đồng Bộ Hiệu Ứng Tên Lên Tác Giả Bộ Từ VocaDeck & Sửa Lỗi Thẻ HTML Header (`04-decks-manager.js`, `header.html` - Issue 40, Ảnh 124718.png)**:
+  - Đồng bộ hiệu ứng tên tác giả bộ từ trong danh sách VocaDeck (`renderDecks`) và màn hình chi tiết bộ từ (`openDeckDetail`) khớp chính xác với hiệu ứng trong Tủ Đồ và Hồ sơ cá nhân.
+  - Sửa lỗi thẻ HTML đóng `</button>` bị thiếu ở nút VocaShop (`btn-shop`) trong `src/components/header.html`.
+
+- [x] **Đồng Bộ Toàn Diện 7-Point Version Consistency (`v0.10.10-52 Build 353`)**:
+  - Cập nhật phiên bản nhất quán trên toàn bộ 7 điểm hệ thống: `modal-settings.html`, `02-state-core.js`, toàn bộ module headers `01-router.js` đến `13-wardrobe.js`, `sw.js` & `Release_App/sw.js`, `pubspec.yaml`, `Program.cs`, `push_github.ps1`, `VOCAFLOW_OVERVIEW.txt`, `CURRENT_TASK.md`.
+
+---
+
+## 🎯 2. DANH SÁCH NHIỆM VỤ CÁC PHIÊN BẢN TRƯỚC (v0.10.10-51 Build 352 - Issue 32, 33, 34, 35)
 
 - [x] **Khắc Phục Lỗi Mất Lượt Quay May Mắn VocaSpin & Không Được Cộng (`10-lucky-wheel.js`, `08-wallet-economy.js`, `12-achievements.js` - Issue 32)**:
   - Loại bỏ hoàn toàn `localStorage.setItem('vocaflow_last_spin_date', getTodayString())` khỏi `setLuckySpinsCount()`, chỉ cập nhật ngày quay khi thực sự quay trong `triggerLuckyWheelSpin()`.

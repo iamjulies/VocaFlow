@@ -1,0 +1,8 @@
+v0.10.10-52
+vấn đề 36: hiệu ứng viền ảnh và danh xưng ở trung tâm cộng đồng đang không đồng bộ với public profile của người khác: "C:\Users\DELL\Pictures\Screenshots\Ảnh chụp màn hình 2026-10-03 124607.png"
+vấn đề 37: hiệu ứng tên và danh xưng ở trung tâm cộng đồng đang không đồng bộ với public profile của @official: "C:\Users\DELL\Pictures\Screenshots\Ảnh chụp màn hình 2026-10-03 124634.png"
+vấn đề 38: hiệu ứng tên, danh xưng, hiệu ứng khung viền và ảnh đại diện ở trung tâm cộng đồng đang không đồng bộ với public profile của @iamjulies: "C:\Users\DELL\Pictures\Screenshots\Ảnh chụp màn hình 2026-10-03 124653.png"
+vấn đề 39: lấy hiệu ứng tên, danh xưng, hiệu ứng viền, ảnh đại diện ở trang cá nhân /me làm giá trị chuẩn để đồng bộ sang mấy chỗ khác "C:\Users\DELL\Pictures\Screenshots\Ảnh chụp màn hình 2026-10-03 125120.png"
+vấn đề 40: hiệu ứng tên ở /me chưa được đồng bộ ra tên gắn ở trên bộ từ vựng "C:\Users\DELL\Pictures\Screenshots\Ảnh chụp màn hình 2026-10-03 124718.png"
+
+đọc và thực hiện các file markdown có trong "C:\Users\DELL\Documents\Modding\VocaFlow" (nếu quên)

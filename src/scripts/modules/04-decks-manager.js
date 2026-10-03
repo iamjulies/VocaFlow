@@ -1,5 +1,5 @@
 // =========================================================================
-// VOCAFLOW 04-DECKS-MANAGER.JS (v0.10.10-51 Build 352)
+// VOCAFLOW 04-DECKS-MANAGER.JS (v0.10.10-52 Build 353)
 // Quản lý VocaDecks, Vocabulary Lists, Import/Export & CRUD Operations
 // =========================================================================
 
@@ -1098,12 +1098,22 @@
             const authorWardrobe = (currentUser && liveAuthorUid === currentUser.uid)
               ? (typeof getEquippedWardrobe === 'function' ? getEquippedWardrobe() : null)
               : (typeof getLiveUserRegistryEntry === 'function' ? getLiveUserRegistryEntry(liveAuthorUid, liveAuthor)?.equippedWardrobe : null);
-            const authorNameEffect = (authorWardrobe?.nameEffect && authorWardrobe.nameEffect !== 'default')
-              ? authorWardrobe.nameEffect
-              : (isVipAuth ? 'vip' : 'default');
-            const authorFormattedName = (typeof renderUsernameWithEffectHtml === 'function')
-              ? renderUsernameWithEffectHtml(liveAuthor, authorNameEffect)
-              : escapeHtml(liveAuthor);
+            const isDeckOfficial = liveAuthorUid === 'official' || (liveAuthor && (liveAuthor.toLowerCase().includes('vocaflow chuẩn') || liveAuthor.toLowerCase().includes('vocaflow official') || liveAuthor.toLowerCase().includes('vocaflow vocavip official')));
+            const isDeckFounder = liveAuthorUid === 'iamjulies' || (liveAuthor && liveAuthor.toLowerCase() === 'julies');
+
+            let authorFormattedName = '';
+            if (isDeckOfficial) {
+              authorFormattedName = `<span class="vip-name-wrapper" style="gap: 4px;"><span class="vip-glowing-name" style="font-size: 1.05em; background: linear-gradient(135deg, #f59e0b, #ec4899, #8b5cf6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 800;">${escapeHtml(liveAuthor)}</span><span style="font-size: 1.1em;" title="Đội ngũ sáng lập & phát triển VocaFlow">👑</span></span>`;
+            } else if (isDeckFounder && (!authorWardrobe || authorWardrobe.nameEffect === 'default' || authorWardrobe.nameEffect === 'mythic')) {
+              authorFormattedName = `<span class="vip-name-wrapper" style="gap: 4px;"><span class="vip-glowing-name" style="font-size: 1.05em; background: linear-gradient(135deg, #f59e0b, #ec4899, #8b5cf6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 800;">${escapeHtml(liveAuthor)}</span><span style="font-size: 1.1em;" title="Nhà Sáng Lập & Phát Triển VocaFlow">👑</span></span>`;
+            } else {
+              const authorNameEffect = (authorWardrobe?.nameEffect && authorWardrobe.nameEffect !== 'default')
+                ? authorWardrobe.nameEffect
+                : (isVipAuth ? 'vip' : 'default');
+              authorFormattedName = (typeof renderUsernameWithEffectHtml === 'function')
+                ? renderUsernameWithEffectHtml(liveAuthor, authorNameEffect)
+                : escapeHtml(liveAuthor);
+            }
             return `
               <div class="deck-meta-footer" style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 4px; margin-top: 8px;">
                 <span class="deck-timestamp" style="margin-top: 0;">🕒 Cập nhật: ${formatDateTime(deck.updatedAt || deck.createdAt)}</span>
@@ -1237,12 +1247,22 @@
           const authorWardrobe = (currentUser && liveAuthorUid === currentUser.uid)
             ? (typeof getEquippedWardrobe === 'function' ? getEquippedWardrobe() : null)
             : (typeof getLiveUserRegistryEntry === 'function' ? getLiveUserRegistryEntry(liveAuthorUid, liveAuthor)?.equippedWardrobe : null);
-          const authorNameEffect = (authorWardrobe?.nameEffect && authorWardrobe.nameEffect !== 'default')
-            ? authorWardrobe.nameEffect
-            : (isVipAuth ? 'vip' : 'default');
-          const authorFormattedName = (typeof renderUsernameWithEffectHtml === 'function')
-            ? renderUsernameWithEffectHtml(liveAuthor, authorNameEffect)
-            : escapeHtml(liveAuthor);
+          const isDeckOfficial = liveAuthorUid === 'official' || (liveAuthor && (liveAuthor.toLowerCase().includes('vocaflow chuẩn') || liveAuthor.toLowerCase().includes('vocaflow official') || liveAuthor.toLowerCase().includes('vocaflow vocavip official')));
+          const isDeckFounder = liveAuthorUid === 'iamjulies' || (liveAuthor && liveAuthor.toLowerCase() === 'julies');
+
+          let authorFormattedName = '';
+          if (isDeckOfficial) {
+            authorFormattedName = `<span class="vip-name-wrapper" style="gap: 4px;"><span class="vip-glowing-name" style="font-size: 1.05em; background: linear-gradient(135deg, #f59e0b, #ec4899, #8b5cf6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 800;">${escapeHtml(liveAuthor)}</span><span style="font-size: 1.1em;" title="Đội ngũ sáng lập & phát triển VocaFlow">👑</span></span>`;
+          } else if (isDeckFounder && (!authorWardrobe || authorWardrobe.nameEffect === 'default' || authorWardrobe.nameEffect === 'mythic')) {
+            authorFormattedName = `<span class="vip-name-wrapper" style="gap: 4px;"><span class="vip-glowing-name" style="font-size: 1.05em; background: linear-gradient(135deg, #f59e0b, #ec4899, #8b5cf6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 800;">${escapeHtml(liveAuthor)}</span><span style="font-size: 1.1em;" title="Nhà Sáng Lập & Phát Triển VocaFlow">👑</span></span>`;
+          } else {
+            const authorNameEffect = (authorWardrobe?.nameEffect && authorWardrobe.nameEffect !== 'default')
+              ? authorWardrobe.nameEffect
+              : (isVipAuth ? 'vip' : 'default');
+            authorFormattedName = (typeof renderUsernameWithEffectHtml === 'function')
+              ? renderUsernameWithEffectHtml(liveAuthor, authorNameEffect)
+              : escapeHtml(liveAuthor);
+          }
           const authorHtml = `<span style="cursor: pointer; display: inline-flex; align-items: center; gap: 4px;" onclick="openPublicProfileModal('${escapeHtml(liveAuthor)}', '${escapeHtml(liveAuthorUid)}', '${escapeHtml(deck.libSourceId || deck.id)}')" title="Xem hồ sơ tác giả">👤 ${authorFormattedName}</span>`;
           timeEl.innerHTML = `${timeText} • ${authorHtml}`;
         } else {

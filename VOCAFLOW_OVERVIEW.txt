@@ -1,4 +1,29 @@
 ================================================================================
+Phiên bản: v0.10.10-52 (Build 353) - Đồng Bộ Toàn Diện Hồ Sơ Cá Nhân /me Làm Nguồn Chuẩn Duy Nhất (Single Source of Truth) Cho Hiệu Ứng Tên, Khung Viền Avatar, Danh Xưng & Ảnh Đại Diện Trên Toàn Bộ Bảng Tin Cộng Đồng, Hồ Sơ Công Khai & VocaDecks (Issues 36, 37, 38, 39, 40)
+================================================================================
+1. [Khắc Phục Lỗi Lệch Khung Avatar & Danh Xưng Community Tab Trong Hồ Sơ Công Khai (Issue 36)]:
+   - Lưu trữ trực tiếp `targetWardrobe` và `vipTier` vào đối tượng tác giả `currentPublicProfileAuthor` ngay khi tính toán xong, ngăn chặn việc rơi về khung tím VIP mặc định khi render tab Bài Viết Cộng Đồng trong hồ sơ công khai (`renderPubProfileCommunityPosts`).
+   - Sử dụng `getAuthorVipTier(post.authorUid, authorName)` để phân loại chính xác các cấp bậc VIP (Monthly, Yearly, Lifetime).
+
+2. [Đồng Bộ Toàn Diện Hiệu Ứng Tên & Danh Hiệu @official Trong Community Center (Issue 37)]:
+   - Chuẩn hóa nhận diện tác giả `@official` với mọi bí danh (VocaFlow Chuẩn, VocaFlow Official, VocaFlow VocaVIP Official).
+   - Hiển thị nhất quán chữ Gradient vàng/hồng/tím kèm vương miện hoàng gia 👑 và huy hiệu `👑 Đội Ngũ Phát Triển` trên mọi thẻ bài viết và bình luận cộng đồng.
+
+3. [Khắc Phục Lỗi Bị Ghi Đè Hồ Sơ @iamjulies Trong Community Center (Issue 38)]:
+   - Tái cấu trúc cơ chế tra cứu `getLiveUserRegistryEntry`: Ưu tiên tuyệt đối `currentUser` lên đầu tiên, cho phép người dùng `@iamjulies` tự do đổi tên hiển thị (như bé pè thâm), ảnh đại diện cá nhân, khung viền (Bé Mèo), hiệu ứng tên và danh xưng mà không bị ghi đè bởi hồ sơ mặc định của Founder.
+
+4. [Thiết Lập /me (Hồ Sơ Cá Nhân) Làm Single Source of Truth (Issue 39)]:
+   - Đồng bộ hóa nhất quán 100% mọi tùy chỉnh thẩm mỹ (Khung viền Avatar, Hiệu ứng tên, Danh xưng, Ảnh đại diện) từ trang cá nhân `/me` sang Header Desktop/Mobile, Bảng tin Cộng đồng, Danh sách bình luận, và Hồ sơ công khai.
+   - Khắc phục xung đột giữa `updateAuthUI` và `applyWardrobeToActiveUI`, đảm bảo huy hiệu danh xưng hiển thị đúng trang bị Wardrobe thay vì bị đè bởi chuỗi VIP mặc định.
+
+5. [Đồng Bộ Hiệu Ứng Tên Lên Tác Giả Bộ Từ VocaDeck & Sửa Lỗi Thẻ HTML Header (Issue 40)]:
+   - Đồng bộ hiệu ứng tên tác giả bộ từ trong danh sách VocaDeck (`renderDecks`) và màn hình chi tiết bộ từ (`openDeckDetail`) khớp chính xác với hiệu ứng trong Tủ Đồ và Hồ sơ cá nhân.
+   - Sửa lỗi thẻ HTML đóng `</button>` bị thiếu ở nút VocaShop (`btn-shop`) trong `src/components/header.html`.
+
+6. [Đồng Bộ Nhất Quán 7-Point Version Consistency & Multi-Deploy (v0.10.10-52 Build 353)]:
+   - Cập nhật phiên bản nhất quán trên toàn bộ 7 điểm hệ thống: `modal-settings.html`, `02-state-core.js`, toàn bộ module headers `01-router.js` đến `13-wardrobe.js`, `sw.js` & `Release_App/sw.js`, `pubspec.yaml`, `Program.cs`, `push_github.ps1`, `VOCAFLOW_OVERVIEW.txt`, `CURRENT_TASK.md`.
+
+================================================================================
 Phiên bản: v0.10.10-51 (Build 352) - Khắc Phục Lỗi Mất Lượt Quay May Mắn VocaSpin & Đồng Bộ Toàn Diện Hiệu Ứng Tên, Khung Viền Avatar, Danh Hiệu Wardrobe Trên Public Profile, Danh Sách Người Theo Dõi & Bảng Tin Cộng Đồng (Issues 32, 33, 34, 35)
 ================================================================================
 1. [Khắc Phục Lỗi Mất & Không Được Cộng Lượt Quay VocaSpin (Issue 32)]:
