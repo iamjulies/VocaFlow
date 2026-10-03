@@ -1,5 +1,5 @@
 ﻿// =========================================================================
-// VOCAFLOW 08-WALLET-ECONOMY.JS (v0.10.10-56 Build 357)
+// VOCAFLOW 08-WALLET-ECONOMY.JS (v0.10.10-57 Build 358)
 // Economy, Wallet, Ledger, Lucky Spin, Cat Meme Reactions, Brain Energy & Study Settlements
 // =========================================================================
 
@@ -304,22 +304,22 @@
           }
         } else if (prize.type === 'POINTS') {
           const rawPts = prize.val || 0;
-          const taxRes = (typeof calculateNonStudyCoinTax === 'function')
-            ? calculateNonStudyCoinTax(rawPts, 'LUCKY_WHEEL')
-            : { netAmount: rawPts, taxAmount: 0, taxRate: 0, notice: '' };
+          const eta = (typeof getDailyFatigueEfficiency === 'function') ? getDailyFatigueEfficiency() : 1.0;
+          const finalPts = Math.max(1, Math.round(rawPts * eta));
 
-          if (typeof recordTodayNonStudyEarnedCoins === 'function') {
-            recordTodayNonStudyEarnedCoins(taxRes.netAmount);
+          setUserPoints(getUserPoints() + finalPts);
+          if (typeof recordTodayEarnedCoins === 'function') {
+            recordTodayEarnedCoins(finalPts);
           }
 
-          setUserPoints(getUserPoints() + taxRes.netAmount);
-          const ledgerDesc = `🎁 Trúng ${rawPts} VoCoin từ VocaWheel${taxRes.notice}`;
-          addLedgerEntry('LUCKY_WHEEL', taxRes.netAmount, ledgerDesc);
+          const energyNotice = (eta < 0.95) ? ` (⚡ Năng lượng: ${Math.round(eta * 100)}%)` : '';
+          const ledgerDesc = `🎁 Trúng ${finalPts} VoCoin từ VocaWheel${energyNotice}`;
+          addLedgerEntry('LUCKY_WHEEL', finalPts, ledgerDesc);
 
-          if (taxRes.taxAmount > 0) {
-            prizeMsg = `🎉 Trúng ${rawPts} VoCoin (Nhận thực tế: +${taxRes.netAmount} VoCoin do thuế bão hòa ngày ${taxRes.taxRate}%)`;
+          if (eta < 0.95) {
+            prizeMsg = `🎉 Trúng +${finalPts} VoCoin! (⚡ Năng lượng tập trung: ${Math.round(eta * 100)}%)`;
           } else {
-            prizeMsg = `🎉 Chúc mừng bạn đã trúng +${taxRes.netAmount} VoCoin!`;
+            prizeMsg = `🎉 Chúc mừng bạn đã trúng +${finalPts} VoCoin!`;
           }
           saveDatabase(true);
           pushCurrentDatabaseToCloud();

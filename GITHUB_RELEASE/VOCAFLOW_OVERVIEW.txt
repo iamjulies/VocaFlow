@@ -1,4 +1,58 @@
 ================================================================================
+Phiên bản: v0.10.10-57 (Build 358) - Tối Ưu Hóa Trải Nghiệm Khởi Đầu: Tái Sử Dụng Cẩm Nang Hướng Dẫn Có Sẵn (modal-user-guide) & Chuẩn Hóa Cơ Chế Soft-Cap Bão Hòa Cho Nguồn Thu Ngoài Học Tập
+================================================================================
+1. [Tái Sử Dụng Cẩm Nang Hướng Dẫn Có Sẵn Cho Người Dùng Mới (modal-user-guide)]:
+   - Xóa bỏ modal chào mừng dư thừa modal-welcome-onboarding.html, chuyển hướng toàn bộ người dùng mới và route /guide mở trực tiếp cẩm nang đa tầng có sẵn modal-user-guide (openUserGuideModal('starter', 0)).
+   - Tối ưu nút Cẩm Nang trong modal Cài Đặt và cơ chế tự động mở hướng dẫn khởi đầu từng bước khi mở app lần đầu (vocaflow_guide_shown).
+
+2. [Chuẩn Hóa Động Cơ Bão Hòa / Soft-Cap Theo Chuẩn v0.10.10-30]:
+   - Hoàn nguyên và loại bỏ toàn bộ code tính thuế lũy tiến (calculateNonStudyCoinTax) và thuật ngữ tiêu cực ("Thuế", "Tax", "Phạt").
+   - Ứng dụng động cơ Soft-Cap Logarit trơn có sẵn (getDailyFatigueEfficiency) cho nguồn thu ngoài học tập (Vòng quay may mắn VocaWheel), tính toán hiệu suất tiếp thu eta(E_today) = 1 / (1 + ln(1 + E_today / K)) và ghi nhận vào hạn ngạch ngày tích lũy (recordTodayEarnedCoins), hiển thị chỉ số tích cực "⚡ Năng lượng tập trung".
+
+3. [Đồng Bộ Toàn Diện 7-Point Version Consistency & Multi-Deploy (v0.10.10-57 Build 358)]:
+   - Cập nhật phiên bản nhất quán trên toàn bộ 7 điểm hệ thống: modal-settings.html, 02-state-core.js, toàn bộ module headers 01-router.js đến 13-wardrobe.js, sw.js & Release_App/sw.js, pubspec.yaml, Program.cs, push_github.ps1, VOCAFLOW_OVERVIEW.txt, CURRENT_TASK.md.
+
+================================================================================
+Phiên bản: v0.10.10-56 (Build 357) - Tinh Chỉnh Hoàn Thiện Cuối Cùng Tiến Lên v1.0-0: Onboarding Guide Trực Tuyến, Khóa Quyền Guest/Free Chuẩn Mực, Thuế Bão Hòa Thu Nhập Ngoài Học Tập, Tối Ưu Bàn Phím Ảo Di Động & Nhắc Nhở Sao Lưu
+================================================================================
+1. [Trải Nghiệm Người Dùng Mới & Cẩm Nang Onboarding Trực Tuyến]:
+   - Thêm modal chào mừng `modal-welcome-onboarding` cho người dùng mới khi mở app lần đầu với 3 bước thiết lập nhanh và nút mở link trực tiếp cẩm nang hướng dẫn `https://iamjulies.github.io/VocaFlow/guide`.
+
+2. [Khóa Quyền Chuẩn Mực Cho Guest & Free User]:
+   - Tích hợp chuẩn hóa `openGuestFeatureLockModal` và `openVipPricingModal` trên toàn bộ các phòng học VIP (Sentence Writing Lab VIP, Dictation Lab VIP, Translation Lab VIP, Cloze Test VIP), Vòng quay may mắn và Tủ đồ Wardrobe.
+
+3. [Bảo Mật Tuyệt Đối .gitignore]:
+   - Rà soát và thêm đầy đủ mẫu bỏ qua token (`.git_token`, `**/.git_token`, `GITHUB_RELEASE/.git_token`, `*.token`, `**/*.token`) ngăn ngừa lộ token lên GitHub public repository.
+
+4. [Tối Ưu Hóa Giao Diện Bàn Phím Ảo Trên Di Động (Mobile Virtual Keyboard UX)]:
+   - Bổ sung bộ lắng nghe `setupMobileVirtualKeyboardAutoScroll` tự động cuộn input/textarea vào giữa màn hình khi focus trên mobile hoặc khi `visualViewport` thay đổi kích thước, kèm CSS chống auto-zoom trên iOS Safari.
+
+5. [Khuyến Nghị An Toàn Dữ Liệu & Nút Xuất Sao Lưu 1-Click Trong Cài Đặt]:
+   - Bổ sung khung nhắc nhở an toàn dữ liệu kèm 2 nút xuất sao lưu nhanh: **"📥 Xuất File JSON (.json)"** và **"📊 Xuất File Excel (.xlsx)"** ngay trong modal Cài Đặt.
+
+6. [Cơ Chế Thuế Bão Hòa Thu Nhập Ngoài Học Tập (Progressive Non-Study Coin Tax Engine)]:
+   - Xây dựng hệ thống tính thuế bão hòa lũy tiến `calculateNonStudyCoinTax(grossAmount, source, isExempt)` (Tier 1: 0%, Tier 2: 30%, Tier 3: 60%, Tier 4: 85% với trần VIP gấp 2 lần) cho Vòng quay may mắn và các nguồn thưởng ngoài học tập.
+
+7. [Đồng Bộ Toàn Diện 7-Point Version Consistency & Multi-Deploy (v0.10.10-56 Build 357)]:
+   - Cập nhật phiên bản nhất quán trên toàn bộ 7 điểm hệ thống: `modal-settings.html`, `02-state-core.js`, toàn bộ module headers `01-router.js` đến `13-wardrobe.js`, `sw.js` & `Release_App/sw.js`, `pubspec.yaml`, `Program.cs`, `push_github.ps1`, `VOCAFLOW_OVERVIEW.txt`, `CURRENT_TASK.md`.
+
+================================================================================
+Phiên bản: v0.10.10-55 (Build 356) - Khắc Phục Lỗi Bóc Tách Điểm 0đ Azure Pronunciation Assessment, Chuẩn Hóa Bảng Phiên Âm Quốc Tế IPA & Trực Quan Hóa Âm Tiết Syllables
+================================================================================
+1. [Khắc Phục Lỗi Bóc Tách Điểm 0đ Azure Pronunciation Assessment REST API]:
+   - Sửa cơ chế đọc dữ liệu phản hồi chi tiết từ Azure REST API: Đọc các chỉ số điểm số `PronScore`, `AccuracyScore`, `FluencyScore`, `ProsodyScore`, `CompletenessScore` trực tiếp từ cấp cao nhất của `NBest[0]`, hỗ trợ fallback đa tầng an toàn.
+   - Bóc tách chính xác độ chuẩn xác của từng từ (`w.AccuracyScore`), từng âm vị (`p.AccuracyScore`) và từng âm tiết (`s.AccuracyScore`).
+
+2. [Chuẩn Hóa Ký Tự Phiên Âm Sang Chuẩn Quốc Tế IPA Oxford]:
+   - Thiết lập bắt buộc `PhonemeAlphabet: "IPA"` trong cấu hình request header của Azure Speech, loại bỏ hoàn toàn các ký tự SAPI thô như `/aekaxdehmihk/` và thay bằng IPA chuẩn `/ækədɛmɪk/`.
+
+3. [Trực Quan Hóa Chi Tiết Từng Âm Tiết (Syllable Breakdown Chips)]:
+   - Bổ sung thanh hiển thị trực quan từng âm tiết kèm phần chữ (grapheme), âm vị và % chuẩn xác với mã màu phân cấp (xanh lá, vàng cam, đỏ cảnh báo).
+
+4. [Đồng Bộ Nhất Quán 7-Point Version Consistency & Multi-Deploy (v0.10.10-55 Build 356)]:
+   - Cập nhật phiên bản nhất quán trên toàn bộ 7 điểm hệ thống: `modal-settings.html`, `02-state-core.js`, toàn bộ module headers `01-router.js` đến `13-wardrobe.js`, `sw.js` & `Release_App/sw.js`, `pubspec.yaml`, `Program.cs`, `push_github.ps1`, `VOCAFLOW_OVERVIEW.txt`, `CURRENT_TASK.md`.
+
+================================================================================
 Phiên bản: v0.10.10-54 (Build 355) - Tích Hợp Toàn Diện Microsoft Azure AI Speech (Pronunciation Assessment REST API), Kiến Trúc AI Đa Tầng Hybrid & Quản Lý Cấu Hình Bảo Mật Key
 ================================================================================
 1. [Tích Hợp Toàn Diện Microsoft Azure AI Speech (Pronunciation Assessment)]:

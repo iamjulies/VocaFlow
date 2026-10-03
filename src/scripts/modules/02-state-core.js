@@ -1,13 +1,13 @@
-// VOCAFLOW 02-STATE-CORE.JS (v0.10.10-56 Build 357)
+// VOCAFLOW 02-STATE-CORE.JS (v0.10.10-57 Build 358)
 // Global constants, core database state, storage keys, recovery & audio engine
 // =========================================================================
 
     // =========================================================================
-    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.10-56 Build 357)
+    // VOCAFLOW CONSTANTS & APP VERSION (v0.10.10-57 Build 358)
     // =========================================================================
-    const VOCAFLOW_APP_VERSION = 'v0.10.10-56';
-    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.10-56 (Build 357)';
-    const VOCAFLOW_APP_BUILD = 357;
+    const VOCAFLOW_APP_VERSION = 'v0.10.10-57';
+    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v0.10.10-57 (Build 358)';
+    const VOCAFLOW_APP_BUILD = 358;
     window.VOCAFLOW_APP_VERSION = VOCAFLOW_APP_VERSION;
     window.VOCAFLOW_APP_FULL_TITLE = VOCAFLOW_APP_FULL_TITLE;
     window.VOCAFLOW_APP_BUILD = VOCAFLOW_APP_BUILD;
@@ -719,112 +719,6 @@
       return Math.max(0.05, Math.min(1.0, Math.round(eta * 1000) / 1000));
     }
     window.getDailyFatigueEfficiency = getDailyFatigueEfficiency;
-
-    // =========================================================================
-    // VOCAFLOW NON-STUDY DAILY SATURATION & PROGRESSIVE TAX ENGINE (v0.10.10-56)
-    // Limits excessive non-study coin gains (Lucky Wheel, random rewards, minigames)
-    // =========================================================================
-    function getTodayNonStudyEarnedCoins() {
-      const today = getTodayString();
-      const uid = (currentUser && (currentUser.id || currentUser.uid || currentUser.email)) ? (currentUser.id || currentUser.uid || currentUser.email) : 'guest';
-      const key = `vocaflow_daily_non_study_coins_${today}_${uid}`;
-      const val = parseInt(localStorage.getItem(key) || '0', 10);
-      return isNaN(val) ? 0 : Math.max(0, val);
-    }
-    window.getTodayNonStudyEarnedCoins = getTodayNonStudyEarnedCoins;
-
-    function recordTodayNonStudyEarnedCoins(amount) {
-      const num = Number(amount) || 0;
-      if (num <= 0) return getTodayNonStudyEarnedCoins();
-      const today = getTodayString();
-      const uid = (currentUser && (currentUser.id || currentUser.uid || currentUser.email)) ? (currentUser.id || currentUser.uid || currentUser.email) : 'guest';
-      const key = `vocaflow_daily_non_study_coins_${today}_${uid}`;
-      const current = getTodayNonStudyEarnedCoins();
-      const updated = current + Math.round(num);
-      localStorage.setItem(key, updated.toString());
-      return updated;
-    }
-    window.recordTodayNonStudyEarnedCoins = recordTodayNonStudyEarnedCoins;
-
-    function calculateNonStudyCoinTax(grossAmount, source = 'REWARD', isExempt = false) {
-      const gross = Math.max(0, Math.round(Number(grossAmount) || 0));
-      if (gross === 0 || isExempt) {
-        return {
-          netAmount: gross,
-          taxAmount: 0,
-          taxRate: 0,
-          priorTotal: getTodayNonStudyEarnedCoins(),
-          newTotal: getTodayNonStudyEarnedCoins() + gross,
-          notice: ''
-        };
-      }
-
-      const isVip = (typeof isUserVip === 'function') ? isUserVip() : false;
-      const currentEarned = getTodayNonStudyEarnedCoins();
-
-      // Progressive tax brackets: VIP gets 2x threshold
-      const TIER1_CAP = isVip ? 500 : 250;  // Bracket 1: 0% tax
-      const TIER2_CAP = isVip ? 1000 : 500; // Bracket 2: 30% tax
-      const TIER3_CAP = isVip ? 1800 : 900; // Bracket 3: 60% tax
-      // Bracket 4: Beyond TIER3_CAP: 85% tax
-
-      let net = 0;
-      let remainingGross = gross;
-      let tempEarned = currentEarned;
-
-      // Bracket 1: Up to TIER1_CAP (0% tax)
-      if (tempEarned < TIER1_CAP) {
-        const spaceInB1 = TIER1_CAP - tempEarned;
-        const chunk = Math.min(remainingGross, spaceInB1);
-        net += chunk;
-        remainingGross -= chunk;
-        tempEarned += chunk;
-      }
-
-      // Bracket 2: TIER1_CAP to TIER2_CAP (30% tax -> 70% net)
-      if (remainingGross > 0 && tempEarned < TIER2_CAP) {
-        const spaceInB2 = TIER2_CAP - tempEarned;
-        const chunk = Math.min(remainingGross, spaceInB2);
-        net += Math.round(chunk * 0.70);
-        remainingGross -= chunk;
-        tempEarned += chunk;
-      }
-
-      // Bracket 3: TIER2_CAP to TIER3_CAP (60% tax -> 40% net)
-      if (remainingGross > 0 && tempEarned < TIER3_CAP) {
-        const spaceInB3 = TIER3_CAP - tempEarned;
-        const chunk = Math.min(remainingGross, spaceInB3);
-        net += Math.round(chunk * 0.40);
-        remainingGross -= chunk;
-        tempEarned += chunk;
-      }
-
-      // Bracket 4: Beyond TIER3_CAP (85% tax -> 15% net, minimum 1 coin)
-      if (remainingGross > 0) {
-        const chunk = remainingGross;
-        net += Math.max(1, Math.round(chunk * 0.15));
-        tempEarned += chunk;
-      }
-
-      net = Math.max(1, Math.min(gross, net));
-      const taxAmount = gross - net;
-      const taxRate = gross > 0 ? Math.round((taxAmount / gross) * 100) : 0;
-
-      let notice = '';
-      if (taxAmount > 0) {
-        notice = ` (Bão hòa ngày: -${taxAmount} Xu thuế [${taxRate}%])`;
-      }
-
-      return {
-        netAmount: net,
-        taxAmount: taxAmount,
-        taxRate: taxRate,
-        priorTotal: currentEarned,
-        newTotal: currentEarned + net,
-        notice: notice
-      };
-    }
-    window.calculateNonStudyCoinTax = calculateNonStudyCoinTax;
 
     function updateModalBrainEnergyIndicator(elementId, res) {
       const el = document.getElementById(elementId);

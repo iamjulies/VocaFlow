@@ -1,1 +1,5 @@
-v0.10.10-57 (sửa lỗi)
+v0.10.10-57
+1. sai! không tạo mới mà dùng luôn trang guide có sẵn đi trời "C:\Users\DELL\Pictures\Screenshots\Ảnh chụp màn hình 2026-10-03 235358.png" -> có sẵn rồi đừng bày thêm, rất phiền
+2. Xây Dựng Cơ Chế "Thuế Bão Hòa" Thu Nhập Ngoài Học Tập ê??? t bảo sao? cái này đã xây dựng rất chi tiết từ các phiên bản trước rồi mà? ý là mày có đọc lại mấy file MD t bảo không vậy? ý là đ thèm đọc chứ gì? đọc lại, làm lại cái cơ chế "thuế" cũ cho t. cáu thật chứ? ai biểu bày thêm?? ai????
+
+đọc và thực hiện các file markdown có trong "C:\Users\DELL\Documents\Modding\VocaFlow" (nếu quên) <- t đã ghi yêu cầu rất rõ ở đây
