@@ -1,5 +1,5 @@
 ﻿// =========================================================================
-// VOCAFLOW 01-ROUTER.JS (v0.10.10-57 Build 358)
+// VOCAFLOW 01-ROUTER.JS (v1.0-0 Build 359)
 // Route manager, screen switcher, browser history & URL management
 // =========================================================================
 

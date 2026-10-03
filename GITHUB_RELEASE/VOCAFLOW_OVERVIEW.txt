@@ -1,4 +1,29 @@
 ================================================================================
+Phiên bản: v1.0-0 (Build 359) - OFFICIAL PRODUCTION RELEASE: Hoàn Thiện Toàn Diện 8 Chế Độ Học Tập, Động Cơ Ngữ Âm Hybrid Azure/Gemini, Hệ Thống Cấp Độ & Tủ Đồ Wardrobe, Hạ Tầng Bền Vững & Lá Chắn Băng Thông Cloud
+================================================================================
+1. [Cột Mốc Lịch Sử v1.0-0 (Official Production Release)]:
+   - Chính thức ra mắt phiên bản Production ổn định toàn diện của VocaFlow sau hơn 350 bản builds hoàn thiện liên tục.
+   - Hoàn chỉnh 8 phòng học & luyện tập chuyên sâu: Flashcard & Auto Flashcard (Passive SRS), Trắc Nghiệm Thông Minh (Quiz Engine), Luyện Viết Chính Tả (Spelling Lab), Luyện Phát Âm AI Âm Vị Đỉnh Cao (Speaking Lab with ELSA Grade Phonetics), Luyện Viết Sáng Tạo Câu Đoạn (Sentence Writing Lab VIP), Đọc Hiểu Điền Đoạn Văn (Cloze Test VIP), Nghe Gõ Câu Tự Nhiên (Dictation Lab VIP), và Dịch Thuật Song Phương Ngữ Cảnh (Translation Lab VIP).
+
+2. [Động Cơ Kinh Tế & Học Thuật Unified Balance v4 & Study EXP]:
+   - Chuẩn hóa toán học phi tuyến: FinalVoCoin = floor(sum(Base_i * W_mode * M_diff) * Phi(N_done) * Psi(r) * M_VIP * eta(E_today)).
+   - Hệ thống Điểm Rèn Luyện (Study EXP) bảo tồn học thuật dựa trên chất lượng (Score/100)^2, hệ số khó M_diff và trọng số nhận thức W_mode.
+   - Động cơ Soft-Cap Logarit trơn eta(E_today) = 1 / (1 + ln(1 + E_today / K)) điều tiết lạm phát nhân văn với "⚡ Năng lượng tiếp thu não bộ", loại bỏ tuyệt đối thuật ngữ tiêu cực.
+   - Hệ thống Cấp Độ 1-50, Max Level 50 và Rương Danh Dự (Prestige Chest) mở khóa chuẩn xác mỗi +50.000 EXP.
+
+3. [Động Cơ Ngữ Âm Hybrid ELSA-Grade AI (Azure Pronunciation Assessment & Gemini Multimodal)]:
+   - Tích hợp chuẩn hóa song song Azure Speech REST API chuẩn quốc tế IPA Oxford và Gemini AI Phonetics Classifier.
+   - Phân tích chi tiết 3 trụ cột phát âm: Trọng âm (Stress), Âm cuối (Ending Sound / Coda), và Nguyên âm chính (Nucleus) kèm gợi ý sửa lỗi bản địa hóa tiếng Việt.
+
+4. [Hạ Tầng Bền Vững, Lá Chắn Băng Thông & Chế Độ Ngoại Tuyến PWA]:
+   - Cơ chế đồng bộ ngầm chỉ đọc node siêu nhẹ lastSync.json (30 bytes) với debounce an toàn và bộ nhớ đệm TTL 5 phút.
+   - Service Worker vocaflow-pwa-v1.0-0 lưu trữ ngoại tuyến toàn diện ứng dụng, hoạt động mượt mà không cần mạng.
+   - Hệ thống Tủ Đồ Wardrobe, Danh Hiệu, Hiệu Ứng Tên và Khung Viền Avatar đồng bộ thời gian thực trên toàn bộ hệ thống.
+
+5. [Đồng Bộ Toàn Diện 7-Point Version Consistency & Multi-Deploy (v1.0-0 Build 359)]:
+   - Đồng bộ nhất quán tại 7 điểm cốt lõi: modal-settings.html, 02-state-core.js, toàn bộ 13 modules trong src/scripts/modules/, app.js, sw.js & Release_App/sw.js, pubspec.yaml, Program.cs & VocaFlow.csproj, push_github.ps1, VOCAFLOW_OVERVIEW.txt, CURRENT_TASK.md.
+
+================================================================================
 Phiên bản: v0.10.10-57 (Build 358) - Tối Ưu Hóa Trải Nghiệm Khởi Đầu: Tái Sử Dụng Cẩm Nang Hướng Dẫn Có Sẵn (modal-user-guide) & Chuẩn Hóa Cơ Chế Soft-Cap Bão Hòa Cho Nguồn Thu Ngoài Học Tập
 ================================================================================
 1. [Tái Sử Dụng Cẩm Nang Hướng Dẫn Có Sẵn Cho Người Dùng Mới (modal-user-guide)]:

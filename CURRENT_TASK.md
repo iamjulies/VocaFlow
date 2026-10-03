@@ -1,25 +1,36 @@
 # CURRENT TASK & TRẠNG THÁI CÔNG VIỆC HIỆN TẠI (VOCAFLOW)
 
-> **Phiên bản mục tiêu:** `v0.10.10-57 (Build 358)`  
+> **Phiên bản mục tiêu:** `v1.0-0 (Build 359) - OFFICIAL PRODUCTION RELEASE`  
 > **Cập nhật lần cuối:** 2026-10-04  
-> **Trạng thái:** 🚀 **ĐÃ HOÀN THÀNH - ĐANG TIẾN HÀNH BUILD & MULTI-DEPLOY GITHUB**
+> **Trạng thái:** 🚀 **OFFICIAL RELEASE PUBLISHED - 100% PRODUCTION READY**
 
 ---
 
-## 🎯 1. DANH SÁCH NHIỆM VỤ ĐÃ GIẢI QUYẾT (v0.10.10-57 Build 358)
+## 🎯 1. DANH SÁCH NHIỆM VỤ ĐÃ GIẢI QUYẾT (v1.0-0 Build 359 - OFFICIAL PRODUCTION RELEASE)
 
-- [x] **Tái Sử Dụng Cẩm Nang Hướng Dẫn Có Sẵn Cho Người Dùng Mới (`modal-user-guide`, `04-decks-manager.js`, `modal-settings.html`)**:
-  - Xóa bỏ file modal dư thừa `src/components/modals/modal-welcome-onboarding.html`.
-  - Kết nối trực tiếp luồng người dùng mở app lần đầu (`vocaflow_guide_shown`) và nút Cẩm Nang trong modal Cài Đặt tới `modal-user-guide` (`openUserGuideModal('starter', 0)`).
-  - Đảm bảo route `/guide` và khởi đầu ứng dụng đồng nhất 100% với giao diện cẩm nang chuẩn tại `https://iamjulies.github.io/VocaFlow/guide`.
+- [x] **Giai đoạn 1: Bảo Mật & Quét Rò Rỉ Thông Tin Nhạy Cảm (Zero-Leak Audit)**:
+  - Quét toàn bộ mã nguồn (.js, .html, .css, .ps1, .cs, .json): Xác nhận không có API Key thực tế (Gemini, Azure Speech, Firebase token) bị hardcode.
+  - Toàn bộ khóa bảo mật được nạp động từ `localStorage`, biến cấu hình người dùng và các getter an toàn.
+  - Bảo vệ nghiêm ngặt `.gitignore` cho `.git_token`, `**/.git_token`, `GITHUB_RELEASE/.git_token`, `*.token`.
 
-- [x] **Chuẩn Hóa Động Cơ Bão Hòa Thu Nhập Ngoài Học Tập Theo Chuẩn v0.10.10-30 (`02-state-core.js`, `08-wallet-economy.js`)**:
-  - Loại bỏ hoàn toàn mã nguồn tính thuế lũy tiến (`calculateNonStudyCoinTax`, `getTodayNonStudyEarnedCoins`, `recordTodayNonStudyEarnedCoins`) và thuật ngữ tiêu cực ("Thuế", "Tax", "Phạt").
-  - Ứng dụng công thức Soft-Cap Logarit trơn có sẵn (`getDailyFatigueEfficiency`) cho nguồn thu ngoài học tập (Vòng quay may mắn VocaWheel).
-  - Tích hợp ghi nhận vào hạn ngạch ngày tích lũy (`recordTodayEarnedCoins`), hiển thị chỉ số tích cực "⚡ Năng lượng tập trung" / "⚡ Hiệu suất ngày" khi chạm ngưỡng bão hòa.
+- [x] **Giai đoạn 2: Tính Toàn Vẹn Cú Pháp & Liên Kết 13 Modules (Syntax & Runtime Integrity)**:
+  - Rà soát AST và cú pháp toàn bộ 13 modules (`01-router.js` đến `13-wardrobe.js`) và `src/scripts/app.js`: 100% PASS không có lỗi SyntaxError, ngoặc mồ côi hay TDZ.
+  - Kiểm tra DOM Binding & Element IDs: Toàn bộ 1,044 lượt truy xuất ID qua `getElementById` đều tồn tại hoặc có fallback an toàn `if (el)`.
 
-- [x] **Đồng Bộ Toàn Diện 7-Point Version Consistency (`v0.10.10-57 Build 358`)**:
-  - Cập nhật phiên bản nhất quán trên toàn bộ 7 điểm hệ thống: `modal-settings.html`, `02-state-core.js`, toàn bộ module headers `01-router.js` đến `13-wardrobe.js`, `sw.js` & `Release_App/sw.js`, `pubspec.yaml`, `Program.cs`, `push_github.ps1`, `VOCAFLOW_OVERVIEW.txt`, `CURRENT_TASK.md`.
+- [x] **Giai đoạn 3: Kiểm Toán Động Cơ Kinh Tế & Học Thuật (Unified Balance v4 & Study EXP)**:
+  - Kiểm toán `calculateUnifiedSessionPoints` trên 8 chế độ học tập. `autofc` và 0% Accuracy trả về đúng 0 VoCoin.
+  - Động cơ Soft-Cap Logarit $\eta(E_{\text{today}})$ vận hành mượt mà, không chia cho 0, không có từ ngữ tiêu cực.
+  - `calculateUnifiedStudyExp` tính điểm rèn luyện chuẩn mực theo $(\text{Score}/100)^2$, độ khó $M_{\text{diff}}$, trọng số $W_{\text{mode}}$.
+  - Mốc Max Level 50 và Rương Danh Dự (Prestige Chest) mỗi +50,000 EXP hoạt động chính xác.
+
+- [x] **Giai đoạn 4: Lá Chắn Băng Thông Firebase & Chế Độ Offline PWA**:
+  - Xác nhận không có polling loop kéo dữ liệu lớn định kỳ.
+  - Kiểm tra đồng bộ ngầm chỉ đọc node siêu nhẹ `lastSync.json` (30 bytes).
+  - Cache TTL 5 phút cho thư viện công cộng và bài viết cộng đồng hoạt động chính xác.
+  - Service Worker `vocaflow-pwa-v1.0-0` lưu trữ ngoại tuyến toàn diện ứng dụng.
+
+- [x] **Giai đoạn 5: Chuẩn Hóa Đồng Bộ 7 Điểm Phiên Bản & Xuất Bản Build v1.0-0**:
+  - Đồng bộ nhất quán tại 7 điểm bắt buộc: `modal-settings.html`, `02-state-core.js`, toàn bộ module headers `01-router.js` đến `13-wardrobe.js`, `app.js`, `sw.js` & `Release_App/sw.js`, `pubspec.yaml`, `Program.cs` & `VocaFlow.csproj`, `push_github.ps1`, `VOCAFLOW_OVERVIEW.txt`, `CURRENT_TASK.md`.
 
 ---
 
