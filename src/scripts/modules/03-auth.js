@@ -1,5 +1,5 @@
 // =========================================================================
-// VOCAFLOW 03-AUTH.JS (v1.0-1 Build 360)
+// VOCAFLOW 03-AUTH.JS (v1.0-2 Build 361)
 // Authentication, Cloud Sync, Community, Profiles & Social Network
 // =========================================================================
 

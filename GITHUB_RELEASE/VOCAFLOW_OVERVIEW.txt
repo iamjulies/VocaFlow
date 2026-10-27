@@ -1,4 +1,20 @@
 ================================================================================
+Phiên bản: v1.0-2 (Build 361) - Nâng Cấp Hệ Thống Gợi Ý Từ Vựng Tiếng Anh & Gợi Ý Nghĩa Tiếng Việt Trực Tiếp Theo Thời Gian Thực (Quizlet-Style Live Autocomplete) Khi Tạo/Sửa Từ Mới
+================================================================================
+1. [Gợi Ý Từ Vựng Tiếng Anh Thời Gian Thực Khi Nhập (Live English Term Autocomplete)]:
+   - Tích hợp động cơ gợi ý từ vựng trực tiếp ngay dưới ô nhập `#word-term` trong modal Thêm/Sửa Từ Vựng (`modal-word.html`) theo phong cách thẻ gợi ý trực quan của Quizlet.
+   - Kết hợp tức thời kho từ vựng nội bộ (các bộ từ của người dùng, kho từ mặc định Oxford/Academic và thư viện cộng đồng) cùng API từ điển gợi ý thời gian thực Datamuse (`api.datamuse.com/sug`) để đề xuất từ đơn, từ ghép và cụm từ tiếng Anh chính xác ngay khi gõ từ 2 ký tự trở lên.
+   - Hỗ trợ đầy đủ cả thao tác chuột/cảm ứng lẫn điều hướng bàn phím (`ArrowDown`, `ArrowUp`, `Enter`, `Escape`).
+
+2. [Gợi Ý Nghĩa Tiếng Việt Đa Tầng & Tự Động Điền IPA/Từ Loại Khi Nhập Nghĩa (Live Meaning Autocomplete)]:
+   - Tích hợp khung gợi ý nghĩa tiếng Việt trực tiếp (`#word-def-suggestions-${idx}`) ngay bên dưới ô Định nghĩa tiếng Việt của từng nét nghĩa kèm nút kích hoạt nhanh `💡 Gợi ý nghĩa`.
+   - Tự động truy xuất song song nghĩa tiếng Việt theo từng từ loại (Danh từ, Động từ, Tính từ, Trạng từ) từ từ điển song ngữ Google Translate Dictionary (`dt=t&dt=bd&dt=at`) kết hợp chuẩn phiên âm IPA, câu ví dụ và từ đồng nghĩa/trái nghĩa từ Free Dictionary API.
+   - Khi người dùng chạm chọn (hoặc nhấn `Enter`) vào một dòng nghĩa gợi ý, hệ thống tự động điền nghĩa tiếng Việt đã chuẩn hóa Unicode NFC đồng thời tự động điền luôn Từ loại (POS), Phiên âm IPA và Câu ví dụ (nếu các ô đó đang trống), không tốn quota Gemini AI.
+
+3. [Đồng Bộ Toàn Diện 7-Point Version Consistency & Multi-Deploy (v1.0-2 Build 361)]:
+   - Đồng bộ nhất quán tại 7 điểm cốt lõi: `modal-settings.html`, `02-state-core.js`, toàn bộ 13 modules trong `src/scripts/modules/`, `app.js`, `sw.js` & `Release_App/sw.js`, `pubspec.yaml`, `Program.cs` & `VocaFlow.csproj`, `push_github.ps1`, `VOCAFLOW_OVERVIEW.txt`, `CURRENT_TASK.md`.
+
+================================================================================
 Phiên bản: v1.0-1 (Build 360) - Khắc Phục Hiển Thị Hạn VocaVIP TRY Trong Admin Portal, Chống Trùng Lặp Tài Khoản Theo Email & Làm Sạch Toàn Bộ Tài Khoản Ảo Kiểm Thử Trên Cloud
 ================================================================================
 1. [Khắc Phục Triệt Để Lỗi Hiển Thị "Hạn: Vĩnh Viễn" Khi Cấp VocaVIP TRY Thủ Công]:

@@ -5949,3 +5949,74 @@
         margin-bottom: 24px;
       }
     }
+
+    /* ========================================================================= */
+    /* QUIZLET-STYLE LIVE TERM & MEANING AUTOCOMPLETE SUGGESTIONS (v1.0-2)       */
+    /* ========================================================================= */
+    .vocaflow-live-suggestions-box {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-top: 8px;
+      animation: fadeIn 0.15s ease-out;
+    }
+
+    .vocaflow-suggestion-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      width: 100%;
+      padding: 9px 14px;
+      background: rgba(15, 23, 42, 0.55);
+      border: 1.5px solid rgba(148, 163, 184, 0.4);
+      border-radius: 10px;
+      color: var(--text);
+      font-size: 13.5px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.14s ease;
+      text-align: left;
+      user-select: none;
+    }
+
+    [data-theme="light"] .vocaflow-suggestion-item {
+      background: rgba(255, 255, 255, 0.92);
+      border-color: rgba(100, 116, 139, 0.38);
+      box-shadow: 0 2px 6px rgba(15, 23, 42, 0.04);
+    }
+
+    .vocaflow-suggestion-item:hover,
+    .vocaflow-suggestion-item.active-item {
+      border-color: #818cf8;
+      background: rgba(99, 102, 241, 0.16);
+      box-shadow: 0 3px 12px rgba(99, 102, 241, 0.2);
+      transform: translateY(-1px);
+    }
+
+    .vocaflow-suggestion-item .sug-main-text {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      min-width: 0;
+      flex: 1;
+    }
+
+    .vocaflow-suggestion-item .sug-meta-badge {
+      font-size: 10.5px;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 6px;
+      background: rgba(99, 102, 241, 0.14);
+      color: #a5b4fc;
+      border: 1px solid rgba(99, 102, 241, 0.28);
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    [data-theme="light"] .vocaflow-suggestion-item .sug-meta-badge {
+      background: rgba(99, 102, 241, 0.1);
+      color: #4f46e5;
+    }
+

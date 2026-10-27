@@ -1,5 +1,5 @@
 // =========================================================================
-// VOCAFLOW 06F-TRANSLATION-ENGINE.JS (v1.0-1 Build 360 - TRANSLATION LAB VIP β)
+// VOCAFLOW 06F-TRANSLATION-ENGINE.JS (v1.0-2 Build 361 - TRANSLATION LAB VIP β)
 // Bidirectional Translation Engine (EN ↔ VI) with Direct Gemini AI Generation, Multi-Tier VocaHint & Balance v3
 // =========================================================================
 

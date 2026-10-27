@@ -1,17 +1,15 @@
-# CURRENT TASK: VOCAFLOW v1.0-1 (BUILD 360) — ADMIN VIP EXPIRY FIX, DUPLICATE ACCOUNT CLEANUP & CLOUD VIRTUAL ACCOUNT PURGE
+# CURRENT TASK: VOCAFLOW v1.0-2 (BUILD 361) — QUIZLET-STYLE LIVE ENGLISH TERM & VIETNAMESE MEANING AUTOCOMPLETE SUGGESTIONS
 
 ## Status: COMPLETED & DEPLOYED (100% PASS)
-- **Version**: `v1.0-1 (Build 360)`
+- **Version**: `v1.0-2 (Build 361)`
 - **Completed Tasks**:
-  1. **Issue 1 — Duplicate Account Explanation & Cleanup (`Tcdjnq` / `congdinh1001@gmail.com`)**:
-     - Diagnosed exact root cause why `Tcdjnq` had 2 UIDs (`huIDNNXrrFT05hpFG28O2XYlhmx2` and `xHHoKGRRRpWAm08VcljUDCVL81P2`).
-     - Deleted the stale orphaned node `huIDNNXrrFT05hpFG28O2XYlhmx2` from Firebase RTDB while keeping active account `xHHoKGRRRpWAm08VcljUDCVL81P2` 100% intact.
-     - Added automatic email-based deduplication in `fetchAdminStudentsList` and `@handle` registration in `handleFormRegister`.
-  2. **Issue 2 — Manual VIP Activation Expiration Fix (`⏳ Hạn: Vĩnh viễn` -> `⏳ Hạn: DD/MM/YYYY (còn X ngày)`)**:
-     - Fixed `saveAdjustStudentWalletCloud()` in `03-auth.js` so `student.vipExpiresAt = newVipExpiresAt` is updated immediately in memory, awaited on Cloud (`/profile.json`, root user node, and `/vip_users_index`), and VIP pill counts are refreshed.
-     - Fixed `renderAdminStudentsTable()` (`03-auth.js`) and `formatVipDurationText()` (`12-achievements.js`) so only `lifetime` (or >80 years) shows `Vĩnh viễn` / `Trọn Đời`.
-     - Updated `Tcdjnq` (`xHHoKGRRRpWAm08VcljUDCVL81P2`) on Firebase RTDB with the exact 3-day VocaVIP TRY expiration (`30/10/2026`).
-  3. **Issue 3 — Cloud Test/Virtual Account Purge**:
-     - Deleted all 17 AI test/virtual/orphan accounts from Firebase RTDB (`/users`, `/vip_users_index`, `/usernames`), leaving only the 9 real accounts (including Hạo's test accounts).
-  4. **7-Point Version Sync & Multi-Deploy**:
-     - Synchronized `v1.0-1 (Build 360)` across all 7 required locations, compiled `VocaFlow.exe`, verified headless browser tests, and deployed to all 3 GitHub remotes.
+  1. **Live English Term Autocomplete (`#word-term` & `#word-term-suggestions-box`)**:
+     - Added real-time Quizlet-style suggestion cards right below the English term input in `modal-word.html`.
+     - Combines instant local lexicon matches (`words`, `DEFAULT_WORDS`, `cachedPublicLibraryDecks`) with live Datamuse vocabulary/phrase autocomplete (`api.datamuse.com/sug`).
+     - Supports mouse click, touch, and keyboard navigation (`ArrowDown`, `ArrowUp`, `Enter`, `Escape`).
+  2. **Live Vietnamese Meaning Autocomplete (`#word-def-${idx}` & `#word-def-suggestions-${idx}`)**:
+     - Added real-time Vietnamese meaning suggestion cards below each sense's definition textarea in `renderWordModalSenses` (`04-decks-manager.js`) plus a `💡 Gợi ý nghĩa` quick trigger.
+     - Automatically queries local lexicon + Google Translate Bilingual Dictionary (`dt=t&dt=bd&dt=at&dj=1`) + Free Dictionary API for POS-tagged Vietnamese meanings, IPA phonetics, example sentences, and synonyms/antonyms.
+     - Selecting a suggested meaning fills `#word-def-${idx}` and auto-populates empty POS, IPA, example, and synonym/antonym fields.
+  3. **7-Point Version Sync & Multi-Deploy**:
+     - Synchronized `v1.0-2 (Build 361)` across all 7 required locations, compiled `VocaFlow.exe`, verified 100% PASS on `test_suite_v1.ps1`, and deployed to all 3 GitHub remotes.

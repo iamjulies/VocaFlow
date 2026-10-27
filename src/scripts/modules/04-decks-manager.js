@@ -1,5 +1,5 @@
 // =========================================================================
-// VOCAFLOW 04-DECKS-MANAGER.JS (v1.0-1 Build 360)
+// VOCAFLOW 04-DECKS-MANAGER.JS (v1.0-2 Build 361)
 // Quản lý VocaDecks, Vocabulary Lists, Import/Export & CRUD Operations
 // =========================================================================
 
@@ -1716,8 +1716,12 @@
             </div>
 
             <div class="form-group" style="margin-bottom: 10px;">
-              <label class="form-label" style="font-size: 11px;">Định nghĩa tiếng Việt *</label>
-              <textarea id="word-def-${idx}" class="form-textarea" placeholder="Nghĩa cốt lõi tiếng Việt cho nét nghĩa này..." style="font-size: 12.5px; padding: 6px 8px; min-height: 52px;">${escapeHtml(s.definitionVi || '')}</textarea>
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 3px;">
+                <label class="form-label" style="font-size: 11px; margin-bottom: 0;">Định nghĩa tiếng Việt *</label>
+                <span id="word-def-suggest-trigger-${idx}" onclick="triggerWordDefSuggestions(${idx}, true)" style="font-size: 10.5px; color: #818cf8; cursor: pointer; font-weight: 700; display: inline-flex; align-items: center; gap: 3px; user-select: none;" title="Bấm để xem các gợi ý nghĩa tiếng Việt cho từ này">💡 Gợi ý nghĩa</span>
+              </div>
+              <textarea id="word-def-${idx}" class="form-textarea" placeholder="Nghĩa cốt lõi tiếng Việt cho nét nghĩa này..." style="font-size: 12.5px; padding: 6px 8px; min-height: 52px;" onfocus="handleWordDefFocus(${idx})" oninput="handleWordDefInput(${idx}, this.value)" onkeydown="handleWordDefKeydown(event, ${idx})" onblur="scheduleHideWordDefSuggestions(${idx})">${escapeHtml(s.definitionVi || '')}</textarea>
+              <div id="word-def-suggestions-${idx}" class="vocaflow-live-suggestions-box" style="display: none;"></div>
             </div>
 
             <div class="form-group" style="margin-bottom: 10px;">
@@ -1843,6 +1847,11 @@
       document.getElementById('word-term').value = '';
       const dupWarn = document.getElementById('word-term-duplicate-warning');
       if (dupWarn) dupWarn.style.display = 'none';
+      const termSugBox = document.getElementById('word-term-suggestions-box');
+      if (termSugBox) {
+        termSugBox.style.display = 'none';
+        termSugBox.innerHTML = '';
+      }
       renderWordModalSenses([{
         partOfSpeech: '',
         cefrLevel: '',
@@ -1889,6 +1898,11 @@
       document.getElementById('word-term').value = w.term;
       const dupWarn = document.getElementById('word-term-duplicate-warning');
       if (dupWarn) dupWarn.style.display = 'none';
+      const termSugBox = document.getElementById('word-term-suggestions-box');
+      if (termSugBox) {
+        termSugBox.style.display = 'none';
+        termSugBox.innerHTML = '';
+      }
       
       currentActiveSenseTab = 0;
       const senses = getWordSenses(w);
@@ -4052,9 +4066,670 @@ Return ONLY a valid raw JSON 2D array with NO markdown fences:
       }
     }
 
+    // =========================================================================
+    // QUIZLET-STYLE LIVE TERM & MEANING AUTOCOMPLETE ENGINE (v1.0-2 Build 361)
+    // =========================================================================
+    let wordTermSuggestTimer = null;
+    let wordTermHideTimer = null;
+    let wordTermSuggestAbortCtrl = null;
+    let currentTermSuggestionItems = [];
+    let activeTermSuggestionIndex = -1;
+
+    const wordMeaningSuggestCache = {};
+    let wordDefSuggestTimer = null;
+    let wordDefHideTimers = {};
+    let currentDefSuggestionMap = {};
+    let activeDefSuggestionIndexMap = {};
+
+    function normalizeViMeaningText(str) {
+      if (!str || typeof str !== 'string') return '';
+      let s = str.normalize('NFC').trim().replace(/\s+/g, ' ');
+      if (!s) return '';
+      return s.charAt(0).toUpperCase() + s.slice(1);
+    }
+
+    function mapGooglePosToVocaPos(rawPos) {
+      if (!rawPos) return '';
+      const p = String(rawPos).toLowerCase().trim();
+      if (p === 'noun' || p.includes('danh từ')) return 'noun';
+      if (p === 'verb' || p.includes('động từ')) return 'verb';
+      if (p === 'adjective' || p.includes('tính từ')) return 'adjective';
+      if (p === 'adverb' || p.includes('trạng từ') || p.includes('phó từ')) return 'adverb';
+      if (p === 'preposition' || p.includes('giới từ')) return 'preposition';
+      if (p === 'conjunction' || p.includes('liên từ')) return 'conjunction';
+      if (p === 'interjection' || p.includes('thán từ')) return 'interjection';
+      if (p.includes('phrase') || p.includes('cụm')) return 'phrase';
+      return '';
+    }
+
+    function formatPosLabelVi(pos) {
+      const map = {
+        'noun': 'Danh từ',
+        'verb': 'Động từ',
+        'adjective': 'Tính từ',
+        'adverb': 'Trạng từ',
+        'noun phrase': 'Cụm danh từ',
+        'phrasal verb': 'Cụm động từ',
+        'phrase': 'Cụm từ',
+        'idiom': 'Thành ngữ',
+        'preposition': 'Giới từ',
+        'conjunction': 'Liên từ',
+        'interjection': 'Thán từ'
+      };
+      return map[(pos || '').toLowerCase()] || '';
+    }
+
+    function collectLocalLexiconEntries() {
+      const map = new Map();
+      const addWordObj = (w) => {
+        if (!w || !w.term || typeof w.term !== 'string') return;
+        const clean = w.term.trim();
+        const key = clean.toLowerCase();
+        if (!key) return;
+        const senses = typeof getWordSenses === 'function' ? getWordSenses(w) : [];
+        const firstSense = (senses && senses[0]) || w;
+        const defVi = normalizeViMeaningText(firstSense.definitionVi || firstSense.definition || w.definitionVi || '');
+        const ipa = (firstSense.phonetic || w.phonetic || '').trim();
+        const pos = (firstSense.partOfSpeech || w.partOfSpeech || '').trim();
+        const example = (firstSense.exampleSentence || w.exampleSentence || '').trim();
+        if (!map.has(key)) {
+          map.set(key, {
+            term: clean,
+            ipa: ipa,
+            pos: pos,
+            defVi: defVi,
+            example: example,
+            senses: senses && senses.length ? senses : [{
+              partOfSpeech: pos,
+              phonetic: ipa,
+              definitionVi: defVi,
+              exampleSentence: example
+            }]
+          });
+        }
+      };
+
+      if (typeof words !== 'undefined' && Array.isArray(words)) {
+        words.forEach(addWordObj);
+      }
+      if (typeof DEFAULT_WORDS !== 'undefined' && Array.isArray(DEFAULT_WORDS)) {
+        DEFAULT_WORDS.forEach(addWordObj);
+      }
+      if (typeof cachedPublicLibraryDecks !== 'undefined' && Array.isArray(cachedPublicLibraryDecks)) {
+        cachedPublicLibraryDecks.forEach(d => {
+          if (d && Array.isArray(d.words)) d.words.forEach(addWordObj);
+        });
+      }
+      return map;
+    }
+
+    function handleWordTermLiveInput(val) {
+      checkWordTermDuplicate(val);
+      if (wordTermSuggestTimer) clearTimeout(wordTermSuggestTimer);
+
+      const q = (val || '').trim();
+      if (q.length < 2) {
+        hideWordTermSuggestions();
+        return;
+      }
+
+      wordTermSuggestTimer = setTimeout(() => {
+        fetchAndRenderWordTermSuggestions(q);
+      }, 150);
+    }
+
+    function handleWordTermFocus(val) {
+      if (wordTermHideTimer) {
+        clearTimeout(wordTermHideTimer);
+        wordTermHideTimer = null;
+      }
+      const q = (val || '').trim();
+      if (q.length >= 2) {
+        fetchAndRenderWordTermSuggestions(q);
+      }
+    }
+
+    function scheduleHideWordTermSuggestions() {
+      if (wordTermHideTimer) clearTimeout(wordTermHideTimer);
+      wordTermHideTimer = setTimeout(() => {
+        hideWordTermSuggestions();
+      }, 200);
+    }
+
+    function hideWordTermSuggestions() {
+      const box = document.getElementById('word-term-suggestions-box');
+      if (box) {
+        box.style.display = 'none';
+      }
+      activeTermSuggestionIndex = -1;
+    }
+
+    async function fetchAndRenderWordTermSuggestions(rawQuery) {
+      const q = (rawQuery || '').trim();
+      const lowerQ = q.toLowerCase();
+      if (lowerQ.length < 2) {
+        hideWordTermSuggestions();
+        return;
+      }
+
+      const localMap = collectLocalLexiconEntries();
+      const prefixMatches = [];
+      const substrMatches = [];
+
+      localMap.forEach((entry, key) => {
+        if (key.startsWith(lowerQ)) {
+          prefixMatches.push({ term: entry.term, ipa: entry.ipa, defVi: entry.defVi, source: 'local' });
+        } else if (key.includes(lowerQ)) {
+          substrMatches.push({ term: entry.term, ipa: entry.ipa, defVi: entry.defVi, source: 'local' });
+        }
+      });
+
+      let merged = [...prefixMatches, ...substrMatches].slice(0, 5);
+
+      // Render immediate local suggestions first if available
+      if (merged.length > 0) {
+        renderWordTermSuggestionsDOM(merged, q);
+      }
+
+      // Query Datamuse live autocomplete API for rich vocabulary & phrase completions (like Quizlet)
+      try {
+        if (wordTermSuggestAbortCtrl) {
+          try { wordTermSuggestAbortCtrl.abort(); } catch (e) {}
+        }
+        wordTermSuggestAbortCtrl = new AbortController();
+        const timeoutId = setTimeout(() => {
+          try { wordTermSuggestAbortCtrl.abort(); } catch (e) {}
+        }, 3000);
+
+        const res = await fetch(`https://api.datamuse.com/sug?s=${encodeURIComponent(lowerQ)}&max=8`, {
+          signal: wordTermSuggestAbortCtrl.signal
+        });
+        clearTimeout(timeoutId);
+
+        if (res.ok) {
+          const data = await res.json();
+          const currentInputVal = (document.getElementById('word-term')?.value || '').trim().toLowerCase();
+          if (currentInputVal !== lowerQ) return; // User already typed further
+
+          const seen = new Set(merged.map(m => m.term.toLowerCase()));
+          if (Array.isArray(data)) {
+            data.forEach(item => {
+              const w = (item && item.word ? String(item.word).trim() : '');
+              if (!w) return;
+              const lw = w.toLowerCase();
+              if (!seen.has(lw)) {
+                seen.add(lw);
+                const loc = localMap.get(lw);
+                merged.push({
+                  term: loc ? loc.term : w,
+                  ipa: loc ? loc.ipa : '',
+                  defVi: loc ? loc.defVi : '',
+                  source: loc ? 'local' : 'datamuse'
+                });
+              }
+            });
+          }
+        }
+      } catch (err) {
+        // Ignore abort or offline error; local matches still work
+      }
+
+      // Prioritize exact prefix matches at top
+      merged.sort((a, b) => {
+        const aStarts = a.term.toLowerCase().startsWith(lowerQ) ? 0 : 1;
+        const bStarts = b.term.toLowerCase().startsWith(lowerQ) ? 0 : 1;
+        if (aStarts !== bStarts) return aStarts - bStarts;
+        return 0;
+      });
+
+      const finalItems = merged.slice(0, 5);
+      renderWordTermSuggestionsDOM(finalItems, q);
+
+      // Pre-warm meaning suggestions for exact term in background
+      if (lowerQ.length >= 2) {
+        prefetchWordMeaningsForTerm(q).catch(() => {});
+      }
+    }
+
+    function renderWordTermSuggestionsDOM(items, query) {
+      const box = document.getElementById('word-term-suggestions-box');
+      if (!box) return;
+
+      if (!items || items.length === 0) {
+        box.style.display = 'none';
+        box.innerHTML = '';
+        currentTermSuggestionItems = [];
+        activeTermSuggestionIndex = -1;
+        return;
+      }
+
+      // If the only suggestion is 100% identical to what's already typed and user already picked it, still show if there are variants or meaning preview
+      currentTermSuggestionItems = items;
+      activeTermSuggestionIndex = -1;
+
+      let html = '';
+      items.forEach((item, idx) => {
+        const metaText = item.defVi
+          ? `📖 ${escapeHtml(item.defVi.length > 26 ? item.defVi.slice(0, 26) + '…' : item.defVi)}`
+          : 'Gợi ý từ ↵';
+        const ipaHtml = item.ipa
+          ? `<span style="font-size: 11.5px; font-weight: 500; color: var(--text-muted); font-family: monospace;">${escapeHtml(item.ipa)}</span>`
+          : '';
+        html += `
+          <div class="vocaflow-suggestion-item" id="word-term-sug-item-${idx}" onmousedown="event.preventDefault(); selectSuggestedWordTerm(${idx})">
+            <div class="sug-main-text">
+              <span>${escapeHtml(item.term)}</span>
+              ${ipaHtml}
+            </div>
+            <span class="sug-meta-badge">${metaText}</span>
+          </div>
+        `;
+      });
+
+      box.innerHTML = html;
+      box.style.display = 'flex';
+    }
+
+    function handleWordTermKeydown(e) {
+      const box = document.getElementById('word-term-suggestions-box');
+      const isVisible = box && box.style.display !== 'none' && currentTermSuggestionItems.length > 0;
+      if (!isVisible) return;
+
+      if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        activeTermSuggestionIndex = (activeTermSuggestionIndex + 1) % currentTermSuggestionItems.length;
+        updateTermSuggestionActiveHighlight();
+      } else if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        activeTermSuggestionIndex = (activeTermSuggestionIndex - 1 + currentTermSuggestionItems.length) % currentTermSuggestionItems.length;
+        updateTermSuggestionActiveHighlight();
+      } else if (e.key === 'Enter' && activeTermSuggestionIndex >= 0 && activeTermSuggestionIndex < currentTermSuggestionItems.length) {
+        e.preventDefault();
+        selectSuggestedWordTerm(activeTermSuggestionIndex);
+      } else if (e.key === 'Escape') {
+        hideWordTermSuggestions();
+      }
+    }
+
+    function updateTermSuggestionActiveHighlight() {
+      currentTermSuggestionItems.forEach((_, idx) => {
+        const el = document.getElementById('word-term-sug-item-' + idx);
+        if (el) {
+          if (idx === activeTermSuggestionIndex) el.classList.add('active-item');
+          else el.classList.remove('active-item');
+        }
+      });
+    }
+
+    function selectSuggestedWordTerm(idx) {
+      const item = currentTermSuggestionItems[idx];
+      if (!item) return;
+
+      const termInput = document.getElementById('word-term');
+      if (termInput) {
+        termInput.value = item.term;
+      }
+      hideWordTermSuggestions();
+      checkWordTermDuplicate(item.term);
+
+      const senseIdx = currentActiveSenseTab || 0;
+      const defEl = document.getElementById('word-def-' + senseIdx);
+      if (defEl) {
+        defEl.focus();
+      }
+      triggerWordDefSuggestions(senseIdx, true);
+    }
+
+    async function prefetchWordMeaningsForTerm(rawTerm) {
+      const cleanTerm = (rawTerm || '').trim();
+      const cacheKey = cleanTerm.toLowerCase();
+      if (!cacheKey) return [];
+      if (wordMeaningSuggestCache[cacheKey] && wordMeaningSuggestCache[cacheKey].length > 0) {
+        return wordMeaningSuggestCache[cacheKey];
+      }
+
+      const suggestions = [];
+      const seenDefs = new Set();
+
+      const addMeaningCandidate = (cand) => {
+        if (!cand || !cand.defVi) return;
+        const normDef = normalizeViMeaningText(cand.defVi);
+        if (!normDef || normDef.toLowerCase() === cacheKey) return;
+        const dedupKey = normDef.toLowerCase();
+        if (seenDefs.has(dedupKey)) return;
+        seenDefs.add(dedupKey);
+        suggestions.push({
+          defVi: normDef,
+          pos: cand.pos || '',
+          ipa: cand.ipa || '',
+          example: cand.example || '',
+          synonyms: Array.isArray(cand.synonyms) ? cand.synonyms : [],
+          antonyms: Array.isArray(cand.antonyms) ? cand.antonyms : []
+        });
+      };
+
+      // 1. Check local lexicon first
+      const localMap = collectLocalLexiconEntries();
+      const localEntry = localMap.get(cacheKey);
+      let sharedIpa = localEntry ? localEntry.ipa : '';
+      let sharedExample = localEntry ? localEntry.example : '';
+      let sharedSynonyms = [];
+      let sharedAntonyms = [];
+
+      if (localEntry && Array.isArray(localEntry.senses)) {
+        localEntry.senses.forEach(s => {
+          addMeaningCandidate({
+            defVi: s.definitionVi || s.definition || '',
+            pos: s.partOfSpeech || localEntry.pos || '',
+            ipa: s.phonetic || sharedIpa,
+            example: s.exampleSentence || sharedExample,
+            synonyms: s.synonyms || [],
+            antonyms: s.antonyms || []
+          });
+        });
+      }
+
+      // 2. Fetch Free Dictionary API (for IPA, POS, English Example, Synonyms) + Google Translate Dictionary API (for Vietnamese meanings) in parallel
+      const fetchWithTimeout = async (url, ms = 3500) => {
+        const ctrl = new AbortController();
+        const tid = setTimeout(() => { try { ctrl.abort(); } catch (e) {} }, ms);
+        try {
+          const r = await fetch(url, { signal: ctrl.signal });
+          clearTimeout(tid);
+          return r.ok ? await r.json() : null;
+        } catch (e) {
+          clearTimeout(tid);
+          return null;
+        }
+      };
+
+      const [dictData, gtData] = await Promise.all([
+        fetchWithTimeout(`https://api.dictionaryapi.dev/api/v2/entries/en/${encodeURIComponent(cacheKey)}`, 3200),
+        fetchWithTimeout(`https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=vi&dt=t&dt=bd&dt=at&dj=1&q=${encodeURIComponent(cleanTerm)}`, 3500)
+      ]);
+
+      let fallbackPos = '';
+      if (Array.isArray(dictData) && dictData.length > 0) {
+        const entry0 = dictData[0];
+        if (!sharedIpa) {
+          sharedIpa = entry0.phonetic || (Array.isArray(entry0.phonetics) ? (entry0.phonetics.find(p => p && p.text)?.text || '') : '');
+        }
+        if (Array.isArray(entry0.meanings) && entry0.meanings.length > 0) {
+          const m0 = entry0.meanings[0];
+          fallbackPos = mapGooglePosToVocaPos(m0.partOfSpeech || '');
+          if (Array.isArray(m0.synonyms) && m0.synonyms.length > 0) {
+            sharedSynonyms = m0.synonyms.slice(0, 3);
+          }
+          if (Array.isArray(m0.antonyms) && m0.antonyms.length > 0) {
+            sharedAntonyms = m0.antonyms.slice(0, 2);
+          }
+          if (!sharedExample && Array.isArray(m0.definitions)) {
+            const defWithEx = m0.definitions.find(d => d && d.example);
+            if (defWithEx) sharedExample = defWithEx.example;
+          }
+        }
+      }
+
+      if (gtData && typeof gtData === 'object') {
+        // Primary translation
+        if (Array.isArray(gtData.sentences) && gtData.sentences.length > 0) {
+          const primaryTrans = gtData.sentences.map(s => s && s.trans ? s.trans : '').join('').trim();
+          if (primaryTrans) {
+            addMeaningCandidate({
+              defVi: primaryTrans,
+              pos: fallbackPos,
+              ipa: sharedIpa,
+              example: sharedExample,
+              synonyms: sharedSynonyms,
+              antonyms: sharedAntonyms
+            });
+          }
+        }
+
+        // Dictionary breakdown by Part of Speech (dt=bd)
+        if (Array.isArray(gtData.dict)) {
+          gtData.dict.forEach(group => {
+            const mappedPos = mapGooglePosToVocaPos(group.pos) || fallbackPos;
+            if (Array.isArray(group.terms)) {
+              group.terms.slice(0, 5).forEach(t => {
+                addMeaningCandidate({
+                  defVi: t,
+                  pos: mappedPos,
+                  ipa: sharedIpa,
+                  example: sharedExample,
+                  synonyms: sharedSynonyms,
+                  antonyms: sharedAntonyms
+                });
+              });
+            }
+          });
+        }
+
+        // Alternative translations (dt=at)
+        if (Array.isArray(gtData.alternative_translations)) {
+          gtData.alternative_translations.forEach(altGroup => {
+            if (Array.isArray(altGroup.alternative)) {
+              altGroup.alternative.slice(0, 5).forEach(alt => {
+                if (alt && alt.word_postproc) {
+                  addMeaningCandidate({
+                    defVi: alt.word_postproc,
+                    pos: fallbackPos,
+                    ipa: sharedIpa,
+                    example: sharedExample,
+                    synonyms: sharedSynonyms,
+                    antonyms: sharedAntonyms
+                  });
+                }
+              });
+            }
+          });
+        }
+      }
+
+      // Backfill sharedIpa onto any local candidates that lacked IPA
+      if (sharedIpa) {
+        suggestions.forEach(s => {
+          if (!s.ipa) s.ipa = sharedIpa;
+        });
+      }
+
+      if (suggestions.length > 0) {
+        wordMeaningSuggestCache[cacheKey] = suggestions.slice(0, 6);
+      }
+      return wordMeaningSuggestCache[cacheKey] || [];
+    }
+
+    function handleWordDefFocus(idx) {
+      if (wordDefHideTimers[idx]) {
+        clearTimeout(wordDefHideTimers[idx]);
+        wordDefHideTimers[idx] = null;
+      }
+      const defEl = document.getElementById('word-def-' + idx);
+      const currentVal = (defEl ? defEl.value : '').trim();
+      triggerWordDefSuggestions(idx, false, currentVal);
+    }
+
+    function handleWordDefInput(idx, val) {
+      if (wordDefSuggestTimer) clearTimeout(wordDefSuggestTimer);
+      wordDefSuggestTimer = setTimeout(() => {
+        triggerWordDefSuggestions(idx, false, (val || '').trim());
+      }, 120);
+    }
+
+    function scheduleHideWordDefSuggestions(idx) {
+      if (wordDefHideTimers[idx]) clearTimeout(wordDefHideTimers[idx]);
+      wordDefHideTimers[idx] = setTimeout(() => {
+        hideWordDefSuggestions(idx);
+      }, 210);
+    }
+
+    function hideWordDefSuggestions(idx) {
+      const box = document.getElementById('word-def-suggestions-' + idx);
+      if (box) {
+        box.style.display = 'none';
+      }
+      activeDefSuggestionIndexMap[idx] = -1;
+    }
+
+    async function triggerWordDefSuggestions(idx, forceShow = false, filterText = '') {
+      const term = (document.getElementById('word-term')?.value || '').trim();
+      const box = document.getElementById('word-def-suggestions-' + idx);
+      if (!box) return;
+
+      if (!term) {
+        if (forceShow) {
+          showToast('💡 Hãy nhập từ vựng tiếng Anh ở ô phía trên trước để nhận gợi ý nghĩa!');
+          const termEl = document.getElementById('word-term');
+          if (termEl) termEl.focus();
+        }
+        box.style.display = 'none';
+        return;
+      }
+
+      const cached = wordMeaningSuggestCache[term.toLowerCase()];
+      if (!cached) {
+        box.innerHTML = `<div style="font-size: 11.5px; color: var(--text-muted); padding: 6px 10px;">⏳ Đang tìm gợi ý nghĩa tiếng Việt cho <strong>"${escapeHtml(term)}"</strong>...</div>`;
+        box.style.display = 'flex';
+      }
+
+      const list = await prefetchWordMeaningsForTerm(term);
+      if (!list || list.length === 0) {
+        box.style.display = 'none';
+        return;
+      }
+
+      const cleanFilter = (filterText || '').normalize('NFC').trim().toLowerCase();
+      let displayList = list;
+      if (cleanFilter && !forceShow) {
+        const matching = list.filter(item => item.defVi.toLowerCase().includes(cleanFilter));
+        // If user already picked an exact match and only 1 item equals cleanFilter, hide unless forceShow
+        if (matching.length === 1 && matching[0].defVi.toLowerCase() === cleanFilter) {
+          box.style.display = 'none';
+          return;
+        }
+        if (matching.length > 0) {
+          displayList = matching;
+        }
+      }
+
+      currentDefSuggestionMap[idx] = displayList;
+      activeDefSuggestionIndexMap[idx] = -1;
+
+      let html = '';
+      displayList.forEach((item, sIdx) => {
+        const posVi = formatPosLabelVi(item.pos);
+        const posBadge = posVi
+          ? `<span style="font-size: 10.5px; font-weight: 600; color: #c084fc; background: rgba(168, 85, 247, 0.14); border: 1px solid rgba(168, 85, 247, 0.3); padding: 1px 6px; border-radius: 5px;">${escapeHtml(posVi)}</span>`
+          : '';
+        const rightBadge = item.ipa
+          ? `<span class="sug-meta-badge" style="font-family: monospace;">${escapeHtml(item.ipa)} ↵</span>`
+          : `<span class="sug-meta-badge">Gợi ý nghĩa ↵</span>`;
+
+        html += `
+          <div class="vocaflow-suggestion-item" id="word-def-sug-item-${idx}-${sIdx}" onmousedown="event.preventDefault(); selectSuggestedWordMeaning(${idx}, ${sIdx})">
+            <div class="sug-main-text">
+              <span>${escapeHtml(item.defVi)}</span>
+              ${posBadge}
+            </div>
+            ${rightBadge}
+          </div>
+        `;
+      });
+
+      box.innerHTML = html;
+      box.style.display = 'flex';
+    }
+
+    function handleWordDefKeydown(e, idx) {
+      const box = document.getElementById('word-def-suggestions-' + idx);
+      const list = currentDefSuggestionMap[idx] || [];
+      const isVisible = box && box.style.display !== 'none' && list.length > 0;
+      if (!isVisible) return;
+
+      let curIdx = typeof activeDefSuggestionIndexMap[idx] === 'number' ? activeDefSuggestionIndexMap[idx] : -1;
+      if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        curIdx = (curIdx + 1) % list.length;
+        activeDefSuggestionIndexMap[idx] = curIdx;
+        updateDefSuggestionActiveHighlight(idx);
+      } else if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        curIdx = (curIdx - 1 + list.length) % list.length;
+        activeDefSuggestionIndexMap[idx] = curIdx;
+        updateDefSuggestionActiveHighlight(idx);
+      } else if (e.key === 'Enter' && curIdx >= 0 && curIdx < list.length) {
+        e.preventDefault();
+        selectSuggestedWordMeaning(idx, curIdx);
+      } else if (e.key === 'Escape') {
+        hideWordDefSuggestions(idx);
+      }
+    }
+
+    function updateDefSuggestionActiveHighlight(idx) {
+      const list = currentDefSuggestionMap[idx] || [];
+      const activeIdx = activeDefSuggestionIndexMap[idx];
+      list.forEach((_, sIdx) => {
+        const el = document.getElementById(`word-def-sug-item-${idx}-${sIdx}`);
+        if (el) {
+          if (sIdx === activeIdx) el.classList.add('active-item');
+          else el.classList.remove('active-item');
+        }
+      });
+    }
+
+    function selectSuggestedWordMeaning(idx, sIdx) {
+      const list = currentDefSuggestionMap[idx] || [];
+      const item = list[sIdx];
+      if (!item) return;
+
+      const defEl = document.getElementById('word-def-' + idx);
+      if (defEl) {
+        defEl.value = item.defVi;
+      }
+
+      const posEl = document.getElementById('word-pos-' + idx);
+      if (posEl && (!posEl.value || posEl.value === '') && item.pos) {
+        posEl.value = item.pos;
+      }
+
+      const ipaEl = document.getElementById('word-phonetic-' + idx);
+      if (ipaEl && (!ipaEl.value || !ipaEl.value.trim()) && item.ipa) {
+        ipaEl.value = item.ipa;
+      }
+
+      const exEl = document.getElementById('word-example-' + idx);
+      if (exEl && (!exEl.value || !exEl.value.trim()) && item.example) {
+        exEl.value = item.example;
+      }
+
+      const synEl = document.getElementById('word-synonyms-' + idx);
+      if (synEl && (!synEl.value || !synEl.value.trim()) && Array.isArray(item.synonyms) && item.synonyms.length > 0) {
+        synEl.value = item.synonyms.join(', ');
+      }
+
+      const antEl = document.getElementById('word-antonyms-' + idx);
+      if (antEl && (!antEl.value || !antEl.value.trim()) && Array.isArray(item.antonyms) && item.antonyms.length > 0) {
+        antEl.value = item.antonyms.join(', ');
+      }
+
+      hideWordDefSuggestions(idx);
+    }
+
     window.saveWordForm = saveWordForm;
     window.openWordModal = openWordModal;
     window.editWord = editWord;
     window.deleteWord = deleteWord;
     window.renderWordList = renderWordList;
     window.checkWordTermDuplicate = checkWordTermDuplicate;
+    window.handleWordTermLiveInput = handleWordTermLiveInput;
+    window.handleWordTermFocus = handleWordTermFocus;
+    window.scheduleHideWordTermSuggestions = scheduleHideWordTermSuggestions;
+    window.handleWordTermKeydown = handleWordTermKeydown;
+    window.selectSuggestedWordTerm = selectSuggestedWordTerm;
+    window.handleWordDefFocus = handleWordDefFocus;
+    window.handleWordDefInput = handleWordDefInput;
+    window.scheduleHideWordDefSuggestions = scheduleHideWordDefSuggestions;
+    window.handleWordDefKeydown = handleWordDefKeydown;
+    window.triggerWordDefSuggestions = triggerWordDefSuggestions;
+    window.selectSuggestedWordMeaning = selectSuggestedWordMeaning;
+
