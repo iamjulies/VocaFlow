@@ -1,5 +1,5 @@
 # =========================================================================
-# VOCAFLOW PRODUCTION PRE-FLIGHT TEST SUITE (v1.0-2 Build 361)
+# VOCAFLOW PRODUCTION PRE-FLIGHT TEST SUITE (v1.0-3 Build 362)
 # =========================================================================
 [Console]::OutputEncoding = [System.Text.Encoding]::UTF8
 [Console]::InputEncoding  = [System.Text.Encoding]::UTF8
@@ -19,7 +19,7 @@ function Assert-Check($desc, $cond) {
 }
 
 Write-Host "==========================================================" -ForegroundColor Cyan
-Write-Host "   VOCAFLOW PRODUCTION PRE-FLIGHT AUDIT - v1.0-2 (BUILD 361)" -ForegroundColor Yellow
+Write-Host "   VOCAFLOW PRODUCTION PRE-FLIGHT AUDIT - v1.0-3 (BUILD 362)" -ForegroundColor Yellow
 Write-Host "==========================================================" -ForegroundColor Cyan
 
 # -------------------------------------------------------------------------
@@ -86,11 +86,12 @@ Assert-Check "Periodic sync guarded with document.hidden" ($authJs.Contains("doc
 
 $swJs = [System.IO.File]::ReadAllText("$root\sw.js", [System.Text.Encoding]::UTF8)
 $releaseSw = [System.IO.File]::ReadAllText("$root\Release_App\sw.js", [System.Text.Encoding]::UTF8)
-Assert-Check "sw.js cache name updated to vocaflow-pwa-v1.0-2" ($swJs.Contains("vocaflow-pwa-v1.0-2"))
-Assert-Check "Release_App/sw.js cache name updated to vocaflow-pwa-v1.0-2" ($releaseSw.Contains("vocaflow-pwa-v1.0-2"))
+Assert-Check "sw.js cache name updated to vocaflow-pwa-v1.0-3" ($swJs.Contains("vocaflow-pwa-v1.0-3"))
+Assert-Check "Release_App/sw.js cache name updated to vocaflow-pwa-v1.0-3" ($releaseSw.Contains("vocaflow-pwa-v1.0-3"))
+Assert-Check "sw.js caches VocaSoundtrack.mp3" ($swJs.Contains("VocaSoundtrack.mp3"))
 
 # -------------------------------------------------------------------------
-# TEST 5: 7-POINT VERSION CONSISTENCY (v1.0-2 Build 361)
+# TEST 5: 7-POINT VERSION CONSISTENCY (v1.0-3 Build 362)
 # -------------------------------------------------------------------------
 Write-Host "`n--- GIAI DOAN 5: 7-POINT VERSION CONSISTENCY ---" -ForegroundColor Cyan
 $settingsModal = [System.IO.File]::ReadAllText("$root\src\components\modals\modal-settings.html", [System.Text.Encoding]::UTF8)
@@ -100,27 +101,44 @@ $pushPs1 = [System.IO.File]::ReadAllText("$root\GITHUB_RELEASE\push_github.ps1",
 $overview = [System.IO.File]::ReadAllText("$root\VOCAFLOW_OVERVIEW.txt", [System.Text.Encoding]::UTF8)
 $currentTask = [System.IO.File]::ReadAllText("$root\CURRENT_TASK.md", [System.Text.Encoding]::UTF8)
 
-Assert-Check "1. modal-settings.html has 'VocaFlow v1.0-2 (Build 361)'" ($settingsModal.Contains("VocaFlow v1.0-2 (Build 361)"))
-Assert-Check "2. 02-state-core.js has VOCAFLOW_APP_VERSION = 'v1.0-2'" ($stateCore.Contains("VOCAFLOW_APP_VERSION = 'v1.0-2'"))
-Assert-Check "   02-state-core.js has VOCAFLOW_APP_BUILD = 361" ($stateCore.Contains("VOCAFLOW_APP_BUILD = 361"))
-Assert-Check "3. sw.js has 'vocaflow-pwa-v1.0-2'" ($swJs.Contains("vocaflow-pwa-v1.0-2"))
-Assert-Check "4. pubspec.yaml has 'version: 1.0.2+361'" ($pubspec.Contains("version: 1.0.2+361"))
-Assert-Check "5. Program.cs has 'VocaFlow v1.0-2'" ($programCs.Contains("VocaFlow v1.0-2"))
-Assert-Check "6. push_github.ps1 has 'VocaFlow_v1.0-2_Windows_Portable.zip'" ($pushPs1.Contains("VocaFlow_v1.0-2_Windows_Portable.zip"))
-Assert-Check "   push_github.ps1 has 'Release v1.0-2 (Build 361)'" ($pushPs1.Contains("Release v1.0-2 (Build 361)"))
-Assert-Check "7. VOCAFLOW_OVERVIEW.txt has 'v1.0-2 (Build 361)'" ($overview.Contains("v1.0-2 (Build 361)"))
-Assert-Check "   CURRENT_TASK.md has 'v1.0-2 (Build 361)'" ($currentTask.Contains("v1.0-2 (Build 361)"))
-Assert-Check "8. 03-auth.js updates student.vipExpiresAt in saveAdjustStudentWalletCloud" ($authJs.Contains("student.vipExpiresAt = newVipExpiresAt;"))
-Assert-Check "9. 03-auth.js deduplicates students by normEmail in fetchAdminStudentsList" ($authJs.Contains("studentsList.findIndex(st => (st.email || '').trim().toLowerCase() === normEmail)"))
+Assert-Check "1. modal-settings.html has 'VocaFlow v1.0-3 (Build 362)'" ($settingsModal.Contains("VocaFlow v1.0-3 (Build 362)"))
+Assert-Check "2. 02-state-core.js has VOCAFLOW_APP_VERSION = 'v1.0-3'" ($stateCore.Contains("VOCAFLOW_APP_VERSION = 'v1.0-3'"))
+Assert-Check "   02-state-core.js has VOCAFLOW_APP_BUILD = 362" ($stateCore.Contains("VOCAFLOW_APP_BUILD = 362"))
+Assert-Check "3. sw.js has 'vocaflow-pwa-v1.0-3'" ($swJs.Contains("vocaflow-pwa-v1.0-3"))
+Assert-Check "4. pubspec.yaml has 'version: 1.0.3+362'" ($pubspec.Contains("version: 1.0.3+362"))
+Assert-Check "5. Program.cs has 'VocaFlow v1.0-3'" ($programCs.Contains("VocaFlow v1.0-3"))
+Assert-Check "6. push_github.ps1 has 'VocaFlow_v1.0-3_Windows_Portable.zip'" ($pushPs1.Contains("VocaFlow_v1.0-3_Windows_Portable.zip"))
+Assert-Check "   push_github.ps1 has 'Release v1.0-3 (Build 362)'" ($pushPs1.Contains("Release v1.0-3 (Build 362)"))
+Assert-Check "7. VOCAFLOW_OVERVIEW.txt has 'v1.0-3 (Build 362)'" ($overview.Contains("v1.0-3 (Build 362)"))
+Assert-Check "   CURRENT_TASK.md has 'v1.0-3 (Build 362)'" ($currentTask.Contains("v1.0-3 (Build 362)"))
+
+# -------------------------------------------------------------------------
+# TEST 6: v1.0-3 FEATURE VERIFICATION (ADBLOCK DETECTOR & SOUNDTRACK BGM)
+# -------------------------------------------------------------------------
+Write-Host "`n--- GIAI DOAN 6: ADBLOCK DETECTOR & SOUNDTRACK BGM AUDIT ---" -ForegroundColor Cyan
+$adblockModalPath = "$root\src\components\modals\modal-adblock-warning.html"
+Assert-Check "modal-adblock-warning.html exists" (Test-Path $adblockModalPath)
+if (Test-Path $adblockModalPath) {
+    $adblockModalContent = [System.IO.File]::ReadAllText($adblockModalPath, [System.Text.Encoding]::UTF8)
+    Assert-Check "AdBlock modal contains id modal-adblock-warning" ($adblockModalContent.Contains("modal-adblock-warning"))
+    Assert-Check "AdBlock modal contains reload button handleAdBlockTurnOffAndReload" ($adblockModalContent.Contains("handleAdBlockTurnOffAndReload"))
+    Assert-Check "AdBlock modal contains bypass function bypassAdBlockWarningTemporarily" ($adblockModalContent.Contains("bypassAdBlockWarningTemporarily"))
+}
+
+Assert-Check "VocaSoundtrack.mp3 exists in audio/" (Test-Path "$root\audio\VocaSoundtrack.mp3")
+Assert-Check "VocaSoundtrack.mp3 exists in Release_App/audio/" (Test-Path "$root\Release_App\audio\VocaSoundtrack.mp3")
+Assert-Check "02-state-core.js has initVocaSoundtrackAudio" ($stateCore.Contains("initVocaSoundtrackAudio"))
+Assert-Check "02-state-core.js has checkAndTriggerAdBlockDetection" ($stateCore.Contains("checkAndTriggerAdBlockDetection"))
+Assert-Check "02-state-core.js has bypassAdBlockWarningTemporarily" ($stateCore.Contains("bypassAdBlockWarningTemporarily"))
 
 Write-Host "==========================================================" -ForegroundColor Cyan
 Write-Host "   KET QUA KIEM TRA: $passed / $total DIEU KIEN DAT CHUAN" -ForegroundColor $(if ($passed -eq $total) { "Green" } else { "Yellow" })
 Write-Host "==========================================================" -ForegroundColor Cyan
 
 if ($passed -eq $total) {
-    Write-Host "`n>>> 100% PASS! SAN SANG BIEN DICH VA PHAT HANH v1.0-2! <<<`n" -ForegroundColor Green
+    Write-Host "`n*** 100% PASS! SAN SANG BIEN DICH VA PHAT HANH v1.0-3! ***`n" -ForegroundColor Green
     exit 0
 } else {
-    Write-Host "`n>>> CO LOI CHUA DAT CHUAN, KIEM TRA LAI! <<<`n" -ForegroundColor Red
+    Write-Host "`n*** CO LOI CHUA DAT CHUAN, KIEM TRA LAI! ***`n" -ForegroundColor Red
     exit 1
 }

@@ -1,7 +1,7 @@
-// =========================================================================
+﻿// =========================================================================
 // VOCAFLOW PWA CACHE & OFFLINE ENGINE (v1.0-0)
 // =========================================================================
-const CACHE_NAME = 'vocaflow-pwa-v1.0-2';
+const CACHE_NAME = 'vocaflow-pwa-v1.0-3';
 const ASSETS = [
   './',
   './index.html',
@@ -13,6 +13,7 @@ const ASSETS = [
   './audio/sfx_wrong.mp3',
   './audio/sfx_skip.mp3',
   './audio/sfx_purchase.mp3',
+  './audio/VocaSoundtrack.mp3',
   './icons/flow.png',
   './icons/Icon-192.png',
   './icons/Icon-512.png',

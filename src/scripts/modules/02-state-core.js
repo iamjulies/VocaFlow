@@ -1,13 +1,13 @@
-// VOCAFLOW 02-STATE-CORE.JS (v1.0-2 Build 361)
+﻿// VOCAFLOW 02-STATE-CORE.JS (v1.0-3 Build 362)
 // Global constants, core database state, storage keys, recovery & audio engine
 // =========================================================================
 
     // =========================================================================
-    // VOCAFLOW CONSTANTS & APP VERSION (v1.0-2 Build 361)
+    // VOCAFLOW CONSTANTS & APP VERSION (v1.0-3 Build 362)
     // =========================================================================
-    const VOCAFLOW_APP_VERSION = 'v1.0-2';
-    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v1.0-2 (Build 361)';
-    const VOCAFLOW_APP_BUILD = 361;
+    const VOCAFLOW_APP_VERSION = 'v1.0-3';
+    const VOCAFLOW_APP_FULL_TITLE = 'VocaFlow v1.0-3 (Build 362)';
+    const VOCAFLOW_APP_BUILD = 362;
     window.VOCAFLOW_APP_VERSION = VOCAFLOW_APP_VERSION;
     window.VOCAFLOW_APP_FULL_TITLE = VOCAFLOW_APP_FULL_TITLE;
     window.VOCAFLOW_APP_BUILD = VOCAFLOW_APP_BUILD;
@@ -635,6 +635,194 @@
       }
       Object.keys(VOCA_SFX).forEach(k => stopVocaSfx(k));
     }
+
+    // =========================================================================
+    // VOCAFLOW BACKGROUND SOUNDTRACK (BGM) ENGINE (v1.0-3 Build 362)
+    // =========================================================================
+    const STORAGE_KEY_SOUNDTRACK_ENABLED = 'vocaflow_soundtrack_enabled';
+    const STORAGE_KEY_SOUNDTRACK_VOLUME = 'vocaflow_soundtrack_volume';
+
+    let soundtrackEnabledSetting = localStorage.getItem(STORAGE_KEY_SOUNDTRACK_ENABLED) === 'true';
+    let soundtrackVolumeSetting = localStorage.getItem(STORAGE_KEY_SOUNDTRACK_VOLUME) !== null 
+      ? parseFloat(localStorage.getItem(STORAGE_KEY_SOUNDTRACK_VOLUME)) 
+      : 0.25; // Moderate 25% gentle volume as requested
+
+    let vocaSoundtrackAudio = null;
+
+    function initVocaSoundtrackAudio() {
+      if (!vocaSoundtrackAudio) {
+        vocaSoundtrackAudio = new Audio('./audio/VocaSoundtrack.mp3');
+        vocaSoundtrackAudio.loop = true;
+        vocaSoundtrackAudio.volume = soundtrackVolumeSetting;
+        // Fallback to Cloud URL if relative path fails
+        vocaSoundtrackAudio.onerror = () => {
+          if (vocaSoundtrackAudio && !vocaSoundtrackAudio.src.includes('iamjulies.github.io')) {
+            vocaSoundtrackAudio.src = 'https://iamjulies.github.io/VocaFlow/audio/VocaSoundtrack.mp3';
+            if (soundtrackEnabledSetting) {
+              vocaSoundtrackAudio.play().catch(() => {});
+            }
+          }
+        };
+      }
+      return vocaSoundtrackAudio;
+    }
+
+    function toggleSoundtrackSetting(val) {
+      soundtrackEnabledSetting = !!val;
+      localStorage.setItem(STORAGE_KEY_SOUNDTRACK_ENABLED, soundtrackEnabledSetting.toString());
+      const volCont = document.getElementById('settings-soundtrack-volume-container');
+      if (volCont) volCont.style.opacity = soundtrackEnabledSetting ? '1' : '0.5';
+
+      const audio = initVocaSoundtrackAudio();
+      if (soundtrackEnabledSetting) {
+        audio.volume = soundtrackVolumeSetting;
+        audio.play().catch((err) => {
+          console.log('Soundtrack autoplay prevented, awaiting user gesture:', err);
+        });
+        if (typeof showToast === 'function') {
+          showToast('🎶 Đã bật nhạc nền VocaFlow (Lo-Fi Chill)!');
+        }
+      } else {
+        audio.pause();
+        if (typeof showToast === 'function') {
+          showToast('🔇 Đã tắt nhạc nền.');
+        }
+      }
+    }
+    window.toggleSoundtrackSetting = toggleSoundtrackSetting;
+
+    function updateSoundtrackVolumeSetting(val) {
+      const num = parseInt(val, 10) || 0;
+      soundtrackVolumeSetting = Math.max(0, Math.min(100, num)) / 100;
+      localStorage.setItem(STORAGE_KEY_SOUNDTRACK_VOLUME, soundtrackVolumeSetting.toString());
+      const lbl = document.getElementById('settings-soundtrack-volume-label');
+      if (lbl) lbl.textContent = Math.round(soundtrackVolumeSetting * 100) + '%';
+
+      if (vocaSoundtrackAudio) {
+        vocaSoundtrackAudio.volume = soundtrackVolumeSetting;
+      }
+    }
+    window.updateSoundtrackVolumeSetting = updateSoundtrackVolumeSetting;
+
+    function tryAutoStartSoundtrackOnUserGesture() {
+      if (!soundtrackEnabledSetting) return;
+      const audio = initVocaSoundtrackAudio();
+      if (audio.paused) {
+        audio.volume = soundtrackVolumeSetting;
+        audio.play().then(() => {
+          document.removeEventListener('click', tryAutoStartSoundtrackOnUserGesture);
+          document.removeEventListener('touchstart', tryAutoStartSoundtrackOnUserGesture);
+          document.removeEventListener('keydown', tryAutoStartSoundtrackOnUserGesture);
+        }).catch(() => {});
+      }
+    }
+    window.tryAutoStartSoundtrackOnUserGesture = tryAutoStartSoundtrackOnUserGesture;
+
+    function syncSoundtrackSettingsUI() {
+      const chk = document.getElementById('settings-soundtrack-enabled-checkbox');
+      const slider = document.getElementById('settings-soundtrack-volume-slider');
+      const lbl = document.getElementById('settings-soundtrack-volume-label');
+      const volCont = document.getElementById('settings-soundtrack-volume-container');
+
+      if (chk) chk.checked = soundtrackEnabledSetting;
+      if (slider) slider.value = Math.round(soundtrackVolumeSetting * 100);
+      if (lbl) lbl.textContent = Math.round(soundtrackVolumeSetting * 100) + '%';
+      if (volCont) volCont.style.opacity = soundtrackEnabledSetting ? '1' : '0.5';
+    }
+    window.syncSoundtrackSettingsUI = syncSoundtrackSettingsUI;
+
+    // =========================================================================
+    // ADBLOCK DETECTOR & WARNING CONTROLLER (v1.0-3 Build 362)
+    // =========================================================================
+    let isAdBlockDetectorRunning = false;
+
+    function checkAndTriggerAdBlockDetection() {
+      // 1. VIP users are 100% exempt from ads and adblock detection
+      if (typeof isUserVip === 'function' && isUserVip()) return;
+
+      // 2. Check if user temporarily bypassed warning in this session
+      if (sessionStorage.getItem('vocaflow_adblock_bypassed_session') === 'true') return;
+
+      if (isAdBlockDetectorRunning) return;
+      isAdBlockDetectorRunning = true;
+
+      // Test 1: Bait Element Technique
+      const bait = document.createElement('div');
+      bait.className = 'adsbox ad-placement pub_300x250 pub_300x250m pub_728x90 text-ad textAd text_ad text_ads text-ads ad-server';
+      bait.id = 'ad-banner-tester';
+      bait.style.position = 'absolute';
+      bait.style.left = '-9999px';
+      bait.style.top = '-9999px';
+      bait.style.width = '1px';
+      bait.style.height = '1px';
+      bait.style.pointerEvents = 'none';
+      bait.innerHTML = '&nbsp;';
+      document.body.appendChild(bait);
+
+      setTimeout(async () => {
+        let isBlocked = false;
+        try {
+          const computed = window.getComputedStyle(bait);
+          if (bait.offsetHeight === 0 || bait.clientHeight === 0 || computed.display === 'none' || computed.visibility === 'hidden') {
+            isBlocked = true;
+          }
+        } catch (e) {}
+
+        // Test 2: Bait Network Fetch (if element wasn't hidden by CSS rules)
+        if (!isBlocked) {
+          try {
+            await fetch('https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js', {
+              method: 'HEAD',
+              mode: 'no-cors',
+              cache: 'no-store'
+            });
+          } catch (netErr) {
+            isBlocked = true; // Blocked by client / DNS / extension
+          }
+        }
+
+        if (bait.parentNode) {
+          bait.parentNode.removeChild(bait);
+        }
+
+        if (isBlocked) {
+          showAdBlockWarningModal();
+        }
+        isAdBlockDetectorRunning = false;
+      }, 1200);
+    }
+    window.checkAndTriggerAdBlockDetection = checkAndTriggerAdBlockDetection;
+
+    function showAdBlockWarningModal() {
+      if (typeof isUserVip === 'function' && isUserVip()) return;
+      if (sessionStorage.getItem('vocaflow_adblock_bypassed_session') === 'true') return;
+      if (typeof openModal === 'function') {
+        openModal('modal-adblock-warning');
+      } else {
+        const m = document.getElementById('modal-adblock-warning');
+        if (m) m.classList.add('active');
+      }
+    }
+    window.showAdBlockWarningModal = showAdBlockWarningModal;
+
+    function handleAdBlockTurnOffAndReload() {
+      location.reload();
+    }
+    window.handleAdBlockTurnOffAndReload = handleAdBlockTurnOffAndReload;
+
+    function bypassAdBlockWarningTemporarily() {
+      sessionStorage.setItem('vocaflow_adblock_bypassed_session', 'true');
+      if (typeof closeModal === 'function') {
+        closeModal('modal-adblock-warning');
+      } else {
+        const m = document.getElementById('modal-adblock-warning');
+        if (m) m.classList.remove('active');
+      }
+      if (typeof showToast === 'function') {
+        showToast('⚠️ Bạn đang tiếp tục với trình chặn quảng cáo.');
+      }
+    }
+    window.bypassAdBlockWarningTemporarily = bypassAdBlockWarningTemporarily;
 
     let studySourceContext = 'deck';
     let quizIsCompleted = false;

@@ -1,4 +1,23 @@
 ================================================================================
+Phiên bản: v1.0-3 (Build 362) - Hệ Thống Nhận Diện Trình Chặn Quảng Cáo (AdBlock Detector) & Tích Hợp Nhạc Nền VocaFlow Soundtrack (Lo-Fi Chill Focus BGM) Tùy Chỉnh Âm Lượng
+================================================================================
+1. [Hệ Thống Nhận Biết Trình Chặn Quảng Cáo & Modal Nhắc Nhở Nhân Văn (AdBlock Detector)]:
+   - Xây dựng cơ chế phát hiện trình chặn quảng cáo kép (Bait Element DOM + Bait Network Fetch `adsbygoogle.js`) chạy tự động cho người dùng Free/Guest khi tải ứng dụng.
+   - Hiển thị modal cảnh báo `modal-adblock-warning.html` với thông điệp thẳng thắn nhưng vui tươi:
+     + Nút to rõ đậm đà: **"✨ TÔI ĐÃ TẮT TRÌNH CHẶN QUẢNG CÁO (TẢI LẠI TRANG)"** hoặc **"👑 Nâng Cấp VocaVIP"**.
+     + Dòng chữ bé xíu xiu nhạt nhòa: *"tao kh ủng hộ app của mày, tao vẫn xài trình chặn ads"* (cho phép bỏ qua tạm thời trong phiên làm việc, nhưng mỗi lần F5 / reload app lại hiện nhắc nhở).
+   - Miễn trừ 100% đối với học viên VocaVIP (`isUserVip() === true`).
+
+2. [Tích Hợp Nhạc Nền VocaSoundtrack (Lo-Fi Chill BGM) Tùy Chỉnh Âm Lượng & Đa Nền Tảng]:
+   - Tích hợp tệp âm thanh bản quyền `VocaSoundtrack.mp3` vào ứng dụng, hỗ trợ cả đường dẫn cục bộ PWA (`audio/VocaSoundtrack.mp3`), Desktop (`Release_App/audio/VocaSoundtrack.mp3`) và Cloud CDN fallback (`https://iamjulies.github.io/VocaFlow/audio/VocaSoundtrack.mp3`).
+   - Thiết lập âm lượng mặc định vừa phải, êm dịu (25%) không gây xao nhãng khi học tập.
+   - Thêm cụm điều khiển Bật/Tắt nhạc nền và thanh trượt tăng giảm âm lượng chuyên biệt trong modal Cài Đặt (`modal-settings.html`), đồng bộ thời gian thực vào `localStorage`.
+   - Cơ chế khởi động tự động thông minh theo tương tác người dùng đầu tiên (`click`, `touchstart`, `keydown`) vượt qua hạn chế autoplay của trình duyệt.
+
+3. [Đồng Bộ Toàn Diện 7-Point Version Consistency & Multi-Deploy (v1.0-3 Build 362)]:
+   - Đồng bộ nhất quán tại 7 điểm cốt lõi: `modal-settings.html`, `02-state-core.js`, toàn bộ 13 modules trong `src/scripts/modules/`, `app.js`, `sw.js` & `Release_App/sw.js`, `pubspec.yaml`, `Program.cs` & `VocaFlow.csproj`, `push_github.ps1`, `VOCAFLOW_OVERVIEW.txt`, `CURRENT_TASK.md`.
+
+================================================================================
 Phiên bản: v1.0-2 (Build 361) - Nâng Cấp Hệ Thống Gợi Ý Từ Vựng Tiếng Anh & Gợi Ý Nghĩa Tiếng Việt Trực Tiếp Theo Thời Gian Thực (Quizlet-Style Live Autocomplete) Khi Tạo/Sửa Từ Mới
 ================================================================================
 1. [Gợi Ý Từ Vựng Tiếng Anh Thời Gian Thực Khi Nhập (Live English Term Autocomplete)]:

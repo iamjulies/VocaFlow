@@ -1,5 +1,5 @@
-// =========================================================================
-// VOCAFLOW APP.JS - CORE LIFECYCLE & GLOBAL BRIDGE ENTRY POINT (v1.0-2 Build 361)
+﻿// =========================================================================
+// VOCAFLOW APP.JS - CORE LIFECYCLE & GLOBAL BRIDGE ENTRY POINT (v1.0-3 Build 362)
 // Screen Switcher, Universal Modal Manager, Keyboard Shortcuts & Bootstrap
 // =========================================================================
 
@@ -77,6 +77,9 @@
       }
       const el = document.getElementById(id);
       if (el) el.classList.add('active');
+      if (id === 'modal-settings') {
+        if (typeof syncSoundtrackSettingsUI === 'function') syncSoundtrackSettingsUI();
+      }
       if (id === 'modal-ai-mentor' || id === 'modal-ai-deck-studio') {
         if (typeof initMonetagPassiveAds === 'function') initMonetagPassiveAds();
       }
@@ -424,6 +427,15 @@
     } else {
       checkUrlProfileDeepLink();
     }
+    if (typeof syncSoundtrackSettingsUI === 'function') syncSoundtrackSettingsUI();
+    ['click', 'touchstart', 'keydown'].forEach(evt => {
+      document.addEventListener(evt, () => {
+        if (typeof tryAutoStartSoundtrackOnUserGesture === 'function') tryAutoStartSoundtrackOnUserGesture();
+      }, { once: true });
+    });
+    setTimeout(() => {
+      if (typeof checkAndTriggerAdBlockDetection === 'function') checkAndTriggerAdBlockDetection();
+    }, 1800);
   });
 
   // Global Visibility & Idle Power Manager (v0.10.10-36)
