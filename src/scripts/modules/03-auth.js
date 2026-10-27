@@ -1,5 +1,5 @@
-﻿// =========================================================================
-// VOCAFLOW 03-AUTH.JS (v1.0-0 Build 359)
+// =========================================================================
+// VOCAFLOW 03-AUTH.JS (v1.0-1 Build 360)
 // Authentication, Cloud Sync, Community, Profiles & Social Network
 // =========================================================================
 
@@ -477,7 +477,7 @@
       if (rawSelectedVipTier === 'custom_try') {
         selectedVipTier = 'try';
         const customDaysInput = document.getElementById('adjust-wallet-vip-custom-days-input');
-        durationDays = parseInt(customDaysInput ? customDaysInput.value : '7', 10) || 7;
+        durationDays = Math.max(1, parseInt(customDaysInput ? customDaysInput.value : '7', 10) || 7);
       } else if (rawSelectedVipTier === 'monthly') {
         durationDays = 30;
       } else if (rawSelectedVipTier === 'yearly') {
@@ -485,7 +485,16 @@
       }
 
       const isVipGranted = (rawSelectedVipTier !== 'none');
-      const newVipExpiresAt = (isVipGranted && durationDays > 0) ? (Date.now() + durationDays * 86400000) : (rawSelectedVipTier === 'lifetime' ? 0 : 0);
+      let newVipExpiresAt = 0;
+      if (isVipGranted) {
+        if (selectedVipTier === 'lifetime') {
+          newVipExpiresAt = 0;
+        } else if (selectedVipTier !== 'try' && student.isVip && student.vipTier === selectedVipTier && student.vipExpiresAt > Date.now()) {
+          newVipExpiresAt = student.vipExpiresAt;
+        } else if (durationDays > 0) {
+          newVipExpiresAt = Date.now() + durationDays * 86400000;
+        }
+      }
 
       const btn = document.getElementById('btn-save-adjust-wallet');
       if (btn) btn.textContent = '⏳ Đang lưu lên Cloud...';
@@ -520,23 +529,47 @@
           student.flowFreezes = newFreezes;
           student.isVip = isVipGranted;
           student.vipTier = selectedVipTier;
+          student.vipExpiresAt = newVipExpiresAt;
 
-          // Save VIP to user's profile on Cloud
+          // Save VIP to user's profile, root node, and vip_users_index on Cloud
           const vipProfilePayload = {
             isVip: isVipGranted,
             vipTier: selectedVipTier,
             vipExpiresAt: newVipExpiresAt
           };
-          fetch(rtdbUrl + '/users/' + editingStudentUid + '/profile.json' + authParam, {
-            method: 'PATCH',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(vipProfilePayload)
-          }).catch(() => {});
-          fetch(rtdbUrl + '/users/' + editingStudentUid + '.json' + authParam, {
-            method: 'PATCH',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(vipProfilePayload)
-          }).catch(() => {});
+          await Promise.allSettled([
+            fetch(rtdbUrl + '/users/' + editingStudentUid + '/profile.json' + authParam, {
+              method: 'PATCH',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(vipProfilePayload)
+            }),
+            fetch(rtdbUrl + '/users/' + editingStudentUid + '.json' + authParam, {
+              method: 'PATCH',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(vipProfilePayload)
+            }),
+            isVipGranted
+              ? fetch(rtdbUrl + '/vip_users_index/' + editingStudentUid + '.json' + authParam, {
+                  method: 'PUT',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({
+                    displayName: student.displayName || '',
+                    isVip: true,
+                    vipTier: selectedVipTier,
+                    vipExpiresAt: newVipExpiresAt,
+                    updatedAt: Date.now()
+                  })
+                })
+              : fetch(rtdbUrl + '/vip_users_index/' + editingStudentUid + '.json' + authParam, {
+                  method: 'DELETE'
+                })
+          ]);
+
+          if (isVipGranted && typeof registerAuthorToVipRegistry === 'function') {
+            registerAuthorToVipRegistry(editingStudentUid, student.displayName || '', selectedVipTier, newVipExpiresAt);
+          } else if (!isVipGranted && typeof globalVipRegistry === 'object' && globalVipRegistry) {
+            delete globalVipRegistry[editingStudentUid];
+          }
 
           // Also sync to root keys & flow subnodes for backwards-compatibility
           fetch(rtdbUrl + '/users/' + editingStudentUid + '/points.json' + authParam, {
@@ -588,6 +621,17 @@
             if (typeof updateFlowUI === 'function') updateFlowUI();
             updateAuthUI();
           }
+
+          // Refresh VIP / Free pill counters
+          const totalStudents = adminStudentsData.length;
+          const vipCount = adminStudentsData.filter(s => s.isVip).length;
+          const freeCount = totalStudents - vipCount;
+          const pillAll = document.getElementById('admin-pill-count-all');
+          const pillVip = document.getElementById('admin-pill-count-vip');
+          const pillFree = document.getElementById('admin-pill-count-free');
+          if (pillAll) pillAll.textContent = totalStudents;
+          if (pillVip) pillVip.textContent = vipCount;
+          if (pillFree) pillFree.textContent = freeCount;
 
           renderAdminStudentsTable();
           closeModal('modal-admin-adjust-wallet');
@@ -2084,7 +2128,12 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
           const email = prof.email || u.email || '';
 
           // Filter out dummy/root nodes and ghost test bot accounts
-          if (!email || typeof email !== 'string' || !email.includes('@') || uid === 'user_julies' || uid === 'u1') {
+          const normEmail = typeof email === 'string' ? email.trim().toLowerCase() : '';
+          const isGhostTestAccount = !normEmail || !normEmail.includes('@') ||
+            uid === 'user_julies' || uid === 'u1' || uid === 'official' ||
+            uid.startsWith('test_') || uid.startsWith('u_test') || uid.startsWith('free_user_test') || uid === 'user-test-decouple' ||
+            normEmail.endsWith('@vocaflow.app') || normEmail.endsWith('@vocaflow.com') || normEmail.endsWith('@example.com');
+          if (isGhostTestAccount) {
             continue;
           }
 
@@ -2163,7 +2212,7 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
           else if (u.flow && typeof u.flow.freezes === 'number') freezes = u.flow.freezes;
           else if (eco.flowFreezes !== undefined) freezes = parseInt(eco.flowFreezes, 10) || 0;
 
-          studentsList.push({
+          const candidateStudent = {
             uid: uid,
             shortUid: getShortUidUpper(uid),
             displayName: prof.displayName || email.split('@')[0],
@@ -2184,7 +2233,23 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
             isVip: isVipStudent,
             vipTier: vipTierStudent,
             vipExpiresAt: isVipStudent ? vipExp : 0
-          });
+          };
+
+          const existingIdx = studentsList.findIndex(st => (st.email || '').trim().toLowerCase() === normEmail);
+          if (existingIdx !== -1) {
+            const existing = studentsList[existingIdx];
+            const existingSyncTime = existing.lastSync ? new Date(existing.lastSync).getTime() : 0;
+            const candidateSyncTime = candidateStudent.lastSync ? new Date(candidateStudent.lastSync).getTime() : 0;
+            const shouldReplace =
+              (candidateStudent.isVip && !existing.isVip) ||
+              (candidateStudent.isVip === existing.isVip && candidateSyncTime > existingSyncTime) ||
+              (candidateStudent.isVip === existing.isVip && candidateSyncTime === existingSyncTime && candidateStudent.points > existing.points);
+            if (shouldReplace) {
+              studentsList[existingIdx] = candidateStudent;
+            }
+          } else {
+            studentsList.push(candidateStudent);
+          }
         }
 
         adminStudentsData = studentsList;
@@ -2298,16 +2363,16 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
         const avatarDisplay = s.avatar || (s.displayName ? s.displayName.trim()[0] : 'U').toUpperCase();
         const formattedDate = s.lastSync ? formatDateTime(s.lastSync) : 'Chưa đồng bộ';
 
-        // Format direct VIP expiration string (v0.10.10-37 Issue 18)
+        // Format direct VIP expiration string (v1.0-1: strict lifetime check vs timed tiers)
         let vipExpiryBadgeHtml = '';
         if (s.isVip) {
-          if (s.vipTier === 'lifetime' || !s.vipExpiresAt || s.vipExpiresAt > Date.now() + 80 * 365 * 86400000) {
+          if (s.vipTier === 'lifetime' || (s.vipExpiresAt && s.vipExpiresAt > Date.now() + 80 * 365 * 86400000)) {
             vipExpiryBadgeHtml = '<span class="badge" style="font-size: 10px; background: rgba(245,158,11,0.18); color: #fbbf24; border: 1px solid rgba(245,158,11,0.4); padding: 1px 6px; font-weight: 700;">⏳ Hạn: <strong style="color: #ffd700;">Vĩnh viễn</strong></span>';
-          } else if (s.vipExpiresAt < Date.now()) {
+          } else if (s.vipExpiresAt && s.vipExpiresAt < Date.now()) {
             const expDate = new Date(s.vipExpiresAt);
             const expDateStr = `${String(expDate.getDate()).padStart(2, '0')}/${String(expDate.getMonth() + 1).padStart(2, '0')}/${expDate.getFullYear()}`;
             vipExpiryBadgeHtml = `<span class="badge" style="font-size: 10px; background: rgba(239,68,68,0.18); color: #f87171; border: 1px solid rgba(239,68,68,0.4); padding: 1px 6px; font-weight: 700;">⏳ Hạn: ${expDateStr} (<strong style="color: #ef4444;">Đã hết hạn</strong>)</span>`;
-          } else {
+          } else if (s.vipExpiresAt && s.vipExpiresAt >= Date.now()) {
             const expDate = new Date(s.vipExpiresAt);
             const expDateStr = `${String(expDate.getDate()).padStart(2, '0')}/${String(expDate.getMonth() + 1).padStart(2, '0')}/${expDate.getFullYear()}`;
             const daysLeft = Math.max(1, Math.ceil((s.vipExpiresAt - Date.now()) / 86400000));
@@ -10023,6 +10088,9 @@ Trả về định dạng JSON DUY NHẤT (không kèm markdown \`\`\`json):
       }
 
       closeModal('modal-auth');
+      if (currentUser && currentUser.uid && typeof ensureUserHandleAssigned === 'function') {
+        ensureUserHandleAssigned(currentUser);
+      }
       updateAuthUI();
       showToast('Tạo tài khoản thành công!');
       handleManualSync();

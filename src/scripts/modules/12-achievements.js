@@ -1,5 +1,5 @@
-﻿// =========================================================================
-// VOCAFLOW 12-ACHIEVEMENTS.JS (v1.0-0 Build 359)
+// =========================================================================
+// VOCAFLOW 12-ACHIEVEMENTS.JS (v1.0-1 Build 360)
 // Badges, daily tasks, highlights showcase, notifications, VocaMail, User Guide
 // =========================================================================
 
@@ -107,7 +107,13 @@
     window.globalVipRegistryNameMap = globalVipRegistryNameMap;
 
     function formatVipDurationText(expiresAt, tier) {
-      if (tier === 'lifetime' || !expiresAt || expiresAt === 0 || expiresAt === Infinity) {
+      if (tier === 'lifetime' || expiresAt === Infinity || (expiresAt && Number(expiresAt) > getTrustedCurrentTimestamp() + 80 * 365 * 86400000)) {
+        return 'Trọn Đời';
+      }
+      if (!expiresAt || expiresAt === 0) {
+        if (tier === 'monthly') return '30 Ngày';
+        if (tier === 'yearly') return '365 Ngày';
+        if (tier === 'try') return 'Dùng thử';
         return 'Trọn Đời';
       }
       const now = getTrustedCurrentTimestamp();

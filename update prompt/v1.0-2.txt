@@ -1,0 +1,5 @@
+v1.0-2 (nâng cấp theo yêu cầu)
+
+đọc yêu cầu ở trong "C:\Users\DELL\Pictures\Screenshots\Ảnh chụp màn hình 2026-10-27 231023.png""C:\Users\DELL\Downloads\869004996_1447113286891332_4579750396229787573_n.jpg"
+
+đọc và thực hiện các file markdown có trong "C:\Users\DELL\Documents\Modding\VocaFlow" (nếu quên) <- t đã ghi yêu cầu rất rõ ở đây

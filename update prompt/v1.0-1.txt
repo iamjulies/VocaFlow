@@ -1,0 +1,6 @@
+v1.0-1 (sửa lỗi)
+
+1. trong cơ sở dữ liệu t nhận thấy có 2 ng học có cùng tên, cùng gmail đăng kí nhưng lại là 2 tài khoản khác nhau là như nào nhỉ? "C:\Users\DELL\Pictures\Screenshots\Ảnh chụp màn hình 2026-10-27 230049.png""C:\Users\DELL\Pictures\Screenshots\Ảnh chụp màn hình 2026-10-27 230100.png"
+2. khi hạo kích hoạt vip thủ công cho ng dùng, dù hạo chỉ chọn hạn 3 ngày thui nhưng mà cái này hiện vĩnh viễn là sai, sửa lại cho hạo "C:\Users\DELL\Pictures\Screenshots\Ảnh chụp màn hình 2026-10-27 225658.png"
+3. trong cổng quản trị bây giờ đang có nhiều tài khoản ảo/test của mày quá, xóa bớt hộ hạo nha (đừng xóa nhầm đấy)
+đọc và thực hiện các file markdown có trong "C:\Users\DELL\Documents\Modding\VocaFlow" (nếu quên) <- t đã ghi yêu cầu rất rõ ở đây

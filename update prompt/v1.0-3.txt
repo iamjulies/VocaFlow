@@ -1,0 +1,6 @@
+v1.0-3 (nâng cấp trải nghiệm)
+
+1. vì hạo muốn người dùng free phải xem quảng cáo nên hạo muốn app có thể nhận biết ai đang dùng chặn quảng cáo và hiện lên cái bảng kiểu "đã phát hiện mày xài chặn ads, vui lòng tắt để sử dụng tiếp app", nút to rõ đậm đà là nút "tắt trình chặn quảng cáo", còn 1 dòng chữ bé xíu xiu nhạt nhòa vô cùng là "tao kh ủng hộ app của mày, tao vẫn xài trình chặn ads" (và mỗi khi tải lại app thì cứ hiện chình ình cho hạo)
+2. thêm nhạc "C:\Users\DELL\Documents\Modding\VocaFlow\save\VocaSoundtrack.mp3" làm soundtrack cho app. có thể tăng giảm bật tắt âm lượng ở setting. âm lượng mặc định thì vừa phải đủ nghe thôi đừng lớn quá. (hạo nghĩ nên cho MP3 này lên cloud luôn)
+
+đọc và thực hiện các file markdown có trong "C:\Users\DELL\Documents\Modding\VocaFlow" (nếu quên) <- t đã ghi yêu cầu rất rõ ở đây

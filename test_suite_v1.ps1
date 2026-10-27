@@ -1,5 +1,5 @@
 # =========================================================================
-# VOCAFLOW PRODUCTION PRE-FLIGHT TEST SUITE (v1.0-0 Build 359)
+# VOCAFLOW PRODUCTION PRE-FLIGHT TEST SUITE (v1.0-1 Build 360)
 # =========================================================================
 [Console]::OutputEncoding = [System.Text.Encoding]::UTF8
 [Console]::InputEncoding  = [System.Text.Encoding]::UTF8
@@ -19,7 +19,7 @@ function Assert-Check($desc, $cond) {
 }
 
 Write-Host "==========================================================" -ForegroundColor Cyan
-Write-Host "   VOCAFLOW PRODUCTION PRE-FLIGHT AUDIT - v1.0-0 (BUILD 359)" -ForegroundColor Yellow
+Write-Host "   VOCAFLOW PRODUCTION PRE-FLIGHT AUDIT - v1.0-1 (BUILD 359)" -ForegroundColor Yellow
 Write-Host "==========================================================" -ForegroundColor Cyan
 
 # -------------------------------------------------------------------------
@@ -86,11 +86,11 @@ Assert-Check "Periodic sync guarded with document.hidden" ($authJs.Contains("doc
 
 $swJs = [System.IO.File]::ReadAllText("$root\sw.js", [System.Text.Encoding]::UTF8)
 $releaseSw = [System.IO.File]::ReadAllText("$root\Release_App\sw.js", [System.Text.Encoding]::UTF8)
-Assert-Check "sw.js cache name updated to vocaflow-pwa-v1.0-0" ($swJs.Contains("vocaflow-pwa-v1.0-0"))
-Assert-Check "Release_App/sw.js cache name updated to vocaflow-pwa-v1.0-0" ($releaseSw.Contains("vocaflow-pwa-v1.0-0"))
+Assert-Check "sw.js cache name updated to vocaflow-pwa-v1.0-1" ($swJs.Contains("vocaflow-pwa-v1.0-1"))
+Assert-Check "Release_App/sw.js cache name updated to vocaflow-pwa-v1.0-1" ($releaseSw.Contains("vocaflow-pwa-v1.0-1"))
 
 # -------------------------------------------------------------------------
-# TEST 5: 7-POINT VERSION CONSISTENCY (v1.0-0 Build 359)
+# TEST 5: 7-POINT VERSION CONSISTENCY (v1.0-1 Build 360)
 # -------------------------------------------------------------------------
 Write-Host "`n--- GIAI DOAN 5: 7-POINT VERSION CONSISTENCY ---" -ForegroundColor Cyan
 $settingsModal = [System.IO.File]::ReadAllText("$root\src\components\modals\modal-settings.html", [System.Text.Encoding]::UTF8)
@@ -100,23 +100,25 @@ $pushPs1 = [System.IO.File]::ReadAllText("$root\GITHUB_RELEASE\push_github.ps1",
 $overview = [System.IO.File]::ReadAllText("$root\VOCAFLOW_OVERVIEW.txt", [System.Text.Encoding]::UTF8)
 $currentTask = [System.IO.File]::ReadAllText("$root\CURRENT_TASK.md", [System.Text.Encoding]::UTF8)
 
-Assert-Check "1. modal-settings.html has 'VocaFlow v1.0-0 (Build 359)'" ($settingsModal.Contains("VocaFlow v1.0-0 (Build 359)"))
-Assert-Check "2. 02-state-core.js has VOCAFLOW_APP_VERSION = 'v1.0-0'" ($stateCore.Contains("VOCAFLOW_APP_VERSION = 'v1.0-0'"))
-Assert-Check "   02-state-core.js has VOCAFLOW_APP_BUILD = 359" ($stateCore.Contains("VOCAFLOW_APP_BUILD = 359"))
-Assert-Check "3. sw.js has 'vocaflow-pwa-v1.0-0'" ($swJs.Contains("vocaflow-pwa-v1.0-0"))
-Assert-Check "4. pubspec.yaml has 'version: 1.0.0+359'" ($pubspec.Contains("version: 1.0.0+359"))
-Assert-Check "5. Program.cs has 'VocaFlow v1.0-0'" ($programCs.Contains("VocaFlow v1.0-0"))
-Assert-Check "6. push_github.ps1 has 'VocaFlow_v1.0-0_Windows_Portable.zip'" ($pushPs1.Contains("VocaFlow_v1.0-0_Windows_Portable.zip"))
-Assert-Check "   push_github.ps1 has 'Release v1.0-0 (Build 359)'" ($pushPs1.Contains("Release v1.0-0 (Build 359)"))
-Assert-Check "7. VOCAFLOW_OVERVIEW.txt has 'v1.0-0 (Build 359) - OFFICIAL PRODUCTION RELEASE'" ($overview.Contains("v1.0-0 (Build 359) - OFFICIAL PRODUCTION RELEASE"))
-Assert-Check "   CURRENT_TASK.md has 'v1.0-0 (Build 359)'" ($currentTask.Contains("v1.0-0 (Build 359)"))
+Assert-Check "1. modal-settings.html has 'VocaFlow v1.0-1 (Build 360)'" ($settingsModal.Contains("VocaFlow v1.0-1 (Build 360)"))
+Assert-Check "2. 02-state-core.js has VOCAFLOW_APP_VERSION = 'v1.0-1'" ($stateCore.Contains("VOCAFLOW_APP_VERSION = 'v1.0-1'"))
+Assert-Check "   02-state-core.js has VOCAFLOW_APP_BUILD = 360" ($stateCore.Contains("VOCAFLOW_APP_BUILD = 360"))
+Assert-Check "3. sw.js has 'vocaflow-pwa-v1.0-1'" ($swJs.Contains("vocaflow-pwa-v1.0-1"))
+Assert-Check "4. pubspec.yaml has 'version: 1.0.1+360'" ($pubspec.Contains("version: 1.0.1+360"))
+Assert-Check "5. Program.cs has 'VocaFlow v1.0-1'" ($programCs.Contains("VocaFlow v1.0-1"))
+Assert-Check "6. push_github.ps1 has 'VocaFlow_v1.0-1_Windows_Portable.zip'" ($pushPs1.Contains("VocaFlow_v1.0-1_Windows_Portable.zip"))
+Assert-Check "   push_github.ps1 has 'Release v1.0-1 (Build 360)'" ($pushPs1.Contains("Release v1.0-1 (Build 360)"))
+Assert-Check "7. VOCAFLOW_OVERVIEW.txt has 'v1.0-1 (Build 360)'" ($overview.Contains("v1.0-1 (Build 360)"))
+Assert-Check "   CURRENT_TASK.md has 'v1.0-1 (Build 360)'" ($currentTask.Contains("v1.0-1 (Build 360)"))
+Assert-Check "8. 03-auth.js updates student.vipExpiresAt in saveAdjustStudentWalletCloud" ($authJs.Contains("student.vipExpiresAt = newVipExpiresAt;"))
+Assert-Check "9. 03-auth.js deduplicates students by normEmail in fetchAdminStudentsList" ($authJs.Contains("studentsList.findIndex(st => (st.email || '').trim().toLowerCase() === normEmail)"))
 
 Write-Host "==========================================================" -ForegroundColor Cyan
 Write-Host "   KET QUA KIEM TRA: $passed / $total DIEU KIEN DAT CHUAN" -ForegroundColor $(if ($passed -eq $total) { "Green" } else { "Yellow" })
 Write-Host "==========================================================" -ForegroundColor Cyan
 
 if ($passed -eq $total) {
-    Write-Host "`n>>> 100% PASS! SAN SANG BIEN DICH VA PHAT HANH v1.0-0! <<<`n" -ForegroundColor Green
+    Write-Host "`n>>> 100% PASS! SAN SANG BIEN DICH VA PHAT HANH v1.0-1! <<<`n" -ForegroundColor Green
     exit 0
 } else {
     Write-Host "`n>>> CO LOI CHUA DAT CHUAN, KIEM TRA LAI! <<<`n" -ForegroundColor Red

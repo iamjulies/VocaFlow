@@ -1,4 +1,20 @@
 ================================================================================
+Phiên bản: v1.0-1 (Build 360) - Khắc Phục Hiển Thị Hạn VocaVIP TRY Trong Admin Portal, Chống Trùng Lặp Tài Khoản Theo Email & Làm Sạch Toàn Bộ Tài Khoản Ảo Kiểm Thử Trên Cloud
+================================================================================
+1. [Khắc Phục Triệt Để Lỗi Hiển Thị "Hạn: Vĩnh Viễn" Khi Cấp VocaVIP TRY Thủ Công]:
+   - Sửa lỗi trong `saveAdjustStudentWalletCloud` (`03-auth.js`): bổ sung gán `student.vipExpiresAt = newVipExpiresAt` ngay trong bộ nhớ RAM (`adminStudentsData`) và đợi (`await Promise.allSettled`) đồng bộ lên `/users/{uid}/profile.json`, `/users/{uid}.json` cũng như `/vip_users_index/{uid}.json` trước khi render lại bảng.
+   - Chuẩn hóa điều kiện hiển thị hạn VIP trong `renderAdminStudentsTable` (`03-auth.js`) và `formatVipDurationText` (`12-achievements.js`): chỉ hiển thị `⏳ Hạn: Vĩnh viễn` / `Trọn Đời` khi `vipTier === 'lifetime'` hoặc mốc hết hạn trên 80 năm; các gói có thời hạn (`try`, `monthly`, `yearly`) hiển thị chính xác ngày hết hạn `DD/MM/YYYY (còn X ngày)`.
+   - Cập nhật trực tiếp hạn sử dụng VocaVIP TRY 3 ngày chuẩn xác trên Cloud cho tài khoản học viên `Tcdjnq` (`xHHoKGRRRpWAm08VcljUDCVL81P2`).
+
+2. [Làm Sạch Tài Khoản Trùng Lặp & Toàn Bộ 17 Tài Khoản Ảo Kiểm Thử Trên Firebase RTDB]:
+   - Xóa bản ghi mồ côi cũ (`huIDNNXrrFT05hpFG28O2XYlhmx2`) của học viên `Tcdjnq` (`congdinh1001@gmail.com`), giữ nguyên 100% tài khoản đang hoạt động (`xHHoKGRRRpWAm08VcljUDCVL81P2`).
+   - Dọn dẹp triệt để toàn bộ các tài khoản ảo / bot kiểm thử của AI trên Firebase RTDB (`/users`, `/vip_users_index`, `/usernames`), bảo toàn tuyệt đối 100% tài khoản người dùng thật và tài khoản test chính chủ của Founder.
+   - Bổ sung bộ lọc tên miền ảo (`@vocaflow.app`, `@vocaflow.com`, `@example.com`) và thuật toán khử trùng lặp theo email trong `fetchAdminStudentsList`, đồng thời gán định danh `@handle` ngay khi đăng ký mới (`handleFormRegister`).
+
+3. [Đồng Bộ Toàn Diện 7-Point Version Consistency & Multi-Deploy (v1.0-1 Build 360)]:
+   - Đồng bộ nhất quán tại 7 điểm cốt lõi: `modal-settings.html`, `02-state-core.js`, toàn bộ 13 modules trong `src/scripts/modules/`, `app.js`, `sw.js` & `Release_App/sw.js`, `pubspec.yaml`, `Program.cs` & `VocaFlow.csproj`, `push_github.ps1`, `VOCAFLOW_OVERVIEW.txt`, `CURRENT_TASK.md`.
+
+================================================================================
 Phiên bản: v1.0-0 (Build 359) - OFFICIAL PRODUCTION RELEASE: Hoàn Thiện Toàn Diện 8 Chế Độ Học Tập, Động Cơ Ngữ Âm Hybrid Azure/Gemini, Hệ Thống Cấp Độ & Tủ Đồ Wardrobe, Hạ Tầng Bền Vững & Lá Chắn Băng Thông Cloud
 ================================================================================
 1. [Cột Mốc Lịch Sử v1.0-0 (Official Production Release)]:
